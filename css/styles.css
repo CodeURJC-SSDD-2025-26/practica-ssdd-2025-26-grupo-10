@@ -56,3 +56,39 @@ a {
 a:hover {
   color: var(--brand-dark);
 }
+
+/* --- NAVBAR CUSTOM --- */
+.navbar {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.navbar-brand {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--brand-primary) !important;
+}
+
+.nav-link {
+  color: var(--text-primary) !important;
+  font-weight: 500;
+  margin-right: 1rem;
+}
+
+/* --- HERO SECTION BASE --- */
+.hero-section {
+  background: white; /* Temporary background */
+  color: var(--text-primary);
+}
+
+.btn-primary {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  padding: 0.75rem 1.5rem;
+}
+
+.btn-primary:hover {
+  background-color: var(--brand-dark);
+  border-color: var(--brand-dark);
+}
