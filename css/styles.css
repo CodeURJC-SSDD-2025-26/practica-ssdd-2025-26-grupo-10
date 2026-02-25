@@ -234,3 +234,47 @@ a:hover {
 .border-top-warning {
   border-top: none !important;
 }
+
+/* --- NAVBAR CUSTOM INTERACTION --- */
+.navbar-custom {
+  background-color: #1a1d20 !important;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.navbar-custom .navbar-brand {
+  color: #198754 !important; /* Brand Green */
+}
+.navbar-custom .nav-link {
+  color: #e9ecef !important; /* Light Grey/White */
+  transition: color 0.3s ease;
+  position: relative;
+}
+/* Hover & Active States */
+.navbar-custom .nav-link:hover,
+.navbar-custom .nav-link.active {
+  color: #198754 !important; /* Vibrant Green */
+}
+/* Underline Effect */
+.navbar-custom .nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 5px;
+  left: 50%;
+  background-color: #198754;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+.navbar-custom .nav-link:hover::after,
+.navbar-custom .nav-link.active::after {
+  width: 80%;
+}
+/* Button Polish */
+.btn-outline-secondary:hover {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+}
