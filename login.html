@@ -9,37 +9,103 @@
       rel="stylesheet"
     />
     <link href="css/styles.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      /* Flexbox centering handled by bootstrap classes */
+    </style>
   </head>
-  <body>
-    <div class="container py-5 mt-5">
-      <div class="row justify-content-center">
-        <div class="col-md-5">
-          <div class="card p-4 border-0 shadow-sm" style="border-radius: 16px">
-            <h2 class="text-center fw-bold mb-4">Iniciar Sesión</h2>
-            <form>
-              <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" required />
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Contraseña</label>
-                <input type="password" class="form-control" required />
-              </div>
-              <button
-                type="submit"
-                class="btn btn-primary w-100 py-2 rounded-pill"
+  <body class="bg-theme-light" style="padding-top: 80px">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
+      <div class="container">
+        <a class="navbar-brand" href="index.html"
+          ><i class="fas fa-recycle me-2"></i>EcoMóstoles</a
+        >
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="login.html">Login</a>
+            </li>
+            <li class="nav-item ms-lg-2">
+              <a class="btn btn-eco btn-sm" href="registro.html"
+                >Registro Empresa</a
               >
-                Entrar
-              </button>
-            </form>
-            <div class="text-center mt-3">
-              <a href="index.html" class="text-secondary small"
-                >Volver al inicio</a
-              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div
+      class="row justify-content-center w-100 flex-grow-1 align-items-center"
+    >
+      <div class="col-md-5 col-lg-4">
+        <div class="card p-4 border-top-success">
+          <div class="card-body">
+            <div class="text-center mb-4">
+              <h2 class="fw-bold text-dark">EcoMóstoles</h2>
+              <p class="text-muted">Acceso para Empresas</p>
             </div>
+            <form action="dashboard.html">
+              <div class="mb-3">
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="Email"
+                  required
+                />
+              </div>
+              <div class="mb-4">
+                <input
+                  type="password"
+                  class="form-control"
+                  placeholder="Contraseña"
+                  required
+                />
+              </div>
+              <div class="d-grid mb-3">
+                <button type="submit" class="btn btn-primary py-2 fw-bold">
+                  Entrar
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- FOOTER AÑADIDO -->
+    <footer class="bg-white text-secondary py-5 border-top mt-auto">
+      <div class="container text-center">
+        <div class="row align-items-center">
+          <div class="col-md-4 text-md-start">
+            <h5 class="mb-0 fw-bold text-dark">
+              <i class="fas fa-recycle text-success"></i> EcoMóstoles
+            </h5>
+            <small>Plataforma de Simbiosis Industrial</small>
+          </div>
+          <div class="col-md-4 my-3">
+            <small>&copy; 2024 EcoMóstoles.</small>
+          </div>
+          <div class="col-md-4 text-md-end">
+            <a href="#" class="text-secondary me-3"
+              ><i class="fab fa-linkedin fa-lg"></i
+            ></a>
+            <a href="#" class="text-secondary"
+              ><i class="fas fa-envelope fa-lg"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <div id="particles-body"></div>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="js/particles-config.js"></script>
+    <script src="js/card-spotlight.js"></script>
   </body>
 </html>
