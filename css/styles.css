@@ -1,55 +1,35 @@
-/* 
- * EcoMóstoles - Premium Clean Light SaaS Theme 
- * Standard: "10/10 Vision" - Stripe/Linear/Vercel Aesthetic
- */
+/* EcoMóstoles - Styles v0.17 */
 
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 :root {
-  /* --- COLOR PALETTE --- */
-  /* Bases */
-  --bg-body: #f8f9fa; /* Lightest Grey - Body Background */
-  --bg-surface: #ffffff; /* Pure White - Cards/Panels */
-
-  /* Text */
-  --text-primary: #212529; /* Dark Charcoal - Main Text */
-  --text-secondary: #6c757d; /* Medium Grey - Subtitles */
-  --text-inverse: #ffffff; /* White - Text on Dark Backgrounds */
-
-  /* Brands */
-  --brand-primary: #198754; /* Success Green - Main Action */
-  --brand-dark: #0f5132; /* Darker Green - Hover/Borders */
-  --brand-accent: #00eb87; /* Neon Green - Glows/Accents */
-
-  /* Accents (Borders/Badges) */
+  --bg-body: #f8f9fa;
+  --bg-surface: #ffffff;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --text-inverse: #ffffff;
+  --brand-primary: #198754;
+  --brand-dark: #0f5132;
+  --brand-accent: #00eb87;
   --accent-blue: #0d6efd;
   --accent-yellow: #ffc107;
   --accent-red: #dc3545;
   --accent-info: #0dcaf0;
-
-  /* --- SHADOWS & RADIUS --- */
-  /* The "Expensive" Shadow */
   --shadow-soft: 0 12px 24px -6px rgba(0, 0, 0, 0.05),
     0 0 1px 0 rgba(0, 0, 0, 0.1);
   --shadow-hover: 0 20px 48px -12px rgba(0, 0, 0, 0.1),
     0 0 1px 0 rgba(0, 0, 0, 0.1);
-
-  /* Modern Radius */
-  --radius-md: 12px; /* Inputs/Buttons */
-  --radius-lg: 16px; /* Cards */
-  --radius-pill: 9999px; /* Chips/Pills */
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
 }
 
-/* --- GLOBAL RESET & TYPOGRAPHY --- */
 body {
   background-color: var(--bg-body);
   color: var(--text-primary);
-  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont,
-    sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  padding-top: 80px; /* Space for fixed navbar */
-  /* Sticky Footer Setup */
+  padding-top: 80px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -62,8 +42,8 @@ h4,
 h5,
 h6 {
   font-weight: 700;
-  letter-spacing: -0.025em; /* Tight tracking for headings */
   color: var(--text-primary);
+  letter-spacing: -0.025em;
 }
 
 a {
@@ -76,32 +56,68 @@ a:hover {
   color: var(--brand-dark);
 }
 
-/* --- THE CARD COMPONENT (CLEAN REDESIGN) --- */
+/* --- CARD STYLES (BUGGY STATE - COMMIT 17) --- */
 .card,
 .card-modern {
-  background-color: var(--bg-surface) !important; /* FORCE WHITE */
-  color: var(--text-primary) !important; /* FORCE DARK TEXT */
-  border: none !important; /* NO BOOTSTRAP BORDERS */
+  background-color: var(
+    --bg-surface
+  ) !important; /* BUG: White BG causing overlap */
+  color: var(--text-primary) !important;
+  border: none;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
-  padding: 0; /* Bootstrap adds padding to body, we manage structure */
+  padding: 0;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
   position: relative;
   margin-bottom: 1.5rem;
 }
 
-.card:hover,
-.card-modern:hover {
+.card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-hover);
 }
 
 .card-body {
-  padding: 2.5rem; /* GENEROUS PADDING rule */
+  padding: 2.5rem;
+  position: relative;
+  z-index: 2;
 }
 
-/* Clean up old colored top borders if they exist */
+/* Spotlight Glow (BUG: Visible by default or weird layering) */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+  background: radial-gradient(
+    800px circle at var(--mouse-x) var(--mouse-y),
+    rgba(16, 185, 129, 0.4),
+    transparent 40%
+  );
+  opacity: 0.5; /* BUG: Should be 0 by default */
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* White content mask */
+.card::after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  right: 1px;
+  bottom: 1px;
+  background: #ffffff;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+/* Borders */
 .border-top-success {
   border-top: 4px solid var(--brand-primary) !important;
 }
@@ -115,12 +131,11 @@ a:hover {
 /* --- HERO SECTION --- */
 .hero-section {
   position: relative;
-  /* Animated Gradient */
   background: linear-gradient(-45deg, #0a2e23, #0f5132, #198754, #0d3838);
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite;
   color: var(--text-inverse);
-  padding: 120px 0 80px 0; /* Extra top padding for fixed navbar */
+  padding: 120px 0 80px 0;
   overflow: hidden;
 }
 
@@ -140,9 +155,9 @@ a:hover {
   color: var(--text-inverse);
 }
 
-/* --- PARTICLES.JS --- */
+/* --- PARTICLES FIX (COMMIT 17 CHANGE) --- */
 #particles-body {
-  position: fixed !important;
+  position: fixed !important; /* FIXED APPLIED HERE */
   width: 100%;
   height: 100%;
   top: 0;
@@ -162,119 +177,50 @@ a:hover {
   pointer-events: auto;
 }
 
-/* --- BUTTONS & NAVBAR (BASIC) --- */
+/* --- BUTTONS (Standard) --- */
 .btn {
-  border-radius: var(--radius-pill);
+  padding: 0.75rem 1.75rem;
   font-weight: 600;
+  border-radius: var(--radius-pill);
 }
-.btn-primary {
+.btn-primary,
+.btn-eco {
   background-color: var(--brand-primary);
-  border-color: var(--brand-primary);
+  border: 1px solid var(--brand-primary);
+  color: white;
 }
+.btn-primary:hover {
+  background-color: var(--brand-dark);
+  transform: translateY(-2px);
+}
+
+/* Secondary (No Green Hover Yet) */
+.btn-outline-secondary {
+  background-color: white;
+  border: 2px solid #e9ecef;
+  color: var(--text-primary);
+}
+.btn-outline-secondary:hover {
+  background-color: #e9ecef; /* Standard grey hover */
+  color: var(--text-primary);
+}
+
+/* Navbar */
 .navbar {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
-.navbar-brand {
-  font-weight: 800;
-  font-size: 1.5rem;
-  color: var(--brand-primary) !important;
-}
-
-/* --- CARD SPOTLIGHT EFFECT --- */
-/* The Spotlight Glow (Background Layer) */
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0; /* Full coverage */
-  border-radius: inherit; /* Syncs with parent */
-  z-index: -1;
-  /* High Intensity Gradient */
-  background: radial-gradient(
-    800px circle at var(--mouse-x) var(--mouse-y),
-    rgba(16, 185, 129, 0.4),
-    /* Green Glow */ transparent 40%
-  );
-  opacity: 0; /* INVISIBLE BY DEFAULT */
-  transition: opacity 0.3s ease;
-}
-
-.card:hover::before {
-  opacity: 1; /* Visible ONLY on hover */
-}
-
-/* The White Mask (Content Background) */
-.card::after {
-  content: "";
-  position: absolute;
-  /* 1px Border effect */
-  top: 1px;
-  left: 1px;
-  right: 1px;
-  bottom: 1px;
-  background: #ffffff;
-  border-radius: inherit; /* Syncs with parent */
-  z-index: 0;
-}
-
-/* Ensure content sits on top */
-.card-body,
-.card-img-top,
-.card-header,
-.card-footer {
-  position: relative;
-  z-index: 2;
-  background: transparent;
-}
-
-/* REMOVE CONFLICTING TOP BORDERS for clean spotlight */
-.border-top-success,
-.border-top-primary,
-.border-top-warning {
-  border-top: none !important;
-}
-
-/* --- NAVBAR CUSTOM INTERACTION --- */
 .navbar-custom {
   background-color: #1a1d20 !important;
-  backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .navbar-custom .navbar-brand {
-  color: #198754 !important; /* Brand Green */
+  color: #198754 !important;
 }
 .navbar-custom .nav-link {
-  color: #e9ecef !important; /* Light Grey/White */
-  transition: color 0.3s ease;
-  position: relative;
+  color: #e9ecef !important;
 }
-/* Hover & Active States */
-.navbar-custom .nav-link:hover,
-.navbar-custom .nav-link.active {
-  color: #198754 !important; /* Vibrant Green */
-}
-/* Underline Effect */
-.navbar-custom .nav-link::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: 5px;
-  left: 50%;
-  background-color: #198754;
-  transition: all 0.3s ease;
-  transform: translateX(-50%);
-}
-.navbar-custom .nav-link:hover::after,
-.navbar-custom .nav-link.active::after {
-  width: 80%;
-}
-/* Button Polish */
-.btn-outline-secondary:hover {
-  background-color: var(--brand-primary);
-  border-color: var(--brand-primary);
-  color: white !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+.navbar-custom .nav-link:hover {
+  color: #198754 !important;
 }
