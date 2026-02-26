@@ -1,4 +1,4 @@
-/* EcoMóstoles - Styles v0.17 */
+/* EcoMóstoles - Styles v0.18 */
 
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
@@ -45,26 +45,22 @@ h6 {
   color: var(--text-primary);
   letter-spacing: -0.025em;
 }
-
 a {
   text-decoration: none;
   color: var(--brand-primary);
   transition: all 0.2s ease;
 }
-
 a:hover {
   color: var(--brand-dark);
 }
 
-/* --- CARD STYLES (BUGGY STATE - COMMIT 17) --- */
+/* --- CARD FIXED STYLES (COMMIT 18 CHANGE) --- */
 .card,
 .card-modern {
-  background-color: var(
-    --bg-surface
-  ) !important; /* BUG: White BG causing overlap */
+  background-color: transparent !important; /* FIXED: Transparent BG */
   color: var(--text-primary) !important;
-  border: none;
-  border-radius: var(--radius-lg);
+  border: none !important; /* FIXED: No borders */
+  border-radius: 16px !important;
   box-shadow: var(--shadow-soft);
   padding: 0;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -82,9 +78,10 @@ a:hover {
   padding: 2.5rem;
   position: relative;
   z-index: 2;
+  background: transparent;
 }
 
-/* Spotlight Glow (BUG: Visible by default or weird layering) */
+/* Spotlight Glow (FIXED: Opacity 0 default) */
 .card::before {
   content: "";
   position: absolute;
@@ -96,12 +93,12 @@ a:hover {
     rgba(16, 185, 129, 0.4),
     transparent 40%
   );
-  opacity: 0.5; /* BUG: Should be 0 by default */
+  opacity: 0 !important; /* FIXED: Hidden */
   transition: opacity 0.3s ease;
 }
 
 .card:hover::before {
-  opacity: 1;
+  opacity: 1 !important;
 }
 
 /* White content mask */
@@ -117,18 +114,14 @@ a:hover {
   z-index: 0;
 }
 
-/* Borders */
-.border-top-success {
-  border-top: 4px solid var(--brand-primary) !important;
-}
-.border-top-primary {
-  border-top: 4px solid var(--accent-blue) !important;
-}
+/* Remove static borders */
+.border-top-success,
+.border-top-primary,
 .border-top-warning {
-  border-top: 4px solid var(--accent-yellow) !important;
+  border-top: none !important;
 }
 
-/* --- HERO SECTION --- */
+/* --- HERO & PARTICLES (Kept Fixed) --- */
 .hero-section {
   position: relative;
   background: linear-gradient(-45deg, #0a2e23, #0f5132, #198754, #0d3838);
@@ -138,7 +131,6 @@ a:hover {
   padding: 120px 0 80px 0;
   overflow: hidden;
 }
-
 @keyframes gradientBG {
   0% {
     background-position: 0% 50%;
@@ -150,14 +142,12 @@ a:hover {
     background-position: 0% 50%;
   }
 }
-
 .hero-section h1 {
   color: var(--text-inverse);
 }
 
-/* --- PARTICLES FIX (COMMIT 17 CHANGE) --- */
 #particles-body {
-  position: fixed !important; /* FIXED APPLIED HERE */
+  position: fixed !important;
   width: 100%;
   height: 100%;
   top: 0;
@@ -166,7 +156,6 @@ a:hover {
   background-color: var(--bg-body);
   pointer-events: none;
 }
-
 #particles-hero {
   position: absolute;
   width: 100%;
@@ -177,7 +166,7 @@ a:hover {
   pointer-events: auto;
 }
 
-/* --- BUTTONS (Standard) --- */
+/* --- BUTTONS (Still Standard) --- */
 .btn {
   padding: 0.75rem 1.75rem;
   font-weight: 600;
@@ -194,14 +183,13 @@ a:hover {
   transform: translateY(-2px);
 }
 
-/* Secondary (No Green Hover Yet) */
 .btn-outline-secondary {
   background-color: white;
   border: 2px solid #e9ecef;
   color: var(--text-primary);
 }
 .btn-outline-secondary:hover {
-  background-color: #e9ecef; /* Standard grey hover */
+  background-color: #e9ecef; /* Still standard */
   color: var(--text-primary);
 }
 
