@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Publicar Activo | EcoMóstoles</title>
+    <title>Editar Activo | EcoMóstoles</title>
     <!-- Bootstrap 5 CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -88,34 +88,16 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="mis_activos.html">
+                <a
+                  class="nav-link active text-success fw-bold"
+                  href="mis_activos.html"
+                >
                   <i class="fas fa-box me-2"></i> Mis Ofertas
                 </a>
               </li>
               <li class="nav-item">
-                <a
-                  class="nav-link active text-success fw-bold"
-                  href="crear_activo.html"
-                >
+                <a class="nav-link" href="crear_activo.html">
                   <i class="fas fa-plus-circle me-2"></i> Publicar Nuevo
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="mensajes.html">
-                  <i class="fas fa-envelope me-2"></i> Mensajes
-                  <span class="badge bg-danger rounded-pill ms-1">2</span>
-                </a>
-              </li>
-            </ul>
-            <h6
-              class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase small"
-            >
-              <span>Historial</span>
-            </h6>
-            <ul class="nav flex-column mb-2">
-              <li class="nav-item">
-                <a class="nav-link" href="perfil_empresa.html">
-                  <i class="fas fa-user-cog me-2"></i> Mi Perfil
                 </a>
               </li>
             </ul>
@@ -127,7 +109,7 @@
           <div
             class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
           >
-            <h1 class="h2 text-dark fw-bold">Publicar Nueva Oferta</h1>
+            <h1 class="h2 text-dark fw-bold">Editar Activo #REF-2024-001</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
               <a
                 href="mis_activos.html"
@@ -138,7 +120,7 @@
             </div>
           </div>
 
-          <div class="card card-modern border-top-success">
+          <div class="card card-modern border-top-primary">
             <div class="card-body p-4">
               <form action="mis_activos.html">
                 <div class="row g-3">
@@ -153,7 +135,7 @@
                       type="text"
                       class="form-control"
                       id="titulo"
-                      placeholder="Ej. Lote de Palets Europeos"
+                      value="Bobinas de Cobre (500kg)"
                       required
                     />
                   </div>
@@ -164,15 +146,11 @@
                       >Tipo <span class="text-danger">*</span></label
                     >
                     <select class="form-select" id="tipo" required>
-                      <option value="" selected disabled>Seleccionar...</option>
-                      <option value="residuo_metal">Residuo: Metal</option>
-                      <option value="residuo_madera">Residuo: Madera</option>
-                      <option value="residuo_plastico">
-                        Residuo: Plástico
+                      <option value="residuo_metal" selected>
+                        Residuo: Metal
                       </option>
-                      <option value="residuo_quimico">Residuo: Químico</option>
+                      <option value="residuo_madera">Residuo: Madera</option>
                       <option value="maquinaria">Alquiler Maquinaria</option>
-                      <option value="espacio">Alquiler Espacio</option>
                     </select>
                   </div>
 
@@ -187,9 +165,10 @@
                       class="form-control"
                       id="descripcion"
                       rows="4"
-                      placeholder="Describe el estado, origen y condiciones de recogida..."
                       required
-                    ></textarea>
+                    >
+Viruta limpia procedente de corte industrial. Libre de aceites y otros contaminantes. Lista para fundición.</textarea
+                    >
                   </div>
 
                   <div class="col-md-4">
@@ -202,7 +181,7 @@
                       type="text"
                       class="form-control"
                       id="cantidad"
-                      placeholder="Ej. 500 kg, 2 Unidades"
+                      value="500 kg"
                     />
                   </div>
                   <div class="col-md-4">
@@ -215,19 +194,19 @@
                       type="text"
                       class="form-control"
                       id="precio"
-                      placeholder="Ej. 1500, o 'A convenir'"
+                      value="1.500"
                     />
                   </div>
                   <div class="col-md-4">
                     <label
-                      for="disponibilidad"
+                      for="estado"
                       class="form-label text-secondary fw-bold small text-uppercase"
-                      >Disponibilidad</label
+                      >Estado de la Oferta</label
                     >
-                    <select class="form-select" id="disponibilidad">
-                      <option value="inmediata">Inmediata</option>
-                      <option value="1semana">En 1 semana</option>
-                      <option value="consultar">Consultar</option>
+                    <select class="form-select" id="estado">
+                      <option value="disponible" selected>Disponible</option>
+                      <option value="reservado">Reservado</option>
+                      <option value="vendido">Vendido / Alquilado</option>
                     </select>
                   </div>
 
@@ -237,15 +216,21 @@
                       class="form-label text-secondary fw-bold small text-uppercase"
                       >Fotografía del Activo</label
                     >
-                    <input class="form-control" type="file" id="imagen" />
-                    <div class="form-text">
-                      Formatos aceptados: JPG, PNG. Máx 5MB.
+                    <div class="mb-2">
+                      <small class="text-muted">Imagen actual:</small><br />
+                      <div
+                        class="bg-light border rounded d-inline-flex align-items-center justify-content-center mt-1"
+                        style="width: 100px; height: 60px"
+                      >
+                        <i class="fas fa-image text-secondary"></i>
+                      </div>
                     </div>
+                    <input class="form-control" type="file" id="imagen" />
                   </div>
 
                   <div class="col-12 mt-4 d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary px-4 fw-bold">
-                      <i class="fas fa-save me-2"></i> Publicar Oferta
+                      <i class="fas fa-save me-2"></i> Guardar Cambios
                     </button>
                   </div>
                 </div>
