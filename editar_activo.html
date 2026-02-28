@@ -1,244 +1,143 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Activo | EcoMóstoles</title>
     <!-- Bootstrap 5 CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <link href="css/styles.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-  </head>
-  <body class="bg-theme-light">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-theme-light">
+
     <!-- Top Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="index.html">
-          <i class="fas fa-recycle me-2"></i>EcoMóstoles
-          <span class="badge bg-light text-dark ms-2" style="font-size: 0.6em"
-            >EMPRESA</span
-          >
-        </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle d-flex align-items-center"
-                href="#"
-                role="button"
-                data-bs-toggle="dropdown"
-              >
-                <img
-                  src="https://ui-avatars.com/api/?name=Metales+Del+Sur&background=0D8ABC&color=fff"
-                  class="user-avatar-nav me-2"
-                  alt="Metales del Sur"
-                />
-                <span>Metales del Sur S.L.</span>
-              </a>
-              <ul
-                class="dropdown-menu dropdown-menu-end border-0 shadow-lg"
-                style="border-radius: 1rem"
-              >
-                <li>
-                  <a class="dropdown-item" href="perfil_empresa.html"
-                    >Mi Perfil</a
-                  >
-                </li>
-                <li><hr class="dropdown-divider" /></li>
-                <li>
-                  <a class="dropdown-item text-danger" href="index.html"
-                    >Cerrar Sesión</a
-                  >
-                </li>
-              </ul>
-            </li>
-          </ul>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-recycle me-2"></i>EcoMóstoles <span class="badge bg-light text-dark ms-2" style="font-size: 0.6em;">EMPRESA</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <img src="https://ui-avatars.com/api/?name=Metales+Del+Sur&background=0D8ABC&color=fff" class="user-avatar-nav me-2" alt="Metales del Sur">
+                            <span>Metales del Sur S.L.</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg" style="border-radius: 1rem;">
+                            <li><a class="dropdown-item" href="perfil_empresa.html">Mi Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="index.html">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
     </nav>
 
     <div class="container-fluid">
-      <div class="row">
-        <!-- Sidebar -->
-        <nav
-          id="sidebarMenu"
-          class="col-md-3 col-lg-2 d-md-block sidebar collapse"
-        >
-          <div class="position-sticky pt-3">
-            <ul class="nav flex-column">
-              <li class="nav-item">
-                <a class="nav-link" href="dashboard.html">
-                  <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-                </a>
-              </li>
-              <li class="nav-item">
-                <a
-                  class="nav-link active text-success fw-bold"
-                  href="mis_activos.html"
-                >
-                  <i class="fas fa-box me-2"></i> Mis Ofertas
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="crear_activo.html">
-                  <i class="fas fa-plus-circle me-2"></i> Publicar Nuevo
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-          <div
-            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
-          >
-            <h1 class="h2 text-dark fw-bold">Editar Activo #REF-2024-001</h1>
-            <div class="btn-toolbar mb-2 mb-md-0">
-              <a
-                href="mis_activos.html"
-                class="btn btn-sm btn-outline-secondary rounded-pill"
-              >
-                <i class="fas fa-arrow-left me-1"></i> Cancelar
-              </a>
-            </div>
-          </div>
-
-          <div class="card card-modern border-top-primary">
-            <div class="card-body p-4">
-              <form action="mis_activos.html">
-                <div class="row g-3">
-                  <div class="col-md-8">
-                    <label
-                      for="titulo"
-                      class="form-label text-secondary fw-bold small text-uppercase"
-                      >Título del Activo
-                      <span class="text-danger">*</span></label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="titulo"
-                      value="Bobinas de Cobre (500kg)"
-                      required
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <label
-                      for="tipo"
-                      class="form-label text-secondary fw-bold small text-uppercase"
-                      >Tipo <span class="text-danger">*</span></label
-                    >
-                    <select class="form-select" id="tipo" required>
-                      <option value="residuo_metal" selected>
-                        Residuo: Metal
-                      </option>
-                      <option value="residuo_madera">Residuo: Madera</option>
-                      <option value="maquinaria">Alquiler Maquinaria</option>
-                    </select>
-                  </div>
-
-                  <div class="col-12">
-                    <label
-                      for="descripcion"
-                      class="form-label text-secondary fw-bold small text-uppercase"
-                      >Descripción Detallada
-                      <span class="text-danger">*</span></label
-                    >
-                    <textarea
-                      class="form-control"
-                      id="descripcion"
-                      rows="4"
-                      required
-                    >
-Viruta limpia procedente de corte industrial. Libre de aceites y otros contaminantes. Lista para fundición.</textarea
-                    >
-                  </div>
-
-                  <div class="col-md-4">
-                    <label
-                      for="cantidad"
-                      class="form-label text-secondary fw-bold small text-uppercase"
-                      >Cantidad / Unidad</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="cantidad"
-                      value="500 kg"
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <label
-                      for="precio"
-                      class="form-label text-secondary fw-bold small text-uppercase"
-                      >Precio (€)</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="precio"
-                      value="1.500"
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <label
-                      for="estado"
-                      class="form-label text-secondary fw-bold small text-uppercase"
-                      >Estado de la Oferta</label
-                    >
-                    <select class="form-select" id="estado">
-                      <option value="disponible" selected>Disponible</option>
-                      <option value="reservado">Reservado</option>
-                      <option value="vendido">Vendido / Alquilado</option>
-                    </select>
-                  </div>
-
-                  <div class="col-12">
-                    <label
-                      for="imagen"
-                      class="form-label text-secondary fw-bold small text-uppercase"
-                      >Fotografía del Activo</label
-                    >
-                    <div class="mb-2">
-                      <small class="text-muted">Imagen actual:</small><br />
-                      <div
-                        class="bg-light border rounded d-inline-flex align-items-center justify-content-center mt-1"
-                        style="width: 100px; height: 60px"
-                      >
-                        <i class="fas fa-image text-secondary"></i>
-                      </div>
-                    </div>
-                    <input class="form-control" type="file" id="imagen" />
-                  </div>
-
-                  <div class="col-12 mt-4 d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary px-4 fw-bold">
-                      <i class="fas fa-save me-2"></i> Guardar Cambios
-                    </button>
-                  </div>
+        <div class="row">
+            
+            <!-- Sidebar -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active text-success fw-bold" href="mis_activos.html">
+                                <i class="fas fa-box me-2"></i> Mis Ofertas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="crear_activo.html">
+                                <i class="fas fa-plus-circle me-2"></i> Publicar Nuevo
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-              </form>
-            </div>
-          </div>
-        </main>
-      </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2 text-dark fw-bold">Editar Activo #REF-2024-001</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <a href="mis_activos.html" class="btn btn-sm btn-outline-secondary rounded-pill">
+                            <i class="fas fa-arrow-left me-1"></i> Cancelar
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card card-modern border-top-primary">
+                    <div class="card-body p-4">
+                        <form action="mis_activos.html">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label for="titulo" class="form-label text-secondary fw-bold small text-uppercase">Título del Activo <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="titulo" value="Bobinas de Cobre (500kg)" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="tipo" class="form-label text-secondary fw-bold small text-uppercase">Tipo <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="tipo" required>
+                                        <option value="residuo_metal" selected>Residuo: Metal</option>
+                                        <option value="residuo_madera">Residuo: Madera</option>
+                                        <option value="maquinaria">Alquiler Maquinaria</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label for="descripcion" class="form-label text-secondary fw-bold small text-uppercase">Descripción Detallada <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="descripcion" rows="4" required>Viruta limpia procedente de corte industrial. Libre de aceites y otros contaminantes. Lista para fundición.</textarea>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad / Unidad</label>
+                                    <input type="text" class="form-control" id="cantidad" value="500 kg">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="precio" class="form-label text-secondary fw-bold small text-uppercase">Precio (€)</label>
+                                    <input type="text" class="form-control" id="precio" value="1.500">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="estado" class="form-label text-secondary fw-bold small text-uppercase">Estado de la Oferta</label>
+                                    <select class="form-select" id="estado">
+                                        <option value="disponible" selected>Disponible</option>
+                                        <option value="reservado">Reservado</option>
+                                        <option value="vendido">Vendido / Alquilado</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="imagen" class="form-label text-secondary fw-bold small text-uppercase">Fotografía del Activo</label>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Imagen actual:</small><br>
+                                        <div class="bg-light border rounded d-inline-flex align-items-center justify-content-center mt-1" style="width: 100px; height: 60px;">
+                                            <i class="fas fa-image text-secondary"></i>
+                                        </div>
+                                    </div>
+                                    <input class="form-control" type="file" id="imagen">
+                                </div>
+
+                                <div class="col-12 mt-4 d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary px-4 fw-bold">
+                                        <i class="fas fa-save me-2"></i> Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
 
     <!-- Particles.js -->
@@ -247,36 +146,26 @@ Viruta limpia procedente de corte industrial. Libre de aceites y otros contamina
     <script src="js/particles-config.js"></script>
     <!-- Footer -->
     <footer class="bg-white text-secondary py-5 border-top mt-auto">
-      <div class="container text-center">
-        <div class="row align-items-center">
-          <div class="col-md-4 text-md-start">
-            <h5 class="mb-0 fw-bold text-dark">
-              <i class="fas fa-recycle text-success"></i> EcoMóstoles
-            </h5>
-            <small>Plataforma de Simbiosis Industrial</small>
-          </div>
-          <div class="col-md-4 my-3 my-md-0">
-            <small
-              >&copy; 2024 EcoMóstoles. Todos los derechos reservados.</small
-            >
-          </div>
-          <div class="col-md-4 text-md-end">
-            <a href="#" class="text-secondary me-3"
-              ><i class="fab fa-linkedin fa-lg"></i
-            ></a>
-            <a href="#" class="text-secondary me-3"
-              ><i class="fab fa-twitter fa-lg"></i
-            ></a>
-            <a href="#" class="text-secondary"
-              ><i class="fas fa-envelope fa-lg"></i
-            ></a>
-          </div>
+        <div class="container text-center">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-md-start">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-recycle text-success"></i> EcoMóstoles</h5>
+                    <small>Plataforma de Simbiosis Industrial</small>
+                </div>
+                <div class="col-md-4 my-3 my-md-0">
+                    <small>&copy; 2024 EcoMóstoles. Todos los derechos reservados.</small>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a href="#" class="text-secondary me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                    <a href="#" class="text-secondary me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="text-secondary"><i class="fas fa-envelope fa-lg"></i></a>
+                </div>
+            </div>
         </div>
-      </div>
     </footer>
 
     <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/card-spotlight.js"></script>
-  </body>
+</body>
 </html>

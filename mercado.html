@@ -1,293 +1,192 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mercado de Residuos | EcoMóstoles</title>
     <!-- Bootstrap 5 CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <link href="css/styles.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-  </head>
-  <body class="bg-theme-light">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-theme-light">
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
-      <div class="container">
-        <a class="navbar-brand" href="index.html">
-          <i class="fas fa-recycle me-2"></i>EcoMóstoles
-        </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto align-items-center">
-            <li class="nav-item">
-              <a class="nav-link" href="index.html">Inicio</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="mercado.html">Ofertas</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="login.html">Login</a>
-            </li>
-            <li class="nav-item ms-lg-2">
-              <a class="btn btn-glow btn-sm" href="registro.html"
-                >Registro Empresa</a
-              >
-            </li>
-          </ul>
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-recycle me-2"></i>EcoMóstoles
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="mercado.html">Ofertas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Login</a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-glow btn-sm" href="registro.html">Registro Empresa</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
     </nav>
 
     <!-- Filters Section -->
     <section class="bg-white border-bottom py-4">
-      <div class="container">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Buscar residuo o maquinaria..."
-            />
-          </div>
-          <div class="col-md-3">
-            <select class="form-select">
-              <option selected>Todos los Tipos</option>
-              <option>Metales</option>
-              <option>Plásticos</option>
-              <option>Madera</option>
-              <option>Maquinaria</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <select class="form-select">
-              <option selected>Todos los Polígonos</option>
-              <option>Regordoño</option>
-              <option>Arroyomolinos</option>
-              <option>Las Nieves</option>
-            </select>
-          </div>
-          <div class="col-md-2 d-grid">
-            <button class="btn btn-glow">Filtrar</button>
-          </div>
+        <div class="container">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Buscar residuo o maquinaria...">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select">
+                        <option selected>Todos los Tipos</option>
+                        <option>Metales</option>
+                        <option>Plásticos</option>
+                        <option>Madera</option>
+                        <option>Maquinaria</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select">
+                        <option selected>Todos los Polígonos</option>
+                        <option>Regordoño</option>
+                        <option>Arroyomolinos</option>
+                        <option>Las Nieves</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button class="btn btn-glow">Filtrar</button>
+                </div>
+            </div>
         </div>
-      </div>
     </section>
 
     <!-- Offers Grid -->
     <section class="py-5">
-      <div class="container">
-        <h2 class="mb-4">Todas las Ofertas Disponibles</h2>
-        <div class="row g-4">
-          <!-- Card 1 -->
-          <div class="col-md-4">
-            <div class="card card-modern h-100 border-top-success">
-              <img
-                src="https://placehold.co/600x400/34495e/FFF?text=Viruta+Acero"
-                class="card-img-top"
-                alt="Viruta de Acero"
-              />
-              <div class="card-body">
-                <h5 class="card-title fw-bold">Viruta de Acero (500kg)</h5>
-                <p class="card-text text-muted small">
-                  <i class="fas fa-industry me-1"></i> Metales del Sur S.L.
-                </p>
-                <span class="badge bg-success mb-2">Residuo Metálico</span>
-                <p class="card-text mt-2">
-                  Excelente calidad para fundición. Disponible para recogida
-                  inmediata.
-                </p>
-              </div>
-              <div class="card-footer bg-white border-top-0 d-grid">
-                <a
-                  href="detalle_activo.html"
-                  class="btn btn-outline-dark-green btn-sm rounded-pill"
-                  >Ver Detalles</a
-                >
-              </div>
-            </div>
-          </div>
+        <div class="container">
+            <h2 class="mb-4">Todas las Ofertas Disponibles</h2>
+            <div class="row g-4">
+                
+                <!-- Card 1 -->
+                <div class="col-md-4">
+                    <div class="card card-modern h-100 border-top-success">
+                        <img src="https://placehold.co/600x400/34495e/FFF?text=Viruta+Acero" class="card-img-top" alt="Viruta de Acero">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Viruta de Acero (500kg)</h5>
+                            <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> Metales del Sur S.L.</p>
+                            <span class="badge bg-success mb-2">Residuo Metálico</span>
+                            <p class="card-text mt-2">Excelente calidad para fundición. Disponible para recogida inmediata.</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 d-grid">
+                            <a href="detalle_activo.html" class="btn btn-outline-dark-green btn-sm rounded-pill">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
 
-          <!-- Card 2 -->
-          <div class="col-md-4">
-            <div class="card card-modern h-100 border-top-primary">
-              <img
-                src="https://placehold.co/600x400/2ecc71/FFF?text=Montacargas"
-                class="card-img-top"
-                alt="Montacargas"
-              />
-              <div class="card-body">
-                <h5 class="card-title fw-bold">Alquiler Montacargas 2T</h5>
-                <p class="card-text text-muted small">
-                  <i class="fas fa-warehouse me-1"></i> Logística Móstoles S.A.
-                </p>
-                <span class="badge bg-primary mb-2">Maquinaria</span>
-                <p class="card-text mt-2">
-                  Disponible por días o semanas. Incluye seguro.
-                </p>
-              </div>
-              <div class="card-footer bg-white border-top-0 d-grid">
-                <a
-                  href="detalle_activo.html"
-                  class="btn btn-outline-dark-green btn-sm rounded-pill"
-                  >Ver Detalles</a
-                >
-              </div>
-            </div>
-          </div>
+                <!-- Card 2 -->
+                <div class="col-md-4">
+                    <div class="card card-modern h-100 border-top-primary">
+                         <img src="https://placehold.co/600x400/2ecc71/FFF?text=Montacargas" class="card-img-top" alt="Montacargas">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Alquiler Montacargas 2T</h5>
+                            <p class="card-text text-muted small"><i class="fas fa-warehouse me-1"></i> Logística Móstoles S.A.</p>
+                            <span class="badge bg-primary mb-2">Maquinaria</span>
+                            <p class="card-text mt-2">Disponible por días o semanas. Incluye seguro.</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 d-grid">
+                            <a href="detalle_activo.html" class="btn btn-outline-dark-green btn-sm rounded-pill">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
 
-          <!-- Card 3 -->
-          <div class="col-md-4">
-            <div class="card card-modern h-100 border-top-warning">
-              <img
-                src="https://placehold.co/600x400/f1c40f/000?text=Palets"
-                class="card-img-top"
-                alt="Palets Madera"
-              />
-              <div class="card-body">
-                <h5 class="card-title fw-bold">Palets de Madera (x200)</h5>
-                <p class="card-text text-muted small">
-                  <i class="fas fa-building me-1"></i> Muebles García
-                </p>
-                <span class="badge bg-warning text-dark mb-2"
-                  >Residuo Madera</span
-                >
-                <p class="card-text mt-2">
-                  Palets usados en buen estado. Se regalan.
-                </p>
-              </div>
-              <div class="card-footer bg-white border-top-0 d-grid">
-                <a
-                  href="detalle_activo.html"
-                  class="btn btn-outline-dark-green btn-sm rounded-pill"
-                  >Ver Detalles</a
-                >
-              </div>
-            </div>
-          </div>
+                <!-- Card 3 -->
+                <div class="col-md-4">
+                    <div class="card card-modern h-100 border-top-warning">
+                        <img src="https://placehold.co/600x400/f1c40f/000?text=Palets" class="card-img-top" alt="Palets Madera">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Palets de Madera (x200)</h5>
+                            <p class="card-text text-muted small"><i class="fas fa-building me-1"></i> Muebles García</p>
+                            <span class="badge bg-warning text-dark mb-2">Residuo Madera</span>
+                            <p class="card-text mt-2">Palets usados en buen estado. Se regalan.</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 d-grid">
+                            <a href="detalle_activo.html" class="btn btn-outline-dark-green btn-sm rounded-pill">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
 
-          <!-- Card 4 (New) -->
-          <div class="col-md-4">
-            <div class="card card-modern h-100 border-top-danger">
-              <img
-                src="https://placehold.co/600x400/e74c3c/FFF?text=Aceite+Usado"
-                class="card-img-top"
-                alt="Aceite Usado"
-              />
-              <div class="card-body">
-                <h5 class="card-title fw-bold">Aceite Industrial (200L)</h5>
-                <p class="card-text text-muted small">
-                  <i class="fas fa-cogs me-1"></i> Talleres Pepe
-                </p>
-                <span class="badge bg-danger mb-2">Residuo Peligroso</span>
-                <p class="card-text mt-2">
-                  Aceite quemado de motor. Solo gestores autorizados.
-                </p>
-              </div>
-              <div class="card-footer bg-white border-top-0 d-grid">
-                <a
-                  href="detalle_activo.html"
-                  class="btn btn-outline-dark-green btn-sm rounded-pill"
-                  >Ver Detalles</a
-                >
-              </div>
-            </div>
-          </div>
+                <!-- Card 4 (New) -->
+                <div class="col-md-4">
+                    <div class="card card-modern h-100 border-top-danger">
+                        <img src="https://placehold.co/600x400/e74c3c/FFF?text=Aceite+Usado" class="card-img-top" alt="Aceite Usado">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Aceite Industrial (200L)</h5>
+                            <p class="card-text text-muted small"><i class="fas fa-cogs me-1"></i> Talleres Pepe</p>
+                            <span class="badge bg-danger mb-2">Residuo Peligroso</span>
+                            <p class="card-text mt-2">Aceite quemado de motor. Solo gestores autorizados.</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 d-grid">
+                            <a href="detalle_activo.html" class="btn btn-outline-dark-green btn-sm rounded-pill">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 5 (New) -->
+                <div class="col-md-4">
+                    <div class="card card-modern h-100 border-top-info">
+                        <img src="https://placehold.co/600x400/9b59b6/FFF?text=Plasticos" class="card-img-top" alt="Retales Plástico">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Retales de PVC</h5>
+                            <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> Plásticos Móstoles</p>
+                            <span class="badge bg-info text-dark mb-2">Residuo Plástico</span>
+                            <p class="card-text mt-2">Recortes de producción limpios. Color blanco.</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 d-grid">
+                            <a href="detalle_activo.html" class="btn btn-outline-dark-green btn-sm rounded-pill">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
+                
+                 <!-- Card 6 (New) -->
+                 <div class="col-md-4">
+                    <div class="card card-modern h-100 border-top-secondary">
+                        <img src="https://placehold.co/600x400/95a5a6/000?text=Nave" class="card-img-top" alt="Nave Industrial">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Compartir Nave (50m²)</h5>
+                            <p class="card-text text-muted small"><i class="fas fa-warehouse me-1"></i> Logística Express</p>
+                            <span class="badge bg-secondary mb-2">Espacio</span>
+                            <p class="card-text mt-2">Cedo espacio sobrante en nave vigilada. Ideal almacenaje.</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 d-grid">
+                            <a href="detalle_activo.html" class="btn btn-outline-dark-green btn-sm rounded-pill">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
 
-          <!-- Card 5 (New) -->
-          <div class="col-md-4">
-            <div class="card card-modern h-100 border-top-info">
-              <img
-                src="https://placehold.co/600x400/9b59b6/FFF?text=Plasticos"
-                class="card-img-top"
-                alt="Retales Plástico"
-              />
-              <div class="card-body">
-                <h5 class="card-title fw-bold">Retales de PVC</h5>
-                <p class="card-text text-muted small">
-                  <i class="fas fa-industry me-1"></i> Plásticos Móstoles
-                </p>
-                <span class="badge bg-info text-dark mb-2"
-                  >Residuo Plástico</span
-                >
-                <p class="card-text mt-2">
-                  Recortes de producción limpios. Color blanco.
-                </p>
-              </div>
-              <div class="card-footer bg-white border-top-0 d-grid">
-                <a
-                  href="detalle_activo.html"
-                  class="btn btn-outline-dark-green btn-sm rounded-pill"
-                  >Ver Detalles</a
-                >
-              </div>
             </div>
-          </div>
-
-          <!-- Card 6 (New) -->
-          <div class="col-md-4">
-            <div class="card card-modern h-100 border-top-secondary">
-              <img
-                src="https://placehold.co/600x400/95a5a6/000?text=Nave"
-                class="card-img-top"
-                alt="Nave Industrial"
-              />
-              <div class="card-body">
-                <h5 class="card-title fw-bold">Compartir Nave (50m²)</h5>
-                <p class="card-text text-muted small">
-                  <i class="fas fa-warehouse me-1"></i> Logística Express
-                </p>
-                <span class="badge bg-secondary mb-2">Espacio</span>
-                <p class="card-text mt-2">
-                  Cedo espacio sobrante en nave vigilada. Ideal almacenaje.
-                </p>
-              </div>
-              <div class="card-footer bg-white border-top-0 d-grid">
-                <a
-                  href="detalle_activo.html"
-                  class="btn btn-outline-dark-green btn-sm rounded-pill"
-                  >Ver Detalles</a
-                >
-              </div>
-            </div>
-          </div>
+            
+            <!-- Pagination -->
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
+                    <li class="page-item active"><a class="page-link bg-success border-success" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link text-success" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link text-success" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link text-success" href="#">Siguiente</a></li>
+                </ul>
+            </nav>
         </div>
-
-        <!-- Pagination -->
-        <nav class="mt-5">
-          <ul class="pagination justify-content-center">
-            <li class="page-item disabled">
-              <a class="page-link" href="#">Anterior</a>
-            </li>
-            <li class="page-item active">
-              <a class="page-link bg-success border-success" href="#">1</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link text-success" href="#">2</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link text-success" href="#">3</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link text-success" href="#">Siguiente</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
     </section>
 
     <!-- Particles.js -->
@@ -296,36 +195,26 @@
     <script src="js/particles-config.js"></script>
     <!-- Footer -->
     <footer class="bg-white text-secondary py-5 border-top mt-auto">
-      <div class="container text-center">
-        <div class="row align-items-center">
-          <div class="col-md-4 text-md-start">
-            <h5 class="mb-0 fw-bold text-dark">
-              <i class="fas fa-recycle text-success"></i> EcoMóstoles
-            </h5>
-            <small>Plataforma de Simbiosis Industrial</small>
-          </div>
-          <div class="col-md-4 my-3 my-md-0">
-            <small
-              >&copy; 2024 EcoMóstoles. Todos los derechos reservados.</small
-            >
-          </div>
-          <div class="col-md-4 text-md-end">
-            <a href="#" class="text-secondary me-3"
-              ><i class="fab fa-linkedin fa-lg"></i
-            ></a>
-            <a href="#" class="text-secondary me-3"
-              ><i class="fab fa-twitter fa-lg"></i
-            ></a>
-            <a href="#" class="text-secondary"
-              ><i class="fas fa-envelope fa-lg"></i
-            ></a>
-          </div>
+        <div class="container text-center">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-md-start">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-recycle text-success"></i> EcoMóstoles</h5>
+                    <small>Plataforma de Simbiosis Industrial</small>
+                </div>
+                <div class="col-md-4 my-3 my-md-0">
+                    <small>&copy; 2024 EcoMóstoles. Todos los derechos reservados.</small>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a href="#" class="text-secondary me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                    <a href="#" class="text-secondary me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="text-secondary"><i class="fas fa-envelope fa-lg"></i></a>
+                </div>
+            </div>
         </div>
-      </div>
     </footer>
 
     <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/card-spotlight.js"></script>
-  </body>
+</body>
 </html>

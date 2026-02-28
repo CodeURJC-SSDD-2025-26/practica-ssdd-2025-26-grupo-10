@@ -1,80 +1,179 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro Empresa | EcoMóstoles</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link href="css/styles.css" rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-  </head>
-  <body class="bg-theme-light" style="padding-top: 80px">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+         /* Centering handled by flex-grow on content now */
+    </style>
+</head>
+<body class="bg-theme-light" style="padding-top: 80px;">
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
-      <div class="container">
-        <a class="navbar-brand" href="index.html"
-          ><i class="fas fa-recycle me-2"></i>EcoMóstoles</a
-        >
-        <div class="collapse navbar-collapse">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="login.html">Login</a>
-            </li>
-          </ul>
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-recycle me-2"></i>EcoMóstoles
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="mercado.html">Ofertas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                    <li class="nav-item ms-lg-2"><a class="btn btn-eco btn-sm" href="registro.html">Registro Empresa</a></li>
+                </ul>
+            </div>
         </div>
-      </div>
     </nav>
+    <!-- Particles removed for clean light theme on auth pages -->
 
-    <div
-      class="row justify-content-center w-100 flex-grow-1 align-items-center"
-    >
-      <div class="col-md-8 col-lg-6">
-        <div class="card p-5 border-top-success">
-          <div class="card-body">
-            <h2 class="fw-bold text-center mb-4">Registro Empresa</h2>
-            <form action="dashboard.html">
-              <!-- Campos del formulario (simplificado para brevedad, mantener campos originales) -->
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Nombre Empresa"
-                    required
-                  />
+    <div class="row justify-content-center w-100 flex-grow-1 align-items-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card p-4 p-md-5 border-top-success">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <a href="index.html" class="text-decoration-none">
+                            <h2 class="fw-bold text-dark"><i class="fas fa-recycle text-success me-2"></i>EcoMóstoles</h2>
+                        </a>
+                        <h4 class="mt-3 text-dark fw-bold">Alta de Nueva Empresa</h4>
+                        <p class="text-secondary">Únete a la mayor red de simbiosis industrial de Móstoles</p>
+                    </div>
+                    
+                    <form action="dashboard.html">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="nombreEmpresa" class="form-label fw-bold small text-uppercase text-secondary">Nombre Comercial</label>
+                                <input type="text" class="form-control" id="nombreEmpresa" placeholder="Ej. Metales del Sur S.L." required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="cif" class="form-label fw-bold small text-uppercase text-secondary">CIF / NIF</label>
+                                <input type="text" class="form-control" id="cif" placeholder="B-12345678" required>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label for="direccion" class="form-label fw-bold small text-uppercase text-secondary">Dirección / Polígono</label>
+                                <select class="form-select" id="direccion" required>
+                                    <option value="" selected disabled>Selecciona tu ubicación...</option>
+                                    <option value="regordono">Polígono Industrial Regordoño</option>
+                                    <option value="arroyomolinos">Polígono Industrial Arroyomolinos</option>
+                                    <option value="nieves">Polígono Industrial Las Nieves</option>
+                                    <option value="otro">Otro (Especificar)</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="sector" class="form-label fw-bold small text-uppercase text-secondary">Sector Industrial</label>
+                                <select class="form-select" id="sector" required>
+                                    <option value="" selected disabled>Seleccionar...</option>
+                                    <option value="metal">Metalúrgico</option>
+                                    <option value="quimico">Químico</option>
+                                    <option value="madera">Madera y Mueble</option>
+                                    <option value="logistica">Logística y Transporte</option>
+                                    <option value="agro">Agroalimentario</option>
+                                    <option value="construccion">Construcción</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="email" class="form-label fw-bold small text-uppercase text-secondary">Email de Contacto</label>
+                                <input type="email" class="form-control" id="email" placeholder="contacto@empresa.com" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="password" class="form-label fw-bold small text-uppercase text-secondary">Contraseña</label>
+                                <input type="password" class="form-control" id="password" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="confirmPassword" class="form-label fw-bold small text-uppercase text-secondary">Confirmar Contraseña</label>
+                                <input type="password" class="form-control" id="confirmPassword" required>
+                            </div>
+
+                            <div class="col-12 mt-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="terminos" required>
+                                    <label class="form-check-label small text-secondary" for="terminos">
+                                        Acepto los <a href="#" class="text-success text-decoration-none">Términos y Condiciones</a> y la Política de Privacidad de EcoMóstoles.
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-12 d-grid mt-4">
+                                <button type="submit" class="btn btn-primary py-2 fw-bold">Crear Cuenta de Empresa</button>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <p class="small text-secondary mb-0">¿Ya tienes cuenta? <a href="login.html" class="text-success fw-bold text-decoration-none">Inicia Sesión</a></p>
+                        </div>
+                    </form>
                 </div>
-                <div class="col-md-6">
-                  <input
-                    type="email"
-                    class="form-control"
-                    placeholder="Email"
-                    required
-                  />
-                </div>
-                <div class="col-12 d-grid mt-4">
-                  <button type="submit" class="btn btn-primary py-2 fw-bold">
-                    Registrar
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
+            </div>
+             <div class="text-center mt-4 mb-5">
+                <a href="index.html" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i> Volver al Inicio</a>
+            </div>
         </div>
-      </div>
     </div>
 
-    <!-- FOOTER AÑADIDO -->
+    <!-- Footer -->
     <footer class="bg-white text-secondary py-5 border-top mt-auto">
-      <div class="container text-center">
-        <small>&copy; 2024 EcoMóstoles. Todos los derechos reservados.</small>
-      </div>
+        <div class="container text-center">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-md-start">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-recycle text-success"></i> EcoMóstoles</h5>
+                    <small>Plataforma de Simbiosis Industrial</small>
+                </div>
+                <div class="col-md-4 my-3 my-md-0">
+                    <small>&copy; 2024 EcoMóstoles. Todos los derechos reservados.</small>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a href="#" class="text-secondary me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                    <a href="#" class="text-secondary me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="text-secondary"><i class="fas fa-envelope fa-lg"></i></a>
+                </div>
+            </div>
+        </div>
     </footer>
+
+    <!-- Particles.js -->
     <div id="particles-body"></div>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="js/particles-config.js"></script>
-  </body>
+    <script>
+        particlesJS("particles-body", {
+            "particles": {
+                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#198754" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.15, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#198754", "opacity": 0.15, "width": 1 },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "window",
+                "events": {
+                    "onhover": { "enable": true, "mode": "grab" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": { "distance": 200, "line_linked": { "opacity": 0.4 } },
+                    "push": { "particles_nb": 4 }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
+    <script src="js/card-spotlight.js"></script>
+</body>
 </html>
