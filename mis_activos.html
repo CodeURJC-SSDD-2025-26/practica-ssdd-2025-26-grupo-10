@@ -4,36 +4,76 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mis Ofertas | EcoMóstoles</title>
+    <!-- Bootstrap 5 CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <!-- Custom CSS -->
     <link href="css/styles.css" rel="stylesheet" />
+    <!-- Font Awesome -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
   </head>
-  <body>
-    <!-- Navbar igual que Dashboard -->
+  <body class="bg-theme-light">
+    <!-- Top Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
       <div class="container-fluid">
         <a class="navbar-brand" href="index.html">
           <i class="fas fa-recycle me-2"></i>EcoMóstoles
-          <span class="badge bg-light text-dark ms-2 ms-2 fs-6">EMPRESA</span>
+          <span class="badge bg-light text-dark ms-2" style="font-size: 0.6em"
+            >EMPRESA</span
+          >
         </a>
-        <div class="d-flex align-items-center">
-          <a href="#" class="d-flex align-items-center text-decoration-none">
-            <img
-              src="https://ui-avatars.com/api/?name=Metales+Del+Sur&background=0D8ABC&color=fff"
-              class="rounded-circle me-2"
-              width="32"
-              height="32"
-            />
-            <span class="d-none d-md-block fw-bold text-dark"
-              >Metales del Sur S.L.</span
-            >
-          </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle d-flex align-items-center"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <img
+                  src="https://ui-avatars.com/api/?name=Metales+Del+Sur&background=0D8ABC&color=fff"
+                  class="user-avatar-nav me-2"
+                  alt="Metales del Sur"
+                />
+                <span>Metales del Sur S.L.</span>
+              </a>
+              <ul
+                class="dropdown-menu dropdown-menu-end border-0 shadow-lg"
+                style="border-radius: 1rem"
+              >
+                <li>
+                  <a class="dropdown-item" href="perfil_empresa.html"
+                    >Mi Perfil</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="perfil_empresa.html"
+                    >Configuración</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item text-danger" href="index.html"
+                    >Cerrar Sesión</a
+                  >
+                </li>
+              </ul>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
@@ -45,107 +85,180 @@
           id="sidebarMenu"
           class="col-md-3 col-lg-2 d-md-block sidebar collapse"
         >
-          <div class="position-sticky">
+          <div class="position-sticky pt-3">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link" href="dashboard.html"
-                  ><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a
-                >
+                <a class="nav-link" href="dashboard.html">
+                  <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="mis_activos.html"
-                  ><i class="fas fa-box me-2"></i> Mis Ofertas</a
+                <a
+                  class="nav-link active text-success fw-bold"
+                  href="mis_activos.html"
                 >
+                  <i class="fas fa-box me-2"></i> Mis Ofertas
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="crear_activo.html"
-                  ><i class="fas fa-plus-circle me-2"></i> Publicar Nuevo</a
-                >
+                <a class="nav-link" href="crear_activo.html">
+                  <i class="fas fa-plus-circle me-2"></i> Publicar Nuevo
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="mensajes.html"
-                  ><i class="fas fa-envelope me-2"></i> Mensajes</a
-                >
+                <a class="nav-link" href="mensajes.html">
+                  <i class="fas fa-envelope me-2"></i> Mensajes
+                  <span class="badge bg-danger rounded-pill ms-1">2</span>
+                </a>
+              </li>
+            </ul>
+
+            <h6
+              class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase small"
+            >
+              <span>Historial</span>
+            </h6>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="perfil_empresa.html">
+                  <i class="fas fa-user-cog me-2"></i> Mi Perfil
+                </a>
               </li>
             </ul>
           </div>
         </nav>
 
+        <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
           <div
             class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
           >
-            <h1 class="h2 fw-bold">Gestión de Activos</h1>
+            <h1 class="h2 text-dark fw-bold">Gestión de Activos</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
-              <a href="crear_activo.html" class="btn btn-sm btn-primary"
-                ><i class="fas fa-plus me-1"></i> Nueva Oferta</a
-              >
+              <a href="crear_activo.html" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus me-1"></i> Nueva Oferta
+              </a>
             </div>
           </div>
 
-          <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card card-modern p-0 border-top-primary">
             <div class="table-responsive">
-              <table class="table align-middle mb-0 text-nowrap">
-                <thead class="bg-light">
+              <table class="table table-clean align-middle mb-0">
+                <!-- Table content remains mostly same but ensure styles apply -->
+                <thead>
                   <tr>
-                    <th class="ps-4">Imagen</th>
-                    <th>Título</th>
+                    <th style="width: 80px">Imagen</th>
+                    <th>Título / Descripción</th>
                     <th>Tipo</th>
                     <th>Precio</th>
+                    <th>Ubicación</th>
                     <th>Estado</th>
-                    <th class="text-end pe-4">Acciones</th>
+                    <th class="text-end">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
+                  <!-- Item 1 -->
                   <tr>
-                    <td class="ps-4">
+                    <td>
                       <div
-                        class="bg-light rounded p-2 text-center"
-                        style="width: 50px"
+                        class="bg-light rounded d-flex align-items-center justify-content-center"
+                        style="width: 60px; height: 60px"
                       >
-                        <i class="fas fa-recycle text-secondary"></i>
+                        <i class="fas fa-recycle text-secondary fa-lg"></i>
                       </div>
                     </td>
-                    <td class="fw-bold">Bobinas de Cobre</td>
                     <td>
-                      <span class="badge bg-warning text-dark">Residuo</span>
+                      <h6 class="mb-0 fw-bold">Bobinas de Cobre (500kg)</h6>
+                      <small class="text-secondary"
+                        >Viruta limpia procedente de corte industrial.</small
+                      >
+                    </td>
+                    <td>
+                      <span class="badge bg-warning text-dark"
+                        >Residuo Metal</span
+                      >
                     </td>
                     <td>€ 1.500</td>
+                    <td>Polígono Regordoño</td>
                     <td><span class="badge bg-success">Disponible</span></td>
-                    <td class="text-end pe-4">
+                    <td class="text-end">
+                      <a
+                        href="editar_activo.html"
+                        class="btn btn-sm btn-outline-primary rounded-pill"
+                        ><i class="fas fa-edit"></i
+                      ></a>
                       <button
-                        class="btn btn-sm btn-outline-primary rounded-circle"
-                      >
-                        <i class="fas fa-edit"></i>
-                      </button>
-                      <button
-                        class="btn btn-sm btn-outline-danger rounded-circle"
+                        class="btn btn-sm btn-outline-danger rounded-pill"
                       >
                         <i class="fas fa-trash"></i>
                       </button>
                     </td>
                   </tr>
+                  <!-- Item 2 -->
                   <tr>
-                    <td class="ps-4">
+                    <td>
                       <div
-                        class="bg-light rounded p-2 text-center"
-                        style="width: 50px"
+                        class="bg-light rounded d-flex align-items-center justify-content-center"
+                        style="width: 60px; height: 60px"
                       >
-                        <i class="fas fa-truck text-secondary"></i>
+                        <i class="fas fa-truck text-secondary fa-lg"></i>
                       </div>
                     </td>
-                    <td class="fw-bold">Carretilla Yale</td>
+                    <td>
+                      <h6 class="mb-0 fw-bold">
+                        Carretilla Elevadora Yale 2020
+                      </h6>
+                      <small class="text-secondary"
+                        >Eléctrica, 3 ruedas. Incluye cargador.</small
+                      >
+                    </td>
                     <td><span class="badge bg-primary">Maquinaria</span></td>
                     <td>€ 50 / día</td>
+                    <td>Polígono Arroyomolinos</td>
                     <td><span class="badge bg-secondary">Reservado</span></td>
-                    <td class="text-end pe-4">
+                    <td class="text-end">
+                      <a
+                        href="editar_activo.html"
+                        class="btn btn-sm btn-outline-primary rounded-pill"
+                        ><i class="fas fa-edit"></i
+                      ></a>
                       <button
-                        class="btn btn-sm btn-outline-primary rounded-circle"
+                        class="btn btn-sm btn-outline-danger rounded-pill"
                       >
-                        <i class="fas fa-edit"></i>
+                        <i class="fas fa-trash"></i>
                       </button>
+                    </td>
+                  </tr>
+                  <!-- Item 3 -->
+                  <tr>
+                    <td>
+                      <div
+                        class="bg-light rounded d-flex align-items-center justify-content-center"
+                        style="width: 60px; height: 60px"
+                      >
+                        <i class="fas fa-box-open text-secondary fa-lg"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <h6 class="mb-0 fw-bold">
+                        Cajas de Cartón Reforzado (x1000)
+                      </h6>
+                      <small class="text-secondary"
+                        >Excedente de stock. Nuevas sin usar.</small
+                      >
+                    </td>
+                    <td><span class="badge bg-success">Residuo Papel</span></td>
+                    <td>Gratis</td>
+                    <td>Polígono Las Nieves</td>
+                    <td><span class="badge bg-success">Disponible</span></td>
+                    <td class="text-end">
+                      <a
+                        href="editar_activo.html"
+                        class="btn btn-sm btn-outline-primary rounded-pill"
+                        ><i class="fas fa-edit"></i
+                      ></a>
                       <button
-                        class="btn btn-sm btn-outline-danger rounded-circle"
+                        class="btn btn-sm btn-outline-danger rounded-pill"
                       >
                         <i class="fas fa-trash"></i>
                       </button>
@@ -158,6 +271,43 @@
         </main>
       </div>
     </div>
+
+    <!-- Particles.js -->
+    <div id="particles-body"></div>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="js/particles-config.js"></script>
+    <!-- Footer -->
+    <footer class="bg-white text-secondary py-5 border-top mt-auto">
+      <div class="container text-center">
+        <div class="row align-items-center">
+          <div class="col-md-4 text-md-start">
+            <h5 class="mb-0 fw-bold text-dark">
+              <i class="fas fa-recycle text-success"></i> EcoMóstoles
+            </h5>
+            <small>Plataforma de Simbiosis Industrial</small>
+          </div>
+          <div class="col-md-4 my-3 my-md-0">
+            <small
+              >&copy; 2024 EcoMóstoles. Todos los derechos reservados.</small
+            >
+          </div>
+          <div class="col-md-4 text-md-end">
+            <a href="#" class="text-secondary me-3"
+              ><i class="fab fa-linkedin fa-lg"></i
+            ></a>
+            <a href="#" class="text-secondary me-3"
+              ><i class="fab fa-twitter fa-lg"></i
+            ></a>
+            <a href="#" class="text-secondary"
+              ><i class="fas fa-envelope fa-lg"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/card-spotlight.js"></script>
   </body>
 </html>
