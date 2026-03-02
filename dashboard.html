@@ -13,26 +13,27 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-theme-light">
+<body class="bg-theme-dark">
+    <!-- Particles: Body (Fixed Background) — identical to index.html -->
+    <div id="particles-body"></div>
 
-    <!-- Navbar Superior -->
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
-        <div class="container-fluid">
-            <a class="navbar-brand text-white fw-bold" href="index.html">
-                <i class="fas fa-recycle text-success me-2"></i>EcoMóstoles <span class="badge bg-light text-dark ms-2 text-uppercase" style="font-size: 0.6em; vertical-align: text-top;">Empresa</span>
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-recycle me-2"></i>EcoMóstoles
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarContent">
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
                         <a class="nav-link" href="mercado.html"><i class="fas fa-store me-1"></i> Ofertas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
+                        <a class="nav-link" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
                     </li>
-                    <!-- User Dropdown -->
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                             <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.8rem;">MS</div>
@@ -43,7 +44,7 @@
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
                             <li><a class="dropdown-item rounded" href="#"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item rounded text-danger" href="index.html"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
+                            <li><a class="dropdown-item rounded text-danger" href="#" onclick="localStorage.removeItem('isLoggedIn'); window.location.href='index.html';"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -53,7 +54,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar ORIGINAL (Restaurada) -->
+            <!-- Sidebar -->
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
@@ -78,24 +79,13 @@
                             </a>
                         </li>
                     </ul>
-
-                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase small">
-                        <span>Historial</span>
-                    </h6>
-                    <ul class="nav flex-column mb-2">
-                        <li class="nav-item">
-                            <a class="nav-link" href="perfil_empresa.html">
-                                <i class="fas fa-user-cog me-2"></i> Mi Perfil
-                            </a>
-                        </li>
-                    </ul>
                 </div>
             </nav>
 
-            <!-- Contenido Principal (Derecha) -->
+            <!-- Contenido Principal -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 
-                <!-- Header Sección -->
+                <!-- Header -->
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                     <div>
                         <h1 class="h2 fw-bold text-dark">Panel de Control</h1>
@@ -108,16 +98,17 @@
                     </div>
                 </div>
 
-                <!-- KPIs (ESTRICTAMENTE SEGÚN FORMATO DE USUARIO) -->
+                <!-- KPIs Row -->
                 <div class="row g-4 mb-5">
                     <!-- KPI 1: Ofertas Activas -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card shadow-sm border-0 h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h6 class="text-muted mb-2">Ofertas Activas</h6>
                                         <h3 class="mb-0 fw-bold">12</h3>
+                                        <small class="text-success"><i class="fas fa-arrow-up me-1"></i>+3 este mes</small>
                                     </div>
                                     <div class="bg-success bg-opacity-10 p-3 rounded-circle">
                                         <span class="text-success"><i class="fas fa-box-open fa-lg"></i></span>
@@ -127,13 +118,14 @@
                         </div>
                     </div>
                     <!-- KPI 2: Acuerdos Cerrados -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card shadow-sm border-0 h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h6 class="text-muted mb-2">Acuerdos Cerrados</h6>
                                         <h3 class="mb-0 fw-bold">5</h3>
+                                        <small class="text-primary"><i class="fas fa-arrow-up me-1"></i>+2 este mes</small>
                                     </div>
                                     <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
                                         <span class="text-primary"><i class="fas fa-handshake fa-lg"></i></span>
@@ -143,13 +135,14 @@
                         </div>
                     </div>
                     <!-- KPI 3: CO2 Ahorrado -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card shadow-sm border-0 h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="text-muted mb-2">CO2 Ahorrado</h6>
+                                        <h6 class="text-muted mb-2">CO₂ Ahorrado</h6>
                                         <h3 class="mb-0 fw-bold">350 kg</h3>
+                                        <small class="text-warning"><i class="fas fa-leaf me-1"></i>Impacto real</small>
                                     </div>
                                     <div class="bg-warning bg-opacity-10 p-3 rounded-circle">
                                         <span class="text-warning"><i class="fas fa-leaf fa-lg"></i></span>
@@ -158,58 +151,110 @@
                             </div>
                         </div>
                     </div>
+                    <!-- KPI 4: Visitas a Ofertas -->
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted mb-2">Visitas Ofertas</h6>
+                                        <h3 class="mb-0 fw-bold">284</h3>
+                                        <small class="text-info"><i class="fas fa-eye me-1"></i>Últimos 30 días</small>
+                                    </div>
+                                    <div class="bg-info bg-opacity-10 p-3 rounded-circle">
+                                        <span class="text-info"><i class="fas fa-chart-line fa-lg"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Charts & Recent Activity -->
-                <div class="row g-4">
-                    <!-- Chart Column -->
+                <!-- Charts & Activity -->
+                <div class="row g-4 mb-4">
+                    <!-- Chart Column: Chart.js Bar Chart -->
                     <div class="col-lg-8">
-                        <div class="card card-modern h-100 shadow-sm border-0">
-                            <div class="card-header bg-white border-bottom-0 py-3">
-                                <h5 class="fw-bold text-dark mb-0">Impacto Ambiental</h5>
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold text-dark mb-0"><i class="fas fa-chart-bar text-success me-2"></i>Residuos Reutilizados por Mes</h5>
+                                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">2024</span>
                             </div>
-                            <div class="card-body">
-                                <!-- Placeholder Chart Image -->
-                                <img src="https://quickchart.io/chart?c={type:'bar',data:{labels:['Ene','Feb','Mar','Abr','May','Jun'],datasets:[{label:'Kg Reciclados',data:[120,190,300,500,200,300],backgroundColor:'rgba(25, 135, 84, 0.5)'}]}}" class="img-fluid w-100 rounded" alt="Gráfico de Impacto" style="max-height: 300px; object-fit: cover;">
+                            <div class="card-body p-4">
+                                <div style="position: relative; height: 350px; width: 100%;">
+                                    <canvas id="residuosChart"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Activity Feed Column -->
                     <div class="col-lg-4">
-                        <div class="card card-modern h-100 shadow-sm border-0">
+                        <div class="card h-100 shadow-sm border-0">
                             <div class="card-header bg-white border-bottom-0 py-3">
-                                <h5 class="fw-bold text-dark mb-0">Actividad Reciente</h5>
+                                <h5 class="fw-bold text-dark mb-0"><i class="fas fa-bell text-warning me-2"></i>Actividad Reciente</h5>
                             </div>
-                            <!-- LISTA DE ACTIVIDAD POBLADA -->
-                            <div class="list-group list-group-flush">
-                                <!-- Item 1 -->
-                                <div class="list-group-item border-0 px-3 py-3">
-                                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                        <h6 class="mb-0 fw-bold text-dark text-truncate" style="max-width: 70%;">Publicado 'Viruta de Acero'</h6>
-                                        <small class="text-secondary" style="font-size: 0.75em;">Hace 2 horas</small>
+                            <div class="card-body p-0" style="max-height: 380px; overflow-y: auto;">
+                                <!-- Timeline Items -->
+                                <div class="px-3">
+                                    <!-- Item 1 -->
+                                    <div class="d-flex align-items-start py-3 border-bottom">
+                                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3 flex-shrink-0">
+                                            <i class="fas fa-handshake text-success" style="width: 16px; text-align: center;"></i>
+                                        </div>
+                                        <div class="flex-grow-1 min-width-0">
+                                            <h6 class="mb-1 fw-bold text-dark small">Acuerdo cerrado</h6>
+                                            <p class="mb-1 text-muted small">Has cerrado un acuerdo por 500kg de Viruta de Acero con <strong>EcoFundiciones SL</strong>.</p>
+                                            <small class="text-secondary"><i class="fas fa-clock me-1"></i>Hace 2 horas</small>
+                                        </div>
                                     </div>
-                                    <p class="mb-0 text-muted small">Tu oferta #1024 está activa en el mercado.</p>
-                                </div>
-                                <!-- Item 2 -->
-                                <div class="list-group-item border-0 px-3 py-3 bg-light rounded my-1">
-                                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                        <h6 class="mb-0 fw-bold text-primary text-truncate" style="max-width: 70%;">Interés en tus Palets</h6>
-                                        <small class="text-secondary" style="font-size: 0.75em;">Ayer</small>
+                                    <!-- Item 2 -->
+                                    <div class="d-flex align-items-start py-3 border-bottom">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3 flex-shrink-0">
+                                            <i class="fas fa-eye text-primary" style="width: 16px; text-align: center;"></i>
+                                        </div>
+                                        <div class="flex-grow-1 min-width-0">
+                                            <h6 class="mb-1 fw-bold text-dark small">Visitas a tu oferta</h6>
+                                            <p class="mb-1 text-muted small">Tu oferta <strong>'Palets de madera'</strong> ha recibido 3 visitas nuevas hoy.</p>
+                                            <small class="text-secondary"><i class="fas fa-clock me-1"></i>Hace 5 horas</small>
+                                        </div>
                                     </div>
-                                    <p class="mb-0 text-muted small">Talleres Pepe ha visto tu oferta.</p>
-                                </div>
-                                <!-- Item 3 -->
-                                <div class="list-group-item border-0 px-3 py-3">
-                                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                        <h6 class="mb-0 fw-bold text-success text-truncate" style="max-width: 70%;">Acuerdo Cerrado</h6>
-                                        <small class="text-secondary" style="font-size: 0.75em;">18 Feb</small>
+                                    <!-- Item 3 -->
+                                    <div class="d-flex align-items-start py-3 border-bottom">
+                                        <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3 flex-shrink-0">
+                                            <i class="fas fa-envelope text-warning" style="width: 16px; text-align: center;"></i>
+                                        </div>
+                                        <div class="flex-grow-1 min-width-0">
+                                            <h6 class="mb-1 fw-bold text-dark small">Nuevo mensaje</h6>
+                                            <p class="mb-1 text-muted small"><strong>Talleres Pepe</strong> te ha enviado una consulta sobre el Aceite Industrial.</p>
+                                            <small class="text-secondary"><i class="fas fa-clock me-1"></i>Ayer, 18:30</small>
+                                        </div>
                                     </div>
-                                    <p class="mb-0 text-muted small">Finalizada gestión con EcoMad S.A.</p>
+                                    <!-- Item 4 -->
+                                    <div class="d-flex align-items-start py-3 border-bottom">
+                                        <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3 flex-shrink-0">
+                                            <i class="fas fa-plus-circle text-info" style="width: 16px; text-align: center;"></i>
+                                        </div>
+                                        <div class="flex-grow-1 min-width-0">
+                                            <h6 class="mb-1 fw-bold text-dark small">Oferta publicada</h6>
+                                            <p class="mb-1 text-muted small">Has publicado <strong>'Retales de PVC (120kg)'</strong> en el mercado.</p>
+                                            <small class="text-secondary"><i class="fas fa-clock me-1"></i>20 Feb, 10:15</small>
+                                        </div>
+                                    </div>
+                                    <!-- Item 5 -->
+                                    <div class="d-flex align-items-start py-3">
+                                        <div class="bg-danger bg-opacity-10 rounded-circle p-2 me-3 flex-shrink-0">
+                                            <i class="fas fa-star text-danger" style="width: 16px; text-align: center;"></i>
+                                        </div>
+                                        <div class="flex-grow-1 min-width-0">
+                                            <h6 class="mb-1 fw-bold text-dark small">Nueva valoración</h6>
+                                            <p class="mb-1 text-muted small"><strong>Logística Móstoles</strong> te ha valorado con ⭐⭐⭐⭐⭐ tras el último acuerdo.</p>
+                                            <small class="text-secondary"><i class="fas fa-clock me-1"></i>18 Feb, 09:00</small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-footer bg-white border-top-0 text-center pb-3">
-                                <button class="btn btn-sm btn-link text-success fw-bold text-decoration-none">Ver todo el historial</button>
+                                <button class="btn btn-sm btn-link text-success fw-bold text-decoration-none">Ver todo el historial <i class="fas fa-arrow-right ms-1"></i></button>
                             </div>
                         </div>
                     </div>
@@ -221,9 +266,100 @@
 
     <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Particles.js Configuration -->
-    <div id="particles-body"></div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Particles.js — SAME inline config as index.html -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="js/particles-config.js"></script>
+    <script>
+        particlesJS("particles-body", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#198754" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": { 
+                    "enable": true, 
+                    "distance": 150, 
+                    "color": "#198754", 
+                    "opacity": 0.3,
+                    "width": 1 
+                },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "window", 
+                "events": {
+                    "onhover": { "enable": true, "mode": "repulse" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "repulse": { "distance": 150, "duration": 0.4 },
+                    "push": { "particles_nb": 4 }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
+
+    <!-- Chart.js: Bar Chart — Residuos Reutilizados por Mes -->
+    <script>
+        const ctx = document.getElementById('residuosChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                datasets: [{
+                    label: 'Kg Reutilizados',
+                    data: [400, 650, 520, 780, 610, 890, 750, 430, 920, 1050, 870, 1200],
+                    backgroundColor: 'rgba(25, 135, 84, 0.6)',
+                    borderColor: 'rgba(25, 135, 84, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1a1a2e',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        cornerRadius: 8,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + ' kg reutilizados';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: {
+                            callback: function(value) { return value + ' kg'; },
+                            font: { size: 11 }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 12, weight: '600' } }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <script src="js/card-spotlight.js"></script>
+    <!-- Auth Guard -->
+    <script>if(localStorage.getItem('isLoggedIn')!=='true'){window.location.href='login.html';}</script>
 </body>
 </html>

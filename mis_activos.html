@@ -15,16 +15,16 @@
 </head>
 <body class="bg-theme-light">
 
-    <!-- Navbar Superior -->
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
-        <div class="container-fluid">
-            <a class="navbar-brand text-white fw-bold" href="index.html">
-                <i class="fas fa-recycle text-success me-2"></i>EcoMóstoles <span class="badge bg-light text-dark ms-2 text-uppercase" style="font-size: 0.6em; vertical-align: text-top;">Empresa</span>
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-recycle me-2"></i>EcoMóstoles
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarContent">
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
                         <a class="nav-link" href="mercado.html"><i class="fas fa-store me-1"></i> Ofertas</a>
@@ -32,7 +32,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
                     </li>
-                    <!-- User Dropdown -->
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                             <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.8rem;">MS</div>
@@ -43,7 +42,7 @@
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
                             <li><a class="dropdown-item rounded" href="#"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item rounded text-danger" href="index.html"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
+                            <li><a class="dropdown-item rounded text-danger" href="#" onclick="localStorage.removeItem('isLoggedIn'); window.location.href='index.html';"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -79,16 +78,7 @@
                         </li>
                     </ul>
 
-                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase small">
-                        <span>Historial</span>
-                    </h6>
-                    <ul class="nav flex-column mb-2">
-                        <li class="nav-item">
-                            <a class="nav-link" href="perfil_empresa.html">
-                                <i class="fas fa-user-cog me-2"></i> Mi Perfil
-                            </a>
-                        </li>
-                    </ul>
+
                 </div>
             </nav>
 
@@ -251,5 +241,7 @@
     <div id="particles-body"></div>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="js/particles-config.js"></script>
+    <!-- Auth Guard -->
+    <script>if(localStorage.getItem('isLoggedIn')!=='true'){window.location.href='login.html';}</script>
 </body>
 </html>

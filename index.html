@@ -26,17 +26,38 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
+                    <!-- VISITOR NAV (shown by default, hidden if logged in) -->
+                    <li class="nav-item nav-visitor">
                         <a class="nav-link active" href="index.html">Inicio</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item nav-visitor">
                         <a class="nav-link" href="mercado.html">Ofertas</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item nav-visitor">
                         <a class="nav-link" href="login.html">Login</a>
                     </li>
-                    <li class="nav-item ms-lg-2">
+                    <li class="nav-item ms-lg-2 nav-visitor">
                         <a class="btn btn-eco btn-sm" href="registro.html">Registro Empresa</a>
+                    </li>
+                    <!-- LOGGED-IN NAV (hidden by default, shown if logged in) -->
+                    <li class="nav-item nav-logged d-none">
+                        <a class="nav-link" href="mercado.html"><i class="fas fa-store me-1"></i> Ofertas</a>
+                    </li>
+                    <li class="nav-item nav-logged d-none">
+                        <a class="nav-link" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
+                    </li>
+                    <li class="nav-item dropdown ms-lg-2 nav-logged d-none">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.8rem;">MS</div>
+                            <span>Metales del Sur S.L.</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2" style="border-radius: 12px;">
+                            <li><h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6></li>
+                            <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
+                            <li><a class="dropdown-item rounded" href="#"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item rounded text-danger" href="#" onclick="localStorage.removeItem('isLoggedIn'); window.location.href='index.html';"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>
@@ -293,5 +314,14 @@
         });
     </script>
     <script src="js/card-spotlight.js"></script>
+    <!-- Session Check: If logged in, redirect to dashboard -->
+    <script>
+        (function() {
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+        })();
+    </script>
 </body>
 </html>
