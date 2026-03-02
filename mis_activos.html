@@ -13,7 +13,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-theme-light">
+<body class="bg-theme-dark">
+    <!-- Particles Background -->
+    <div id="particles-body"></div>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
@@ -52,7 +54,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar ORIGINAL (Conservada) -->
+            <!-- Sidebar -->
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
@@ -77,25 +79,19 @@
                             </a>
                         </li>
                     </ul>
-
-
                 </div>
             </nav>
 
-            <!-- Main Content (Nuevo Diseño Premium) -->
+            <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 
                 <!-- Header -->
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                     <div>
                         <h1 class="h2 fw-bold text-dark">Mis Ofertas</h1>
-                        <p class="text-secondary small mb-0">Gestiona tus residuos y maquinaria publicada.</p>
+                        <p class="text-secondary small mb-0">Gestiona tus residuos y materiales publicados en la plataforma.</p>
                     </div>
                     <div class="btn-toolbar mb-2 mb-md-0">
-                        <div class="input-group me-3">
-                            <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0 ps-0" placeholder="Buscar oferta...">
-                        </div>
                         <a href="crear_activo.html" class="btn btn-primary rounded-pill shadow-sm text-nowrap">
                             <i class="fas fa-plus me-2"></i> Publicar Nuevo
                         </a>
@@ -104,24 +100,37 @@
 
                 <!-- Stats Summary -->
                 <div class="row g-4 mb-4">
-                    <div class="col-md-4">
-                        <div class="card card-modern border-start border-4 border-success p-3">
-                            <div class="d-flex align-items-center">
-                                <div class="icon-shape bg-success bg-opacity-10 text-success rounded p-2 me-3">
-                                    <i class="fas fa-check-circle fa-lg"></i>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="fas fa-check-circle text-success fa-lg"></i>
                                 </div>
                                 <div>
-                                    <small class="text-muted fw-bold text-uppercase">Publicadas</small>
-                                    <h4 class="fw-bold mb-0 text-dark">3</h4>
+                                    <small class="text-muted fw-bold text-uppercase">Activas</small>
+                                    <h4 class="fw-bold mb-0 text-dark">4</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card card-modern border-start border-4 border-warning p-3">
-                            <div class="d-flex align-items-center">
-                                <div class="icon-shape bg-warning bg-opacity-10 text-warning rounded p-2 me-3">
-                                    <i class="fas fa-handshake fa-lg"></i>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="fas fa-pause-circle text-warning fa-lg"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted fw-bold text-uppercase">Pausadas</small>
+                                    <h4 class="fw-bold mb-0 text-dark">1</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="fas fa-handshake text-primary fa-lg"></i>
                                 </div>
                                 <div>
                                     <small class="text-muted fw-bold text-uppercase">En Negociación</small>
@@ -130,117 +139,286 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card card-modern border-start border-4 border-danger p-3">
-                            <div class="d-flex align-items-center">
-                                <div class="icon-shape bg-danger bg-opacity-10 text-danger rounded p-2 me-3">
-                                    <i class="fas fa-eye-slash fa-lg"></i>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="fas fa-eye text-info fa-lg"></i>
                                 </div>
                                 <div>
-                                    <small class="text-muted fw-bold text-uppercase">Ocultas/Borrador</small>
-                                    <h4 class="fw-bold mb-0 text-dark">0</h4>
+                                    <small class="text-muted fw-bold text-uppercase">Visitas Totales</small>
+                                    <h4 class="fw-bold mb-0 text-dark">127</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Assets Table -->
-                <div class="card card-modern shadow-sm border-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light text-secondary small text-uppercase">
-                                <tr>
-                                    <th class="ps-4">Oferta</th>
-                                    <th>Categoría</th>
-                                    <th>Precio</th>
-                                    <th>Ubicación</th>
-                                    <th>Estado</th>
-                                    <th class="text-end pe-4">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Item 1 -->
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="rounded bg-light d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
-                                                <i class="fas fa-cubes text-secondary fa-lg"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0 fw-bold text-dark">Bobinas de Cobre</h6>
-                                                <small class="text-muted">500 kg &bull; Viruta Limpia</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><span class="badge bg-warning text-dark rounded-pill">Metal</span></td>
-                                    <td class="fw-bold text-success">€ 1.500</td>
-                                    <td class="text-secondary small"><i class="fas fa-map-marker-alt me-1"></i> Móstoles</td>
-                                    <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Activa</span></td>
-                                    <td class="text-end pe-4">
-                                        <button class="btn btn-sm btn-icon btn-light text-primary" title="Editar"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-icon btn-light text-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                                <!-- Item 2 -->
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="rounded bg-light d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
-                                                <i class="fas fa-truck-loading text-secondary fa-lg"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0 fw-bold text-dark">Carretilla Elevadora</h6>
-                                                <small class="text-muted">Yale 2020 &bull; Eléctrica</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><span class="badge bg-secondary rounded-pill">Maquinaria</span></td>
-                                    <td class="fw-bold text-dark">€ 50 <small class="fw-normal text-muted">/día</small></td>
-                                    <td class="text-secondary small"><i class="fas fa-map-marker-alt me-1"></i> Arroyomolinos</td>
-                                    <td><span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3">Reservada</span></td>
-                                    <td class="text-end pe-4">
-                                        <button class="btn btn-sm btn-icon btn-light text-primary" title="Editar"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-icon btn-light text-secondary" title="Archivar"><i class="fas fa-archive"></i></button>
-                                    </td>
-                                </tr>
-                                <!-- Item 3 -->
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="rounded bg-light d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
-                                                <i class="fas fa-box text-secondary fa-lg"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0 fw-bold text-dark">Cajas de Cartón</h6>
-                                                <small class="text-muted">Pack x100 &bull; Nuevas</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><span class="badge bg-info text-dark rounded-pill">Papel/Cartón</span></td>
-                                    <td class="fw-bold text-success">Gratis</td>
-                                    <td class="text-secondary small"><i class="fas fa-map-marker-alt me-1"></i> Villaviciosa</td>
-                                    <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Activa</span></td>
-                                    <td class="text-end pe-4">
-                                        <button class="btn btn-sm btn-icon btn-light text-primary" title="Editar"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-icon btn-light text-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <!-- Card Grid -->
+                <div class="row g-4 mb-4">
+
+                    <!-- Card 1: Viruta de Aluminio -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                        <i class="fas fa-industry text-success fa-lg"></i>
+                                    </div>
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Activo</span>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1">Viruta de Aluminio</h5>
+                                <p class="text-muted small mb-3">Residuo de mecanizado CNC, viruta limpia sin contaminantes. Ideal para fundición secundaria.</p>
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i> 500 kg</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> Metal</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt me-1"></i> Móstoles</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="fw-bold text-success fs-5">€ 1.200</span>
+                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 45 visitas</small>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-top d-flex gap-2 p-3">
+                                <a href="editar_activo.html" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
+                                    <i class="fas fa-edit me-1"></i> Editar
+                                </a>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill">
+                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Card 2: Palets de Madera Rotos -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                                        <i class="fas fa-pallet text-warning fa-lg"></i>
+                                    </div>
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Activo</span>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1">Palets de Madera Rotos</h5>
+                                <p class="text-muted small mb-3">Palets europeos dañados, aptos para reparación o reciclaje como biomasa. Recogida en planta.</p>
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-cubes me-1"></i> 50 unidades</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> Madera</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt me-1"></i> Móstoles</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="fw-bold text-success fs-5">Gratis</span>
+                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 38 visitas</small>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-top d-flex gap-2 p-3">
+                                <a href="editar_activo.html" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
+                                    <i class="fas fa-edit me-1"></i> Editar
+                                </a>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill">
+                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Aceite Industrial Usado -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+                                        <i class="fas fa-oil-can text-danger fa-lg"></i>
+                                    </div>
+                                    <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-2">Pausado</span>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1">Aceite Industrial Usado</h5>
+                                <p class="text-muted small mb-3">Aceite hidráulico de maquinaria pesada. Requiere gestor autorizado para su recogida y tratamiento.</p>
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-tint me-1"></i> 200 litros</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> Químico</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt me-1"></i> Móstoles</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="fw-bold text-success fs-5">€ 80</span>
+                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 12 visitas</small>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-top d-flex gap-2 p-3">
+                                <a href="editar_activo.html" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
+                                    <i class="fas fa-edit me-1"></i> Editar
+                                </a>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill">
+                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Bobinas de Cobre -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                                        <i class="fas fa-cubes text-primary fa-lg"></i>
+                                    </div>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2">En Negociación</span>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1">Bobinas de Cobre</h5>
+                                <p class="text-muted small mb-3">Cobre electrolítico sobrante de instalación eléctrica. Alta pureza, listo para reutilizar.</p>
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i> 120 kg</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> Metal</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt me-1"></i> Arroyomolinos</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="fw-bold text-success fs-5">€ 1.500</span>
+                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 32 visitas</small>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-top d-flex gap-2 p-3">
+                                <a href="editar_activo.html" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
+                                    <i class="fas fa-edit me-1"></i> Editar
+                                </a>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill">
+                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Retales de PVC -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                                        <i class="fas fa-recycle text-info fa-lg"></i>
+                                    </div>
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Activo</span>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1">Retales de PVC</h5>
+                                <p class="text-muted small mb-3">Recortes de tubería de PVC de diferentes diámetros. Aptos para trituración y reciclaje industrial.</p>
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i> 80 kg</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> Plástico</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt me-1"></i> Villaviciosa</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="fw-bold text-success fs-5">Gratis</span>
+                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 19 visitas</small>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-top d-flex gap-2 p-3">
+                                <a href="editar_activo.html" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
+                                    <i class="fas fa-edit me-1"></i> Editar
+                                </a>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill">
+                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 6: Cajas de Cartón -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="bg-secondary bg-opacity-10 rounded-circle p-3">
+                                        <i class="fas fa-box text-secondary fa-lg"></i>
+                                    </div>
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Activo</span>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1">Cajas de Cartón Industriales</h5>
+                                <p class="text-muted small mb-3">Cajas de embalaje industrial de doble canal en buen estado. Ideales para reutilización en logística.</p>
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-cubes me-1"></i> 100 unidades</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> Papel/Cartón</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt me-1"></i> Móstoles</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="fw-bold text-success fs-5">Gratis</span>
+                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 8 visitas</small>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-top d-flex gap-2 p-3">
+                                <a href="editar_activo.html" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
+                                    <i class="fas fa-edit me-1"></i> Editar
+                                </a>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill">
+                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </main>
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-white text-secondary py-5 border-top mt-auto">
+        <div class="container text-center">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-md-start">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-recycle text-success"></i> EcoMóstoles</h5>
+                    <small>Plataforma de Simbiosis Industrial</small>
+                </div>
+                <div class="col-md-4 my-3 my-md-0">
+                    <small>&copy; 2024 EcoMóstoles. Todos los derechos reservados.</small>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a href="#" class="text-secondary me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                    <a href="#" class="text-secondary me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="text-secondary"><i class="fas fa-envelope fa-lg"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Particles.js Configuration -->
-    <div id="particles-body"></div>
+
+    <!-- Particles.js — inline config identical to index/dashboard -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="js/particles-config.js"></script>
+    <script>
+        particlesJS("particles-body", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#198754" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": { 
+                    "enable": true, 
+                    "distance": 150, 
+                    "color": "#198754", 
+                    "opacity": 0.3,
+                    "width": 1 
+                },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "window", 
+                "events": {
+                    "onhover": { "enable": true, "mode": "repulse" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "repulse": { "distance": 150, "duration": 0.4 },
+                    "push": { "particles_nb": 4 }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
+    <script src="js/card-spotlight.js"></script>
     <!-- Auth Guard -->
     <script>if(localStorage.getItem('isLoggedIn')!=='true'){window.location.href='login.html';}</script>
 </body>
