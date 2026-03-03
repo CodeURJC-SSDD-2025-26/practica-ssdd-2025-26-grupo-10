@@ -34,19 +34,36 @@
             cursor: pointer;
             transition: background 0.2s;
             border-left: 3px solid transparent;
+            background: #ffffff !important;
+            color: #212529 !important;
         }
-        .contact-item:hover,
-        .contact-item.active {
-            background: rgba(25, 135, 84, 0.06);
+        .contact-item h6 {
+            color: #212529 !important;
+        }
+        .contact-item p,
+        .contact-item small {
+            color: #6c757d !important;
+        }
+        .contact-item:hover {
+            background: #f8f9fa !important;
             border-left-color: #198754;
+        }
+        .contact-item.active {
+            background: #f1fcf5 !important;
+            border-left-color: #198754;
+        }
+        .contact-item.active h6 {
+            color: #0f5132 !important;
         }
         .chat-area {
             height: 480px;
             overflow-y: auto;
+            background: #fafbfc !important;
         }
         .contacts-list {
             height: 540px;
             overflow-y: auto;
+            background: #ffffff !important;
         }
     </style>
 </head>
@@ -90,7 +107,7 @@
     </nav>
 
     <div class="container-fluid">
-        <div class="row">
+        <div class="row min-vh-100">
             <!-- Sidebar -->
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
@@ -140,86 +157,38 @@
 
                     <!-- LEFT: Contacts List -->
                     <div class="col-lg-4 col-md-5">
-                        <div class="card border-0 shadow-sm h-100" style="border-radius: 12px 0 0 12px;">
-                            <!-- Search -->
-                            <div class="card-header bg-white border-bottom p-3">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted small"></i></span>
-                                    <input type="text" class="form-control bg-light border-start-0 ps-0" placeholder="Buscar conversación...">
+                        <div class="p-3">
+                            <div class="mb-3">
+                                <div class="input-group shadow-sm">
+                                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                                    <input type="text" class="form-control border-start-0 ps-0" placeholder="Buscar conversación...">
                                 </div>
                             </div>
-                            <!-- Contact Items -->
-                            <div class="contacts-list">
-                                <!-- Contact 1: Active (selected) -->
-                                <div class="contact-item active d-flex align-items-center p-3 border-bottom">
-                                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width: 44px; height: 44px;">
-                                        <span class="fw-bold small">EF</span>
-                                    </div>
-                                    <div class="flex-grow-1 min-width-0">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <h6 class="mb-0 fw-bold text-dark text-truncate">EcoFundiciones S.A.</h6>
-                                            <small class="text-success fw-bold flex-shrink-0 ms-2">10:42</small>
-                                        </div>
-                                        <p class="mb-0 text-muted small text-truncate">¿Tienen transporte propio?</p>
-                                    </div>
-                                    <span class="badge bg-success rounded-pill ms-2 flex-shrink-0">2</span>
-                                </div>
 
-                                <!-- Contact 2 -->
-                                <div class="contact-item d-flex align-items-center p-3 border-bottom">
-                                    <div class="rounded-circle bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width: 44px; height: 44px;">
-                                        <span class="fw-bold small">RM</span>
+                            <div class="list-group list-group-flush shadow-sm rounded-3 border">
+                                <a href="#" class="list-group-item list-group-item-action active bg-success text-white py-3 border-bottom">
+                                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                        <h6 class="mb-0 fw-bold">EcoFundiciones S.A.</h6>
+                                        <small>10:30</small>
                                     </div>
-                                    <div class="flex-grow-1 min-width-0">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <h6 class="mb-0 fw-bold text-dark text-truncate">Reciclajes Madrid</h6>
-                                            <small class="text-muted flex-shrink-0 ms-2">Ayer</small>
-                                        </div>
-                                        <p class="mb-0 text-muted small text-truncate">Perfecto, pasamos a recoger los palets mañana.</p>
+                                    <p class="mb-0 small text-white-50 text-truncate">Hola, estamos interesados en los 500kg...</p>
+                                </a>
+                                
+                                <a href="#" class="list-group-item list-group-item-action py-3 border-bottom">
+                                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                        <h6 class="mb-0 fw-bold text-dark">Reciclajes Madrid</h6>
+                                        <small class="text-muted">Ayer</small>
                                     </div>
-                                </div>
-
-                                <!-- Contact 3 -->
-                                <div class="contact-item d-flex align-items-center p-3 border-bottom">
-                                    <div class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width: 44px; height: 44px;">
-                                        <span class="fw-bold small">CR</span>
+                                    <p class="mb-0 small text-muted text-truncate">¿Tienen transporte propio para la recogida?</p>
+                                </a>
+                                
+                                <a href="#" class="list-group-item list-group-item-action py-3">
+                                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                        <h6 class="mb-0 fw-bold text-dark">Plásticos del Sur</h6>
+                                        <small class="text-muted">Lunes</small>
                                     </div>
-                                    <div class="flex-grow-1 min-width-0">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <h6 class="mb-0 text-muted text-truncate">Carpintería Hnos. Ruiz</h6>
-                                            <small class="text-muted flex-shrink-0 ms-2">Mar 20</small>
-                                        </div>
-                                        <p class="mb-0 text-muted small text-truncate">Gracias, ha sido un placer. ¡Hasta la próxima!</p>
-                                    </div>
-                                </div>
-
-                                <!-- Contact 4 -->
-                                <div class="contact-item d-flex align-items-center p-3 border-bottom">
-                                    <div class="rounded-circle bg-info bg-opacity-10 text-info d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width: 44px; height: 44px;">
-                                        <span class="fw-bold small">LM</span>
-                                    </div>
-                                    <div class="flex-grow-1 min-width-0">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <h6 class="mb-0 text-muted text-truncate">Logística Móstoles</h6>
-                                            <small class="text-muted flex-shrink-0 ms-2">Feb 18</small>
-                                        </div>
-                                        <p class="mb-0 text-muted small text-truncate">Valoración enviada. ⭐⭐⭐⭐⭐</p>
-                                    </div>
-                                </div>
-
-                                <!-- Contact 5: System -->
-                                <div class="contact-item d-flex align-items-center p-3">
-                                    <div class="rounded-circle bg-secondary bg-opacity-10 text-secondary d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width: 44px; height: 44px;">
-                                        <span class="fw-bold small"><i class="fas fa-robot"></i></span>
-                                    </div>
-                                    <div class="flex-grow-1 min-width-0">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <h6 class="mb-0 text-muted text-truncate">Admin EcoMóstoles</h6>
-                                            <small class="text-muted flex-shrink-0 ms-2">Feb 10</small>
-                                        </div>
-                                        <p class="mb-0 text-muted small text-truncate">Bienvenido a la plataforma. Complete su perfil.</p>
-                                    </div>
-                                </div>
+                                    <p class="mb-0 small text-muted text-truncate">Acuerdo cerrado. Adjunto documentación.</p>
+                                </a>
                             </div>
                         </div>
                     </div>

@@ -404,8 +404,11 @@ a:hover {
 .sidebar {
     background: white;
     border-right: 1px solid rgba(0,0,0,0.05);
-    height: 100vh;
+    min-height: calc(100vh - 80px);
     padding-top: 1rem;
+    position: sticky;
+    top: 80px;
+    align-self: stretch;
 }
 
 .sidebar .nav-link {
