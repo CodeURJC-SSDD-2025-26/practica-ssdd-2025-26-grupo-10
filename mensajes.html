@@ -12,8 +12,47 @@
     <link href="css/styles.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .chat-bubble {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .chat-bubble-received {
+            background: #f0f2f5;
+            color: #1a1a2e;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-bubble-sent {
+            background: #198754;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+        .contact-item {
+            cursor: pointer;
+            transition: background 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .contact-item:hover,
+        .contact-item.active {
+            background: rgba(25, 135, 84, 0.06);
+            border-left-color: #198754;
+        }
+        .chat-area {
+            height: 480px;
+            overflow-y: auto;
+        }
+        .contacts-list {
+            height: 540px;
+            overflow-y: auto;
+        }
+    </style>
 </head>
-<body class="bg-theme-light">
+<body class="bg-theme-dark">
+    <!-- Particles Background -->
+    <div id="particles-body"></div>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
@@ -52,7 +91,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar ORIGINAL (Conservada) -->
+            <!-- Sidebar -->
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
@@ -77,77 +116,229 @@
                             </a>
                         </li>
                     </ul>
-
-
                 </div>
             </nav>
 
-            <!-- Main Content (Nuevo Diseño Inbox) -->
+            <!-- Main Content: Split Inbox -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 
+                <!-- Header -->
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
-                    <h1 class="h2 fw-bold text-dark">Buzón de Mensajes</h1>
+                    <div>
+                        <h1 class="h2 fw-bold text-dark">Buzón de Mensajes</h1>
+                        <p class="text-secondary small mb-0">Comunicaciones con otras empresas de la plataforma.</p>
+                    </div>
                     <div class="btn-toolbar mb-2 mb-md-0">
-                        <button type="button" class="btn btn-sm btn-outline-secondary me-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill">
                             <i class="fas fa-check-double me-1"></i> Marcar todo leído
                         </button>
                     </div>
                 </div>
 
-                <div class="card card-modern shadow-sm border-0">
-                    <div class="list-group list-group-flush">
-                        <!-- Message 1 (Unread) -->
-                        <a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-4 border-start border-4 border-primary">
-                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
-                                <span class="fw-bold">TP</span>
+                <!-- Inbox Layout: Contacts (30%) + Chat (70%) -->
+                <div class="row g-0">
+
+                    <!-- LEFT: Contacts List -->
+                    <div class="col-lg-4 col-md-5">
+                        <div class="card border-0 shadow-sm h-100" style="border-radius: 12px 0 0 12px;">
+                            <!-- Search -->
+                            <div class="card-header bg-white border-bottom p-3">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted small"></i></span>
+                                    <input type="text" class="form-control bg-light border-start-0 ps-0" placeholder="Buscar conversación...">
+                                </div>
                             </div>
-                            <div class="d-flex gap-2 w-100 justify-content-between">
-                                <div>
-                                    <div class="d-flex align-items-center mb-1">
-                                        <h6 class="mb-0 fw-bold text-dark">Talleres Mecánicos Pepe</h6>
-                                        <span class="badge bg-primary rounded-pill ms-2 text-uppercase" style="font-size: 0.6em;">Nuevo</span>
+                            <!-- Contact Items -->
+                            <div class="contacts-list">
+                                <!-- Contact 1: Active (selected) -->
+                                <div class="contact-item active d-flex align-items-center p-3 border-bottom">
+                                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width: 44px; height: 44px;">
+                                        <span class="fw-bold small">EF</span>
                                     </div>
-                                    <p class="mb-0 text-secondary opacity-75">Hola, estoy interesado en el alquiler del montacargas para la semana que viene...</p>
-                                </div>
-                                <small class="text-nowrap fw-bold text-primary">10:42 AM</small>
-                            </div>
-                        </a>
-                        
-                        <!-- Message 2 (Unread) -->
-                        <a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-4 border-start border-4 border-primary bg-light">
-                            <div class="rounded-circle bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
-                                <span class="fw-bold">CH</span>
-                            </div>
-                            <div class="d-flex gap-2 w-100 justify-content-between">
-                                <div>
-                                    <div class="d-flex align-items-center mb-1">
-                                        <h6 class="mb-0 fw-bold text-dark">Carpintería Hnos. Ruiz</h6>
-                                        <span class="badge bg-primary rounded-pill ms-2 text-uppercase" style="font-size: 0.6em;">Nuevo</span>
+                                    <div class="flex-grow-1 min-width-0">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0 fw-bold text-dark text-truncate">EcoFundiciones S.A.</h6>
+                                            <small class="text-success fw-bold flex-shrink-0 ms-2">10:42</small>
+                                        </div>
+                                        <p class="mb-0 text-muted small text-truncate">¿Tienen transporte propio?</p>
                                     </div>
-                                    <p class="mb-0 text-secondary opacity-75">Perfecto, pasamos a recoger los palets mañana a primera hora.</p>
+                                    <span class="badge bg-success rounded-pill ms-2 flex-shrink-0">2</span>
                                 </div>
-                                <small class="text-nowrap fw-bold text-primary">Ayer</small>
+
+                                <!-- Contact 2 -->
+                                <div class="contact-item d-flex align-items-center p-3 border-bottom">
+                                    <div class="rounded-circle bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width: 44px; height: 44px;">
+                                        <span class="fw-bold small">RM</span>
+                                    </div>
+                                    <div class="flex-grow-1 min-width-0">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0 fw-bold text-dark text-truncate">Reciclajes Madrid</h6>
+                                            <small class="text-muted flex-shrink-0 ms-2">Ayer</small>
+                                        </div>
+                                        <p class="mb-0 text-muted small text-truncate">Perfecto, pasamos a recoger los palets mañana.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Contact 3 -->
+                                <div class="contact-item d-flex align-items-center p-3 border-bottom">
+                                    <div class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width: 44px; height: 44px;">
+                                        <span class="fw-bold small">CR</span>
+                                    </div>
+                                    <div class="flex-grow-1 min-width-0">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0 text-muted text-truncate">Carpintería Hnos. Ruiz</h6>
+                                            <small class="text-muted flex-shrink-0 ms-2">Mar 20</small>
+                                        </div>
+                                        <p class="mb-0 text-muted small text-truncate">Gracias, ha sido un placer. ¡Hasta la próxima!</p>
+                                    </div>
+                                </div>
+
+                                <!-- Contact 4 -->
+                                <div class="contact-item d-flex align-items-center p-3 border-bottom">
+                                    <div class="rounded-circle bg-info bg-opacity-10 text-info d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width: 44px; height: 44px;">
+                                        <span class="fw-bold small">LM</span>
+                                    </div>
+                                    <div class="flex-grow-1 min-width-0">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0 text-muted text-truncate">Logística Móstoles</h6>
+                                            <small class="text-muted flex-shrink-0 ms-2">Feb 18</small>
+                                        </div>
+                                        <p class="mb-0 text-muted small text-truncate">Valoración enviada. ⭐⭐⭐⭐⭐</p>
+                                    </div>
+                                </div>
+
+                                <!-- Contact 5: System -->
+                                <div class="contact-item d-flex align-items-center p-3">
+                                    <div class="rounded-circle bg-secondary bg-opacity-10 text-secondary d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width: 44px; height: 44px;">
+                                        <span class="fw-bold small"><i class="fas fa-robot"></i></span>
+                                    </div>
+                                    <div class="flex-grow-1 min-width-0">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0 text-muted text-truncate">Admin EcoMóstoles</h6>
+                                            <small class="text-muted flex-shrink-0 ms-2">Feb 10</small>
+                                        </div>
+                                        <p class="mb-0 text-muted small text-truncate">Bienvenido a la plataforma. Complete su perfil.</p>
+                                    </div>
+                                </div>
                             </div>
-                        </a>
-                        
-                        <!-- Message 3 (Read) -->
-                        <a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-4">
-                            <div class="rounded-circle bg-secondary bg-opacity-10 text-secondary d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
-                                <span class="fw-bold">EA</span>
-                            </div>
-                            <div class="d-flex gap-2 w-100 justify-content-between">
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Active Chat -->
+                    <div class="col-lg-8 col-md-7">
+                        <div class="card border-0 shadow-sm h-100" style="border-radius: 0 12px 12px 0;">
+                            <!-- Chat Header -->
+                            <div class="card-header bg-white border-bottom p-3 d-flex align-items-center">
+                                <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width: 40px; height: 40px;">
+                                    <span class="fw-bold small">EF</span>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0 fw-bold text-dark">EcoFundiciones S.A.</h6>
+                                    <small class="text-success"><i class="fas fa-circle me-1" style="font-size: 0.5rem; vertical-align: middle;"></i> En línea</small>
+                                </div>
                                 <div>
-                                    <h6 class="mb-1 text-muted">Administración EcoMóstoles</h6>
-                                    <p class="mb-0 text-muted opacity-50">Bienvenido a la plataforma. Recuerda completar tu perfil de empresa para mejorar tu visibilidad.</p>
+                                    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+                                        <i class="fas fa-industry me-1"></i> Re: Viruta de Aluminio · 500 kg
+                                    </span>
                                 </div>
-                                <small class="text-nowrap text-muted">Hace 1 semana</small>
                             </div>
-                        </a>
+
+                            <!-- Chat Messages -->
+                            <div class="card-body chat-area p-4" style="background: #fafbfc;">
+
+                                <!-- Date separator -->
+                                <div class="text-center my-3">
+                                    <span class="badge bg-light text-muted px-3 py-2 rounded-pill" style="font-size: 0.75rem;">Hoy, 25 de febrero</span>
+                                </div>
+
+                                <!-- Received message 1 -->
+                                <div class="d-flex mb-3">
+                                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center flex-shrink-0 me-2" style="width: 32px; height: 32px; margin-top: 4px;">
+                                        <span class="fw-bold" style="font-size: 0.65rem;">EF</span>
+                                    </div>
+                                    <div>
+                                        <div class="chat-bubble chat-bubble-received">
+                                            Buenos días. Hemos visto su oferta de 500 kg de viruta de aluminio en la plataforma y estamos muy interesados.
+                                        </div>
+                                        <small class="text-muted d-block mt-1 ms-1" style="font-size: 0.7rem;">09:15</small>
+                                    </div>
+                                </div>
+
+                                <!-- Received message 2 -->
+                                <div class="d-flex mb-3">
+                                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center flex-shrink-0 me-2" style="width: 32px; height: 32px; margin-top: 4px;">
+                                        <span class="fw-bold" style="font-size: 0.65rem;">EF</span>
+                                    </div>
+                                    <div>
+                                        <div class="chat-bubble chat-bubble-received">
+                                            ¿La viruta es de aleación 6061 o 7075? Necesitamos saberlo para nuestro proceso de fundición secundaria. También, ¿tienen transporte propio?
+                                        </div>
+                                        <small class="text-muted d-block mt-1 ms-1" style="font-size: 0.7rem;">09:17</small>
+                                    </div>
+                                </div>
+
+                                <!-- Sent message 1 -->
+                                <div class="d-flex justify-content-end mb-3">
+                                    <div class="text-end">
+                                        <div class="chat-bubble chat-bubble-sent">
+                                            Buenos días. La viruta es de aleación 6061, limpia y sin contaminantes de aceite. Proviene de nuestro taller de mecanizado CNC.
+                                        </div>
+                                        <small class="text-muted d-block mt-1 me-1" style="font-size: 0.7rem;">09:45 <i class="fas fa-check-double text-success ms-1"></i></small>
+                                    </div>
+                                </div>
+
+                                <!-- Sent message 2 -->
+                                <div class="d-flex justify-content-end mb-3">
+                                    <div class="text-end">
+                                        <div class="chat-bubble chat-bubble-sent">
+                                            Sí, disponemos de transporte propio. Podemos llevar el material a su polígono este jueves por la mañana. ¿Les viene bien?
+                                        </div>
+                                        <small class="text-muted d-block mt-1 me-1" style="font-size: 0.7rem;">09:46 <i class="fas fa-check-double text-success ms-1"></i></small>
+                                    </div>
+                                </div>
+
+                                <!-- Received message 3 -->
+                                <div class="d-flex mb-3">
+                                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center flex-shrink-0 me-2" style="width: 32px; height: 32px; margin-top: 4px;">
+                                        <span class="fw-bold" style="font-size: 0.65rem;">EF</span>
+                                    </div>
+                                    <div>
+                                        <div class="chat-bubble chat-bubble-received">
+                                            Perfecto, la 6061 nos viene genial. El jueves por la mañana es ideal. Nuestra dirección es Pol. Ind. Las Nieves, Nave 12, Móstoles. ¿Cerramos el acuerdo por 1.200€?
+                                        </div>
+                                        <small class="text-muted d-block mt-1 ms-1" style="font-size: 0.7rem;">10:30</small>
+                                    </div>
+                                </div>
+
+                                <!-- Sent message 3 -->
+                                <div class="d-flex justify-content-end mb-3">
+                                    <div class="text-end">
+                                        <div class="chat-bubble chat-bubble-sent">
+                                            De acuerdo, cerramos. Les enviaré la confirmación de recogida y el albarán por esta misma vía. ¡Un placer hacer negocios con EcoFundiciones! 🤝
+                                        </div>
+                                        <small class="text-muted d-block mt-1 me-1" style="font-size: 0.7rem;">10:42 <i class="fas fa-check-double text-success ms-1"></i></small>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Compose Area -->
+                            <div class="card-footer bg-white border-top p-3">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <button class="btn btn-light rounded-circle flex-shrink-0" title="Adjuntar archivo">
+                                        <i class="fas fa-paperclip text-muted"></i>
+                                    </button>
+                                    <input type="text" class="form-control rounded-pill border" placeholder="Escribe un mensaje..." style="padding: 10px 20px;">
+                                    <button class="btn btn-success rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;" title="Enviar">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-footer bg-white border-top-0 py-3 text-center">
-                        <button class="btn btn-sm btn-link text-decoration-none text-muted">Cargar mensajes antiguos</button>
-                    </div>
+
                 </div>
+                <!-- End Inbox Layout -->
 
             </main>
         </div>
@@ -175,10 +366,42 @@
 
     <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Particles.js Configuration -->
-    <div id="particles-body"></div>
+
+    <!-- Particles.js — inline config -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="js/particles-config.js"></script>
+    <script>
+        particlesJS("particles-body", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#198754" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": { 
+                    "enable": true, 
+                    "distance": 150, 
+                    "color": "#198754", 
+                    "opacity": 0.3,
+                    "width": 1 
+                },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "window", 
+                "events": {
+                    "onhover": { "enable": true, "mode": "repulse" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "repulse": { "distance": 150, "duration": 0.4 },
+                    "push": { "particles_nb": 4 }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
+    <script src="js/card-spotlight.js"></script>
     <!-- Auth Guard -->
     <script>if(localStorage.getItem('isLoggedIn')!=='true'){window.location.href='login.html';}</script>
 </body>
