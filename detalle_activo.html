@@ -13,7 +13,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-theme-light">
+<body class="bg-theme-dark">
+    <!-- Particles Background -->
+    <div id="particles-body" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
@@ -51,7 +53,7 @@
     </nav>
 
     <!-- Content -->
-    <div class="container py-5 mt-5">
+    <div class="container my-5 p-4 bg-white shadow-sm rounded">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item"><a href="index.html" class="text-muted text-decoration-none">Inicio</a></li>
@@ -61,29 +63,8 @@
         </nav>
 
         <div class="row g-5">
-            <!-- Left Column: Image Gallery -->
-            <div class="col-lg-6">
-                <div class="card card-modern overflow-hidden mb-3 border-0 shadow-sm position-relative">
-                    <span class="badge bg-success position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill shadow-sm">Verificado</span>
-                    <img src="https://placehold.co/800x600/34495e/FFF?text=Viruta+de+Acero" class="img-fluid w-100" alt="Detalle Activo" style="object-fit: cover; height: 400px;">
-                </div>
-                <div class="row g-2">
-                    <div class="col-3">
-                        <div class="card card-modern border-0 rounded overflow-hidden ratio ratio-1x1 cursor-pointer ring-hover">
-                            <img src="https://placehold.co/200x200/2c3e50/FFF?text=Vista+1" class="img-fluid" alt="Vista 1">
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="card card-modern border-0 rounded overflow-hidden ratio ratio-1x1 cursor-pointer ring-hover">
-                            <img src="https://placehold.co/200x200/95a5a6/FFF?text=Vista+2" class="img-fluid" alt="Vista 2">
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="card card-modern border-0 rounded overflow-hidden ratio ratio-1x1 cursor-pointer ring-hover d-flex align-items-center justify-content-center bg-light">
-                            <i class="fas fa-play-circle fa-2x text-muted"></i>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="https://placehold.co/800x600/e9ecef/495057?text=Foto+del+Material" class="img-fluid rounded shadow-sm w-100 object-fit-cover" alt="Imagen del Residuo" style="min-height: 400px;">
             </div>
 
             <!-- Right Column: Details & Action -->
@@ -120,26 +101,13 @@
                     <i class="fas fa-info-circle text-primary me-1"></i> <strong>Logística:</strong> El lote completo consta de 2 contenedores de 250kg cada uno. Se prefiere retirada completa con vehículo propio, aunque podemos gestionar transporte local.
                 </p>
 
-                <!-- Seller Info -->
-                <div class="card card-modern border-0 p-3 mb-4 shadow-sm bg-light">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3 position-relative">
-                            <img src="https://ui-avatars.com/api/?name=Metales+Del+Sur&background=198754&color=fff" class="rounded-circle shadow-sm" width="50" height="50" alt="Logo Empresa">
-                            <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle"></span>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0 fw-bold text-dark">Metales del Sur S.L.</h6>
-                            <small class="text-muted">Empresa Verificada &bull; <span class="text-warning"><i class="fas fa-star"></i> 4.8/5</span></small>
-                        </div>
-                        <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill">Ver Perfil</a>
-                    </div>
-                </div>
 
                 <div class="d-grid gap-2">
-                    <a href="login.html" class="btn btn-primary btn-lg shadow fw-bold rounded-pill">
+                    <textarea class="form-control bg-light border-0 mb-3 p-3" rows="4" placeholder="Escribe aquí tu mensaje para la empresa..."></textarea>
+                    <a href="mensajes.html" class="btn btn-primary btn-lg shadow fw-bold rounded-pill">
                         <i class="fas fa-envelope me-2"></i> Contactar con la Empresa
                     </a>
-                    <p class="text-center small text-muted mt-2">Debes <a href="login.html" class="text-decoration-none fw-bold">iniciar sesión</a> para ver los datos de contacto directo.</p>
+                    <small class="text-muted text-center d-block mt-2"><i class="fas fa-shield-alt text-success me-1"></i> Mensajería segura B2B.</small>
                 </div>
             </div>
         </div>
@@ -167,6 +135,27 @@
 
     <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS("particles-body", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#198754" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#198754", "opacity": 0.3, "width": 1 },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "window",
+                "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                "modes": { "repulse": { "distance": 150, "duration": 0.4 }, "push": { "particles_nb": 4 } }
+            },
+            "retina_detect": true
+        });
+    </script>
     <script src="js/card-spotlight.js"></script>
     <!-- Auth Guard -->
     <script>if(localStorage.getItem('isLoggedIn')!=='true'){window.location.href='login.html';}</script>
