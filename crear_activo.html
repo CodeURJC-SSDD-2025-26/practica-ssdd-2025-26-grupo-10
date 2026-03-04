@@ -34,7 +34,7 @@
                     </li>
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.8rem;">MS</div>
+                            <img src="img/logo.jfif" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2" style="width: 35px; height: 35px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                             <span>Metales del Sur S.L.</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2" style="border-radius: 12px;">
@@ -122,11 +122,11 @@
 
                                 <div class="col-md-4">
                                     <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad / Unidad</label>
-                                    <input type="text" class="form-control" id="cantidad" placeholder="Ej. 500 kg, 2 Unidades">
+                                    <input type="number" class="form-control" id="cantidad" placeholder="Ej. 500">
                                 </div>
                                 <div class="col-md-4">
                                     <label for="precio" class="form-label text-secondary fw-bold small text-uppercase">Precio (€)</label>
-                                    <input type="text" class="form-control" id="precio" placeholder="Ej. 1500, o 'A convenir'">
+                                    <input type="number" class="form-control" id="precio" placeholder="Ej. 1500" step="0.01" min="0">
                                 </div>
                                 <div class="col-md-4">
                                     <label for="disponibilidad" class="form-label text-secondary fw-bold small text-uppercase">Disponibilidad</label>
