@@ -32,6 +32,9 @@
                         <a class="nav-link" href="mercado.html"><i class="fas fa-store me-1"></i> Ofertas</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="solicitudes.html"><i class="fas fa-bullhorn me-1"></i> Demandas</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
                     </li>
                     <li class="nav-item dropdown ms-lg-2">
@@ -170,6 +173,64 @@
                     </div>
                 </div>
 
+                <!-- Smart Matching Widget -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold text-dark mb-0"><i class="fas fa-bullseye text-danger me-2"></i>🎯 Oportunidades Sugeridas (Smart Matching)</h5>
+                                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill"><i class="fas fa-robot me-1"></i>Algoritmo IA</span>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row g-3">
+                                    <!-- Suggestion 1 -->
+                                    <div class="col-md-4">
+                                        <div class="border rounded-3 p-3 h-100 position-relative" style="border-left: 4px solid #198754 !important;">
+                                            <span class="badge bg-success position-absolute top-0 end-0 m-2 rounded-pill">95% Match</span>
+                                            <h6 class="fw-bold text-dark mb-1 pe-5">Viruta de Acero Inoxidable</h6>
+                                            <p class="text-muted small mb-2">EcoFundiciones S.A. busca exactamente tu tipo de viruta para fundición secundaria.</p>
+                                            <div class="d-flex align-items-center gap-2 mb-3">
+                                                <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt text-success me-1"></i>A 2 km</span>
+                                                <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i>500 kg</span>
+                                                <span class="badge bg-light text-dark border"><i class="fas fa-euro-sign me-1"></i>1.200 €</span>
+                                            </div>
+                                            <a href="detalle_activo.html" class="btn btn-sm btn-outline-success rounded-pill w-100"><i class="fas fa-eye me-1"></i>Ver Oferta</a>
+                                        </div>
+                                    </div>
+                                    <!-- Suggestion 2 -->
+                                    <div class="col-md-4">
+                                        <div class="border rounded-3 p-3 h-100 position-relative" style="border-left: 4px solid #0d6efd !important;">
+                                            <span class="badge bg-primary position-absolute top-0 end-0 m-2 rounded-pill">82% Match</span>
+                                            <h6 class="fw-bold text-dark mb-1 pe-5">Bobinas de Cobre Reciclado</h6>
+                                            <p class="text-muted small mb-2">Cableados Móstoles necesita cobre para producción de cable industrial.</p>
+                                            <div class="d-flex align-items-center gap-2 mb-3">
+                                                <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt text-primary me-1"></i>A 5 km</span>
+                                                <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i>300 kg</span>
+                                                <span class="badge bg-light text-dark border"><i class="fas fa-euro-sign me-1"></i>2.800 €</span>
+                                            </div>
+                                            <a href="detalle_activo.html" class="btn btn-sm btn-outline-primary rounded-pill w-100"><i class="fas fa-eye me-1"></i>Ver Oferta</a>
+                                        </div>
+                                    </div>
+                                    <!-- Suggestion 3 -->
+                                    <div class="col-md-4">
+                                        <div class="border rounded-3 p-3 h-100 position-relative" style="border-left: 4px solid #ffc107 !important;">
+                                            <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 rounded-pill">74% Match</span>
+                                            <h6 class="fw-bold text-dark mb-1 pe-5">Transporte Compartido - Zona Sur</h6>
+                                            <p class="text-muted small mb-2">Logística Express ofrece compartir ruta de recogida en tu polígono.</p>
+                                            <div class="d-flex align-items-center gap-2 mb-3">
+                                                <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt text-warning me-1"></i>A 1 km</span>
+                                                <span class="badge bg-light text-dark border"><i class="fas fa-truck me-1"></i>Servicio</span>
+                                                <span class="badge bg-light text-dark border"><i class="fas fa-euro-sign me-1"></i>150 €/viaje</span>
+                                            </div>
+                                            <a href="detalle_activo.html" class="btn btn-sm btn-outline-warning rounded-pill w-100 text-dark"><i class="fas fa-eye me-1"></i>Ver Oferta</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Charts & Activity -->
                 <div class="row g-4 mb-4">
                     <!-- Chart Column: Chart.js Bar Chart -->
@@ -255,6 +316,85 @@
                             </div>
                             <div class="card-footer bg-white border-top-0 text-center pb-3">
                                 <button class="btn btn-sm btn-link text-success fw-bold text-decoration-none">Ver todo el historial <i class="fas fa-arrow-right ms-1"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Historial de Acuerdos Cerrados -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold text-dark mb-0"><i class="fas fa-handshake text-success me-2"></i>🤝 Historial de Acuerdos Cerrados</h5>
+                                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">3 acuerdos</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th class="ps-4 text-secondary small text-uppercase">Fecha</th>
+                                                <th class="text-secondary small text-uppercase">Empresa</th>
+                                                <th class="text-secondary small text-uppercase">Material</th>
+                                                <th class="text-secondary small text-uppercase">Cantidad</th>
+                                                <th class="text-secondary small text-uppercase">Precio</th>
+                                                <th class="text-secondary small text-uppercase">Estado</th>
+                                                <th class="text-secondary small text-uppercase text-end pe-4">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="ps-4 text-dark">15/02/2026</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.75rem;">EF</div>
+                                                        <span class="fw-bold text-dark">EcoFundiciones S.A.</span>
+                                                    </div>
+                                                </td>
+                                                <td class="text-secondary">Viruta de Acero</td>
+                                                <td class="text-secondary">500 kg</td>
+                                                <td class="fw-bold text-success">1.200 €</td>
+                                                <td><span class="badge bg-success rounded-pill">Completado</span></td>
+                                                <td class="text-end pe-4">
+                                                    <a href="#" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fas fa-file-pdf me-1"></i>Descargar Albarán</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="ps-4 text-dark">28/01/2026</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.75rem;">LM</div>
+                                                        <span class="fw-bold text-dark">Logística Móstoles S.A.</span>
+                                                    </div>
+                                                </td>
+                                                <td class="text-secondary">Palets de Madera</td>
+                                                <td class="text-secondary">50 uds</td>
+                                                <td class="fw-bold text-success">Gratis</td>
+                                                <td><span class="badge bg-success rounded-pill">Completado</span></td>
+                                                <td class="text-end pe-4">
+                                                    <a href="#" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fas fa-file-pdf me-1"></i>Descargar Albarán</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="ps-4 text-dark">10/01/2026</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.75rem;">CM</div>
+                                                        <span class="fw-bold text-dark">Cableados Móstoles</span>
+                                                    </div>
+                                                </td>
+                                                <td class="text-secondary">Bobinas de Cobre</td>
+                                                <td class="text-secondary">200 kg</td>
+                                                <td class="fw-bold text-success">2.800 €</td>
+                                                <td><span class="badge bg-warning text-dark rounded-pill">En curso</span></td>
+                                                <td class="text-end pe-4">
+                                                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill disabled"><i class="fas fa-file-pdf me-1"></i>Pendiente</a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
