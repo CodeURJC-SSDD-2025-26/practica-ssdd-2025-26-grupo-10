@@ -422,3 +422,14 @@ a:hover {
     background-color: #f1fcf5; /* Very light green */
     color: var(--brand-primary) !important;
 }
+
+/* ===== Sidebar Mobile Improvements ===== */
+@media (max-width: 767.98px) {
+    .sidebar.collapse.show,
+    .sidebar.collapsing {
+        border-bottom: 2px solid rgba(25, 135, 84, 0.2);
+        padding-bottom: 1rem;
+        margin-bottom: 0.5rem;
+        background: rgba(255, 255, 255, 0.03);
+    }
+}

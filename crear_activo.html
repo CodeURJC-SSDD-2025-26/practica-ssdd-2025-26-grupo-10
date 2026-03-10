@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular. Conecta ofertas de residuos y demandas de maquinaria en el ámbito local.">
     <title>Publicar Activo | EcoMóstoles</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -21,6 +23,7 @@
             <a class="navbar-brand" href="dashboard.html">
                 <i class="fas fa-recycle me-2"></i>EcoMóstoles
             </a>
+                        <button class="navbar-toggler d-md-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle sidebar"><span class="navbar-toggler-icon"></span></button>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -33,7 +36,7 @@
                         <a class="nav-link" href="solicitudes.html"><i class="fas fa-bullhorn me-1"></i> Demandas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
+                        <a class="nav-link active" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
                     </li>
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
@@ -43,7 +46,7 @@
                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2" style="border-radius: 12px;">
                             <li><h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6></li>
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
-                            <li><a class="dropdown-item rounded" href="#"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
+                            <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item rounded text-danger" href="#" onclick="localStorage.removeItem('isLoggedIn'); window.location.href='index.html';"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
                         </ul>
@@ -65,6 +68,7 @@
                                 <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                             </a>
                         </li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Ofertas</small></li>
                         <li class="nav-item">
                             <a class="nav-link" href="mis_activos.html">
                                 <i class="fas fa-box me-2"></i> Mis Ofertas
@@ -72,17 +76,27 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active text-success fw-bold" href="crear_activo.html">
-                                <i class="fas fa-plus-circle me-2"></i> Publicar Nuevo
+                                <i class="fas fa-plus-circle me-2"></i> Publicar Oferta
                             </a>
                         </li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Demandas</small></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="mis_demandas.html">
+                                <i class="fas fa-clipboard-list me-2"></i> Mis Demandas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="crear_solicitud.html">
+                                <i class="fas fa-plus-circle me-2"></i> Publicar Demanda
+                            </a>
+                        </li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Comunicación</small></li>
                         <li class="nav-item">
                             <a class="nav-link" href="mensajes.html">
                                 <i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">2</span>
                             </a>
                         </li>
                     </ul>
-
-
                 </div>
             </nav>
 
@@ -99,11 +113,12 @@
 
                 <div class="card card-modern border-top-success">
                     <div class="card-body p-4">
-                        <form action="mis_activos.html">
+                        <form action="mis_activos.html" class="needs-validation" novalidate>
                             <div class="row g-3">
                                 <div class="col-md-8">
                                     <label for="titulo" class="form-label text-secondary fw-bold small text-uppercase">Título del Activo <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="titulo" placeholder="Ej. Lote de Palets Europeos" required>
+                                    <div class="invalid-feedback">Por favor, completa este campo.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="tipo" class="form-label text-secondary fw-bold small text-uppercase">Tipo <span class="text-danger">*</span></label>
@@ -244,5 +259,22 @@
     <script src="js/card-spotlight.js"></script>
     <!-- Auth Guard -->
     <script>if(localStorage.getItem('isLoggedIn')!=='true'){window.location.href='login.html';}</script>
+
+    <!-- Bootstrap Form Validation -->
+    <script>
+    (function () {
+        'use strict';
+        var forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+    </script>
 </body>
 </html>

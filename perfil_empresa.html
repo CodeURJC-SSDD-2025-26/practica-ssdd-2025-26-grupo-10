@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular. Conecta ofertas de residuos y demandas de maquinaria en el ámbito local.">
     <title>Mi Perfil | EcoMóstoles</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -21,6 +23,7 @@
             <a class="navbar-brand" href="dashboard.html">
                 <i class="fas fa-recycle me-2"></i>EcoMóstoles
             </a>
+                        <button class="navbar-toggler d-md-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle sidebar"><span class="navbar-toggler-icon"></span></button>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -33,7 +36,7 @@
                         <a class="nav-link" href="solicitudes.html"><i class="fas fa-bullhorn me-1"></i> Demandas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
+                        <a class="nav-link active" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
                     </li>
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
@@ -43,7 +46,7 @@
                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2" style="border-radius: 12px;">
                             <li><h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6></li>
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
-                            <li><a class="dropdown-item rounded" href="#"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
+                            <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item rounded text-danger" href="#" onclick="localStorage.removeItem('isLoggedIn'); window.location.href='index.html';"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
                         </ul>
@@ -53,154 +56,200 @@
         </div>
     </nav>
 
-    <!-- Profile Content -->
-    <section class="py-5 position-relative" style="padding-top: 120px; z-index: 1;">
-        <div class="container">
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            <!-- Sidebar -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Ofertas</small></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="mis_activos.html">
+                                <i class="fas fa-box me-2"></i> Mis Ofertas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="crear_activo.html">
+                                <i class="fas fa-plus-circle me-2"></i> Publicar Oferta
+                            </a>
+                        </li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Demandas</small></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="mis_demandas.html">
+                                <i class="fas fa-clipboard-list me-2"></i> Mis Demandas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="crear_solicitud.html">
+                                <i class="fas fa-plus-circle me-2"></i> Publicar Demanda
+                            </a>
+                        </li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Comunicación</small></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="mensajes.html">
+                                <i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">2</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
-            <!-- Page Header -->
-            <div class="text-center mb-5">
-                <h1 class="display-6 fw-bold text-success">Mi Perfil de Empresa</h1>
-                <p class="text-light-muted">Gestiona la información pública de tu empresa en EcoMóstoles.</p>
-            </div>
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
 
-            <div class="row g-4 justify-content-center">
-
-                <!-- Left Column: Photo / Logo Upload -->
-                <div class="col-lg-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body text-center p-4">
-                            <!-- Avatar / Logo -->
-                            <div class="position-relative d-inline-block mb-4">
-                                <img src="img/logo.webp" alt="Logo Metales del Sur" class="rounded-circle object-fit-cover shadow-sm mb-3" style="width: 160px; height: 160px; border: 4px solid #fff;">
-                            </div>
-
-                            <h5 class="fw-bold mb-1">Metales del Sur S.L.</h5>
-                            <p class="text-muted small mb-4">Sector Metalúrgico &bull; Móstoles</p>
-
-                            <!-- File Upload (Estilizado) -->
-                            <label for="logoUpload" class="btn btn-outline-success rounded-pill w-100 mb-3" style="cursor: pointer;">
-                                <i class="fas fa-camera me-2"></i> Cambiar Logo / Foto
-                            </label>
-                            <input type="file" id="logoUpload" accept="image/*" class="d-none">
-                            <p class="text-muted small mb-0">JPG, PNG o SVG. Máx 2MB.</p>
-
-                            <hr class="my-4">
-
-                            <!-- Quick Info -->
-                            <div class="text-start">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="bg-success bg-opacity-10 p-2 rounded me-3">
-                                        <i class="fas fa-id-card text-success"></i>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted d-block">CIF / NIF</small>
-                                        <span class="fw-bold small">B-12345678</span>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="bg-primary bg-opacity-10 p-2 rounded me-3">
-                                        <i class="fas fa-calendar-check text-primary"></i>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted d-block">Miembro desde</small>
-                                        <span class="fw-bold small">Enero 2024</span>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-warning bg-opacity-10 p-2 rounded me-3">
-                                        <i class="fas fa-star text-warning"></i>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted d-block">Valoración</small>
-                                        <span class="fw-bold small">4.8 / 5 <span class="text-muted">(12 reseñas)</span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                    <div>
+                        <h1 class="h2 fw-bold text-dark"><i class="fas fa-user-circle text-success me-2"></i>Mi Perfil de Empresa</h1>
+                        <p class="text-secondary small mb-0">Gestiona la información pública de tu empresa en EcoMóstoles.</p>
                     </div>
                 </div>
 
-                <!-- Right Column: Edit Form -->
-                <div class="col-lg-7">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body p-4 p-md-5">
-                            <h4 class="fw-bold mb-1"><i class="fas fa-building text-success me-2"></i>Información de Empresa</h4>
-                            <p class="text-muted small mb-4">Actualiza tus datos para que otras empresas puedan encontrarte.</p>
+                <div class="row g-4 justify-content-center">
 
-                            <form>
-                                <!-- Nombre Comercial -->
-                                <div class="mb-3">
-                                    <label for="nombreEmpresa" class="form-label fw-bold small text-uppercase text-secondary">Nombre Comercial</label>
-                                    <input type="text" class="form-control" id="nombreEmpresa" value="Metales del Sur S.L.">
+                    <!-- Left Column: Photo / Logo Upload -->
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center p-4">
+                                <!-- Avatar / Logo -->
+                                <div class="position-relative d-inline-block mb-4">
+                                    <img src="img/logo.webp" alt="Logo Metales del Sur" class="rounded-circle object-fit-cover shadow-sm mb-3" style="width: 160px; height: 160px; border: 4px solid #fff;">
                                 </div>
 
-                                <!-- Email y Teléfono (2 cols) -->
-                                <div class="row g-3 mb-3">
-                                    <div class="col-md-6">
-                                        <label for="emailContacto" class="form-label fw-bold small text-uppercase text-secondary">Email de Contacto</label>
-                                        <input type="email" class="form-control" id="emailContacto" value="contacto@metalesdelsur.com">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="telefono" class="form-label fw-bold small text-uppercase text-secondary">Teléfono</label>
-                                        <input type="tel" class="form-control" id="telefono" value="+34 91 234 56 78">
-                                    </div>
-                                </div>
+                                <h5 class="fw-bold mb-1">Metales del Sur S.L.</h5>
+                                <p class="text-muted small mb-4">Sector Metalúrgico &bull; Móstoles</p>
 
-                                <!-- Dirección -->
-                                <div class="mb-3">
-                                    <label for="direccion" class="form-label fw-bold small text-uppercase text-secondary">Dirección / Polígono</label>
-                                    <input type="text" class="form-control" id="direccion" value="Polígono Industrial Regordoño, Calle Principal 44, Móstoles">
-                                </div>
-
-                                <!-- Sector -->
-                                <div class="mb-3">
-                                    <label for="sector" class="form-label fw-bold small text-uppercase text-secondary">Sector Industrial</label>
-                                    <select class="form-select" id="sector">
-                                        <option value="metal" selected>Metalúrgico</option>
-                                        <option value="quimico">Químico</option>
-                                        <option value="madera">Madera y Mueble</option>
-                                        <option value="logistica">Logística y Transporte</option>
-                                        <option value="agro">Agroalimentario</option>
-                                        <option value="construccion">Construcción</option>
-                                    </select>
-                                </div>
-
-                                <!-- Descripción -->
-                                <div class="mb-4">
-                                    <label for="descripcion" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
-                                    <textarea class="form-control" id="descripcion" rows="4" placeholder="Escribe una breve descripción de tu actividad...">Empresa dedicada al mecanizado y tratamiento de metales industriales desde 1998. Especializados en acero, cobre y aluminio. Comprometidos con la economía circular y la gestión responsable de residuos metálicos.</textarea>
-                                </div>
+                                <!-- File Upload (Estilizado) -->
+                                <label for="logoUpload" class="btn btn-outline-success rounded-pill w-100 mb-3" style="cursor: pointer;">
+                                    <i class="fas fa-camera me-2"></i> Cambiar Logo / Foto
+                                </label>
+                                <input type="file" id="logoUpload" accept="image/*" class="d-none">
+                                <p class="text-muted small mb-0">JPG, PNG o SVG. Máx 2MB.</p>
 
                                 <hr class="my-4">
 
-                                <!-- Seguridad -->
-                                <h5 class="fw-bold mb-3"><i class="fas fa-lock text-muted me-2"></i>Seguridad</h5>
-                                <div class="row g-3 mb-4">
-                                    <div class="col-md-6">
-                                        <label for="password" class="form-label fw-bold small text-uppercase text-secondary">Nueva Contraseña</label>
-                                        <input type="password" class="form-control" id="password" placeholder="••••••••">
+                                <!-- Quick Info -->
+                                <div class="text-start">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="bg-success bg-opacity-10 p-2 rounded me-3">
+                                            <i class="fas fa-id-card text-success"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block">CIF / NIF</small>
+                                            <span class="fw-bold small">B-12345678</span>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label for="confirmPassword" class="form-label fw-bold small text-uppercase text-secondary">Confirmar Contraseña</label>
-                                        <input type="password" class="form-control" id="confirmPassword" placeholder="••••••••">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="bg-primary bg-opacity-10 p-2 rounded me-3">
+                                            <i class="fas fa-calendar-check text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block">Miembro desde</small>
+                                            <span class="fw-bold small">Enero 2024</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-warning bg-opacity-10 p-2 rounded me-3">
+                                            <i class="fas fa-star text-warning"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block">Valoración</small>
+                                            <span class="fw-bold small">4.8 / 5 <span class="text-muted">(12 reseñas)</span></span>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <!-- Submit -->
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <a href="dashboard.html" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i> Volver al Dashboard</a>
-                                    <button type="submit" class="btn btn-success px-5 py-2 fw-bold rounded-pill shadow-sm">
-                                        <i class="fas fa-save me-2"></i>Guardar Cambios
-                                    </button>
-                                </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Right Column: Edit Form -->
+                    <div class="col-lg-7">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-4 p-md-5">
+                                <h4 class="fw-bold mb-1"><i class="fas fa-building text-success me-2"></i>Información de Empresa</h4>
+                                <p class="text-muted small mb-4">Actualiza tus datos para que otras empresas puedan encontrarte.</p>
+
+                                <form>
+                                    <!-- Nombre Comercial -->
+                                    <div class="mb-3">
+                                        <label for="nombreEmpresa" class="form-label fw-bold small text-uppercase text-secondary">Nombre Comercial</label>
+                                        <input type="text" class="form-control" id="nombreEmpresa" value="Metales del Sur S.L.">
+                                    </div>
+
+                                    <!-- Email y Teléfono (2 cols) -->
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label for="emailContacto" class="form-label fw-bold small text-uppercase text-secondary">Email de Contacto</label>
+                                            <input type="email" class="form-control" id="emailContacto" value="contacto@metalesdelsur.com">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="telefono" class="form-label fw-bold small text-uppercase text-secondary">Teléfono</label>
+                                            <input type="tel" class="form-control" id="telefono" value="+34 91 234 56 78">
+                                        </div>
+                                    </div>
+
+                                    <!-- Dirección -->
+                                    <div class="mb-3">
+                                        <label for="direccion" class="form-label fw-bold small text-uppercase text-secondary">Dirección / Polígono</label>
+                                        <input type="text" class="form-control" id="direccion" value="Polígono Industrial Regordoño, Calle Principal 44, Móstoles">
+                                    </div>
+
+                                    <!-- Sector -->
+                                    <div class="mb-3">
+                                        <label for="sector" class="form-label fw-bold small text-uppercase text-secondary">Sector Industrial</label>
+                                        <select class="form-select" id="sector">
+                                            <option value="metal" selected>Metalúrgico</option>
+                                            <option value="quimico">Químico</option>
+                                            <option value="madera">Madera y Mueble</option>
+                                            <option value="logistica">Logística y Transporte</option>
+                                            <option value="agro">Agroalimentario</option>
+                                            <option value="construccion">Construcción</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Descripción -->
+                                    <div class="mb-4">
+                                        <label for="descripcion" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
+                                        <textarea class="form-control" id="descripcion" rows="4" placeholder="Escribe una breve descripción de tu actividad...">Empresa dedicada al mecanizado y tratamiento de metales industriales desde 1998. Especializados en acero, cobre y aluminio. Comprometidos con la economía circular y la gestión responsable de residuos metálicos.</textarea>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <!-- Seguridad -->
+                                    <h5 class="fw-bold mb-3"><i class="fas fa-lock text-muted me-2"></i>Seguridad</h5>
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <label for="password" class="form-label fw-bold small text-uppercase text-secondary">Nueva Contraseña</label>
+                                            <input type="password" class="form-control" id="password" placeholder="••••••••">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="confirmPassword" class="form-label fw-bold small text-uppercase text-secondary">Confirmar Contraseña</label>
+                                            <input type="password" class="form-control" id="confirmPassword" placeholder="••••••••">
+                                        </div>
+                                    </div>
+
+                                    <!-- Submit -->
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="dashboard.html" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i> Volver al Dashboard</a>
+                                        <button type="submit" class="btn btn-success px-5 py-2 fw-bold rounded-pill shadow-sm">
+                                            <i class="fas fa-save me-2"></i>Guardar Cambios
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
-            </div>
+            </main>
         </div>
-    </section>
+    </div>
 
     <!-- Footer — EXACT copy from index.html -->
     <footer class="bg-white border-top pt-5 pb-4 mt-auto">

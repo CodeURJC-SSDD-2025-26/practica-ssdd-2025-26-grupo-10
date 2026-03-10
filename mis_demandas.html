@@ -5,17 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
     <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular. Conecta ofertas de residuos y demandas de maquinaria en el ámbito local.">
-    <title>Editar Activo | EcoMóstoles</title>
+    <title>Mis Demandas | EcoMóstoles</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="css/styles.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg-theme-dark">
     <!-- Particles Background -->
-    <div id="particles-body" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
+    <div id="particles-body"></div>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
@@ -58,7 +60,6 @@
 
     <div class="container-fluid">
         <div class="row min-vh-100">
-            
             <!-- Sidebar -->
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
@@ -75,13 +76,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active text-success fw-bold" href="crear_activo.html">
+                            <a class="nav-link" href="crear_activo.html">
                                 <i class="fas fa-plus-circle me-2"></i> Publicar Oferta
                             </a>
                         </li>
                         <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Demandas</small></li>
                         <li class="nav-item">
-                            <a class="nav-link" href="mis_demandas.html">
+                            <a class="nav-link active text-success fw-bold" href="mis_demandas.html">
                                 <i class="fas fa-clipboard-list me-2"></i> Mis Demandas
                             </a>
                         </li>
@@ -102,77 +103,155 @@
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2 text-dark fw-bold">Editar Activo #REF-2024-001</h1>
+                
+                <!-- Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                    <div>
+                        <h1 class="h2 fw-bold text-dark"><i class="fas fa-clipboard-list text-success me-2"></i>Mis Demandas Publicadas</h1>
+                        <p class="text-secondary small mb-0">Gestiona las solicitudes de materiales que has publicado en el tablón.</p>
+                    </div>
                     <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="mis_activos.html" class="btn btn-sm btn-outline-secondary rounded-pill">
-                            <i class="fas fa-arrow-left me-1"></i> Cancelar
+                        <a href="crear_solicitud.html" class="btn btn-success rounded-pill shadow-sm text-nowrap">
+                            <i class="fas fa-plus me-2"></i> Nueva Demanda
                         </a>
                     </div>
                 </div>
 
-                <div class="card card-modern border-top-primary">
-                    <div class="card-body p-4">
-                        <form action="mis_activos.html" class="needs-validation" novalidate>
-                            <div class="row g-3">
-                                <div class="col-md-8">
-                                    <label for="titulo" class="form-label text-secondary fw-bold small text-uppercase">Título del Activo <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="titulo" value="Bobinas de Cobre (500kg)" required>
-                                    <div class="invalid-feedback">Por favor, completa este campo.</div>
+                <!-- Stats Summary -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="fas fa-check-circle text-success fa-lg"></i>
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="tipo" class="form-label text-secondary fw-bold small text-uppercase">Tipo <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="tipo" required>
-                                        <option value="residuo_metal" selected>Residuo: Metal</option>
-                                        <option value="residuo_madera">Residuo: Madera</option>
-                                        <option value="maquinaria">Alquiler Maquinaria</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="col-12">
-                                    <label for="descripcion" class="form-label text-secondary fw-bold small text-uppercase">Descripción Detallada <span class="text-danger">*</span></label>
-                                    <textarea class="form-control" id="descripcion" rows="4" required>Viruta limpia procedente de corte industrial. Libre de aceites y otros contaminantes. Lista para fundición.</textarea>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad / Unidad</label>
-                                    <input type="number" class="form-control" id="cantidad" value="500">
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="precio" class="form-label text-secondary fw-bold small text-uppercase">Precio (€)</label>
-                                    <input type="number" class="form-control" id="precio" value="1500" step="0.01" min="0">
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="estado" class="form-label text-secondary fw-bold small text-uppercase">Estado de la Oferta</label>
-                                    <select class="form-select" id="estado">
-                                        <option value="disponible" selected>Disponible</option>
-                                        <option value="reservado">Reservado</option>
-                                        <option value="vendido">Vendido / Alquilado</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12">
-                                    <label for="imagen" class="form-label text-secondary fw-bold small text-uppercase">Fotografía del Activo</label>
-                                    <div class="mb-2">
-                                        <small class="text-muted">Imagen actual:</small><br>
-                                        <img src="img/bobinas-cobre.webp" alt="Imagen actual de bobinas de cobre" class="img-thumbnail rounded object-fit-cover mt-2 mb-3 shadow-sm" style="width: 150px; height: 150px;">
-                                    </div>
-                                    <input class="form-control" type="file" id="imagen">
-                                </div>
-
-                                <div class="col-12 mt-4 d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary px-4 fw-bold">
-                                        <i class="fas fa-save me-2"></i> Guardar Cambios
-                                    </button>
+                                <div>
+                                    <small class="text-muted fw-bold text-uppercase">Activas</small>
+                                    <h4 class="fw-bold mb-0 text-dark">2</h4>
                                 </div>
                             </div>
-                        </form>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="fas fa-handshake text-primary fa-lg"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted fw-bold text-uppercase">Con Respuestas</small>
+                                    <h4 class="fw-bold mb-0 text-dark">1</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="bg-secondary bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="fas fa-archive text-secondary fa-lg"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted fw-bold text-uppercase">Cerradas</small>
+                                    <h4 class="fw-bold mb-0 text-dark">1</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="fas fa-paper-plane text-info fa-lg"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted fw-bold text-uppercase">Ofertas Recibidas</small>
+                                    <h4 class="fw-bold mb-0 text-dark">5</h4>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Demands Table -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <h5 class="fw-bold text-dark mb-0"><i class="fas fa-list me-2 text-success"></i>Listado de Mis Demandas</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4 text-secondary small text-uppercase">Demanda</th>
+                                        <th class="text-secondary small text-uppercase">Categoría</th>
+                                        <th class="text-secondary small text-uppercase">Cantidad</th>
+                                        <th class="text-secondary small text-uppercase">Urgencia</th>
+                                        <th class="text-secondary small text-uppercase">Estado</th>
+                                        <th class="text-secondary small text-uppercase text-end pe-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div>
+                                                <span class="fw-bold text-dark">Necesito Cobre Reciclado</span>
+                                                <br><small class="text-muted">Publicada el 21/02/2026</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i>Metal</span></td>
+                                        <td class="text-secondary">500 kg</td>
+                                        <td><span class="badge bg-warning text-dark rounded-pill">Media</span></td>
+                                        <td><span class="badge bg-success rounded-pill">Activa</span></td>
+                                        <td class="text-end pe-4">
+                                            <div class="d-flex gap-2 justify-content-end">
+                                                <a href="editar_solicitud.html" class="btn btn-sm btn-outline-primary rounded-pill px-3 text-nowrap"><i class="fas fa-edit me-1"></i>Editar</a>
+                                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3 text-nowrap"><i class="fas fa-trash-alt me-1"></i>Eliminar</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div>
+                                                <span class="fw-bold text-dark">Busco Retales de Chapa Inox</span>
+                                                <br><small class="text-muted">Publicada el 10/02/2026</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i>Metal</span></td>
+                                        <td class="text-secondary">200 kg</td>
+                                        <td><span class="badge bg-danger rounded-pill text-white">Alta</span></td>
+                                        <td><span class="badge bg-primary rounded-pill">Con ofertas</span></td>
+                                        <td class="text-end pe-4">
+                                            <div class="d-flex gap-2 justify-content-end">
+                                                <a href="editar_solicitud.html" class="btn btn-sm btn-outline-primary rounded-pill px-3 text-nowrap"><i class="fas fa-edit me-1"></i>Editar</a>
+                                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3 text-nowrap"><i class="fas fa-trash-alt me-1"></i>Eliminar</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="table-light">
+                                        <td class="ps-4">
+                                            <div>
+                                                <span class="fw-bold text-muted">Necesitaba Palés Europeos</span>
+                                                <br><small class="text-muted">Publicada el 05/01/2026</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i>Madera</span></td>
+                                        <td class="text-secondary">80 uds</td>
+                                        <td><span class="badge bg-secondary rounded-pill">Baja</span></td>
+                                        <td><span class="badge bg-secondary rounded-pill">Cerrada</span></td>
+                                        <td class="text-end pe-4">
+                                            <span class="text-muted small"><i class="fas fa-check-circle text-success me-1"></i>Resuelta</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </main>
         </div>
     </div>
-
 
     <!-- Footer -->
     <footer class="bg-white border-top pt-5 pb-4 mt-auto">
@@ -221,7 +300,8 @@
 
     <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Particles.js -->
+
+    <!-- Particles.js — inline config identical to index/dashboard -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script>
         particlesJS("particles-body", {
@@ -231,13 +311,26 @@
                 "shape": { "type": "circle" },
                 "opacity": { "value": 0.5, "random": false },
                 "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": "#198754", "opacity": 0.3, "width": 1 },
+                "line_linked": { 
+                    "enable": true, 
+                    "distance": 150, 
+                    "color": "#198754", 
+                    "opacity": 0.3,
+                    "width": 1 
+                },
                 "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
             },
             "interactivity": {
-                "detect_on": "window",
-                "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
-                "modes": { "repulse": { "distance": 150, "duration": 0.4 }, "push": { "particles_nb": 4 } }
+                "detect_on": "window", 
+                "events": {
+                    "onhover": { "enable": true, "mode": "repulse" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "repulse": { "distance": 150, "duration": 0.4 },
+                    "push": { "particles_nb": 4 }
+                }
             },
             "retina_detect": true
         });
@@ -245,22 +338,5 @@
     <script src="js/card-spotlight.js"></script>
     <!-- Auth Guard -->
     <script>if(localStorage.getItem('isLoggedIn')!=='true'){window.location.href='login.html';}</script>
-
-    <!-- Bootstrap Form Validation -->
-    <script>
-    (function () {
-        'use strict';
-        var forms = document.querySelectorAll('.needs-validation');
-        Array.prototype.slice.call(forms).forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
-    })();
-    </script>
 </body>
 </html>
