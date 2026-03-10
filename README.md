@@ -110,55 +110,65 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 |  3  |                                                   [Add custom navbar styles and button hover effects for improved interaction](URL_commit_3)                                                   | [Archivo3](URL_archivo_3) |
 |  4  |                                            [Update styles and enhance dashboard layout with improved navbar, sidebar, and KPI cards](URL_commit_4)                                             | [Archivo4](URL_archivo_4) |
 |  5  | [Refactor navigation and layout in dashboard, mensajes, mis_activos, mercado, and perfil_empresa pages; enhance user experience with consistent styling and improved structure.](URL_commit_5) | [Archivo5](URL_archivo_5) |
-|  6  |    [Refactor layout in crear_activo, dashboard, mensajes, and mis_activos pages for improved structure and user experience; adjust sidebar styling for better responsiveness](URL_commit_6)    | [Archivo4](URL_archivo_6) |
-|  7  |                             [Add admin_reportes page and update navigation links in admin_ofertas, admin_panel, and admin_usuarios for consistency](URL_commit_7)                              | [Archivo4](URL_archivo_7) |
+|  6  |    [Refactor layout in crear_activo, dashboard, mensajes, and mis_activos pages for improved structure and user experience; adjust sidebar styling for better responsiveness](URL_commit_6)    | [Archivo6](URL_archivo_6) |
+|  7  |                             [Add admin_reportes page and update navigation links in admin_ofertas, admin_panel, and admin_usuarios for consistency](URL_commit_7)                              | [Archivo7](URL_archivo_7) |
 |  8  |                                                        [Add edit demand page and my demands page with updated layout and functionality                                                         |
 
 - Created `editar_solicitud.html` for editing demand requests with form validation and Bootstrap styling.
 - Added `mis_demandas.html` to display user's published demands with statistics and action buttons. - Introduced a new favicon in SVG format for branding.
-  ](URL_commit_8) | [Archivo4](URL_archivo_8) |
+  ](URL_commit_8) | [Archivo8](URL_archivo_8) |
 
 ---
 
-#### **Alumno 2 - [Nombre Completo]**
+#### **Alumno 2 - [Daniel Nieto Díaz]**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
-| Nº  |               Commits                |           Files           |
-| :-: | :----------------------------------: | :-----------------------: |
-|  1  | [Descripción commit 1](URL_commit_1) | [Archivo1](URL_archivo_1) |
-|  2  | [Descripción commit 2](URL_commit_2) | [Archivo2](URL_archivo_2) |
-|  3  | [Descripción commit 3](URL_commit_3) | [Archivo3](URL_archivo_3) |
-|  4  | [Descripción commit 4](URL_commit_4) | [Archivo4](URL_archivo_4) |
-|  5  | [Descripción commit 5](URL_commit_5) | [Archivo5](URL_archivo_5) |
+| Nº  |                                                                                 Commits                                                                                 |           Files           |
+| :-: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------: |
+|  1  |                                                 [Add login and registration pages with Bootstrap styling](URL_commit_1)                                                 | [Archivo1](URL_archivo_1) |
+|  2  |                                    [Add mercado.html for offers display; include navigation, filters, and item cards](URL_commit_2)                                     | [Archivo2](URL_archivo_2) |
+|  3  |                                 [Refactor CSS styles for improved readability and organization; add comments for clarity](URL_commit_3)                                 | [Archivo3](URL_archivo_3) |
+|  4  |                                 [Enhance registration and login pages with new navbar, footer, and improved form layout](URL_commit_4)                                  | [Archivo4](URL_archivo_4) |
+|  5  |                          [Refactor CSS styles for improved organization and readability; fix spotlight effect on card component](URL_commit_5)                          | [Archivo5](URL_archivo_5) |
+|  6  | [Enhance detalle_activo.html with Bootstrap integration, improved layout, and new footer; update navbar and content structure for better user experience](URL_commit_6) | [Archivo6](URL_archivo_6) |
+|  7  |                         [Add consistent footer across dashboard, mensajes, and detalle_activo pages for improved user experience](URL_commit_7)                         | [Archivo7](URL_archivo_7) |
+|  8  |                             [Replace Twitter icon with SVG version and update styling for consistency across multiple pages](URL_commit_8)                              | [Archivo8](URL_archivo_8) |
+|  9  |                               [Add new image assets and update footer layout for improved consistency and user experience](URL_commit_9)                                | [Archivo9](URL_archivo_9) |
 
 ---
 
-#### **Alumno 3 - [Nombre Completo]**
+#### **Alumno 3 - [Alberto Sastre Zorrilla]**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
-| Nº  |               Commits                |           Files           |
-| :-: | :----------------------------------: | :-----------------------: |
-|  1  | [Descripción commit 1](URL_commit_1) | [Archivo1](URL_archivo_1) |
-|  2  | [Descripción commit 2](URL_commit_2) | [Archivo2](URL_archivo_2) |
-|  3  | [Descripción commit 3](URL_commit_3) | [Archivo3](URL_archivo_3) |
-|  4  | [Descripción commit 4](URL_commit_4) | [Archivo4](URL_archivo_4) |
-|  5  | [Descripción commit 5](URL_commit_5) | [Archivo5](URL_archivo_5) |
+| Nº  |                                                                          Commits                                                                          |           Files           |
+| :-: | :-------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------: |
+|  1  |                                      [Add index.html with initial structure and Bootstrap integration](URL_commit_1)                                      | [Archivo1](URL_archivo_1) |
+|  2  |              [Add dashboard.html with initial layout and sidebar navigation; update styles.css for button and sidebar styles](URL_commit_2)               | [Archivo2](URL_archivo_2) |
+|  3  |                       [Add detalle_activo.html for offer details display; include navbar, image, and contact button](URL_commit_3)                        | [Archivo3](URL_archivo_3) |
+|  4  |                                   [Add spotlight effect to card component with dynamic hover interaction](URL_commit_4)                                   | [Archivo4](URL_archivo_4) |
+|  5  |                 [Update styles and finalize layout adjustments in CSS and HTML; enhance particle effects and clean up code](URL_commit_5)                 | [Archivo5](URL_archivo_5) |
+|  6  |                              [Refactor perfil_empresa.html and registro.html for improved layout and styling](URL_commit_6)                               | [Archivo6](URL_archivo_6) |
+|  7  | [ Refactor mensajes.html and crear_activo.html for improved layout and user experience; integrate particles.js for enhanced visual effects](URL_commit_7) | [Archivo7](URL_archivo_7) |
+|  8  |      [Add admin_ofertas and admin_usuarios pages with updated layout and styling; integrate particles.js for enhanced visual effects](URL_commit_8)       | [Archivo8](URL_archivo_8) |
 
 ---
 
-#### **Alumno 4 - [Nombre Completo]**
+#### **Alumno 4 - [Javier de la Casa Muñoz]**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
-| Nº  |               Commits                |           Files           |
-| :-: | :----------------------------------: | :-----------------------: |
-|  1  | [Descripción commit 1](URL_commit_1) | [Archivo1](URL_archivo_1) |
-|  2  | [Descripción commit 2](URL_commit_2) | [Archivo2](URL_archivo_2) |
-|  3  | [Descripción commit 3](URL_commit_3) | [Archivo3](URL_archivo_3) |
-|  4  | [Descripción commit 4](URL_commit_4) | [Archivo4](URL_archivo_4) |
-|  5  | [Descripción commit 5](URL_commit_5) | [Archivo5](URL_archivo_5) |
+| Nº  |                                                                                         Commits                                                                                         |           Files           |
+| :-: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------: |
+|  1  |                                                 [Add navbar and hero section to index.html; enhance styles in styles.css](URL_commit_1)                                                 | [Archivo1](URL_archivo_1) |
+|  2  |                                       [Add crear_activo.html for asset publication; include form for asset details and navigation](URL_commit_2)                                        | [Archivo2](URL_archivo_2) |
+|  3  |                                                  [Add particle effects to index.html and create particles configuration](URL_commit_3)                                                  | [Archivo3](URL_archivo_3) |
+|  4  |                               [Refactor login and registration pages for improved layout and styling; add navigation and footer components](URL_commit_4)                               | [Archivo4](URL_archivo_4) |
+|  5  |                                   [Add admin panel, create asset, and edit asset pages with Bootstrap integration and enhanced layouts](URL_commit_5)                                   | [Archivo5](URL_archivo_5) |
+|  6  |                                                    [Refactor navigation and authentication flow across multiple pages](URL_commit_6)                                                    | [Archivo6](URL_archivo_6) |
+|  7  | [Refactor detalle_activo and editar_activo pages for improved layout and user experience; update background theme and integrate particles.js for enhanced visual effects](URL_commit_7) | [Archivo7](URL_archivo_7) |
+|  8  |                    [ Update UI elements across multiple admin pages for consistency; replace initials with logo image and enhance button interactions](URL_commit_8)                    | [Archivo8](URL_archivo_8) |
 
 ---
 
