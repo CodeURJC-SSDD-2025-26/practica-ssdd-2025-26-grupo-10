@@ -115,7 +115,7 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 |  8  |                                                        [Add edit demand page and my demands page with updated layout and functionality                                                         |
 
 - Created `editar_solicitud.html` for editing demand requests with form validation and Bootstrap styling.
-- Added `mis_demandas.html` to display user's published demands with statistics and action buttons. - Introduced a new favicon in SVG format for branding.
+- Added `mis_demandas.html` to display user's published demands with statistics and action buttons. - Introduced a new favicon in SVG format for branding. |
   ](URL_commit_8) | [Archivo8](URL_archivo_8) |
 
 ---
