@@ -74,6 +74,7 @@ El núcleo inteligente de la aplicación será un Sistema de "Matching" Industri
 
 - **Algoritmo/Consulta**: Emparejamiento proactivo de Oferta y Demanda.
 - **Descripción**: El sistema analiza periódicamente las nuevas Solicitudes (Demandas) y las compara con los Activos (Ofertas) disponibles. Es decir, calcularáun "Índice de Compatibilidad" ponderando: Coincidencia de material/subcategoría, volumen requerido vs disponible (con un margen del 10%) y proximidad geográfica (priorizando mismo polígono). Y como resultado, sugiere las mejores oportunidades de negocio ordenadas por compatibilidad.
+
 ---
 
 ## 🛠 **Práctica 1: Maquetación de páginas web con HTML y CSS**
@@ -98,17 +99,24 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 
 ### **Participación de Miembros en la Práctica 1**
 
-#### **Alumno 1 - [Nombre Completo]**
+#### **Alumno 1 - [Guillermo Domínguez Galindo]**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
-| Nº  |               Commits                |           Files           |
-| :-: | :----------------------------------: | :-----------------------: |
-|  1  | [Descripción commit 1](URL_commit_1) | [Archivo1](URL_archivo_1) |
-|  2  | [Descripción commit 2](URL_commit_2) | [Archivo2](URL_archivo_2) |
-|  3  | [Descripción commit 3](URL_commit_3) | [Archivo3](URL_archivo_3) |
-|  4  | [Descripción commit 4](URL_commit_4) | [Archivo4](URL_archivo_4) |
-|  5  | [Descripción commit 5](URL_commit_5) | [Archivo5](URL_archivo_5) |
+| Nº  |                                                                                            Commits                                                                                             |           Files           |
+| :-: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------: |
+|  1  |                                     [Add mis_activos.html with layout for asset management; include navbar, sidebar, and table for offers.](URL_commit_1)                                      | [Archivo1](URL_archivo_1) |
+|  2  |                                                        [Add particles.js library for dynamic particle effects on canvas](URL_commit_2)                                                         | [Archivo2](URL_archivo_2) |
+|  3  |                                                   [Add custom navbar styles and button hover effects for improved interaction](URL_commit_3)                                                   | [Archivo3](URL_archivo_3) |
+|  4  |                                            [Update styles and enhance dashboard layout with improved navbar, sidebar, and KPI cards](URL_commit_4)                                             | [Archivo4](URL_archivo_4) |
+|  5  | [Refactor navigation and layout in dashboard, mensajes, mis_activos, mercado, and perfil_empresa pages; enhance user experience with consistent styling and improved structure.](URL_commit_5) | [Archivo5](URL_archivo_5) |
+|  6  |    [Refactor layout in crear_activo, dashboard, mensajes, and mis_activos pages for improved structure and user experience; adjust sidebar styling for better responsiveness](URL_commit_6)    | [Archivo4](URL_archivo_6) |
+|  7  |                             [Add admin_reportes page and update navigation links in admin_ofertas, admin_panel, and admin_usuarios for consistency](URL_commit_7)                              | [Archivo4](URL_archivo_7) |
+|  8  |                                                        [Add edit demand page and my demands page with updated layout and functionality                                                         |
+
+- Created `editar_solicitud.html` for editing demand requests with form validation and Bootstrap styling.
+- Added `mis_demandas.html` to display user's published demands with statistics and action buttons. - Introduced a new favicon in SVG format for branding.
+  ](URL_commit_8) | [Archivo4](URL_archivo_8) |
 
 ---
 
