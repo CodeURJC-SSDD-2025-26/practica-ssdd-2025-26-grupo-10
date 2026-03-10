@@ -2,12 +2,12 @@
 
 ## 👥 Miembros del Equipo
 
-| Nombre y Apellidos | Correo URJC                        | Usuario GitHub |
-| :----------------- | :--------------------------------- | :------------- |
-| [Guillermo]        | [g.dominguez.2022@alumnos.urjc.es] | [User1]        |
-| [Daniel]           | [d.nieto.2021@alumnos.urjc es]     | [User2]        |
-| [Alberto]          | [a.sastre.2022@alumnos.urjc.es]    | [User3]        |
-| [Javier]           | [j.delacasa.2022@alumnos.urjc es]  | [User4]        |
+| Nombre y Apellidos | Correo URJC                        | Usuario GitHub    |
+| :----------------- | :--------------------------------- | :---------------- |
+| [Guillermo]        | [g.dominguez.2022@alumnos.urjc.es] | [Guilledgg06]     |
+| [Daniel]           | [d.nieto.2021@alumnos.urjc es]     | [nietodiazdaniel] |
+| [Alberto]          | [a.sastre.2022@alumnos.urjc.es]    | [ASastre03]       |
+| [Javier]           | [j.delacasa.2022@alumnos.urjc es]  | [Javi1014]        |
 
 ---
 
