@@ -85,7 +85,11 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 
 ![Diagrama de Navegación](images/navigation-diagram.png)
 
-> [Descripción opcional del flujo de navegación: Ej: "El usuario puede acceder desde la página principal a todas las secciones mediante el menú de navegación. Los usuarios anónimos solo tienen acceso a las páginas públicas, mientras que los registrados pueden acceder a su perfil y panel de usuario."]
+> [El ecosistema digital de EcoMóstoles se organiza en tres grandes áreas interconectadas que facilitan la simbiosis industrial. Todo comienza en la zona pública, donde las empresas pueden conocer la plataforma a través del inicio, registrarse mediante un formulario especializado o acceder con sus credenciales. Una vez dentro, el usuario aterriza en un panel de control central que actúa como el núcleo de navegación, permitiéndole gestionar su perfil corporativo y visualizar KPIs clave.
+
+Desde este centro operativo, la navegación se ramifica hacia la gestión de recursos. Por un lado, existe un flujo dedicado a las Ofertas, donde la empresa puede explorar el mercado general, gestionar sus propios activos (residuos o maquinaria) y utilizar formularios para publicar o editar sus anuncios. Por otro lado, el flujo de Demandas permite consultar lo que otros necesitan y administrar las solicitudes de búsqueda propias.
+
+Finalmente, el diagrama converge en la formalización del negocio. Cuando hay interés por un material, la navegación fluye hacia un sistema de mensajería interna para la negociación directa. Si la operación tiene éxito, el usuario accede al módulo de Acuerdos, donde se archiva el historial de transacciones, se registran nuevos pactos y se descargan los albaranes correspondientes que garantizan la trazabilidad del proceso.]
 
 ### **Capturas de Pantalla y Descripción de Páginas**
 
