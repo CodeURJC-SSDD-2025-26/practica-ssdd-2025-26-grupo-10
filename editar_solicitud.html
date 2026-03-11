@@ -1,9 +1,10 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head></head><body class="bg-theme-dark">﻿
+
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
     <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular. Conecta ofertas de residuos y demandas de maquinaria en el ámbito local.">
     <title>Editar Demanda | EcoMóstoles</title>
     <!-- Bootstrap 5 CSS -->
@@ -12,10 +13,11 @@
     <link href="css/styles.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="bg-theme-dark">
+
+
+
     <!-- Particles Background -->
-    <div id="particles-body" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
+    <div id="particles-body"></div>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
@@ -23,7 +25,7 @@
             <a class="navbar-brand" href="dashboard.html">
                 <i class="fas fa-recycle me-2"></i>EcoMóstoles
             </a>
-                        <button class="navbar-toggler d-md-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle sidebar"><span class="navbar-toggler-icon"></span></button>
+            <button class="navbar-toggler d-md-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle sidebar"><span class="navbar-toggler-icon"></span></button>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -36,18 +38,23 @@
                         <a class="nav-link" href="solicitudes.html"><i class="fas fa-bullhorn me-1"></i> Demandas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
+                        <a class="nav-link active" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i>
+                            Panel de Control</a>
                     </li>
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <img src="img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2" style="width: 35px; height: 35px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <img src="img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
                             <span>Metales del Sur S.L.</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2" style="border-radius: 12px;">
-                            <li><h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6></li>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 dropdown-rounded">
+                            <li>
+                                <h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6>
+                            </li>
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item rounded text-danger" href="#" onclick="localStorage.removeItem('isLoggedIn'); window.location.href='index.html';"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
                         </ul>
                     </li>
@@ -58,7 +65,7 @@
 
     <div class="container-fluid">
         <div class="row min-vh-100">
-            
+
             <!-- Sidebar -->
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
@@ -68,7 +75,8 @@
                                 <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                             </a>
                         </li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Ofertas</small></li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="mis_activos.html">
                                 <i class="fas fa-box me-2"></i> Mis Ofertas
@@ -79,7 +87,8 @@
                                 <i class="fas fa-plus-circle me-2"></i> Publicar Oferta
                             </a>
                         </li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Demandas</small></li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="mis_demandas.html">
                                 <i class="fas fa-clipboard-list me-2"></i> Mis Demandas
@@ -90,7 +99,22 @@
                                 <i class="fas fa-plus-circle me-2"></i> Publicar Demanda
                             </a>
                         </li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Comunicación</small></li>
+                        <li class="nav-item mt-3">
+                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+                                <span>Acuerdos</span>
+                            </h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark link-mis-acuerdos" href="mis_acuerdos.html">
+                                <i class="fas fa-handshake me-2"></i> Mis Acuerdos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark link-crear-acuerdo" href="crear_acuerdo.html">
+                                <i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo
+                            </a>
+                        </li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
                         <li class="nav-item">
                             <a class="nav-link" href="mensajes.html">
                                 <i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">2</span>
@@ -103,7 +127,8 @@
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2 text-dark fw-bold"><i class="fas fa-edit text-primary me-2"></i>Editar Demanda <span class="text-muted fs-6">#REQ-2026-001</span></h1>
+                    <h1 class="h2 text-dark fw-bold">Editar Demanda <span class="text-muted fs-6">#REQ-2026-001</span>
+                    </h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <a href="solicitudes.html" class="btn btn-sm btn-outline-secondary rounded-pill">
                             <i class="fas fa-arrow-left me-1"></i> Cancelar
@@ -113,18 +138,20 @@
 
                 <div class="card card-modern border-top-primary">
                     <div class="card-body p-4">
-                        <form action="solicitudes.html" class="needs-validation" novalidate>
+                        <form action="solicitudes.html" class="needs-validation" novalidate="">
                             <div class="row g-3">
                                 <div class="col-md-8">
-                                    <label for="titulo" class="form-label text-secondary fw-bold small text-uppercase">Título de lo que buscas <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="titulo" value="Necesito Cobre Reciclado" required>
+                                    <label for="titulo" class="form-label text-secondary fw-bold small text-uppercase">Título de lo que
+                                        buscas <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="titulo" value="Necesito Cobre Reciclado" required="">
                                     <div class="invalid-feedback">Por favor, completa este campo.</div>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="categoria" class="form-label text-secondary fw-bold small text-uppercase">Categoría del Material <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="categoria" required>
-                                        <option value="" disabled>Seleccionar...</option>
-                                        <option value="metal" selected>Metal</option>
+                                    <label for="categoria" class="form-label text-secondary fw-bold small text-uppercase">Categoría del
+                                        Material <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="categoria" required="">
+                                        <option value="" disabled="">Seleccionar...</option>
+                                        <option value="metal" selected="">Metal</option>
                                         <option value="madera">Madera</option>
                                         <option value="plastico">Plástico</option>
                                         <option value="quimico">Químico</option>
@@ -133,64 +160,68 @@
                                         <option value="otro">Otro</option>
                                     </select>
                                 </div>
-                                
+
                                 <div class="col-12">
-                                    <label for="descripcion" class="form-label text-secondary fw-bold small text-uppercase">Descripción detallada de tu necesidad <span class="text-danger">*</span></label>
-                                    <textarea class="form-control" id="descripcion" rows="4" required>Buscamos lotes de cobre reciclado (cable pelado o granalla) para fundición de piezas industriales. Mínimo pureza 95%. Preferimos recogida en nuestras instalaciones del Pol. Regordoño.</textarea>
+                                    <label for="descripcion" class="form-label text-secondary fw-bold small text-uppercase">Descripción
+                                        detallada de tu necesidad <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="descripcion" rows="4" required="">Buscamos lotes de cobre reciclado (cable pelado o granalla) para fundición de piezas industriales. Mínimo pureza 95%. Preferimos recogida en nuestras instalaciones del Pol. Regordoño.</textarea>
                                 </div>
 
                                 <div class="col-md-4">
-                                    <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad requerida</label>
+                                    <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad y Unidad
+                                        <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="cantidad" value="500" min="0">
-                                        <select class="form-select" id="unidadMedida" style="max-width: 120px;" aria-label="Seleccionar unidad de medida">
-                                            <option value="kg" selected>kg</option>
+                                        <input type="number" class="form-control" id="cantidad" value="500" min="0" required="">
+                                        <select class="form-select" id="unidadMedida" required="">
+                                            <option value="kg" selected="">kg</option>
                                             <option value="uds">unidades</option>
                                             <option value="L">litros</option>
                                             <option value="t">toneladas</option>
                                             <option value="m2">m²</option>
                                         </select>
                                     </div>
+                                    <div class="invalid-feedback">Indica la cantidad.</div>
                                 </div>
+
                                 <div class="col-md-4">
                                     <label for="urgencia" class="form-label text-secondary fw-bold small text-uppercase">Urgencia <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="urgencia" required>
-                                        <option value="" disabled>Seleccionar...</option>
+                                    <select class="form-select" id="urgencia" required="">
+                                        <option value="" disabled="">Seleccionar...</option>
                                         <option value="alta">🔴 Alta — Lo necesito esta semana</option>
-                                        <option value="media" selected>🟡 Media — En las próximas 2-4 semanas</option>
+                                        <option value="media" selected="">🟡 Media — En las próximas 2-4 semanas</option>
                                         <option value="baja">🟢 Baja — Sin prisa, cuando surja</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="presupuesto" class="form-label text-secondary fw-bold small text-uppercase">Presupuesto máximo (€)</label>
+                                    <label for="presupuesto" class="form-label text-secondary fw-bold small text-uppercase">Presupuesto
+                                        máximo (€)</label>
                                     <input type="number" class="form-control" id="presupuesto" value="3000" step="0.01" min="0">
                                     <div class="form-text">Pon 0 si buscas material gratis.</div>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="zona" class="form-label text-secondary fw-bold small text-uppercase">Zona preferida de recogida</label>
+                                    <label for="zona" class="form-label text-secondary fw-bold small text-uppercase">Zona preferida de
+                                        recogida</label>
                                     <select class="form-select" id="zona">
                                         <option value="cualquiera">Cualquier zona</option>
-                                        <option value="regordono" selected>Pol. Regordoño</option>
+                                        <option value="regordono" selected="">Pol. Regordoño</option>
                                         <option value="nieves">Pol. Las Nieves</option>
                                         <option value="arroyomolinos">Arroyomolinos</option>
                                         <option value="mostoles">Móstoles centro</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="vigencia" class="form-label text-secondary fw-bold small text-uppercase">Vigencia de la demanda</label>
+                                    <label for="vigencia" class="form-label text-secondary fw-bold small text-uppercase">Vigencia de la
+                                        demanda</label>
                                     <select class="form-select" id="vigencia">
                                         <option value="7">7 días</option>
                                         <option value="15">15 días</option>
-                                        <option value="30" selected>30 días</option>
+                                        <option value="30" selected="">30 días</option>
                                         <option value="60">60 días</option>
                                     </select>
                                 </div>
 
                                 <div class="col-12 mt-4 d-flex justify-content-end gap-2">
-                                    <a href="solicitudes.html" class="btn btn-outline-secondary px-4 rounded-pill">
-                                        <i class="fas fa-times me-2"></i>Descartar
-                                    </a>
                                     <button type="submit" class="btn btn-primary px-4 fw-bold rounded-pill">
                                         <i class="fas fa-save me-2"></i> Guardar Cambios
                                     </button>
@@ -206,104 +237,64 @@
 
     <!-- Footer -->
     <footer class="bg-white border-top pt-5 pb-4 mt-auto">
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                <h5 class="fw-bold text-dark mb-3"><i class="fas fa-recycle text-success me-2"></i>EcoMóstoles</h5>
-                <p class="text-muted small pe-4">Plataforma B2B de Simbiosis Industrial y Economía Circular. Transformando los residuos de hoy en los recursos del mañana para el tejido empresarial local.</p>
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="fw-bold text-dark mb-3"><i class="fas fa-recycle text-success me-2"></i>EcoMóstoles</h5>
+                    <p class="text-muted small pe-4">Plataforma B2B de Simbiosis Industrial y Economía Circular.
+                        Transformando los residuos de hoy en los recursos del mañana para el tejido empresarial local.
+                    </p>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <h6 class="fw-bold text-dark mb-3">Plataforma</h6>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><a href="mercado.html" class="text-muted text-decoration-none text-hover-success">Mercado de Ofertas</a></li>
+                        <li class="mb-2"><a href="dashboard.html" class="text-muted text-decoration-none text-hover-success">Panel de Control</a></li>
+                        <li class="mb-2"><a href="crear_activo.html" class="text-muted text-decoration-none text-hover-success">Publicar Activo</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-4 col-md-12">
+                    <h6 class="fw-bold text-dark mb-3">Legal y Soporte</h6>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none text-hover-success">Aviso
+                                Legal y Privacidad</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none text-hover-success">Política
+                                de Cookies</a></li>
+                        <li class="mb-2"><a href="mailto:soporte@ecomostoles.com" class="text-muted text-decoration-none text-hover-success"><i class="fas fa-envelope me-2"></i>soporte@ecomostoles.com</a></li>
+                    </ul>
+                </div>
             </div>
-            
-            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                <h6 class="fw-bold text-dark mb-3">Plataforma</h6>
-                <ul class="list-unstyled text-muted small">
-                    <li class="mb-2"><a href="mercado.html" class="text-muted text-decoration-none text-hover-success">Mercado de Ofertas</a></li>
-                    <li class="mb-2"><a href="dashboard.html" class="text-muted text-decoration-none text-hover-success">Panel de Control</a></li>
-                    <li class="mb-2"><a href="crear_activo.html" class="text-muted text-decoration-none text-hover-success">Publicar Activo</a></li>
-                </ul>
-            </div>
-            
-            <div class="col-lg-4 col-md-12">
-                <h6 class="fw-bold text-dark mb-3">Legal y Soporte</h6>
-                <ul class="list-unstyled text-muted small">
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none text-hover-success">Aviso Legal y Privacidad</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none text-hover-success">Política de Cookies</a></li>
-                    <li class="mb-2"><a href="mailto:soporte@ecomostoles.com" class="text-muted text-decoration-none text-hover-success"><i class="fas fa-envelope me-2"></i>soporte@ecomostoles.com</a></li>
-                </ul>
+
+            <div class="row align-items-center border-top pt-4">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <span class="text-muted small">© 2026 EcoMóstoles. Todos los derechos reservados.</span>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="#" class="text-secondary me-3 text-decoration-none"><i class="fab fa-linkedin fs-5"></i></a>
+                    <a href="#" class="text-secondary me-3 text-decoration-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-twitter-x mb-1" viewBox="0 0 16 16">
+                            <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-secondary text-decoration-none"><i class="fas fa-envelope fs-5"></i></a>
+                </div>
             </div>
         </div>
-        
-        <div class="row align-items-center border-top pt-4">
-            <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                <span class="text-muted small">© 2026 EcoMóstoles. Todos los derechos reservados.</span>
-            </div>
-            <div class="col-md-6 text-center text-md-end">
-                <a href="#" class="text-secondary me-3 text-decoration-none"><i class="fab fa-linkedin fs-5"></i></a>
-                <a href="#" class="text-secondary me-3 text-decoration-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-twitter-x mb-1" viewBox="0 0 16 16">
-                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/>
-                    </svg>
-                </a>
-                <a href="#" class="text-secondary text-decoration-none"><i class="fas fa-envelope fs-5"></i></a>
-            </div>
-        </div>
-    </div>
-</footer>
+    </footer>
 
     <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Particles.js — inline config -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script>
-        particlesJS("particles-body", {
-            "particles": {
-                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#198754" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5, "random": false },
-                "size": { "value": 3, "random": true },
-                "line_linked": { 
-                    "enable": true, 
-                    "distance": 150, 
-                    "color": "#198754", 
-                    "opacity": 0.3,
-                    "width": 1 
-                },
-                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
-            },
-            "interactivity": {
-                "detect_on": "window", 
-                "events": {
-                    "onhover": { "enable": true, "mode": "repulse" },
-                    "onclick": { "enable": true, "mode": "push" },
-                    "resize": true
-                },
-                "modes": {
-                    "repulse": { "distance": 150, "duration": 0.4 },
-                    "push": { "particles_nb": 4 }
-                }
-            },
-            "retina_detect": true
-        });
-    </script>
+    <script src="js/particles-init.js"></script>
     <script src="js/card-spotlight.js"></script>
     <!-- Auth Guard -->
-    <script>if(localStorage.getItem('isLoggedIn')!=='true'){window.location.href='login.html';}</script>
+    <script src="js/auth-guard.js"></script>
 
     <!-- Bootstrap Form Validation -->
-    <script>
-    (function () {
-        'use strict';
-        var forms = document.querySelectorAll('.needs-validation');
-        Array.prototype.slice.call(forms).forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
-    })();
-    </script>
-</body>
-</html>
+    <script src="js/form-validation.js"></script>
+
+
+</body></html>

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head></head><body class="bg-theme-dark">﻿
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
     <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular. Conecta ofertas de residuos y demandas de maquinaria en el ámbito local.">
     <title>Mercado de Residuos | EcoMóstoles</title>
     <!-- Bootstrap 5 CSS -->
@@ -12,8 +12,8 @@
     <link href="css/styles.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="bg-theme-dark">
+
+
     <!-- Particles: Body (Fixed Background) — identical to index.html -->
     <div id="particles-body"></div>
 
@@ -39,10 +39,10 @@
                     </li>
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <img src="img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2" style="width: 35px; height: 35px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <img src="img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
                             <span>Metales del Sur S.L.</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2" style="border-radius: 12px;">
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 dropdown-rounded">
                             <li><h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6></li>
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
@@ -55,16 +55,27 @@
         </div>
     </nav>
 
-    <!-- Filters Section -->
-    <section class="bg-white border-bottom py-4 position-relative" style="padding-top: 100px; z-index: 1;">
+    <!-- Header & Filters -->
+    <div class="bg-white shadow-sm border-bottom mb-4 py-4 position-relative filter-bar-z">
         <div class="container">
+            <div class="row align-items-center mb-4">
+                <div class="col-md-8">
+                    <h1 class="h2 fw-bold text-dark mb-1"><i class="fas fa-store text-success me-2"></i> Mercado de Residuos</h1>
+                    <p class="text-muted mb-0">Encuentra materiales disponibles de otras empresas o publica tu propia oferta</p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="crear_activo.html" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
+                        <i class="fas fa-plus me-2"></i>Publicar Nueva Oferta
+                    </a>
+                </div>
+            </div>
             <div class="row g-3">
                 <div class="col-md-4">
-                    <input type="text" class="form-control" id="buscarOferta" placeholder="Buscar residuo o maquinaria..." aria-label="Buscar oferta">
+                    <input type="text" class="form-control" id="buscarOferta" placeholder="Buscar oferta..." aria-label="Buscar oferta">
                 </div>
                 <div class="col-md-3">
                     <select class="form-select" id="filtroTipo" aria-label="Filtrar por tipo de material">
-                        <option selected>Todos los Tipos</option>
+                        <option selected="">Todos los Tipos</option>
                         <option>Metales</option>
                         <option>Plásticos</option>
                         <option>Madera</option>
@@ -73,7 +84,7 @@
                 </div>
                 <div class="col-md-3">
                     <select class="form-select" id="filtroPoligono" aria-label="Filtrar por polígono industrial">
-                        <option selected>Todos los Polígonos</option>
+                        <option selected="">Todos los Polígonos</option>
                         <option>Regordoño</option>
                         <option>Arroyomolinos</option>
                         <option>Las Nieves</option>
@@ -84,23 +95,23 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Offers Grid — card structure identical to index.html -->
+    <!-- Offers Grid -->
     <section class="py-5">
         <div class="container">
-            <h1 class="h2 text-center mb-5 text-uppercase fw-bold text-secondary">Todas las Ofertas Disponibles</h1>
             <div class="row g-4">
                 
                 <!-- Card 1 -->
                 <div class="col-md-4">
                     <div class="card h-100 border-top-success">
-                        <img src="img/virutas.webp" class="card-img-top w-100" style="height: 220px; object-fit: cover;" alt="Viruta de Acero">
+                        <img src="img/virutas.webp" class="card-img-top card-img-uniform" alt="Viruta de Acero">
                         <div class="card-body">
                             <h5 class="card-title fw-bold">Viruta de Acero (500kg)</h5>
                             <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> Metales del Sur S.L.</p>
                             <span class="badge bg-success mb-2">Residuo Metálico</span>
                             <p class="card-text mt-2">Excelente calidad para fundición. Disponible para recogida inmediata.</p>
+                            <h5 class="text-success fw-bold mt-3 mb-0">€ 1.200</h5>
                             <div class="d-grid mt-3">
                                 <a href="detalle_activo.html" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
                             </div>
@@ -111,12 +122,13 @@
                 <!-- Card 2 -->
                 <div class="col-md-4">
                     <div class="card h-100 border-top-primary">
-                         <img src="img/montacargas.webp" class="card-img-top w-100" style="height: 220px; object-fit: cover;" alt="Montacargas">
+                         <img src="img/montacargas.webp" class="card-img-top card-img-uniform" alt="Montacargas">
                         <div class="card-body">
                             <h5 class="card-title fw-bold">Alquiler Montacargas 2T</h5>
                             <p class="card-text text-muted small"><i class="fas fa-warehouse me-1"></i> Logística Móstoles S.A.</p>
                             <span class="badge bg-primary mb-2">Maquinaria</span>
                             <p class="card-text mt-2">Disponible por días o semanas. Incluye seguro.</p>
+                            <h5 class="text-success fw-bold mt-3 mb-0">€ 150/día</h5>
                             <div class="d-grid mt-3">
                                 <a href="detalle_activo.html" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
                             </div>
@@ -127,12 +139,13 @@
                 <!-- Card 3 -->
                 <div class="col-md-4">
                     <div class="card h-100 border-top-warning">
-                        <img src="img/palés.webp" class="card-img-top w-100" style="height: 220px; object-fit: cover;" alt="Palets Madera">
+                        <img src="img/palés.webp" class="card-img-top card-img-uniform" alt="Palets Madera">
                         <div class="card-body">
                             <h5 class="card-title fw-bold">Palets de Madera (x200)</h5>
                             <p class="card-text text-muted small"><i class="fas fa-building me-1"></i> Muebles García</p>
                             <span class="badge bg-warning text-dark mb-2">Residuo Madera</span>
                             <p class="card-text mt-2">Palets usados en buen estado. Se regalan.</p>
+                            <h5 class="text-success fw-bold mt-3 mb-0">Gratis</h5>
                             <div class="d-grid mt-3">
                                 <a href="detalle_activo.html" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
                             </div>
@@ -143,12 +156,13 @@
                 <!-- Card 4 -->
                 <div class="col-md-4">
                     <div class="card h-100 border-top-danger">
-                        <img src="img/aceite-industrial.webp" class="card-img-top w-100" style="height: 220px; object-fit: cover;" alt="Aceite Usado">
+                        <img src="img/aceite-industrial.webp" class="card-img-top card-img-uniform" alt="Aceite Usado">
                         <div class="card-body">
                             <h5 class="card-title fw-bold">Aceite Industrial (200L)</h5>
                             <p class="card-text text-muted small"><i class="fas fa-cogs me-1"></i> Talleres Pepe</p>
                             <span class="badge bg-danger mb-2">Residuo Peligroso</span>
                             <p class="card-text mt-2">Aceite quemado de motor. Solo gestores autorizados.</p>
+                            <h5 class="text-success fw-bold mt-3 mb-0">€ 80</h5>
                             <div class="d-grid mt-3">
                                 <a href="detalle_activo.html" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
                             </div>
@@ -159,12 +173,13 @@
                 <!-- Card 5 -->
                 <div class="col-md-4">
                     <div class="card h-100 border-top-info">
-                        <img src="img/retales-pvc.webp" class="card-img-top w-100" style="height: 220px; object-fit: cover;" alt="Retales Plástico">
+                        <img src="img/retales-pvc.webp" class="card-img-top card-img-uniform" alt="Retales Plástico">
                         <div class="card-body">
                             <h5 class="card-title fw-bold">Retales de PVC</h5>
                             <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> Plásticos Móstoles</p>
                             <span class="badge bg-info text-dark mb-2">Residuo Plástico</span>
                             <p class="card-text mt-2">Recortes de producción limpios. Color blanco.</p>
+                            <h5 class="text-success fw-bold mt-3 mb-0">Gratis</h5>
                             <div class="d-grid mt-3">
                                 <a href="detalle_activo.html" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
                             </div>
@@ -175,12 +190,13 @@
                  <!-- Card 6 -->
                  <div class="col-md-4">
                     <div class="card h-100 border-top-secondary">
-                        <img src="img/nave.webp" class="card-img-top w-100" style="height: 220px; object-fit: cover;" alt="Nave Industrial">
+                        <img src="img/nave.webp" class="card-img-top card-img-uniform" alt="Nave Industrial">
                         <div class="card-body">
                             <h5 class="card-title fw-bold">Compartir Nave (50m²)</h5>
                             <p class="card-text text-muted small"><i class="fas fa-warehouse me-1"></i> Logística Express</p>
                             <span class="badge bg-secondary mb-2">Espacio</span>
                             <p class="card-text mt-2">Cedo espacio sobrante en nave vigilada. Ideal almacenaje.</p>
+                            <h5 class="text-success fw-bold mt-3 mb-0">€ 300/mes</h5>
                             <div class="d-grid mt-3">
                                 <a href="detalle_activo.html" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
                             </div>
@@ -239,7 +255,7 @@
                 <a href="#" class="text-secondary me-3 text-decoration-none"><i class="fab fa-linkedin fs-5"></i></a>
                 <a href="#" class="text-secondary me-3 text-decoration-none">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-twitter-x mb-1" viewBox="0 0 16 16">
-                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/>
+                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"></path>
                     </svg>
                 </a>
                 <a href="#" class="text-secondary text-decoration-none"><i class="fas fa-envelope fs-5"></i></a>
@@ -253,40 +269,10 @@
 
     <!-- Particles.js — SAME inline config as index.html (repulse mode) -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script>
-        particlesJS("particles-body", {
-            "particles": {
-                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#198754" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5, "random": false },
-                "size": { "value": 3, "random": true },
-                "line_linked": { 
-                    "enable": true, 
-                    "distance": 150, 
-                    "color": "#198754", 
-                    "opacity": 0.3,
-                    "width": 1 
-                },
-                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
-            },
-            "interactivity": {
-                "detect_on": "window", 
-                "events": {
-                    "onhover": { "enable": true, "mode": "repulse" },
-                    "onclick": { "enable": true, "mode": "push" },
-                    "resize": true
-                },
-                "modes": {
-                    "repulse": { "distance": 150, "duration": 0.4 },
-                    "push": { "particles_nb": 4 }
-                }
-            },
-            "retina_detect": true
-        });
-    </script>
+    <script src="js/particles-init.js"></script>
     <script src="js/card-spotlight.js"></script>
     <!-- Auth Guard -->
-    <script>if(localStorage.getItem('isLoggedIn')!=='true'){window.location.href='login.html';}</script>
-</body>
-</html>
+    <script src="js/auth-guard.js"></script>
+
+
+</body></html>

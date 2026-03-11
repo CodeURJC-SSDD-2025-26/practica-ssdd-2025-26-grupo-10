@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head></head><body class="bg-theme-dark">﻿
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
     <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular. Conecta ofertas de residuos y demandas de maquinaria en el ámbito local.">
     <title>Dashboard Empresa | EcoMóstoles</title>
     <!-- Bootstrap 5 CSS -->
@@ -13,9 +13,9 @@
     <!-- Custom CSS -->
     <link href="css/styles.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="bg-theme-dark">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+
+
     <!-- Particles: Body (Fixed Background) — identical to index.html -->
     <div id="particles-body"></div>
 
@@ -42,10 +42,10 @@
                     </li>
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <img src="img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2" style="width: 35px; height: 35px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <img src="img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
                             <span>Metales del Sur S.L.</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2" style="border-radius: 12px;">
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 dropdown-rounded">
                             <li><h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6></li>
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
@@ -73,7 +73,7 @@
                                 <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                             </a>
                         </li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Ofertas</small></li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small></li>
                         <li class="nav-item">
                             <a class="nav-link" href="mis_activos.html">
                                 <i class="fas fa-box me-2"></i> Mis Ofertas
@@ -84,7 +84,7 @@
                                 <i class="fas fa-plus-circle me-2"></i> Publicar Oferta
                             </a>
                         </li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Demandas</small></li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small></li>
                         <li class="nav-item">
                             <a class="nav-link" href="mis_demandas.html">
                                 <i class="fas fa-clipboard-list me-2"></i> Mis Demandas
@@ -95,7 +95,22 @@
                                 <i class="fas fa-plus-circle me-2"></i> Publicar Demanda
                             </a>
                         </li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Comunicación</small></li>
+                        <li class="nav-item mt-3">
+                          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+                            <span>Acuerdos</span>
+                          </h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark link-mis-acuerdos" href="mis_acuerdos.html">
+                                <i class="fas fa-handshake me-2"></i> Mis Acuerdos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark link-crear-acuerdo" href="crear_acuerdo.html">
+                                <i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo
+                            </a>
+                        </li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
                         <li class="nav-item">
                             <a class="nav-link" href="mensajes.html">
                                 <i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">2</span>
@@ -105,11 +120,11 @@
                 </div>
             </nav>
 
-            <!-- Contenido Principal -->
+            <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 
                 <!-- Header -->
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                     <div>
                         <h1 class="h2 fw-bold text-dark">Panel de Control</h1>
                         <p class="text-secondary small mb-0">Bienvenido de nuevo, Metales del Sur.</p>
@@ -119,10 +134,10 @@
                             <i class="fas fa-plus me-2"></i> Publicar Residuo
                         </a>
                     </div>
-                </div>
+                </header>
 
                 <!-- KPIs Row -->
-                <div class="row g-4 mb-5">
+                <section class="row g-4 mb-5">
                     <!-- KPI 1: Ofertas Activas -->
                     <div class="col-md-3">
                         <div class="card shadow-sm border-0 h-100">
@@ -133,7 +148,7 @@
                                         <h3 class="mb-0 fw-bold">12</h3>
                                         <small class="text-success"><i class="fas fa-arrow-up me-1"></i>+3 este mes</small>
                                     </div>
-                                    <div class="bg-success bg-opacity-10 p-3 rounded-circle">
+                                    <div class="bg-success bg-opacity-10 rounded-circle kpi-icon">
                                         <span class="text-success"><i class="fas fa-box-open fa-lg"></i></span>
                                     </div>
                                 </div>
@@ -150,7 +165,7 @@
                                         <h3 class="mb-0 fw-bold">5</h3>
                                         <small class="text-primary"><i class="fas fa-arrow-up me-1"></i>+2 este mes</small>
                                     </div>
-                                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle kpi-icon">
                                         <span class="text-primary"><i class="fas fa-handshake fa-lg"></i></span>
                                     </div>
                                 </div>
@@ -167,7 +182,7 @@
                                         <h3 class="mb-0 fw-bold">350 kg</h3>
                                         <small class="text-warning"><i class="fas fa-leaf me-1"></i>Impacto real</small>
                                     </div>
-                                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle">
+                                    <div class="bg-warning bg-opacity-10 rounded-circle kpi-icon">
                                         <span class="text-warning"><i class="fas fa-leaf fa-lg"></i></span>
                                     </div>
                                 </div>
@@ -184,20 +199,20 @@
                                         <h3 class="mb-0 fw-bold">284</h3>
                                         <small class="text-info"><i class="fas fa-eye me-1"></i>Últimos 30 días</small>
                                     </div>
-                                    <div class="bg-info bg-opacity-10 p-3 rounded-circle">
+                                    <div class="bg-info bg-opacity-10 rounded-circle kpi-icon">
                                         <span class="text-info"><i class="fas fa-chart-line fa-lg"></i></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <!-- Smart Matching Widget -->
-                <div class="row g-4 mb-4">
+                <section class="row g-4 mb-4">
                     <div class="col-12">
-                        <div class="card shadow-sm border-0">
-                            <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
+                        <div class="card shadow-sm card-hover border-top border-success border-4">
+                            <div class="card-header bg-transparent border-bottom-0 py-3 d-flex justify-content-between align-items-center">
                                 <h5 class="fw-bold text-dark mb-0"><i class="fas fa-bullseye text-danger me-2"></i>Oportunidades Sugeridas (Smart Matching)</h5>
                                 <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill"><i class="fas fa-robot me-1"></i>Algoritmo IA</span>
                             </div>
@@ -205,7 +220,7 @@
                                 <div class="row g-3">
                                     <!-- Suggestion 1 -->
                                     <div class="col-md-4">
-                                        <div class="border rounded-3 p-3 h-100 position-relative" style="border-left: 4px solid #198754 !important;">
+                                        <div class="border rounded-3 p-3 h-100 position-relative">
                                             <span class="badge bg-success position-absolute top-0 end-0 m-2 rounded-pill">95% Match</span>
                                             <h6 class="fw-bold text-dark mb-1 pe-5">Viruta de Acero Inoxidable</h6>
                                             <p class="text-muted small mb-2">EcoFundiciones S.A. busca exactamente tu tipo de viruta para fundición secundaria.</p>
@@ -219,7 +234,7 @@
                                     </div>
                                     <!-- Suggestion 2 -->
                                     <div class="col-md-4">
-                                        <div class="border rounded-3 p-3 h-100 position-relative" style="border-left: 4px solid #0d6efd !important;">
+                                        <div class="border rounded-3 p-3 h-100 position-relative">
                                             <span class="badge bg-primary position-absolute top-0 end-0 m-2 rounded-pill">82% Match</span>
                                             <h6 class="fw-bold text-dark mb-1 pe-5">Bobinas de Cobre Reciclado</h6>
                                             <p class="text-muted small mb-2">Cableados Móstoles necesita cobre para producción de cable industrial.</p>
@@ -233,7 +248,7 @@
                                     </div>
                                     <!-- Suggestion 3 -->
                                     <div class="col-md-4">
-                                        <div class="border rounded-3 p-3 h-100 position-relative" style="border-left: 4px solid #ffc107 !important;">
+                                        <div class="border rounded-3 p-3 h-100 position-relative">
                                             <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 rounded-pill">74% Match</span>
                                             <h6 class="fw-bold text-dark mb-1 pe-5">Transporte Compartido - Zona Sur</h6>
                                             <p class="text-muted small mb-2">Logística Express ofrece compartir ruta de recogida en tu polígono.</p>
@@ -249,20 +264,20 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <!-- Charts & Activity -->
-                <div class="row g-4 mb-4">
+                <section class="row g-4 mb-4">
                     <!-- Chart Column: Chart.js Bar Chart -->
                     <div class="col-lg-8">
-                        <div class="card h-100 shadow-sm border-0">
-                            <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
+                        <div class="card h-100 shadow-sm card-hover border-top border-success border-4">
+                            <div class="card-header bg-transparent border-bottom-0 py-3 d-flex justify-content-between align-items-center">
                                 <h5 class="fw-bold text-dark mb-0"><i class="fas fa-chart-bar text-success me-2"></i>Residuos Reutilizados por Mes</h5>
                                 <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">2024</span>
                             </div>
-                            <div class="card-body p-4">
-                                <div style="position: relative; height: 350px; width: 100%;">
-                                    <canvas id="residuosChart"></canvas>
+                            <div class="card-body p-4 d-flex flex-column">
+                                <div class="flex-grow-1 position-relative chart-wrapper">
+                                    <canvas id="residuosChart" class="chart-canvas"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -270,17 +285,17 @@
                     
                     <!-- Activity Feed Column -->
                     <div class="col-lg-4">
-                        <div class="card h-100 shadow-sm border-0">
-                            <div class="card-header bg-white border-bottom-0 py-3">
+                        <div class="card h-100 shadow-sm card-hover border-top border-success border-4">
+                            <div class="card-header bg-transparent border-bottom-0 py-3">
                                 <h5 class="fw-bold text-dark mb-0"><i class="fas fa-bell text-warning me-2"></i>Actividad Reciente</h5>
                             </div>
-                            <div class="card-body p-0" style="max-height: 380px; overflow-y: auto;">
+                            <div class="card-body p-0">
                                 <!-- Timeline Items -->
                                 <div class="px-3">
                                     <!-- Item 1 -->
                                     <div class="d-flex align-items-start py-3 border-bottom">
-                                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3 flex-shrink-0">
-                                            <i class="fas fa-handshake text-success" style="width: 16px; text-align: center;"></i>
+                                        <div class="bg-success bg-opacity-10 rounded-circle me-3 kpi-icon kpi-icon--sm">
+                                            <i class="fas fa-handshake text-success"></i>
                                         </div>
                                         <div class="flex-grow-1 min-width-0">
                                             <h6 class="mb-1 fw-bold text-dark small">Acuerdo cerrado</h6>
@@ -290,8 +305,8 @@
                                     </div>
                                     <!-- Item 2 -->
                                     <div class="d-flex align-items-start py-3 border-bottom">
-                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3 flex-shrink-0">
-                                            <i class="fas fa-eye text-primary" style="width: 16px; text-align: center;"></i>
+                                        <div class="bg-primary bg-opacity-10 rounded-circle me-3 kpi-icon kpi-icon--sm">
+                                            <i class="fas fa-eye text-primary"></i>
                                         </div>
                                         <div class="flex-grow-1 min-width-0">
                                             <h6 class="mb-1 fw-bold text-dark small">Visitas a tu oferta</h6>
@@ -301,8 +316,8 @@
                                     </div>
                                     <!-- Item 3 -->
                                     <div class="d-flex align-items-start py-3 border-bottom">
-                                        <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3 flex-shrink-0">
-                                            <i class="fas fa-envelope text-warning" style="width: 16px; text-align: center;"></i>
+                                        <div class="bg-warning bg-opacity-10 rounded-circle me-3 kpi-icon kpi-icon--sm">
+                                            <i class="fas fa-envelope text-warning"></i>
                                         </div>
                                         <div class="flex-grow-1 min-width-0">
                                             <h6 class="mb-1 fw-bold text-dark small">Nuevo mensaje</h6>
@@ -312,8 +327,8 @@
                                     </div>
                                     <!-- Item 4 -->
                                     <div class="d-flex align-items-start py-3 border-bottom">
-                                        <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3 flex-shrink-0">
-                                            <i class="fas fa-plus-circle text-info" style="width: 16px; text-align: center;"></i>
+                                        <div class="bg-info bg-opacity-10 rounded-circle me-3 kpi-icon kpi-icon--sm">
+                                            <i class="fas fa-plus-circle text-info"></i>
                                         </div>
                                         <div class="flex-grow-1 min-width-0">
                                             <h6 class="mb-1 fw-bold text-dark small">Oferta publicada</h6>
@@ -323,8 +338,8 @@
                                     </div>
                                     <!-- Item 5 -->
                                     <div class="d-flex align-items-start py-3">
-                                        <div class="bg-danger bg-opacity-10 rounded-circle p-2 me-3 flex-shrink-0">
-                                            <i class="fas fa-star text-danger" style="width: 16px; text-align: center;"></i>
+                                        <div class="bg-danger bg-opacity-10 rounded-circle me-3 kpi-icon kpi-icon--sm">
+                                            <i class="fas fa-star text-danger"></i>
                                         </div>
                                         <div class="flex-grow-1 min-width-0">
                                             <h6 class="mb-1 fw-bold text-dark small">Nueva valoración</h6>
@@ -334,18 +349,18 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-footer bg-white border-top-0 text-center pb-3">
-                                <a href="mis_activos.html" class="btn btn-sm btn-link text-success fw-bold text-decoration-none">Ver todo el historial <i class="fas fa-arrow-right ms-1"></i></a>
+                            <div class="card-footer bg-transparent border-top-0 text-center pb-3 px-3">
+                                <a href="mis_activos.html" class="btn btn-outline-success w-100">Ver todo el historial <i class="fas fa-arrow-right ms-1"></i></a>
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <!-- Historial de Acuerdos Cerrados -->
-                <div class="row g-4 mb-4">
+                <section class="row g-4 mb-4">
                     <div class="col-12">
-                        <div class="card shadow-sm border-0">
-                            <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
+                        <div class="card shadow-sm card-hover border-top border-success border-4">
+                            <div class="card-header bg-transparent border-bottom-0 py-3 d-flex justify-content-between align-items-center">
                                 <h5 class="fw-bold text-dark mb-0"><i class="fas fa-handshake text-success me-2"></i>Historial de Acuerdos Cerrados</h5>
                                 <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">3 acuerdos</span>
                             </div>
@@ -368,7 +383,7 @@
                                                 <td class="ps-4 text-dark">15/02/2026</td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        <div class="avatar rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.75rem;">EF</div>
+                                                        <div class="avatar rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-2 avatar-sm">EF</div>
                                                         <span class="fw-bold text-dark">EcoFundiciones S.A.</span>
                                                     </div>
                                                 </td>
@@ -377,14 +392,16 @@
                                                 <td class="fw-bold text-success">1.200 €</td>
                                                 <td><span class="badge bg-success rounded-pill">Completado</span></td>
                                                 <td class="text-end pe-4">
-                                                    <a href="#" class="btn btn-sm btn-outline-danger rounded-pill text-nowrap"><i class="fas fa-file-pdf me-1"></i>Descargar Albarán</a>
+                                                    <a href="detalle_acuerdo.html" class="btn btn-sm btn-outline-success rounded-pill text-nowrap me-1"><i class="fas fa-eye me-1"></i>Ver</a>
+                                                    <a href="#" class="btn btn-sm btn-outline-danger rounded-pill text-nowrap me-1"><i class="fas fa-file-pdf me-1"></i>Albarán</a>
+                                                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap"><i class="fas fa-trash-alt me-1"></i></a>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td class="ps-4 text-dark">28/01/2026</td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        <div class="avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.75rem;">LM</div>
+                                                        <div class="avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2 avatar-sm">LM</div>
                                                         <span class="fw-bold text-dark">Logística Móstoles S.A.</span>
                                                     </div>
                                                 </td>
@@ -393,14 +410,16 @@
                                                 <td class="fw-bold text-success">Gratis</td>
                                                 <td><span class="badge bg-success rounded-pill">Completado</span></td>
                                                 <td class="text-end pe-4">
-                                                    <a href="#" class="btn btn-sm btn-outline-danger rounded-pill text-nowrap"><i class="fas fa-file-pdf me-1"></i>Descargar Albarán</a>
+                                                    <a href="detalle_acuerdo.html" class="btn btn-sm btn-outline-success rounded-pill text-nowrap me-1"><i class="fas fa-eye me-1"></i>Ver</a>
+                                                    <a href="#" class="btn btn-sm btn-outline-danger rounded-pill text-nowrap me-1"><i class="fas fa-file-pdf me-1"></i>Albarán</a>
+                                                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap"><i class="fas fa-trash-alt me-1"></i></a>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td class="ps-4 text-dark">10/01/2026</td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        <div class="avatar rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.75rem;">CM</div>
+                                                        <div class="avatar rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center me-2 avatar-sm">CM</div>
                                                         <span class="fw-bold text-dark">Cableados Móstoles</span>
                                                     </div>
                                                 </td>
@@ -418,7 +437,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
             </main>
         </div>
@@ -460,7 +479,7 @@
                 <a href="#" class="text-secondary me-3 text-decoration-none"><i class="fab fa-linkedin fs-5"></i></a>
                 <a href="#" class="text-secondary me-3 text-decoration-none">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-twitter-x mb-1" viewBox="0 0 16 16">
-                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/>
+                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"></path>
                     </svg>
                 </a>
                 <a href="#" class="text-secondary text-decoration-none"><i class="fas fa-envelope fs-5"></i></a>
@@ -477,38 +496,7 @@
 
     <!-- Particles.js — SAME inline config as index.html -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script>
-        particlesJS("particles-body", {
-            "particles": {
-                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#198754" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5, "random": false },
-                "size": { "value": 3, "random": true },
-                "line_linked": { 
-                    "enable": true, 
-                    "distance": 150, 
-                    "color": "#198754", 
-                    "opacity": 0.3,
-                    "width": 1 
-                },
-                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
-            },
-            "interactivity": {
-                "detect_on": "window", 
-                "events": {
-                    "onhover": { "enable": true, "mode": "repulse" },
-                    "onclick": { "enable": true, "mode": "push" },
-                    "resize": true
-                },
-                "modes": {
-                    "repulse": { "distance": 150, "duration": 0.4 },
-                    "push": { "particles_nb": 4 }
-                }
-            },
-            "retina_detect": true
-        });
-    </script>
+    <script src="js/particles-init.js"></script>
 
     <!-- Chart.js: Bar Chart — Residuos Reutilizados por Mes -->
     <script>
@@ -565,6 +553,7 @@
 
     <script src="js/card-spotlight.js"></script>
     <!-- Auth Guard -->
-    <script>if(localStorage.getItem('isLoggedIn')!=='true'){window.location.href='login.html';}</script>
-</body>
-</html>
+    <script src="js/auth-guard.js"></script>
+
+
+</body></html>

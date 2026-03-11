@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head></head><body class="bg-theme-dark">﻿
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
     <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular. Conecta ofertas de residuos y demandas de maquinaria en el ámbito local.">
     <title>Publicar Demanda | EcoMóstoles</title>
     <!-- Bootstrap 5 CSS -->
@@ -12,10 +12,10 @@
     <link href="css/styles.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="bg-theme-dark">
+
+
     <!-- Particles Background -->
-    <div id="particles-body" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
+    <div id="particles-body"></div>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
@@ -40,10 +40,10 @@
                     </li>
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <img src="img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2" style="width: 35px; height: 35px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <img src="img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
                             <span>Metales del Sur S.L.</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2" style="border-radius: 12px;">
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 dropdown-rounded">
                             <li><h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6></li>
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
@@ -68,7 +68,7 @@
                                 <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                             </a>
                         </li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Ofertas</small></li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small></li>
                         <li class="nav-item">
                             <a class="nav-link" href="mis_activos.html">
                                 <i class="fas fa-box me-2"></i> Mis Ofertas
@@ -79,7 +79,7 @@
                                 <i class="fas fa-plus-circle me-2"></i> Publicar Oferta
                             </a>
                         </li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Demandas</small></li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small></li>
                         <li class="nav-item">
                             <a class="nav-link" href="mis_demandas.html">
                                 <i class="fas fa-clipboard-list me-2"></i> Mis Demandas
@@ -90,7 +90,22 @@
                                 <i class="fas fa-plus-circle me-2"></i> Publicar Demanda
                             </a>
                         </li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3" style="font-size: 0.7rem;">Comunicación</small></li>
+                        <li class="nav-item mt-3">
+                          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+                            <span>Acuerdos</span>
+                          </h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark link-mis-acuerdos" href="mis_acuerdos.html">
+                                <i class="fas fa-handshake me-2"></i> Mis Acuerdos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark link-crear-acuerdo" href="crear_acuerdo.html">
+                                <i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo
+                            </a>
+                        </li>
+                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
                         <li class="nav-item">
                             <a class="nav-link" href="mensajes.html">
                                 <i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">2</span>
@@ -103,7 +118,7 @@
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2 text-dark fw-bold"><i class="fas fa-bullhorn text-success me-2"></i>Publicar Nueva Demanda</h1>
+                    <h1 class="h2 text-dark fw-bold">Publicar Nueva Demanda</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <a href="solicitudes.html" class="btn btn-sm btn-outline-secondary rounded-pill">
                             <i class="fas fa-arrow-left me-1"></i> Cancelar
@@ -113,17 +128,17 @@
 
                 <div class="card card-modern border-top-success">
                     <div class="card-body p-4">
-                        <form action="solicitudes.html" class="needs-validation" novalidate>
+                        <form action="solicitudes.html" class="needs-validation" novalidate="">
                             <div class="row g-3">
                                 <div class="col-md-8">
                                     <label for="titulo" class="form-label text-secondary fw-bold small text-uppercase">Título de lo que buscas <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="titulo" placeholder="Ej. Busco Palés Europeos en buen estado" required>
+                                    <input type="text" class="form-control" id="titulo" placeholder="Ej. Busco Palés Europeos en buen estado" required="">
                                     <div class="invalid-feedback">Por favor, completa este campo.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="categoria" class="form-label text-secondary fw-bold small text-uppercase">Categoría del Material <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="categoria" required>
-                                        <option value="" selected disabled>Seleccionar...</option>
+                                    <select class="form-select" id="categoria" required="">
+                                        <option value="" selected="" disabled="">Seleccionar...</option>
                                         <option value="metal">Metal</option>
                                         <option value="madera">Madera</option>
                                         <option value="plastico">Plástico</option>
@@ -136,15 +151,15 @@
                                 
                                 <div class="col-12">
                                     <label for="descripcion" class="form-label text-secondary fw-bold small text-uppercase">Descripción detallada de tu necesidad <span class="text-danger">*</span></label>
-                                    <textarea class="form-control" id="descripcion" rows="4" placeholder="Describe qué material necesitas, en qué condiciones, para qué lo vas a utilizar y cualquier requisito técnico..." required></textarea>
+                                    <textarea class="form-control" id="descripcion" rows="4" placeholder="Describe qué material necesitas, en qué condiciones, para qué lo vas a utilizar y cualquier requisito técnico..." required=""></textarea>
                                 </div>
 
                                 <div class="col-md-4">
                                     <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad requerida</label>
                                     <div class="input-group">
                                         <input type="number" class="form-control" id="cantidad" placeholder="Ej. 500" min="0">
-                                        <select class="form-select" id="unidadMedida" style="max-width: 120px;" aria-label="Seleccionar unidad de medida">
-                                            <option value="kg" selected>kg</option>
+                                        <select class="form-select" id="unidadMedida" aria-label="Seleccionar unidad de medida">
+                                            <option value="kg" selected="">kg</option>
                                             <option value="uds">unidades</option>
                                             <option value="L">litros</option>
                                             <option value="t">toneladas</option>
@@ -154,8 +169,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label for="urgencia" class="form-label text-secondary fw-bold small text-uppercase">Urgencia <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="urgencia" required>
-                                        <option value="" selected disabled>Seleccionar...</option>
+                                    <select class="form-select" id="urgencia" required="">
+                                        <option value="" selected="" disabled="">Seleccionar...</option>
                                         <option value="alta">🔴 Alta — Lo necesito esta semana</option>
                                         <option value="media">🟡 Media — En las próximas 2-4 semanas</option>
                                         <option value="baja">🟢 Baja — Sin prisa, cuando surja</option>
@@ -170,7 +185,7 @@
                                 <div class="col-md-6">
                                     <label for="zona" class="form-label text-secondary fw-bold small text-uppercase">Zona preferida de recogida</label>
                                     <select class="form-select" id="zona">
-                                        <option value="cualquiera" selected>Cualquier zona</option>
+                                        <option value="cualquiera" selected="">Cualquier zona</option>
                                         <option value="regordono">Pol. Regordoño</option>
                                         <option value="nieves">Pol. Las Nieves</option>
                                         <option value="arroyomolinos">Arroyomolinos</option>
@@ -182,7 +197,7 @@
                                     <select class="form-select" id="vigencia">
                                         <option value="7">7 días</option>
                                         <option value="15">15 días</option>
-                                        <option value="30" selected>30 días</option>
+                                        <option value="30" selected="">30 días</option>
                                         <option value="60">60 días</option>
                                     </select>
                                 </div>
@@ -237,7 +252,7 @@
                 <a href="#" class="text-secondary me-3 text-decoration-none"><i class="fab fa-linkedin fs-5"></i></a>
                 <a href="#" class="text-secondary me-3 text-decoration-none">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-twitter-x mb-1" viewBox="0 0 16 16">
-                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/>
+                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"></path>
                     </svg>
                 </a>
                 <a href="#" class="text-secondary text-decoration-none"><i class="fas fa-envelope fs-5"></i></a>
@@ -250,57 +265,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Particles.js — inline config -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script>
-        particlesJS("particles-body", {
-            "particles": {
-                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#198754" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5, "random": false },
-                "size": { "value": 3, "random": true },
-                "line_linked": { 
-                    "enable": true, 
-                    "distance": 150, 
-                    "color": "#198754", 
-                    "opacity": 0.3,
-                    "width": 1 
-                },
-                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
-            },
-            "interactivity": {
-                "detect_on": "window", 
-                "events": {
-                    "onhover": { "enable": true, "mode": "repulse" },
-                    "onclick": { "enable": true, "mode": "push" },
-                    "resize": true
-                },
-                "modes": {
-                    "repulse": { "distance": 150, "duration": 0.4 },
-                    "push": { "particles_nb": 4 }
-                }
-            },
-            "retina_detect": true
-        });
-    </script>
+    <script src="js/particles-init.js"></script>
     <script src="js/card-spotlight.js"></script>
     <!-- Auth Guard -->
-    <script>if(localStorage.getItem('isLoggedIn')!=='true'){window.location.href='login.html';}</script>
+    <script src="js/auth-guard.js"></script>
 
     <!-- Bootstrap Form Validation -->
-    <script>
-    (function () {
-        'use strict';
-        var forms = document.querySelectorAll('.needs-validation');
-        Array.prototype.slice.call(forms).forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
-    })();
-    </script>
-</body>
-</html>
+    <script src="js/form-validation.js"></script>
+
+
+</body></html>
