@@ -5,9 +5,9 @@
 | Nombre y Apellidos | Correo URJC                        | Usuario GitHub    |
 | :----------------- | :--------------------------------- | :---------------- |
 | [Guillermo]        | [g.dominguez.2022@alumnos.urjc.es] | [Guilledgg06]     |
-| [Daniel]           | [d.nieto.2021@alumnos.urjc es]     | [nietodiazdaniel] |
+| [Daniel]           | [d.nieto.2021@alumnos.urjc.es]     | [nietodiazdaniel] |
 | [Alberto]          | [a.sastre.2022@alumnos.urjc.es]    | [ASastre03]       |
-| [Javier]           | [j.delacasa.2022@alumnos.urjc es]  | [Javi1014]        |
+| [Javier]           | [j.delacasa.2022@alumnos.urjc.es]  | [Javi1014]        |
 
 ---
 
@@ -155,16 +155,16 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 
 [Javier de la Casa ha desempeñado el rol de Desarrollo Frontend y Diseño de Interfaz (UI/UX), asumiendo la responsabilidad de construir y optimizar la arquitectura visual de la plataforma mediante el uso de HTML5, CSS3 y el framework Bootstrap. Sus tareas principales incluyeron el diseño de la landing page y los flujos de autenticación, así como la creación integral de paneles de administración para la gestión, edición y visualización de activos. Además de la maquetación inicial, el alumno lideró la refactorización de componentes globales como el navbar y el footer para asegurar la coherencia estética, integrando librerías dinámicas como Particles.js para mejorar la experiencia visual y actualizando elementos de interacción (botones y logotipos) para elevar la usabilidad y el acabado profesional del proyecto.]
 
-| Nº  |                                                                                         Commits                                                                                         |           Files           |
-| :-: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------: |
-|  1  |                                                 [Add navbar and hero section to index.html; enhance styles in styles.css](URL_commit_1)                                                 | [Archivo1](URL_archivo_1) |
-|  2  |                                       [Add crear_activo.html for asset publication; include form for asset details and navigation](URL_commit_2)                                        | [Archivo2](URL_archivo_2) |
-|  3  |                                                  [Add particle effects to index.html and create particles configuration](URL_commit_3)                                                  | [Archivo3](URL_archivo_3) |
-|  4  |                               [Refactor login and registration pages for improved layout and styling; add navigation and footer components](URL_commit_4)                               | [Archivo4](URL_archivo_4) |
-|  5  |                                   [Add admin panel, create asset, and edit asset pages with Bootstrap integration and enhanced layouts](URL_commit_5)                                   | [Archivo5](URL_archivo_5) |
-|  6  |                                                    [Refactor navigation and authentication flow across multiple pages](URL_commit_6)                                                    | [Archivo6](URL_archivo_6) |
-|  7  | [Refactor detalle_activo and editar_activo pages for improved layout and user experience; update background theme and integrate particles.js for enhanced visual effects](URL_commit_7) | [Archivo7](URL_archivo_7) |
-|  8  |                    [ Update UI elements across multiple admin pages for consistency; replace initials with logo image and enhance button interactions](URL_commit_8)                    | [Archivo8](URL_archivo_8) |
+| Nº  |                                                                                         Commits                                                                                         |                                                                              Files                                                                              |
+| :-: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|  1  |                                                 [Add navbar and hero section to index.html; enhance styles in styles.css](URL_commit_1)                                                 |        [https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/e328329a747073af7895f951542ca7590a783595/index.html](URL_archivo_1)        |
+|  2  |                                       [Add crear_activo.html for asset publication; include form for asset details and navigation](URL_commit_2)                                        |    [https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/0c9fdb9148b124226220e2a6720427d83467fe62/crear_activo.html](URL_archivo_2)     |
+|  3  |                                                  [Add particle effects to index.html and create particles configuration](URL_commit_3)                                                  |        [https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/aca7ccaa7ac6a7396a194b82ed4b0e53a0f418cb/index.html](URL_archivo_3)        |
+|  4  |                               [Refactor login and registration pages for improved layout and styling; add navigation and footer components](URL_commit_4)                               |      [https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/ce0e18569d02fa3f30e481d1d30b5aab5e4991b4/registro.html](URL_archivo_4)       |
+|  5  |                                   [Add admin panel, create asset, and edit asset pages with Bootstrap integration and enhanced layouts](URL_commit_5)                                   |     [https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/281838807605d9c6930ad2eb781b15096c81dfb6/admin_panel.html](URL_archivo_5)     |
+|  6  |                                                    [Refactor navigation and authentication flow across multiple pages](URL_commit_6)                                                    |        [https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/a4b58da06e8176b35e89328f7592f53c585bf32e/index.html](URL_archivo_6)        |
+|  7  | [Refactor detalle_activo and editar_activo pages for improved layout and user experience; update background theme and integrate particles.js for enhanced visual effects](URL_commit_7) |   [https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/e2046bec900a2d971278eab18df9d91dd3820d34/detalle_activo.html](URL_archivo_7)    |
+|  8  |                    [ Update UI elements across multiple admin pages for consistency; replace initials with logo image and enhance button interactions](URL_commit_8)                    | [https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/b9f46816195a6b93bae30ec04f4f99cc07289599/admin_configuracion.html](URL_archivo_8) |
 
 ---
 
