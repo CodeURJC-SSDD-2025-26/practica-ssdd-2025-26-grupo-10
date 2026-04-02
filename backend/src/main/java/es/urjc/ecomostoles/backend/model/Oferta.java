@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Represents an Offer (Oferta) in the domain model.
@@ -176,6 +178,19 @@ public class Oferta {
 
     public void setPrecio(Double precio) {
         this.precio = precio;
+    }
+
+    /**
+     * Gets the price formatted as a currency string according to Spanish locale.
+     *
+     * @return the formatted price string (e.g., 1.200 € or 1.200,50 €)
+     */
+    public String getPrecioFormateado() {
+        if (this.precio == null) {
+            return "0,00 €";
+        }
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.of("es", "ES"));
+        return formatter.format(this.precio);
     }
 
     public String getDisponibilidad() {

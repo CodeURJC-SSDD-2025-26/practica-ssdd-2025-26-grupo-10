@@ -8,6 +8,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Represents a Demanda (Demand/Request) in the domain model.
@@ -167,6 +170,19 @@ public class Demanda {
         this.cantidad = cantidad;
     }
 
+    /**
+     * Gets the quantity formatted as a string, removing trailing decimal zeros.
+     *
+     * @return the formatted quantity string (e.g., 10 instead of 10.0)
+     */
+    public String getCantidadFormateada() {
+        if (this.cantidad == null) {
+            return "0";
+        }
+        DecimalFormat df = new DecimalFormat("#.##");
+        return df.format(this.cantidad);
+    }
+
     public String getUnidad() {
         return unidad;
     }
@@ -189,6 +205,19 @@ public class Demanda {
 
     public void setPresupuestoMaximo(Double presupuestoMaximo) {
         this.presupuestoMaximo = presupuestoMaximo;
+    }
+
+    /**
+     * Gets the maximum budget formatted as a currency string according to Spanish locale.
+     *
+     * @return the formatted budget string (e.g., 500,00 €)
+     */
+    public String getPresupuestoFormateado() {
+        if (this.presupuestoMaximo == null) {
+            return "0,00 €";
+        }
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.of("es", "ES"));
+        return formatter.format(this.presupuestoMaximo);
     }
 
     public String getZonaRecogida() {
