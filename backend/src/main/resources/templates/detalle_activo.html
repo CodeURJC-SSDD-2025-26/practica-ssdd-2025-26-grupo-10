@@ -4,13 +4,13 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
     <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular. Conecta ofertas de residuos y demandas de maquinaria en el ámbito local.">
     <title>Detalle Oferta | EcoMóstoles</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <link href="css/styles.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Google Fonts -->
@@ -24,7 +24,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
         <div class="container">
-            <a class="navbar-brand" href="dashboard.html">
+            <a class="navbar-brand" href="/dashboard">
                 <i class="fas fa-recycle me-2"></i>EcoMóstoles
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -33,18 +33,18 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link active" href="mercado.html"><i class="fas fa-store me-1"></i> Ofertas</a>
+                        <a class="nav-link active" href="/mercado"><i class="fas fa-store me-1"></i> Ofertas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="solicitudes.html"><i class="fas fa-bullhorn me-1"></i> Demandas</a>
+                        <a class="nav-link" href="/solicitudes"><i class="fas fa-bullhorn me-1"></i> Demandas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i> Panel de
+                        <a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-1"></i> Panel de
                             Control</a>
                     </li>
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <img src="img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
+                            <img src="/img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
                             <span>Metales del Sur S.L.</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 dropdown-rounded">
@@ -56,7 +56,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item rounded text-danger" href="#" onclick="localStorage.removeItem('isLoggedIn'); window.location.href='index.html';"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
+                            <li><a class="dropdown-item rounded text-danger" href="#" onclick="localStorage.removeItem('isLoggedIn'); window.location.href='/';"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -71,7 +71,7 @@
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
-                        <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
                         <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="mis_activos.html"><i class="fas fa-box me-2"></i>
@@ -103,13 +103,14 @@
             </nav>
 
             <!-- Main Content -->
+            {{#oferta}}
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 <div class="card shadow-sm border-top border-success border-4 rounded">
                     <div class="card-body p-4">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-4">
-                                <li class="breadcrumb-item"><a href="index.html" class="text-muted text-decoration-none">Inicio</a></li>
-                                <li class="breadcrumb-item"><a href="mercado.html" class="text-muted text-decoration-none">Ofertas</a></li>
+                                <li class="breadcrumb-item"><a href="/" class="text-muted text-decoration-none">Inicio</a></li>
+                                <li class="breadcrumb-item"><a href="/mercado" class="text-muted text-decoration-none">Ofertas</a></li>
                                 <li class="breadcrumb-item active fw-bold text-dark" aria-current="page">Detalle de
                                     Oferta</li>
                             </ol>
@@ -117,75 +118,73 @@
 
                         <div class="row g-5">
                             <div class="col-lg-6 mb-4 mb-lg-0">
-                                <img src="img/virutas.webp" class="img-fluid rounded shadow-sm w-100 object-fit-cover" alt="Imagen del Residuo">
+                                <img src="/oferta/{{id}}/imagen" class="img-fluid rounded shadow-sm w-100 object-fit-cover" alt="{{titulo}}">
                             </div>
 
                             <!-- Right Column: Details & Action -->
                             <div class="col-lg-6">
-                                <div class="d-flex align-items-start justify-content-between mb-2">
-                                    <div>
-                                        <span class="badge bg-warning text-dark mb-2 text-uppercase fw-bold">Residuo
-                                            Metálico</span>
-                                        <h1 class="fw-bold mb-1 text-dark">Viruta de Acero Industrial</h1>
-                                        <div class="d-flex align-items-center text-muted small">
-                                            <i class="fas fa-map-marker-alt me-1 text-danger"></i> Polígono Regordoño,
-                                            Móstoles • <span class="ms-2">Publicado hace 2 días</span>
-                                        </div>
-                                    </div>
-                                    <div class="text-end">
-                                        <button class="btn btn-outline-danger d-inline-flex align-items-center justify-content-center rounded-circle mb-2 btn-icon-circle">
-                                            <i class="far fa-heart"></i>
+                                <!-- Cabecera (Badge y Acciones) -->
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="badge bg-warning text-dark px-3 py-2 text-uppercase rounded-pill">{{tipoResiduo}}</span>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-danger border-0 rounded-circle p-2 shadow-sm" title="Guardar en favoritos">
+                                            <i class="far fa-heart fs-5"></i>
                                         </button>
-                                        <button class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center rounded-circle btn-icon-circle">
-                                            <i class="fas fa-share-alt"></i>
+                                        <button class="btn btn-outline-secondary border-0 rounded-circle p-2 shadow-sm" title="Compartir">
+                                            <i class="fas fa-share-alt fs-5"></i>
                                         </button>
                                     </div>
                                 </div>
 
-                                <div class="d-flex align-items-end my-4 p-3 bg-white rounded shadow-sm border-start border-4 border-success">
-                                    <div class="me-4">
-                                        <small class="text-uppercase text-muted fw-bold d-block">Precio</small>
-                                        <span class="h2 text-success fw-bold mb-0">€ 1.500</span>
+                                <!-- Títulos y Ubicación -->
+                                <h1 class="display-6 fw-bold mb-3 text-dark">{{titulo}}</h1>
+                                <p class="text-muted mb-4">
+                                    <i class="fas fa-map-marker-alt text-danger me-2"></i>{{empresa.direccion}} &bull; Publicado recientemente
+                                </p>
+                                <div class="mb-4">
+                                    <small class="text-muted d-block mb-1 text-uppercase fw-bold small">Empresa Vendedora</small>
+                                    <h6 class="text-success fw-bold"><i class="fas fa-building me-2"></i>{{empresa.nombreComercial}}</h6>
+                                </div>
+
+                                <!-- Caja de Resumen (El toque moderno) -->
+                                <div class="d-flex justify-content-between align-items-center bg-light p-4 rounded-3 border-start border-success border-4 mb-5 shadow-sm">
+                                    <div class="flex-grow-1">
+                                        <span class="small text-muted text-uppercase fw-bold d-block mb-1">Precio</span>
+                                        <span class="h3 text-success fw-bold mb-0">{{precioFormateado}}</span>
                                     </div>
-                                    <div class="me-4">
-                                        <small class="text-uppercase text-muted fw-bold d-block">Cantidad</small>
-                                        <span class="h4 text-dark fw-bold mb-0">500 kg</span>
+                                    <div class="flex-grow-1 text-center border-start border-end px-3">
+                                        <span class="small text-muted text-uppercase fw-bold d-block mb-1">Cantidad</span>
+                                        <span class="h4 fw-bold mb-0 text-dark">{{cantidadFormateada}} {{unidad}}</span>
                                     </div>
-                                    <div>
-                                        <small class="text-uppercase text-muted fw-bold d-block">Disponibilidad</small>
-                                        <span class="h5 text-dark fw-bold mb-0"><i class="fas fa-clock text-success me-1"></i>Inmediata</span>
+                                    <div class="flex-grow-1 text-end">
+                                        <span class="small text-muted text-uppercase fw-bold d-block mb-1">Disponibilidad</span>
+                                        <span class="h5 fw-bold mb-0 text-dark"><i class="far fa-clock text-success me-1"></i>{{disponibilidad}}</span>
                                     </div>
                                 </div>
 
-                                <h5 class="fw-bold mb-3 text-dark">Descripción del Material</h5>
-                                <p class="text-secondary mb-4 lh-lg">
-                                    Viruta limpia procedente de corte industrial mecanizado (torneado). Material libre
-                                    de aceites y taladrinas, almacenado en seco en contenedores estancos. Ideal para
-                                    fundiciones que requieran acero de calidad estándar sin aleaciones complejas.
-                                    <br><br>
-                                    <i class="fas fa-info-circle text-primary me-1"></i> <strong>Logística:</strong> El
-                                    lote completo consta de 2 contenedores de 250kg cada uno. Se prefiere retirada
-                                    completa con vehículo propio, aunque podemos gestionar transporte local.
+                                <!-- Descripción -->
+                                <h5 class="fw-bold mb-3">Descripción del Material</h5>
+                                <p class="text-muted lh-lg mb-5">
+                                    {{descripcion}}
                                 </p>
 
-                                <div class="text-center mt-4 pt-4 border-top">
-                                    <div class="d-flex justify-content-center gap-3">
-                                        <a href="mensajes.html" class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow-sm">
-                                            <i class="fas fa-envelope me-2"></i> Contactar con la Empresa
-                                        </a>
-                                        <a href="mercado.html" class="btn btn-outline-secondary btn-lg px-4 py-3 rounded-pill">
-                                            <i class="fas fa-arrow-left me-2"></i> Volver
-                                        </a>
-                                    </div>
-                                    <p class="text-muted small mt-3">
-                                        <i class="fas fa-shield-alt me-1"></i> Mensajería segura B2B verificada
-                                    </p>
+                                <!-- Botones de Acción -->
+                                <div class="d-flex flex-column flex-sm-row gap-3 mt-4 pt-3 border-top">
+                                    <a href="/mensajes" class="btn btn-success btn-lg px-5 shadow-sm fw-bold rounded-3">
+                                        <i class="fas fa-envelope me-2"></i>Contactar con la Empresa
+                                    </a>
+                                    <a href="/mercado" class="btn btn-outline-secondary btn-lg px-4 rounded-3">
+                                        <i class="fas fa-arrow-left me-2"></i>Volver
+                                    </a>
                                 </div>
+                                <p class="text-muted small mt-4 text-center text-sm-start">
+                                    <i class="fas fa-shield-alt me-1 text-success"></i> Transacción protegida por EcoMóstoles
+                                </p>
                             </div>
-                        </div>
                     </div>
                 </div>
             </main>
+            {{/oferta}}
         </div>
     </div>
 
@@ -203,8 +202,8 @@
                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                     <h6 class="fw-bold text-dark mb-3">Plataforma</h6>
                     <ul class="list-unstyled text-muted small">
-                        <li class="mb-2"><a href="mercado.html" class="text-muted text-decoration-none text-hover-success">Mercado de Ofertas</a></li>
-                        <li class="mb-2"><a href="dashboard.html" class="text-muted text-decoration-none text-hover-success">Panel de Control</a></li>
+                        <li class="mb-2"><a href="/mercado" class="text-muted text-decoration-none text-hover-success">Mercado de Ofertas</a></li>
+                        <li class="mb-2"><a href="/dashboard" class="text-muted text-decoration-none text-hover-success">Panel de Control</a></li>
                         <li class="mb-2"><a href="crear_activo.html" class="text-muted text-decoration-none text-hover-success">Publicar Activo</a></li>
                     </ul>
                 </div>
@@ -242,10 +241,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Particles.js -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="js/particles-init.js"></script>
-    <script src="js/card-spotlight.js"></script>
+    <script src="/js/particles-init.js"></script>
+    <script src="/js/card-spotlight.js"></script>
     <!-- Auth Guard -->
-    <script src="js/auth-guard.js"></script>
+    <script src="/js/auth-guard.js"></script>
 
 
 </body></html>

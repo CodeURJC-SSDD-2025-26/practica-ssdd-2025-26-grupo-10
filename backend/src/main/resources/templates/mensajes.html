@@ -3,7 +3,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
     <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular. Conecta ofertas de residuos y demandas de maquinaria en el ámbito local.">
     <title>Mensajes | EcoMóstoles</title>
     <!-- Bootstrap 5 CSS -->
@@ -11,7 +11,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link href="css/styles.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <style>
@@ -76,7 +76,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
         <div class="container">
-            <a class="navbar-brand" href="dashboard.html">
+            <a class="navbar-brand" href="/dashboard">
                 <i class="fas fa-recycle me-2"></i>EcoMóstoles
             </a>
                         <button class="navbar-toggler d-md-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle sidebar"><span class="navbar-toggler-icon"></span></button>
@@ -86,17 +86,17 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="mercado.html"><i class="fas fa-store me-1"></i> Ofertas</a>
+                        <a class="nav-link" href="/mercado"><i class="fas fa-store me-1"></i> Ofertas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="solicitudes.html"><i class="fas fa-bullhorn me-1"></i> Demandas</a>
+                        <a class="nav-link" href="/solicitudes"><i class="fas fa-bullhorn me-1"></i> Demandas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="dashboard.html"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
+                        <a class="nav-link active" href="/dashboard"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
                     </li>
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <img src="img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
+                            <img src="/img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
                             <span>Metales del Sur S.L.</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 dropdown-rounded">
@@ -104,7 +104,7 @@
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
                             <li><a class="dropdown-item rounded" href="perfil_empresa.html"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item rounded text-danger" href="#" onclick="localStorage.removeItem('isLoggedIn'); window.location.href='index.html';"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
+                            <li><a class="dropdown-item rounded text-danger" href="#" onclick="localStorage.removeItem('isLoggedIn'); window.location.href='/';"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -119,7 +119,7 @@
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="dashboard.html">
+                            <a class="nav-link" href="/dashboard">
                                 <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                             </a>
                         </li>
@@ -162,7 +162,7 @@
                         </li>
                         <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
                         <li class="nav-item">
-                            <a class="nav-link active text-success fw-bold" href="mensajes.html">
+                            <a class="nav-link active text-success fw-bold" href="/mensajes">
                                 <i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">2</span>
                             </a>
                         </li>
@@ -359,8 +359,8 @@
             <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                 <h6 class="fw-bold text-dark mb-3">Plataforma</h6>
                 <ul class="list-unstyled text-muted small">
-                    <li class="mb-2"><a href="mercado.html" class="text-muted text-decoration-none text-hover-success">Mercado de Ofertas</a></li>
-                    <li class="mb-2"><a href="dashboard.html" class="text-muted text-decoration-none text-hover-success">Panel de Control</a></li>
+                    <li class="mb-2"><a href="/mercado" class="text-muted text-decoration-none text-hover-success">Mercado de Ofertas</a></li>
+                    <li class="mb-2"><a href="/dashboard" class="text-muted text-decoration-none text-hover-success">Panel de Control</a></li>
                     <li class="mb-2"><a href="crear_activo.html" class="text-muted text-decoration-none text-hover-success">Publicar Activo</a></li>
                 </ul>
             </div>
@@ -397,10 +397,10 @@
 
     <!-- Particles.js — inline config -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="js/particles-init.js"></script>
-    <script src="js/card-spotlight.js"></script>
+    <script src="/js/particles-init.js"></script>
+    <script src="/js/card-spotlight.js"></script>
     <!-- Auth Guard -->
-    <script src="js/auth-guard.js"></script>
+    <script src="/js/auth-guard.js"></script>
 
 
 </body></html>

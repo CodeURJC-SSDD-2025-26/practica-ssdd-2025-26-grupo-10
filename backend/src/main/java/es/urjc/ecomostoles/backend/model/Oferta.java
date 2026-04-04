@@ -164,6 +164,12 @@ public class Oferta {
         this.cantidad = cantidad;
     }
 
+    // Format quantity without decimals if it's a whole number
+    public String getCantidadFormateada() {
+        java.text.DecimalFormat df = new java.text.DecimalFormat("#.##");
+        return df.format(this.cantidad);
+    }
+
     public String getUnidad() {
         return unidad;
     }
