@@ -156,6 +156,13 @@ public class Oferta {
         this.tipoResiduo = tipoResiduo;
     }
 
+    // Format the residue type to be user-friendly (e.g., "residuo_madera" -> "Residuo madera")
+    public String getTipoResiduoFormateado() {
+        if (this.tipoResiduo == null || this.tipoResiduo.isEmpty()) return "";
+        String formateado = this.tipoResiduo.replace("_", " ");
+        return formateado.substring(0, 1).toUpperCase() + formateado.substring(1).toLowerCase();
+    }
+
     public Double getCantidad() {
         return cantidad;
     }

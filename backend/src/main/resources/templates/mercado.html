@@ -124,13 +124,13 @@
                 <!-- Card 1 -->
                 {{#ofertas}}
                 <div class="col-md-4">
-                    <div class="card h-100 border-top-success">
-                        <img src="/oferta/{{id}}/imagen" class="card-img-top card-img-uniform" alt="{{titulo}}">
+                    <div class="card h-100 border-top-success overflow-hidden">
+                        <img src="/oferta/{{id}}/imagen" class="card-img-top card-img-uniform" alt="{{titulo}}" onerror="this.onerror=null; this.src='https://placehold.co/600x400/e9ecef/6c757d?text=Sin+Imagen';">
                         <div class="card-body">
-                            <h5 class="card-title fw-bold">{{titulo}}</h5>
+                            <h5 class="card-title fw-bold">{{titulo}} ({{cantidadFormateada}} {{unidad}})</h5>
                             <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i>
                                 {{empresa.nombreComercial }}</p>
-                            <span class="badge bg-success mb-2">{{tipoResiduo}}</span>
+                            <span class="badge bg-success mb-2">{{tipoResiduoFormateado}}</span>
                             <p class="card-text mt-2">{{descripcion}}</p>
                             <h5 class="text-success fw-bold mt-3 mb-0">{{precioFormateado}}</h5>
                             <div class="d-grid mt-3">

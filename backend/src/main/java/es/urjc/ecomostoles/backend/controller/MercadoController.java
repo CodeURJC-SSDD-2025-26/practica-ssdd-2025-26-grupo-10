@@ -1,14 +1,18 @@
 package es.urjc.ecomostoles.backend.controller;
 
+import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.model.Oferta;
+import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
 import es.urjc.ecomostoles.backend.repository.OfertaRepository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,13 +24,16 @@ import java.util.Optional;
 public class MercadoController {
 
     private final OfertaRepository ofertaRepository;
+    private final EmpresaRepository empresaRepository;
 
     /**
-     * Constructor-based injection of the Oferta repository.
+     * Constructor-based injection of repositories.
      * @param ofertaRepository repository for offer data
+     * @param empresaRepository repository for company data
      */
-    public MercadoController(OfertaRepository ofertaRepository) {
+    public MercadoController(OfertaRepository ofertaRepository, EmpresaRepository empresaRepository) {
         this.ofertaRepository = ofertaRepository;
+        this.empresaRepository = empresaRepository;
     }
 
     /**
@@ -54,7 +61,7 @@ public class MercadoController {
      * @return the template name "detalle_activo" if found, else redirects to market
      */
     @GetMapping("/oferta/{id}")
-    public String mostrarDetalleOferta(@PathVariable Long id, Model model) {
+    public String mostrarDetalleOferta(@PathVariable("id") Long id, Model model) {
         Optional<Oferta> oferta = ofertaRepository.findById(id);
         if (oferta.isPresent()) {
             model.addAttribute("oferta", oferta.get());
@@ -71,7 +78,7 @@ public class MercadoController {
      * @return a ResponseEntity containing the image bytes
      */
     @GetMapping("/oferta/{id}/imagen")
-    public ResponseEntity<byte[]> descargarImagenOferta(@PathVariable Long id) {
+    public ResponseEntity<byte[]> descargarImagenOferta(@PathVariable("id") Long id) {
         Optional<Oferta> oferta = ofertaRepository.findById(id);
         if (oferta.isPresent() && oferta.get().getImagen() != null) {
             return ResponseEntity.ok()
@@ -80,5 +87,51 @@ public class MercadoController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    /**
+     * Shows the form to create a new offer.
+     *
+     * @param model the Spring UI model
+     * @return the template name "crear_activo"
+     */
+    @GetMapping("/oferta/nueva")
+    public String mostrarFormularioNuevaOferta(Model model) {
+        // Add a new empty Oferta object to the model for form binding
+        model.addAttribute("oferta", new Oferta());
+        return "crear_activo";
+    }
+
+    /**
+     * Processes the submission of the new offer form.
+     *
+     * @param oferta     the offer data from the form
+     * @param imagenFile the uploaded image file
+     * @return redirection to the market page
+     */
+    @PostMapping("/oferta/nueva")
+    public String guardarNuevaOferta(@ModelAttribute Oferta oferta, @RequestParam("imagenFile") MultipartFile imagenFile) {
+        
+        // Link the offer to a temporary company (Metales del Sur)
+        Optional<Empresa> empresa = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        empresa.ifPresent(oferta::setEmpresa);
+
+        // Set the current publication date
+        oferta.setFechaPublicacion(LocalDateTime.now());
+
+        // Handle image upload as BLOB
+        if (!imagenFile.isEmpty()) {
+            try {
+                oferta.setImagen(imagenFile.getBytes());
+            } catch (IOException e) {
+                // Print error to console if something goes wrong reading the file bytes
+                e.printStackTrace();
+            }
+        }
+
+        // Save the new offer to the database
+        ofertaRepository.save(oferta);
+
+        return "redirect:/mercado";
     }
 }
