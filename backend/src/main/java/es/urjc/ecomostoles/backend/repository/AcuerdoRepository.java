@@ -26,4 +26,13 @@ public interface AcuerdoRepository extends JpaRepository<Acuerdo, Long> {
      * @return a list of agreements
      */
     List<Acuerdo> findByEmpresaDestino(Empresa empresaDestino);
+
+    /**
+     * Retrieves a list of agreements where the given company is involved as source or destination.
+     *
+     * @param empresa the involved company
+     * @return a list of agreements
+     */
+    @org.springframework.data.jpa.repository.Query("SELECT a FROM Acuerdo a WHERE a.empresaOrigen = :empresa OR a.empresaDestino = :empresa")
+    List<Acuerdo> findByEmpresa(@org.springframework.data.repository.query.Param("empresa") Empresa empresa);
 }

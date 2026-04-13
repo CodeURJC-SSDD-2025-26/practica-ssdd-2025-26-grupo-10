@@ -7,7 +7,12 @@ import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,5 +62,134 @@ public class MisDemandasController {
 
         // Redirect to home if the company is not found
         return "redirect:/";
+    }
+
+    /**
+     * Shows the form to create a new demand.
+     *
+     * @param model the Spring UI model to pass data to the template
+     * @return the template name "crear_solicitud" or redirect if company not found
+     */
+    @GetMapping("/demanda/nueva")
+    public String mostrarFormularioNuevaDemanda(Model model) {
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        if (empresaOpt.isPresent()) {
+            model.addAttribute("empresa", empresaOpt.get());
+            // Add an empty demand for the form
+            model.addAttribute("demanda", new Demanda());
+            return "crear_solicitud";
+        }
+        return "redirect:/";
+    }
+
+    /**
+     * Processes the creation of a new demand.
+     *
+     * @param titulo            title of the demand
+     * @param descripcion       long description
+     * @param categoria         category of material (mapped to categoriaMaterial)
+     * @param cantidad          quantity requested
+     * @param precioMaximo      max budget for the demand (mapped to presupuestoMaximo)
+     * @return redirect to the "Mis Demandas" dashboard
+     */
+    @PostMapping("/demanda/nueva")
+    public String guardarNuevaDemanda(@RequestParam String titulo, 
+                                      @RequestParam String descripcion, 
+                                      @RequestParam String categoria,
+                                      @RequestParam Double cantidad, 
+                                      @RequestParam Double precioMaximo) {
+
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        
+        if (empresaOpt.isPresent()) {
+            Demanda nuevaDemanda = new Demanda();
+            nuevaDemanda.setTitulo(titulo);
+            nuevaDemanda.setDescripcion(descripcion);
+            nuevaDemanda.setCategoriaMaterial(categoria);
+            nuevaDemanda.setCantidad(cantidad);
+            nuevaDemanda.setPresupuestoMaximo(precioMaximo);
+            
+            // Set author and publication date
+            nuevaDemanda.setEmpresa(empresaOpt.get());
+            nuevaDemanda.setFechaPublicacion(LocalDateTime.now());
+            
+            // Set default status
+            nuevaDemanda.setEstado("Activa");
+
+            // Save to database
+            demandaRepository.save(nuevaDemanda);
+            
+            // Redirect to the dashboard list
+            return "redirect:/dashboard/mis-demandas";
+        }
+
+        return "redirect:/";
+    }
+
+    /**
+     * Deletes a demand.
+     *
+     * @param id the ID of the demand to delete
+     * @return redirect to the "Mis Demandas" dashboard
+     */
+    @PostMapping("/dashboard/mis-demandas/eliminar/{id}")
+    public String eliminarDemanda(@PathVariable Long id) {
+        demandaRepository.deleteById(id);
+        return "redirect:/dashboard/mis-demandas";
+    }
+
+    /**
+     * Shows the form to edit an existing demand.
+     *
+     * @param id    the ID of the demand to edit
+     * @param model the Spring UI model
+     * @return the template name "editar_solicitud" or redirect
+     */
+    @GetMapping("/demanda/editar/{id}")
+    public String mostrarFormularioEditarDemanda(@PathVariable Long id, Model model) {
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        Optional<Demanda> demandaOpt = demandaRepository.findById(id);
+
+        if (empresaOpt.isPresent() && demandaOpt.isPresent()) {
+            model.addAttribute("empresa", empresaOpt.get());
+            model.addAttribute("demanda", demandaOpt.get());
+            return "editar_solicitud";
+        }
+        return "redirect:/dashboard/mis-demandas";
+    }
+
+    /**
+     * Processes the update of an existing demand.
+     *
+     * @param id                the ID of the demand
+     * @param titulo            the new title
+     * @param descripcion       the new description
+     * @param categoria         the new category
+     * @param cantidad          the new quantity
+     * @param precioMaximo      the new max budget
+     * @return redirect to the "Mis Demandas" dashboard
+     */
+    @PostMapping("/demanda/editar/{id}")
+    public String guardarEdicionDemanda(@PathVariable Long id,
+                                        @RequestParam String titulo,
+                                        @RequestParam String descripcion,
+                                        @RequestParam String categoria,
+                                        @RequestParam Double cantidad,
+                                        @RequestParam Double precioMaximo) {
+
+        Optional<Demanda> demandaOpt = demandaRepository.findById(id);
+        
+        if (demandaOpt.isPresent()) {
+            Demanda demandaExistente = demandaOpt.get();
+            demandaExistente.setTitulo(titulo);
+            demandaExistente.setDescripcion(descripcion);
+            demandaExistente.setCategoriaMaterial(categoria);
+            demandaExistente.setCantidad(cantidad);
+            demandaExistente.setPresupuestoMaximo(precioMaximo);
+            
+            demandaRepository.save(demandaExistente);
+        }
+
+        return "redirect:/dashboard/mis-demandas";
     }
 }

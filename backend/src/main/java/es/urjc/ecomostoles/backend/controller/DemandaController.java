@@ -7,11 +7,8 @@ import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,16 +39,14 @@ public class DemandaController {
      * @return the name of the template ("solicitudes")
      */
     @GetMapping("/solicitudes")
-    public String mostrarSolicitudes(Model model) {
-        // Fetch all demands from the database using JPA
-        List<Demanda> demandas = demandaRepository.findAll();
-        
-        // Add the list of demands to the model to be rendered by Mustache/HTML
-        model.addAttribute("demandas", demandas);
-        
-        // Inject active company context for the navbar
+    public String mostrarTablonDemandas(Model model) {
         Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
-        empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
+        if (empresaOpt.isPresent()) {
+            model.addAttribute("empresa", empresaOpt.get());
+        }
+
+        List<Demanda> todasLasDemandas = demandaRepository.findAll();
+        model.addAttribute("demandas", todasLasDemandas);
         
         return "solicitudes";
     }
@@ -79,43 +74,4 @@ public class DemandaController {
         }
     }
 
-    /**
-     * Shows the form to create a new demand.
-     *
-     * @param model the Spring UI model
-     * @return the template name "crear_solicitud"
-     */
-    @GetMapping("/demanda/nueva")
-    public String mostrarFormularioNuevaDemanda(Model model) {
-        // Add a new empty Demanda object to the model for form binding
-        model.addAttribute("demanda", new Demanda());
-
-        // Inject active company context for the navbar
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
-        empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
-        
-        return "crear_solicitud";
-    }
-
-    /**
-     * Processes the submission of the new demand form.
-     *
-     * @param demanda the demand data from the form
-     * @return redirection to the solicitudes page
-     */
-    @PostMapping("/demanda/nueva")
-    public String guardarNuevaDemanda(@ModelAttribute Demanda demanda) {
-        // Link the demand to a specific company (Plásticos Norte)
-        Optional<Empresa> empresa = empresaRepository.findByEmailContacto("info@plasticosnorte.com");
-        empresa.ifPresent(demanda::setEmpresa);
-
-        // Set the current publication date and default status
-        demanda.setFechaPublicacion(LocalDateTime.now());
-        demanda.setEstado("Activa");
-
-        // Save the new demand to the database
-        demandaRepository.save(demanda);
-
-        return "redirect:/solicitudes";
-    }
 }
