@@ -1,5 +1,6 @@
 package es.urjc.ecomostoles.backend;
 
+import java.security.Principal;
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
 import java.util.Optional;
@@ -15,14 +16,13 @@ public class WebController {
     public WebController(EmpresaRepository empresaRepository) {
         this.empresaRepository = empresaRepository;
     }
-    @GetMapping("/") // Cuando alguien entre a "localhost:8080/", se ejecuta este método
-    public String index(Model model) {
-        // Inject active company context for the navbar
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
-        empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
-
-        // Devuelve el nombre de la plantilla sin la extensión. 
-        // Spring irá a buscar "index.html" a la carpeta templates.
-        return "index"; 
+    @GetMapping("/")
+    public String index(Model model, Principal principal) {
+        // Solo inyectamos los datos de empresa si el usuario está logueado
+        if (principal != null) {
+            Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
+            empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
+        }
+        return "index";
     }
 }

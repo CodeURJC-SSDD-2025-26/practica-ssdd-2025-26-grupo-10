@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,9 +43,8 @@ public class MisDemandasController {
      * @return the template name "mis_demandas" or a redirect to home if no company is found
      */
     @GetMapping("/dashboard/mis-demandas")
-    public String mostrarMisDemandas(Model model) {
-        // Fetch the active company (simulated session)
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+    public String mostrarMisDemandas(Model model, Principal principal) {
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
 
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
@@ -71,8 +71,8 @@ public class MisDemandasController {
      * @return the template name "crear_solicitud" or redirect if company not found
      */
     @GetMapping("/demanda/nueva")
-    public String mostrarFormularioNuevaDemanda(Model model) {
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+    public String mostrarFormularioNuevaDemanda(Model model, Principal principal) {
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
         if (empresaOpt.isPresent()) {
             model.addAttribute("empresa", empresaOpt.get());
             // Add an empty demand for the form
@@ -97,9 +97,10 @@ public class MisDemandasController {
                                       @RequestParam String descripcion, 
                                       @RequestParam String categoria,
                                       @RequestParam Double cantidad, 
-                                      @RequestParam Double precioMaximo) {
+                                      @RequestParam Double precioMaximo,
+                                      Principal principal) {
 
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
         
         if (empresaOpt.isPresent()) {
             Demanda nuevaDemanda = new Demanda();
@@ -146,8 +147,8 @@ public class MisDemandasController {
      * @return the template name "editar_solicitud" or redirect
      */
     @GetMapping("/demanda/editar/{id}")
-    public String mostrarFormularioEditarDemanda(@PathVariable Long id, Model model) {
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+    public String mostrarFormularioEditarDemanda(@PathVariable Long id, Model model, Principal principal) {
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
         Optional<Demanda> demandaOpt = demandaRepository.findById(id);
 
         if (empresaOpt.isPresent() && demandaOpt.isPresent()) {

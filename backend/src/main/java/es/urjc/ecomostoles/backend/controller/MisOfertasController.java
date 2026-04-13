@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -41,9 +42,8 @@ public class MisOfertasController {
      * @return the template name "mis_activos" or a redirect to home if no company is found
      */
     @GetMapping("/dashboard/mis-ofertas")
-    public String mostrarMisOfertas(Model model) {
-        // Fetch the active company (simulated session)
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+    public String mostrarMisOfertas(Model model, Principal principal) {
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
 
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
@@ -70,8 +70,8 @@ public class MisOfertasController {
      * @return the template name "crear_activo" or redirect if company not found
      */
     @GetMapping("/oferta/nueva")
-    public String mostrarFormularioNuevaOferta(Model model) {
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+    public String mostrarFormularioNuevaOferta(Model model, Principal principal) {
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
         if (empresaOpt.isPresent()) {
             model.addAttribute("empresa", empresaOpt.get());
             // Add an empty offer for the form
@@ -96,9 +96,10 @@ public class MisOfertasController {
                                      @RequestParam String descripcion, 
                                      @RequestParam Double cantidad, 
                                      @RequestParam Double precio, 
-                                     @RequestParam String categoria) {
+                                     @RequestParam String categoria,
+                                     Principal principal) {
 
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
         
         if (empresaOpt.isPresent()) {
             Oferta nuevaOferta = new Oferta();
@@ -148,11 +149,9 @@ public class MisOfertasController {
      * @return the template name "editar_activo" if found, else redirects to dashboard
      */
     @GetMapping("/oferta/editar/{id}")
-    public String mostrarFormularioEditarOferta(@PathVariable Long id, Model model) {
-        // Find the offer by ID
+    public String mostrarFormularioEditarOferta(@PathVariable Long id, Model model, Principal principal) {
         Optional<Oferta> ofertaOpt = ofertaRepository.findById(id);
-        // Fetch the active company (simulated session)
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
 
         if (ofertaOpt.isPresent() && empresaOpt.isPresent()) {
             model.addAttribute("empresa", empresaOpt.get());

@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,8 +40,8 @@ public class DemandaController {
      * @return the name of the template ("solicitudes")
      */
     @GetMapping("/solicitudes")
-    public String mostrarTablonDemandas(Model model) {
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+    public String mostrarTablonDemandas(Model model, Principal principal) {
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
         if (empresaOpt.isPresent()) {
             model.addAttribute("empresa", empresaOpt.get());
         }
@@ -59,13 +60,13 @@ public class DemandaController {
      * @return the template name "detalle_solicitud" if found, else redirects to solicitudes
      */
     @GetMapping("/demanda/{id}")
-    public String mostrarDetalleDemanda(@PathVariable("id") Long id, Model model) {
+    public String mostrarDetalleDemanda(@PathVariable("id") Long id, Model model, Principal principal) {
         Optional<Demanda> demanda = demandaRepository.findById(id);
         if (demanda.isPresent()) {
             model.addAttribute("demanda", demanda.get());
             
             // Inject active company context for the navbar
-            Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+            Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
             empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
             
             return "detalle_solicitud";

@@ -75,7 +75,7 @@ public class Acuerdo {
     /**
      * The company receiving the material.
      */
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Empresa empresaDestino;
 
     /**

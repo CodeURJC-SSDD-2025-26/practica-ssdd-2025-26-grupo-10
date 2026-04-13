@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -40,9 +41,9 @@ public class MensajeController {
      * @return view template "mensajes"
      */
     @GetMapping("/mensajes")
-    public String mostrarMensajes(Model model) {
-        // Obteniendo mock de empresa activa simulada
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+    public String mostrarMensajes(Model model, Principal principal) {
+        // Obteniendo empresa activa desde sesión real
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
 
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
@@ -62,9 +63,9 @@ public class MensajeController {
      * Envia un mensaje al propietario de una oferta.
      */
     @PostMapping("/mensajes/enviar/{ofertaId}")
-    public String enviarMensajeOferta(@PathVariable Long ofertaId, @RequestParam String contenido) {
+    public String enviarMensajeOferta(@PathVariable Long ofertaId, @RequestParam String contenido, Principal principal) {
         Optional<Oferta> ofertaOpt = ofertaRepository.findById(ofertaId);
-        Optional<Empresa> remitenteOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        Optional<Empresa> remitenteOpt = empresaRepository.findByEmailContacto(principal.getName());
 
         if (ofertaOpt.isPresent() && remitenteOpt.isPresent()) {
             Oferta oferta = ofertaOpt.get();

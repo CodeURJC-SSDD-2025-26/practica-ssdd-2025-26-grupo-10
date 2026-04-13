@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,8 +42,8 @@ public class AcuerdoController {
      * @return Vista "crear_acuerdo"
      */
     @GetMapping("/acuerdo/nuevo")
-    public String mostrarFormularioAcuerdo(Model model) {
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+    public String mostrarFormularioAcuerdo(Model model, Principal principal) {
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
 
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
@@ -62,8 +63,8 @@ public class AcuerdoController {
      * Muestra el historial de acuerdos de la empresa activa.
      */
     @GetMapping("/acuerdos")
-    public String mostrarMisAcuerdos(Model model) {
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+    public String mostrarMisAcuerdos(Model model, Principal principal) {
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
 
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
@@ -88,7 +89,8 @@ public class AcuerdoController {
                                    @RequestParam Double precioAcordado, 
                                    @RequestParam String fechaRecogida, 
                                    @RequestParam String estado, 
-                                   @RequestParam(required = false) String notas) {
+                                   @RequestParam(required = false) String notas,
+                                   Principal principal) {
         
         // 1. Buscamos la oferta que se está vendiendo
         Optional<Oferta> ofertaOpt = ofertaRepository.findById(ofertaId);
@@ -119,8 +121,8 @@ public class AcuerdoController {
             nuevoAcuerdo.setNotas(notas);
             nuevoAcuerdo.setFechaRegistro(LocalDateTime.now());
             
-            // Buscamos la empresa activa y se la asignamos al acuerdo (Lógica de tu mock)
-            Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+            // Buscamos la empresa activa y se la asignamos al acuerdo
+            Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
             empresaOpt.ifPresent(nuevoAcuerdo::setEmpresaOrigen);
             
             // Fallback en caso de no encontrar destino por mock estricto a las BD de entidades (ManyToOne required)

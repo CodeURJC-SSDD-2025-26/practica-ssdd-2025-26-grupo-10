@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +41,7 @@ public class MercadoController {
      * @return the name of the template ("mercado")
      */
     @GetMapping("/mercado")
-    public String mostrarMercado(Model model) {
+    public String mostrarMercado(Model model, Principal principal) {
         // Fetch all offers from the database using JPA
         List<Oferta> listaDeOfertas = ofertaRepository.findAll();
         
@@ -48,7 +49,7 @@ public class MercadoController {
         model.addAttribute("ofertas", listaDeOfertas);
         
         // Inject active company context for the navbar
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
         empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
         
         return "mercado";
@@ -62,13 +63,13 @@ public class MercadoController {
      * @return the template name "detalle_activo" if found, else redirects to market
      */
     @GetMapping("/oferta/{id}")
-    public String mostrarDetalleOferta(@PathVariable("id") Long id, Model model) {
+    public String mostrarDetalleOferta(@PathVariable("id") Long id, Model model, Principal principal) {
         Optional<Oferta> oferta = ofertaRepository.findById(id);
         if (oferta.isPresent()) {
             model.addAttribute("oferta", oferta.get());
             
             // Inject active company context for the navbar
-            Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+            Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
             empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
             
             return "detalle_activo";

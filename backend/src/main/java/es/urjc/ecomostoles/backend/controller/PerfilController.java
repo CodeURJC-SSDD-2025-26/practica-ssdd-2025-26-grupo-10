@@ -1,5 +1,6 @@
 package es.urjc.ecomostoles.backend.controller;
 
+import java.security.Principal;
 import java.util.Optional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,9 +32,8 @@ public class PerfilController {
      * @return the profile view name (perfil_empresa.html) or a redirect to home if not found
      */
     @GetMapping("/perfil")
-    public String mostrarPerfil(Model model, @RequestParam(required = false) boolean exito) {
-        // Simulating a logged-in session by finding the main company by its email
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+    public String mostrarPerfil(Model model, @RequestParam(required = false) boolean exito, Principal principal) {
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
 
         if (empresaOpt.isPresent()) {
             // Adding company object to the model for Mustache rendering
@@ -67,10 +67,10 @@ public class PerfilController {
                                 @RequestParam String telefono,
                                 @RequestParam String direccion,
                                 @RequestParam String sector,
-                                @RequestParam String descripcion) {
+                                @RequestParam String descripcion,
+                                Principal principal) {
 
-        // Simulating a logged-in session for the update as well
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
 
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
