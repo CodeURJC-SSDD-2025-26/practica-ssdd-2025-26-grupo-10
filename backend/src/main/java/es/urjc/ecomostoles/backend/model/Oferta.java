@@ -163,6 +163,10 @@ public class Oferta {
         return formateado.substring(0, 1).toUpperCase() + formateado.substring(1).toLowerCase();
     }
 
+    public String getCategoria() {
+        return getTipoResiduoFormateado();
+    }
+
     public Double getCantidad() {
         return cantidad;
     }

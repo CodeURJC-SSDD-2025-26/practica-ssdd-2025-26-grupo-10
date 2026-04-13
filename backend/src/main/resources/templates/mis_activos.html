@@ -1,56 +1,39 @@
-<html lang="es"><head></head><body class="bg-theme-dark">﻿
-
-
+<!DOCTYPE html>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
-    <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular. Conecta ofertas de residuos y demandas de maquinaria en el ámbito local.">
+    <meta name="description" content="EcoMóstoles - Mis Ofertas">
     <title>Mis Ofertas | EcoMóstoles</title>
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Custom CSS -->
     <link href="/css/styles.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+</head>
+<body class="bg-theme-dark">
 
-
-    <!-- Particles Background -->
     <div id="particles-body"></div>
 
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
         <div class="container">
-            <a class="navbar-brand" href="/dashboard">
-                <i class="fas fa-recycle me-2"></i>EcoMóstoles
-            </a>
-                        <button class="navbar-toggler d-md-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle sidebar"><span class="navbar-toggler-icon"></span></button>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <a class="navbar-brand" href="/dashboard"><i class="fas fa-recycle me-2"></i>EcoMóstoles</a>
+            <button class="navbar-toggler d-md-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu"><span class="navbar-toggler-icon"></span></button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/mercado"><i class="fas fa-store me-1"></i> Ofertas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/solicitudes"><i class="fas fa-bullhorn me-1"></i> Demandas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/dashboard"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/mercado"><i class="fas fa-store me-1"></i> Ofertas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/solicitudes"><i class="fas fa-bullhorn me-1"></i> Demandas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-1"></i> Panel de Control</a></li>
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                             <img src="/img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
                             <span>{{empresa.nombreComercial}}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 dropdown-rounded">
-                            <li><h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6></li>
-                            <li><a class="dropdown-item rounded" href="/perfil_empresa"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
-                            <li><a class="dropdown-item rounded" href="/perfil_empresa"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
+                            <li><a class="dropdown-item rounded" href="/perfil"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
+                            <li><a class="dropdown-item rounded" href="/perfil"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item rounded text-danger" href="#" onclick="localStorage.removeItem('isLoggedIn'); window.location.href='/';"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
+                            <li><a class="dropdown-item rounded text-danger" href="/"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -60,395 +43,107 @@
 
     <div class="container-fluid">
         <div class="row min-vh-100">
-            <!-- Sidebar -->
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/dashboard">
-                                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-                            </a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
                         <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small></li>
-                        <li class="nav-item">
-                            <a class="nav-link active text-success fw-bold" href="/mis_activos">
-                                <i class="fas fa-box me-2"></i> Mis Ofertas
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/crear_activo">
-                                <i class="fas fa-plus-circle me-2"></i> Publicar Oferta
-                            </a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link active text-success fw-bold" href="/dashboard/mis-ofertas"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/oferta/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
                         <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small></li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/mis_demandas">
-                                <i class="fas fa-clipboard-list me-2"></i> Mis Demandas
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/demanda/nueva">
-                                <i class="fas fa-plus-circle me-2"></i> Publicar Demanda
-                            </a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/demanda/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Demanda</a></li>
                         <li class="nav-item mt-3">
                           <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
                             <span>Acuerdos</span>
                           </h6>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark link-mis-acuerdos" href="/mis_acuerdos">
-                                <i class="fas fa-handshake me-2"></i> Mis Acuerdos
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark link-crear-acuerdo" href="/crear_acuerdo">
-                                <i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo
-                            </a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link text-dark" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
                         <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/mensajes">
-                                <i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">2</span>
-                            </a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">2</span></a></li>
                     </ul>
                 </div>
             </nav>
 
-            <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-                
-                <!-- Header -->
                 <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                     <div>
                         <h1 class="h2 fw-bold text-dark">Mis Ofertas</h1>
                         <p class="text-secondary small mb-0">Gestiona tus residuos y materiales publicados en la plataforma.</p>
                     </div>
                     <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/crear_activo" class="btn btn-primary rounded-pill shadow-sm text-nowrap">
+                        <a href="/oferta/nueva" class="btn btn-primary rounded-pill shadow-sm text-nowrap">
                             <i class="fas fa-plus me-2"></i> Publicar Nuevo
                         </a>
                     </div>
                 </header>
 
-                <!-- Stats Summary -->
                 <section class="row g-4 mb-4">
-                    <div class="col-md-3">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body d-flex align-items-center">
-                                <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
-                                    <i class="fas fa-check-circle text-success fa-lg"></i>
-                                </div>
-                                <div>
-                                    <small class="text-muted fw-bold text-uppercase">Activas</small>
-                                    <h4 class="fw-bold mb-0 text-dark">4</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body d-flex align-items-center">
-                                <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
-                                    <i class="fas fa-pause-circle text-warning fa-lg"></i>
-                                </div>
-                                <div>
-                                    <small class="text-muted fw-bold text-uppercase">Pausadas</small>
-                                    <h4 class="fw-bold mb-0 text-dark">1</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body d-flex align-items-center">
-                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-                                    <i class="fas fa-handshake text-primary fa-lg"></i>
-                                </div>
-                                <div>
-                                    <small class="text-muted fw-bold text-uppercase">En Negociación</small>
-                                    <h4 class="fw-bold mb-0 text-dark">1</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body d-flex align-items-center">
-                                <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3">
-                                    <i class="fas fa-eye text-info fa-lg"></i>
-                                </div>
-                                <div>
-                                    <small class="text-muted fw-bold text-uppercase">Visitas Totales</small>
-                                    <h4 class="fw-bold mb-0 text-dark">127</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body d-flex align-items-center"><div class="bg-success bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-check-circle text-success fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Activas</small><h4 class="fw-bold mb-0 text-dark">4</h4></div></div></div></div>
+                    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body d-flex align-items-center"><div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-pause-circle text-warning fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Pausadas</small><h4 class="fw-bold mb-0 text-dark">1</h4></div></div></div></div>
+                    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body d-flex align-items-center"><div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-handshake text-primary fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">En Negociación</small><h4 class="fw-bold mb-0 text-dark">1</h4></div></div></div></div>
+                    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body d-flex align-items-center"><div class="bg-info bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-eye text-info fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Visitas Totales</small><h4 class="fw-bold mb-0 text-dark">127</h4></div></div></div></div>
                 </section>
 
-                <!-- Card Grid -->
                 <section class="row g-4 mb-4">
-
-                    <!-- Card 1: Viruta de Aluminio -->
+                    {{#ofertas}}
                     <div class="col-lg-4 col-md-6">
                         <div class="card border-0 shadow-sm h-100 card-hover">
                             <div class="card-body p-4">
                                 <div class="d-flex justify-content-between align-items-start mb-3">
                                     <div class="bg-success bg-opacity-10 rounded-circle p-3">
-                                        <i class="fas fa-industry text-success fa-lg"></i>
+                                        <i class="fas fa-box text-success fa-lg"></i>
                                     </div>
                                     <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Activo</span>
                                 </div>
-                                <h5 class="fw-bold text-dark mb-1">Viruta de Aluminio</h5>
-                                <p class="text-muted small mb-3">Residuo de mecanizado CNC, viruta limpia sin contaminantes. Ideal para fundición secundaria.</p>
+                                <h5 class="fw-bold text-dark mb-1">{{titulo}}</h5>
+                                <p class="text-muted small mb-3">{{descripcion}}</p>
+                                
                                 <div class="d-flex flex-wrap gap-2 mb-3">
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i> 500 kg</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> Metal</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i> {{cantidad}} kg</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> {{categoria}}</span>
                                     <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt me-1"></i> Móstoles</span>
                                 </div>
+                                
                                 <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <span class="fw-bold text-success fs-5">€ 1.200</span>
-                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 45 visitas</small>
+                                    <span class="fw-bold text-success fs-5">€ {{precio}}</span>
+                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 0 visitas</small>
                                 </div>
                             </div>
+                            
                             <div class="card-footer bg-transparent border-top-0 d-flex gap-2 p-3">
-                                <a href="/editar_activo" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
+                                <a href="/oferta/editar/{{id}}" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
                                     <i class="fas fa-edit me-1"></i> Editar
                                 </a>
-                                <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill">
-                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
-                                </button>
+                                <form action="/dashboard/mis-ofertas/eliminar/{{id}}" method="POST" class="flex-fill mb-0">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill w-100">
+                                        <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
+                    {{/ofertas}}
 
-                    <!-- Card 2: Palets de Madera Rotos -->
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card border-0 shadow-sm h-100 card-hover">
-                            <div class="card-body p-4">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div class="bg-warning bg-opacity-10 rounded-circle p-3">
-                                        <i class="fas fa-pallet text-warning fa-lg"></i>
-                                    </div>
-                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Activo</span>
-                                </div>
-                                <h5 class="fw-bold text-dark mb-1">Palets de Madera Rotos</h5>
-                                <p class="text-muted small mb-3">Palets europeos dañados, aptos para reparación o reciclaje como biomasa. Recogida en planta.</p>
-                                <div class="d-flex flex-wrap gap-2 mb-3">
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-cubes me-1"></i> 50 unidades</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> Madera</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt me-1"></i> Móstoles</span>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <span class="fw-bold text-success fs-5">Gratis</span>
-                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 38 visitas</small>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent border-top-0 d-flex gap-2 p-3">
-                                <a href="/editar_activo" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
-                                    <i class="fas fa-edit me-1"></i> Editar
-                                </a>
-                                <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill">
-                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
-                                </button>
-                            </div>
+                    {{^ofertas}}
+                    <div class="col-12 text-center py-5">
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-box-open fs-2 text-muted"></i>
                         </div>
+                        <h5 class="fw-bold text-dark">Aún no has publicado nada</h5>
+                        <p class="text-muted">Tus residuos publicados aparecerán aquí.</p>
+                        <a href="/oferta/nueva" class="btn btn-success mt-2 rounded-pill shadow-sm">Publicar mi primer residuo</a>
                     </div>
-
-                    <!-- Card 3: Aceite Industrial Usado -->
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card border-0 shadow-sm h-100 card-hover">
-                            <div class="card-body p-4">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div class="bg-danger bg-opacity-10 rounded-circle p-3">
-                                        <i class="fas fa-oil-can text-danger fa-lg"></i>
-                                    </div>
-                                    <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-2">Pausado</span>
-                                </div>
-                                <h5 class="fw-bold text-dark mb-1">Aceite Industrial Usado</h5>
-                                <p class="text-muted small mb-3">Aceite hidráulico de maquinaria pesada. Requiere gestor autorizado para su recogida y tratamiento.</p>
-                                <div class="d-flex flex-wrap gap-2 mb-3">
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-tint me-1"></i> 200 litros</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> Químico</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt me-1"></i> Móstoles</span>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <span class="fw-bold text-success fs-5">€ 80</span>
-                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 12 visitas</small>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent border-top-0 d-flex gap-2 p-3">
-                                <a href="/editar_activo" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
-                                    <i class="fas fa-edit me-1"></i> Editar
-                                </a>
-                                <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill">
-                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 4: Bobinas de Cobre -->
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card border-0 shadow-sm h-100 card-hover">
-                            <div class="card-body p-4">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                                        <i class="fas fa-cubes text-primary fa-lg"></i>
-                                    </div>
-                                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2">En Negociación</span>
-                                </div>
-                                <h5 class="fw-bold text-dark mb-1">Bobinas de Cobre</h5>
-                                <p class="text-muted small mb-3">Cobre electrolítico sobrante de instalación eléctrica. Alta pureza, listo para reutilizar.</p>
-                                <div class="d-flex flex-wrap gap-2 mb-3">
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i> 120 kg</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> Metal</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt me-1"></i> Arroyomolinos</span>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <span class="fw-bold text-success fs-5">€ 1.500</span>
-                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 32 visitas</small>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent border-top-0 d-flex gap-2 p-3">
-                                <a href="/editar_activo" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
-                                    <i class="fas fa-edit me-1"></i> Editar
-                                </a>
-                                <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill">
-                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 5: Retales de PVC -->
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card border-0 shadow-sm h-100 card-hover">
-                            <div class="card-body p-4">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div class="bg-info bg-opacity-10 rounded-circle p-3">
-                                        <i class="fas fa-recycle text-info fa-lg"></i>
-                                    </div>
-                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Activo</span>
-                                </div>
-                                <h5 class="fw-bold text-dark mb-1">Retales de PVC</h5>
-                                <p class="text-muted small mb-3">Recortes de tubería de PVC de diferentes diámetros. Aptos para trituración y reciclaje industrial.</p>
-                                <div class="d-flex flex-wrap gap-2 mb-3">
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i> 80 kg</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> Plástico</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt me-1"></i> Villaviciosa</span>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <span class="fw-bold text-success fs-5">Gratis</span>
-                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 19 visitas</small>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent border-top-0 d-flex gap-2 p-3">
-                                <a href="/editar_activo" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
-                                    <i class="fas fa-edit me-1"></i> Editar
-                                </a>
-                                <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill">
-                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 6: Cajas de Cartón -->
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card border-0 shadow-sm h-100 card-hover">
-                            <div class="card-body p-4">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div class="bg-secondary bg-opacity-10 rounded-circle p-3">
-                                        <i class="fas fa-box text-secondary fa-lg"></i>
-                                    </div>
-                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Activo</span>
-                                </div>
-                                <h5 class="fw-bold text-dark mb-1">Cajas de Cartón Industriales</h5>
-                                <p class="text-muted small mb-3">Cajas de embalaje industrial de doble canal en buen estado. Ideales para reutilización en logística.</p>
-                                <div class="d-flex flex-wrap gap-2 mb-3">
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-cubes me-1"></i> 100 unidades</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1"></i> Papel/Cartón</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt me-1"></i> Móstoles</span>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <span class="fw-bold text-success fs-5">Gratis</span>
-                                    <small class="text-muted"><i class="fas fa-eye me-1"></i> 8 visitas</small>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent border-top-0 d-flex gap-2 p-3">
-                                <a href="/editar_activo" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
-                                    <i class="fas fa-edit me-1"></i> Editar
-                                </a>
-                                <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill">
-                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
+                    {{/ofertas}}
                 </section>
-
             </main>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-white border-top pt-5 pb-4 mt-auto">
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                <h5 class="fw-bold text-dark mb-3"><i class="fas fa-recycle text-success me-2"></i>EcoMóstoles</h5>
-                <p class="text-muted small pe-4">Plataforma B2B de Simbiosis Industrial y Economía Circular. Transformando los residuos de hoy en los recursos del mañana para el tejido empresarial local.</p>
-            </div>
-            
-            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                <h6 class="fw-bold text-dark mb-3">Plataforma</h6>
-                <ul class="list-unstyled text-muted small">
-                    <li class="mb-2"><a href="/mercado" class="text-muted text-decoration-none text-hover-success">Mercado de Ofertas</a></li>
-                    <li class="mb-2"><a href="/dashboard" class="text-muted text-decoration-none text-hover-success">Panel de Control</a></li>
-                    <li class="mb-2"><a href="/crear_activo" class="text-muted text-decoration-none text-hover-success">Publicar Activo</a></li>
-                </ul>
-            </div>
-            
-            <div class="col-lg-4 col-md-12">
-                <h6 class="fw-bold text-dark mb-3">Legal y Soporte</h6>
-                <ul class="list-unstyled text-muted small">
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none text-hover-success">Aviso Legal y Privacidad</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none text-hover-success">Política de Cookies</a></li>
-                    <li class="mb-2"><a href="mailto:soporte@ecomostoles.com" class="text-muted text-decoration-none text-hover-success"><i class="fas fa-envelope me-2"></i>soporte@ecomostoles.com</a></li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="row align-items-center border-top pt-4">
-            <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                <span class="text-muted small">© 2026 EcoMóstoles. Todos los derechos reservados.</span>
-            </div>
-            <div class="col-md-6 text-center text-md-end">
-                <a href="#" class="text-secondary me-3 text-decoration-none"><i class="fab fa-linkedin fs-5"></i></a>
-                <a href="#" class="text-secondary me-3 text-decoration-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-twitter-x mb-1" viewBox="0 0 16 16">
-                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"></path>
-                    </svg>
-                </a>
-                <a href="#" class="text-secondary text-decoration-none"><i class="fas fa-envelope fs-5"></i></a>
-            </div>
-        </div>
-    </div>
-</footer>
-
-    <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Particles.js — inline config identical to index/dashboard -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="/js/particles-init.js"></script>
     <script src="/js/card-spotlight.js"></script>
-    <!-- Auth Guard -->
-    <script src="/js/auth-guard.js"></script>
-
-
-</body></html>
+</body>
+</html>

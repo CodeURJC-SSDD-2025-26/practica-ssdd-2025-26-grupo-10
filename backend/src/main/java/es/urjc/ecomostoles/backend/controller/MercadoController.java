@@ -9,10 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,53 +95,4 @@ public class MercadoController {
         }
     }
 
-    /**
-     * Shows the form to create a new offer.
-     *
-     * @param model the Spring UI model
-     * @return the template name "crear_activo"
-     */
-    @GetMapping("/oferta/nueva")
-    public String mostrarFormularioNuevaOferta(Model model) {
-        // Inject active company context for the navbar
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
-        empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
-        
-        // Add a new empty Oferta object to the model for form binding
-        model.addAttribute("oferta", new Oferta());
-        return "crear_activo";
-    }
-
-    /**
-     * Processes the submission of the new offer form.
-     *
-     * @param oferta     the offer data from the form
-     * @param imagenFile the uploaded image file
-     * @return redirection to the market page
-     */
-    @PostMapping("/oferta/nueva")
-    public String guardarNuevaOferta(@ModelAttribute Oferta oferta, @RequestParam("imagenFile") MultipartFile imagenFile) {
-        
-        // Link the offer to a temporary company (Metales del Sur)
-        Optional<Empresa> empresa = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
-        empresa.ifPresent(oferta::setEmpresa);
-
-        // Set the current publication date
-        oferta.setFechaPublicacion(LocalDateTime.now());
-
-        // Handle image upload as BLOB
-        if (!imagenFile.isEmpty()) {
-            try {
-                oferta.setImagen(imagenFile.getBytes());
-            } catch (IOException e) {
-                // Print error to console if something goes wrong reading the file bytes
-                e.printStackTrace();
-            }
-        }
-
-        // Save the new offer to the database
-        ofertaRepository.save(oferta);
-
-        return "redirect:/mercado";
-    }
 }
