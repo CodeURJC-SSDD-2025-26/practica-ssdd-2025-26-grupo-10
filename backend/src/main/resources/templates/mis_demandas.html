@@ -43,7 +43,7 @@
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                             <img src="/img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
-                            <span>Metales del Sur S.L.</span>
+                            <span>{{empresa.nombreComercial}}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 dropdown-rounded">
                             <li><h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6></li>
@@ -87,7 +87,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/crear_solicitud">
+                            <a class="nav-link" href="/demanda/nueva">
                                 <i class="fas fa-plus-circle me-2"></i> Publicar Demanda
                             </a>
                         </li>
@@ -126,7 +126,7 @@
                         <p class="text-secondary small mb-0">Gestiona las solicitudes de materiales que has publicado en el tablón.</p>
                     </div>
                     <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/crear_solicitud" class="btn btn-success rounded-pill shadow-sm text-nowrap">
+                        <a href="/demanda/nueva" class="btn btn-success rounded-pill shadow-sm text-nowrap">
                             <i class="fas fa-plus me-2"></i> Nueva Demanda
                         </a>
                     </div>

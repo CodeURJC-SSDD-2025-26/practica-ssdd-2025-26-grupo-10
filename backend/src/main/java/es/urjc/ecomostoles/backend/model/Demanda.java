@@ -259,4 +259,10 @@ public class Demanda {
     public void setEmpresa(Empresa empresa) {
         this.empresa = empresa;
     }
+
+    // Format zonaRecogida to capitalize the first letter
+    public String getZonaRecogidaFormateada() {
+        if (this.zonaRecogida == null || this.zonaRecogida.isEmpty()) return "";
+        return this.zonaRecogida.substring(0, 1).toUpperCase() + this.zonaRecogida.substring(1).toLowerCase();
+    }
 }

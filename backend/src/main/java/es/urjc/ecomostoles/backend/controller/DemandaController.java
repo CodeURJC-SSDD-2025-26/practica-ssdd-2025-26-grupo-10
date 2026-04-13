@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDateTime;
@@ -48,7 +49,34 @@ public class DemandaController {
         // Add the list of demands to the model to be rendered by Mustache/HTML
         model.addAttribute("demandas", demandas);
         
+        // Inject active company context for the navbar
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
+        
         return "solicitudes";
+    }
+
+    /**
+     * Shows the details of a specific demand.
+     *
+     * @param id    the ID of the demand to display
+     * @param model the Spring UI model
+     * @return the template name "detalle_solicitud" if found, else redirects to solicitudes
+     */
+    @GetMapping("/demanda/{id}")
+    public String mostrarDetalleDemanda(@PathVariable("id") Long id, Model model) {
+        Optional<Demanda> demanda = demandaRepository.findById(id);
+        if (demanda.isPresent()) {
+            model.addAttribute("demanda", demanda.get());
+            
+            // Inject active company context for the navbar
+            Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+            empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
+            
+            return "detalle_solicitud";
+        } else {
+            return "redirect:/solicitudes";
+        }
     }
 
     /**
@@ -61,6 +89,11 @@ public class DemandaController {
     public String mostrarFormularioNuevaDemanda(Model model) {
         // Add a new empty Demanda object to the model for form binding
         model.addAttribute("demanda", new Demanda());
+
+        // Inject active company context for the navbar
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
+        
         return "crear_solicitud";
     }
 

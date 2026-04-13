@@ -50,6 +50,10 @@ public class MercadoController {
         // Add the list of offers to the model to be rendered by Mustache/HTML
         model.addAttribute("ofertas", listaDeOfertas);
         
+        // Inject active company context for the navbar
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
+        
         return "mercado";
     }
 
@@ -65,6 +69,11 @@ public class MercadoController {
         Optional<Oferta> oferta = ofertaRepository.findById(id);
         if (oferta.isPresent()) {
             model.addAttribute("oferta", oferta.get());
+            
+            // Inject active company context for the navbar
+            Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+            empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
+            
             return "detalle_activo";
         } else {
             return "redirect:/mercado";
@@ -97,6 +106,10 @@ public class MercadoController {
      */
     @GetMapping("/oferta/nueva")
     public String mostrarFormularioNuevaOferta(Model model) {
+        // Inject active company context for the navbar
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto("contacto@metalesdelsur.es");
+        empresaOpt.ifPresent(empresa -> model.addAttribute("empresa", empresa));
+        
         // Add a new empty Oferta object to the model for form binding
         model.addAttribute("oferta", new Oferta());
         return "crear_activo";

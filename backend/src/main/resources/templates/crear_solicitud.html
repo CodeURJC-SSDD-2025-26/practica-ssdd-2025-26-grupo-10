@@ -41,7 +41,7 @@
                     <li class="nav-item dropdown ms-lg-2">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                             <img src="/img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
-                            <span>Metales del Sur S.L.</span>
+                            <span>{{empresa.nombreComercial}}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 dropdown-rounded">
                             <li><h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6></li>
@@ -86,7 +86,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active text-success fw-bold" href="/crear_solicitud">
+                            <a class="nav-link active text-success fw-bold" href="/demanda/nueva">
                                 <i class="fas fa-plus-circle me-2"></i> Publicar Demanda
                             </a>
                         </li>
@@ -128,37 +128,37 @@
 
                 <div class="card card-modern border-top-success">
                     <div class="card-body p-4">
-                        <form action="/solicitudes" class="needs-validation" novalidate="">
+                        <form action="/demanda/nueva" method="POST" class="needs-validation" novalidate="">
                             <div class="row g-3">
                                 <div class="col-md-8">
                                     <label for="titulo" class="form-label text-secondary fw-bold small text-uppercase">Título de lo que buscas <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="titulo" placeholder="Ej. Busco Palés Europeos en buen estado" required="">
+                                    <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej. Busco Palés Europeos en buen estado" required="">
                                     <div class="invalid-feedback">Por favor, completa este campo.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="categoria" class="form-label text-secondary fw-bold small text-uppercase">Categoría del Material <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="categoria" required="">
+                                    <select class="form-select" id="categoria" name="categoriaMaterial" required="">
                                         <option value="" selected="" disabled="">Seleccionar...</option>
-                                        <option value="metal">Metal</option>
-                                        <option value="madera">Madera</option>
-                                        <option value="plastico">Plástico</option>
-                                        <option value="quimico">Químico</option>
-                                        <option value="maquinaria">Maquinaria</option>
-                                        <option value="espacio">Espacio Industrial</option>
-                                        <option value="otro">Otro</option>
+                                        <option value="Residuo Metálico">Metal</option>
+                                        <option value="Residuo de Madera">Madera</option>
+                                        <option value="Residuo Plástico">Plástico</option>
+                                        <option value="Residuo Químico">Químico</option>
+                                        <option value="Maquinaria">Maquinaria</option>
+                                        <option value="Espacio Industrial">Espacio Industrial</option>
+                                        <option value="Otro">Otro</option>
                                     </select>
                                 </div>
                                 
                                 <div class="col-12">
                                     <label for="descripcion" class="form-label text-secondary fw-bold small text-uppercase">Descripción detallada de tu necesidad <span class="text-danger">*</span></label>
-                                    <textarea class="form-control" id="descripcion" rows="4" placeholder="Describe qué material necesitas, en qué condiciones, para qué lo vas a utilizar y cualquier requisito técnico..." required=""></textarea>
+                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Describe qué material necesitas, en qué condiciones, para qué lo vas a utilizar y cualquier requisito técnico..." required=""></textarea>
                                 </div>
 
                                 <div class="col-md-4">
                                     <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad requerida</label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="cantidad" placeholder="Ej. 500" min="0">
-                                        <select class="form-select" id="unidadMedida" aria-label="Seleccionar unidad de medida">
+                                        <input type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Ej. 500" min="0">
+                                        <select class="form-select" id="unidadMedida" name="unidad" aria-label="Seleccionar unidad de medida">
                                             <option value="kg" selected="">kg</option>
                                             <option value="uds">unidades</option>
                                             <option value="L">litros</option>
@@ -169,7 +169,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label for="urgencia" class="form-label text-secondary fw-bold small text-uppercase">Urgencia <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="urgencia" required="">
+                                    <select class="form-select" id="urgencia" name="urgencia" required="">
                                         <option value="" selected="" disabled="">Seleccionar...</option>
                                         <option value="alta">🔴 Alta — Lo necesito esta semana</option>
                                         <option value="media">🟡 Media — En las próximas 2-4 semanas</option>
@@ -178,23 +178,23 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label for="presupuesto" class="form-label text-secondary fw-bold small text-uppercase">Presupuesto máximo (€)</label>
-                                    <input type="number" class="form-control" id="presupuesto" placeholder="Ej. 2000" step="0.01" min="0">
+                                    <input type="number" class="form-control" id="presupuesto" name="presupuestoMaximo" placeholder="Ej. 2000" step="0.01" min="0">
                                     <div class="form-text">Pon 0 si buscas material gratis.</div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label for="zona" class="form-label text-secondary fw-bold small text-uppercase">Zona preferida de recogida</label>
-                                    <select class="form-select" id="zona">
-                                        <option value="cualquiera" selected="">Cualquier zona</option>
-                                        <option value="regordono">Pol. Regordoño</option>
-                                        <option value="nieves">Pol. Las Nieves</option>
-                                        <option value="arroyomolinos">Arroyomolinos</option>
-                                        <option value="mostoles">Móstoles centro</option>
+                                    <select class="form-select" id="zona" name="zonaRecogida">
+                                        <option value="Cualquiera" selected="">Cualquier zona</option>
+                                        <option value="Regordoño">Pol. Regordoño</option>
+                                        <option value="Nieves">Pol. Las Nieves</option>
+                                        <option value="Arroyomolinos">Arroyomolinos</option>
+                                        <option value="Móstoles">Móstoles centro</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="vigencia" class="form-label text-secondary fw-bold small text-uppercase">Vigencia de la demanda</label>
-                                    <select class="form-select" id="vigencia">
+                                    <select class="form-select" id="vigencia" name="vigencia">
                                         <option value="7">7 días</option>
                                         <option value="15">15 días</option>
                                         <option value="30" selected="">30 días</option>
