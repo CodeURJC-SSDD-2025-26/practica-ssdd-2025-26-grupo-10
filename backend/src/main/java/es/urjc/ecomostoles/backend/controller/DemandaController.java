@@ -1,12 +1,18 @@
 package es.urjc.ecomostoles.backend.controller;
 
 import es.urjc.ecomostoles.backend.model.Demanda;
+import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.repository.DemandaRepository;
+import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller to handle demand-related (Demanda/Solicitudes) web requests.
@@ -16,13 +22,16 @@ import java.util.List;
 public class DemandaController {
 
     private final DemandaRepository demandaRepository;
+    private final EmpresaRepository empresaRepository;
 
     /**
-     * Constructor-based injection of the Demanda repository.
+     * Constructor-based injection of repositories.
      * @param demandaRepository repository for demand data
+     * @param empresaRepository repository for company data
      */
-    public DemandaController(DemandaRepository demandaRepository) {
+    public DemandaController(DemandaRepository demandaRepository, EmpresaRepository empresaRepository) {
         this.demandaRepository = demandaRepository;
+        this.empresaRepository = empresaRepository;
     }
 
     /**
@@ -40,5 +49,40 @@ public class DemandaController {
         model.addAttribute("demandas", demandas);
         
         return "solicitudes";
+    }
+
+    /**
+     * Shows the form to create a new demand.
+     *
+     * @param model the Spring UI model
+     * @return the template name "crear_solicitud"
+     */
+    @GetMapping("/demanda/nueva")
+    public String mostrarFormularioNuevaDemanda(Model model) {
+        // Add a new empty Demanda object to the model for form binding
+        model.addAttribute("demanda", new Demanda());
+        return "crear_solicitud";
+    }
+
+    /**
+     * Processes the submission of the new demand form.
+     *
+     * @param demanda the demand data from the form
+     * @return redirection to the solicitudes page
+     */
+    @PostMapping("/demanda/nueva")
+    public String guardarNuevaDemanda(@ModelAttribute Demanda demanda) {
+        // Link the demand to a specific company (Plásticos Norte)
+        Optional<Empresa> empresa = empresaRepository.findByEmailContacto("info@plasticosnorte.com");
+        empresa.ifPresent(demanda::setEmpresa);
+
+        // Set the current publication date and default status
+        demanda.setFechaPublicacion(LocalDateTime.now());
+        demanda.setEstado("Activa");
+
+        // Save the new demand to the database
+        demandaRepository.save(demanda);
+
+        return "redirect:/solicitudes";
     }
 }
