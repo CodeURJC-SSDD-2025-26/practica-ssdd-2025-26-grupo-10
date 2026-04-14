@@ -87,9 +87,15 @@ public class MercadoController {
      */
     @GetMapping("/oferta/{id}")
     public String mostrarDetalleOferta(@PathVariable("id") Long id, Model model, Principal principal) {
-        Optional<Oferta> oferta = ofertaService.buscarPorId(id);
-        if (oferta.isPresent()) {
-            model.addAttribute("oferta", oferta.get());
+        Optional<Oferta> ofertaOpt = ofertaService.buscarPorId(id);
+        if (ofertaOpt.isPresent()) {
+            Oferta oferta = ofertaOpt.get();
+            
+            // Increment visits and persist
+            oferta.setVisitas(oferta.getVisitas() + 1);
+            ofertaService.guardar(oferta);
+ 
+            model.addAttribute("oferta", oferta);
             if (principal != null) {
                 empresaService.buscarPorEmail(principal.getName())
                               .ifPresent(empresa -> model.addAttribute("empresa", empresa));

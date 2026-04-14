@@ -59,19 +59,19 @@
                         </div>
                         <div class="col-md-3">
                             <div class="border rounded-3 p-3 text-center bg-light">
-                                <h4 class="fw-bold text-warning mb-0">12</h4>
+                                <h4 class="fw-bold text-warning mb-0">{{totalPendientes}}</h4>
                                 <small class="text-muted">Pendientes</small>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="border rounded-3 p-3 text-center bg-light">
-                                <h4 class="fw-bold text-danger mb-0">3</h4>
+                                <h4 class="fw-bold text-danger mb-0">{{totalDenunciadas}}</h4>
                                 <small class="text-muted">Denunciadas</small>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="border rounded-3 p-3 text-center bg-light">
-                                <h4 class="fw-bold text-secondary mb-0">24</h4>
+                                <h4 class="fw-bold text-secondary mb-0">{{totalCompletadas}}</h4>
                                 <small class="text-muted">Completadas</small>
                             </div>
                         </div>
@@ -116,7 +116,10 @@
                                     <td><span class="badge bg-success rounded-pill">{{estado}}</span></td>
                                     <td class="text-end pe-4">
                                         <a href="/oferta/{{id}}" class="btn btn-sm btn-outline-primary rounded-pill me-1"><i class="fas fa-eye me-1"></i>Ver</a>
-                                        <button class="btn btn-sm btn-outline-danger rounded-pill"><i class="fas fa-trash me-1"></i>Borrar</button>
+                                        <form action="/admin/ofertas/{{id}}/eliminar" method="POST" style="display:inline;">
+                                            {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill" onclick="return confirm('¿Estás seguro de que deseas eliminar esta oferta de forma permanente?')"><i class="fas fa-trash me-1"></i>Borrar</button>
+                                        </form>
                                     </td>
                                 </tr>
                                 {{/todasOfertas}}

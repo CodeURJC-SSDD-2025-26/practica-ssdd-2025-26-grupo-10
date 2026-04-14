@@ -76,4 +76,9 @@ public class OfertaService {
     public long contarTodas() {
         return ofertaRepository.count();
     }
+
+    @Transactional(readOnly = true)
+    public long contarPorEstado(es.urjc.ecomostoles.backend.model.EstadoOferta estado) {
+        return ofertaRepository.countByEstado(estado);
+    }
 }

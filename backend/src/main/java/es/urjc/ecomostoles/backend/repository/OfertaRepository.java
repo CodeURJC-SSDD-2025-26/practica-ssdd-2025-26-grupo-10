@@ -12,6 +12,8 @@ import java.util.List;
  * Repository interface for Oferta entity.
  */
 public interface OfertaRepository extends JpaRepository<Oferta, Long> {
+    
+    long countByEstado(EstadoOferta estado);
 
     /**
      * Finds a list of offers associated with a specific company.

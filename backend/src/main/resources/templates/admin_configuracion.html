@@ -26,54 +26,65 @@
                             <p class="text-muted mb-0">Ajustes globales del sistema EcoMóstoles</p>
                         </div>
                     </div>
+
+                    {{#mensaje}}
+                    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="fas fa-check-circle me-2"></i> {{mensaje}}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {{/mensaje}}
                 </div>
             </section>
 
-            <div class="card shadow-sm border-top border-success border-4 rounded-3 mb-4">
-                <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0">
-                    <h5 class="fw-bold"><i class="fas fa-server text-primary me-2"></i> Estado del Sistema</h5>
-                </div>
-                <div class="card-body p-4">
-                    <div class="form-check form-switch fs-5 mb-0">
-                        <input class="form-check-input cursor-pointer" type="checkbox" id="modoMantenimiento">
-                        <label class="form-check-label ms-2 fw-bold text-dark" for="modoMantenimiento">Activar Modo Mantenimiento</label>
-                    </div>
-                    <small class="text-muted d-block mt-1 ms-5">Si se activa, los usuarios normales no podrán acceder a la plataforma.</small>
-                </div>
-            </div>
+            <form action="/admin/configuracion" method="POST">
+                {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
 
-            <div class="card shadow-sm border-top border-success border-4 rounded-3 mb-4">
-                <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0">
-                    <h5 class="fw-bold"><i class="fas fa-percentage text-warning me-2"></i> Tarifas de Plataforma</h5>
-                </div>
-                <div class="card-body p-4">
-                    <label for="comisionPlataforma" class="form-label fw-bold text-dark">Comisión por transacción (%)</label>
-                    <div class="input-group w-50">
-                        <input type="number" class="form-control" id="comisionPlataforma" value="2.5" step="0.1">
-                        <span class="input-group-text bg-light text-muted">%</span>
+                <div class="card shadow-sm border-top border-success border-4 rounded-3 mb-4">
+                    <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0">
+                        <h5 class="fw-bold"><i class="fas fa-server text-primary me-2"></i> Estado del Sistema</h5>
                     </div>
-                    <small class="text-muted d-block mt-2">Porcentaje de retención aplicado a cada acuerdo cerrado.</small>
+                    <div class="card-body p-4">
+                        <div class="form-check form-switch fs-5 mb-0">
+                            <input class="form-check-input cursor-pointer" type="checkbox" id="modoMantenimiento" name="modoMantenimiento">
+                            <label class="form-check-label ms-2 fw-bold text-dark" for="modoMantenimiento">Activar Modo Mantenimiento</label>
+                        </div>
+                        <small class="text-muted d-block mt-1 ms-5">Si se activa, los usuarios normales no podrán acceder a la plataforma.</small>
+                    </div>
                 </div>
-            </div>
 
-            <div class="card shadow-sm border-top border-success border-4 rounded-3 mb-4">
-                <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0">
-                    <h5 class="fw-bold"><i class="fas fa-tags text-success me-2"></i> Categorías de Residuos</h5>
+                <div class="card shadow-sm border-top border-success border-4 rounded-3 mb-4">
+                    <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0">
+                        <h5 class="fw-bold"><i class="fas fa-percentage text-warning me-2"></i> Tarifas de Plataforma</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <label for="comisionPlataforma" class="form-label fw-bold text-dark">Comisión por transacción (%)</label>
+                        <div class="input-group w-50">
+                            <input type="number" class="form-control" name="comisionPlataforma" id="comisionPlataforma" value="2.5" step="0.1">
+                            <span class="input-group-text bg-light text-muted">%</span>
+                        </div>
+                        <small class="text-muted d-block mt-2">Porcentaje de retención aplicado a cada acuerdo cerrado.</small>
+                    </div>
                 </div>
-                <div class="card-body p-4">
-                    <label for="listaCategorias" class="form-label fw-bold text-dark">Tipos de residuos permitidos (uno por línea)</label>
-                    <textarea class="form-control bg-light" id="listaCategorias" rows="5">Residuo Metálico
+
+                <div class="card shadow-sm border-top border-success border-4 rounded-3 mb-4">
+                    <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0">
+                        <h5 class="fw-bold"><i class="fas fa-tags text-success me-2"></i> Categorías de Residuos</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <label for="listaCategorias" class="form-label fw-bold text-dark">Tipos de residuos permitidos (uno por línea)</label>
+                        <textarea class="form-control bg-light" name="listaCategorias" id="listaCategorias" rows="5">Residuo Metálico
 Residuo Peligroso
 Residuo Madera
 Reciclaje Plástico
 Residuo Electrónico (RAEE)</textarea>
 
-                    <div class="mt-4 text-end border-top pt-3">
-                        <button class="btn btn-outline-secondary me-2"><i class="fas fa-undo"></i> Restablecer</button>
-                        <button class="btn btn-success"><i class="fas fa-save"></i> Guardar Cambios</button>
+                        <div class="mt-4 text-end border-top pt-3">
+                            <button type="reset" class="btn btn-outline-secondary me-2"><i class="fas fa-undo"></i> Restablecer</button>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar Cambios</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
 
         </main>
     </div>

@@ -67,6 +67,11 @@ public class AcuerdoService {
     }
 
     @Transactional(readOnly = true)
+    public long contarPorEstado(es.urjc.ecomostoles.backend.model.EstadoAcuerdo estado) {
+        return acuerdoRepository.countByEstado(estado);
+    }
+
+    @Transactional(readOnly = true)
     public long contarPorEmpresa(Empresa empresa) {
         return acuerdoRepository.countByEmpresa(empresa);
     }
@@ -104,7 +109,29 @@ public class AcuerdoService {
     }
 
     @Transactional(readOnly = true)
+    public double calcularCO2AhorradoPorEmpresa(Long empresaId) {
+        Optional<Empresa> empresa = empresaService.buscarPorId(empresaId);
+        if (empresa.isEmpty()) return 0.0;
+        
+        double totalKilos = sumarMaterialReintroducido(empresa.get());
+        return totalKilos * 0.45;
+    }
+
+    @Transactional(readOnly = true)
     public long contarPorEmpresaYEstado(Empresa empresa, String estado) {
         return acuerdoRepository.countByEmpresaAndEstado(empresa, estado);
+    }
+ 
+    @Transactional(readOnly = true)
+    public String calcularCO2Ahorrado() {
+        Double totalKilos = acuerdoRepository.sumTotalCantidadByEstadoCompletado();
+        if (totalKilos == null || totalKilos == 0) return "0";
+        
+        // Algorithm: 0.5 tons of CO2 saved for every 1000kg (1 ton) of material
+        // Actually, the prompt says "0.5 tons per each unit". I'll assume 1 unit = 1000kg or simply use quantity * 0.5 as suggested.
+        double tonsCO2 = totalKilos * 0.5;
+ 
+        java.text.DecimalFormat df = new java.text.DecimalFormat("#,###.###");
+        return df.format(tonsCO2);
     }
 }

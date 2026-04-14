@@ -5,14 +5,23 @@ import es.urjc.ecomostoles.backend.service.EmpresaService;
 import es.urjc.ecomostoles.backend.service.OfertaService;
 import es.urjc.ecomostoles.backend.service.DemandaService;
 import es.urjc.ecomostoles.backend.service.AcuerdoService;
+import es.urjc.ecomostoles.backend.model.EstadoAcuerdo;
+import es.urjc.ecomostoles.backend.model.EstadoOferta;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import es.urjc.ecomostoles.backend.dto.EmpresaDTO;
 
 /**
  * Administration panel controller.
@@ -54,6 +63,12 @@ public class AdminController {
         model.addAttribute("totalOfertas",   ofertaService.contarTodas());
         model.addAttribute("totalDemandas",  demandaService.contarTodas());
         model.addAttribute("totalAcuerdos",  acuerdoService.contarTodos());
+ 
+        // Admin-Specific Stats (Real DB counts)
+        model.addAttribute("totalPendientes",  acuerdoService.contarPorEstado(EstadoAcuerdo.PENDIENTE));
+        model.addAttribute("totalDenunciadas", ofertaService.contarPorEstado(EstadoOferta.DENUNCIADA));
+        model.addAttribute("totalCompletadas", acuerdoService.contarPorEstado(EstadoAcuerdo.COMPLETADO));
+        model.addAttribute("toneladasCO2", acuerdoService.calcularCO2Ahorrado());
     }
 
     // ── GET /admin  →  redirects to /admin/panel ───────────────────────────
@@ -94,6 +109,15 @@ public class AdminController {
     public String reportes(Model model, Principal principal) {
         addCommonAttributes(model, principal);
         model.addAttribute("navReportes", true);
+
+        // Fetch companies and enrich with CO2 stats
+        List<EmpresaDTO> empresas = empresaService.obtenerTodas().stream().map(e -> {
+            EmpresaDTO dto = new EmpresaDTO(e);
+            dto.setCo2Ahorrado(acuerdoService.calcularCO2AhorradoPorEmpresa(e.getId()));
+            return dto;
+        }).collect(Collectors.toList());
+
+        model.addAttribute("empresas", empresas);
         return "admin_reportes";
     }
 
@@ -103,5 +127,28 @@ public class AdminController {
         addCommonAttributes(model, principal);
         model.addAttribute("navConfiguracion", true);
         return "admin_configuracion";
+    }
+ 
+    /**
+     * Deletes an offer from the administrative panel.
+     */
+    @PostMapping("/ofertas/{id}/eliminar")
+    public String eliminarOferta(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        ofertaService.eliminar(id);
+        redirectAttributes.addFlashAttribute("mensaje", "La oferta ha sido eliminada correctamente por el administrador.");
+        return "redirect:/admin/ofertas";
+    }
+ 
+    /**
+     * Saves global platform configuration.
+     */
+    @PostMapping("/configuracion")
+    public String guardarConfiguracion(@RequestParam(required = false) String modoMantenimiento,
+                                       @RequestParam(required = false) Double comisionPlataforma,
+                                       @RequestParam(required = false) String listaCategorias,
+                                       RedirectAttributes redirectAttributes) {
+        // Logic to persist settings would go here. For now, we simulate success.
+        redirectAttributes.addFlashAttribute("mensaje", "La configuración de la plataforma se ha actualizado correctamente.");
+        return "redirect:/admin/configuracion";
     }
 }

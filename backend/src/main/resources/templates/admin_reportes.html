@@ -26,7 +26,7 @@
                         <div class="card-body p-4 text-center">
                             <div class="text-success mb-2"><i class="fas fa-leaf fa-2x"></i></div>
                             <h5 class="text-muted mb-1">CO₂ Ahorrado</h5>
-                            <h2 class="fw-bold mb-0">15.000 t</h2>
+                            <h2 class="fw-bold mb-0">{{toneladasCO2}} t</h2>
                         </div>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                                     </td>
                                     <td class="text-secondary">{{emailContacto}}</td>
                                     <td class="text-secondary fw-bold">{{cif}}</td>
-                                    <td><span class="text-success fw-bold"><i class="fas fa-leaf me-1"></i>-- t</span></td>
+                                    <td><span class="text-success fw-bold"><i class="fas fa-leaf me-1"></i>{{co2Ahorrado}} t</span></td>
                                 </tr>
                                 {{/empresas}}
                             </tbody>

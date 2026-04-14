@@ -144,4 +144,58 @@ public class AcuerdoController {
         model.addAttribute("empresa", logueada);
         return "detalle_acuerdo";
     }
+ 
+    /**
+     * Shows the form to edit an existing agreement.
+     */
+    @GetMapping("/acuerdos/{id}/editar")
+    public String mostrarFormularioEditar(@PathVariable Long id, Model model, Principal principal) {
+        Acuerdo acuerdo = acuerdoService.buscarPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
+ 
+        String userEmail = principal.getName();
+        boolean esOrigen = acuerdo.getEmpresaOrigen() != null && acuerdo.getEmpresaOrigen().getEmailContacto().equals(userEmail);
+        boolean esDestino = acuerdo.getEmpresaDestino() != null && acuerdo.getEmpresaDestino().getEmailContacto().equals(userEmail);
+ 
+        if (!esOrigen && !esDestino) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para editar este acuerdo");
+        }
+ 
+        model.addAttribute("acuerdo", acuerdo);
+        return "editar_acuerdo";
+    }
+ 
+    /**
+     * Processes the update of an existing agreement.
+     */
+    @PostMapping("/acuerdos/{id}/editar")
+    public String actualizarAcuerdo(@PathVariable Long id, @Valid @ModelAttribute Acuerdo acuerdoActualizado,
+                                    BindingResult result, Principal principal) {
+        if (result.hasErrors()) {
+            return "editar_acuerdo";
+        }
+ 
+        Acuerdo acuerdoExistente = acuerdoService.buscarPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
+ 
+        String userEmail = principal.getName();
+        boolean esOrigen = acuerdoExistente.getEmpresaOrigen() != null && acuerdoExistente.getEmpresaOrigen().getEmailContacto().equals(userEmail);
+        boolean esDestino = acuerdoExistente.getEmpresaDestino() != null && acuerdoExistente.getEmpresaDestino().getEmailContacto().equals(userEmail);
+ 
+        if (!esOrigen && !esDestino) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para editar este acuerdo");
+        }
+ 
+        // Update allowed fields
+        acuerdoExistente.setMaterialIntercambiado(acuerdoActualizado.getMaterialIntercambiado());
+        acuerdoExistente.setCantidad(acuerdoActualizado.getCantidad());
+        acuerdoExistente.setUnidad(acuerdoActualizado.getUnidad());
+        acuerdoExistente.setPrecioAcordado(acuerdoActualizado.getPrecioAcordado());
+        acuerdoExistente.setFechaRecogida(acuerdoActualizado.getFechaRecogida());
+        acuerdoExistente.setEstado(acuerdoActualizado.getEstado());
+ 
+        acuerdoService.guardar(acuerdoExistente);
+ 
+        return "redirect:/acuerdos/" + id;
+    }
 }

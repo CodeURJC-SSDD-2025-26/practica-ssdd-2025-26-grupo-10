@@ -2,6 +2,7 @@ package es.urjc.ecomostoles.backend.repository;
 
 import es.urjc.ecomostoles.backend.model.Acuerdo;
 import es.urjc.ecomostoles.backend.model.Empresa;
+import es.urjc.ecomostoles.backend.model.EstadoAcuerdo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
@@ -10,6 +11,13 @@ import java.util.List;
  * Provides methods to retrieve agreements based on source or destination companies.
  */
 public interface AcuerdoRepository extends JpaRepository<Acuerdo, Long> {
+    
+    /**
+     * Counts agreements by their status.
+     * @param estado the status to count
+     * @return count of agreements
+     */
+    long countByEstado(EstadoAcuerdo estado);
 
     /**
      * Retrieves a list of agreements where the given company is the originator (source).
@@ -47,4 +55,7 @@ public interface AcuerdoRepository extends JpaRepository<Acuerdo, Long> {
 
     @org.springframework.data.jpa.repository.Query("SELECT a FROM Acuerdo a JOIN FETCH a.empresaOrigen JOIN FETCH a.empresaDestino ORDER BY a.fechaRegistro DESC LIMIT 50")
     List<Acuerdo> findTop50ByOrderByFechaRegistroDesc();
+ 
+    @org.springframework.data.jpa.repository.Query("SELECT SUM(a.cantidad) FROM Acuerdo a WHERE a.estado = 'COMPLETADO'")
+    Double sumTotalCantidadByEstadoCompletado();
 }

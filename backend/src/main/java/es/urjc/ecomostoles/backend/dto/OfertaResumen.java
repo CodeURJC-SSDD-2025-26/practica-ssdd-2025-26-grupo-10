@@ -24,4 +24,5 @@ public interface OfertaResumen {
     EstadoOferta getEstado();
     LocalDateTime getFechaPublicacion();
     Empresa getEmpresa();
+    int getVisitas();
 }

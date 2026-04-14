@@ -93,6 +93,11 @@ public class Oferta {
     private byte[] imagen;
 
     /**
+     * Number of times the offer has been viewed by users.
+     */
+    private int visitas = 0;
+
+    /**
      * The company that created this offer.
      */
     @ManyToOne
@@ -261,5 +266,13 @@ public class Oferta {
 
     public void setEmpresa(Empresa empresa) {
         this.empresa = empresa;
+    }
+ 
+    public int getVisitas() {
+        return visitas;
+    }
+ 
+    public void setVisitas(int visitas) {
+        this.visitas = visitas;
     }
 }

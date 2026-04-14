@@ -86,6 +86,13 @@ public class MisOfertasController {
             model.addAttribute("empresa", empresa);
             List<OfertaResumen> misOfertas = ofertaService.obtenerPorEmpresa(empresa);
             model.addAttribute("ofertas", misOfertas);
+ 
+            // Dynamic KPIs for the user dashboard
+            model.addAttribute("totalActivas",     misOfertas.stream().filter(o -> "ACTIVA".equals(o.getEstado().toString())).count());
+            model.addAttribute("totalPausadas",    misOfertas.stream().filter(o -> "PAUSADA".equals(o.getEstado().toString())).count());
+            model.addAttribute("totalNegociacion", misOfertas.stream().filter(o -> "EN_NEGOCIACION".equals(o.getEstado().toString())).count());
+            model.addAttribute("totalVisitas",     misOfertas.stream().mapToInt(OfertaResumen::getVisitas).sum());
+ 
             return "mis_activos";
         }
         return "redirect:/";

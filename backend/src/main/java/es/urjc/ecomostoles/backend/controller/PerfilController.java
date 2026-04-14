@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import es.urjc.ecomostoles.backend.model.Empresa;
+import es.urjc.ecomostoles.backend.dto.EmpresaDTO;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,8 @@ public class PerfilController {
         Empresa empresa = empresaService.buscarPorEmail(principal.getName())
                 .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Recurso no encontrado"));
 
-        model.addAttribute("empresa", empresa);
+        EmpresaDTO empresaSegura = new EmpresaDTO(empresa);
+        model.addAttribute("empresa", empresaSegura);
         if (exito) {
             model.addAttribute("exito", true);
         }

@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import es.urjc.ecomostoles.backend.model.Demanda;
 import es.urjc.ecomostoles.backend.model.Empresa;
+import es.urjc.ecomostoles.backend.dto.EmpresaDTO;
 import es.urjc.ecomostoles.backend.service.AcuerdoService;
 import es.urjc.ecomostoles.backend.service.DemandaService;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
@@ -46,8 +47,9 @@ public class DashboardController {
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
 
         if (empresaOpt.isPresent()) {
-            Empresa empresa = empresaOpt.get();
-            model.addAttribute("empresa", empresa);
+            Empresa empresa = empresaOpt.get(); // Keep entity for logic
+            EmpresaDTO empresaSegura = new EmpresaDTO(empresa);
+            model.addAttribute("empresa", empresaSegura); // Add DTO to model
             model.addAttribute("navDashboard", true);
 
             boolean esAdmin = empresa.getRoles() != null

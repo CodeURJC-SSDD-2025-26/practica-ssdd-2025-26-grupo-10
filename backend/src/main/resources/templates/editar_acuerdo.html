@@ -3,110 +3,92 @@
 <div class="container-fluid">
     <div class="row min-vh-100">
         <!-- Sidebar -->
-        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-            <div class="position-sticky pt-3">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 offcanvas-md offcanvas-start bg-white sidebar" tabindex="-1">
+            <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
                 <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
                     <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small></li>
-                    <li class="nav-item"><a class="nav-link" href="/mis_activos"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/crear_activo"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard/mis-ofertas"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/oferta/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
                     <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small></li>
-                    <li class="nav-item"><a class="nav-link" href="/mis_demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard/mis-demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
                     <li class="nav-item"><a class="nav-link" href="/demanda/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Demanda</a></li>
-                    <li class="nav-item mt-3">
-                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
-                            <span>Acuerdos</span>
-                        </h6>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active link-mis-acuerdos" href="/mis_acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark link-crear-acuerdo" href="/crear_acuerdo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a>
-                    </li>
-                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
-                    <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">{{#totalMensajes}}{{totalMensajes}}{{/totalMensajes}}{{^totalMensajes}}0{{/totalMensajes}}</span></a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Acuerdos</small></li>
+                    <li class="nav-item"><a class="nav-link active text-success fw-bold" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
                 </ul>
             </div>
         </nav>
 
         <!-- Main Content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+        {{#acuerdo}}
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4" 
+              data-unidad="{{unidad}}" 
+              data-estado="{{estado}}">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2 text-dark fw-bold">Editar Acuerdo <span class="text-muted fs-6">#ACU-2026-001</span></h1>
+                <h1 class="h2 text-dark fw-bold">Editar Acuerdo <span class="text-muted fs-6">#ACU-{{id}}</span></h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <a href="/dashboard" class="btn btn-sm btn-outline-secondary rounded-pill">
+                    <a href="/acuerdos/{{id}}" class="btn btn-sm btn-outline-secondary rounded-pill">
                         <i class="fas fa-arrow-left me-1"></i> Cancelar
                     </a>
                 </div>
             </div>
 
-            <div class="card card-modern border-top-primary">
+            <div class="card card-modern border-top border-primary border-4 shadow-sm">
                 <div class="card-body p-4">
-                    <form action="/dashboard" class="needs-validation" novalidate="">
+                    <form action="/acuerdos/{{id}}/editar" method="POST" class="needs-validation">
+                        {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
+                        
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="oferta" class="form-label text-secondary fw-bold small text-uppercase">Oferta / Demanda Relacionada <span class="text-danger">*</span></label>
-                                <select class="form-select" id="oferta" required="">
-                                    <option value="" disabled="">Seleccionar...</option>
-                                    <option value="of1" selected="">OFR-001: Viruta de Acero Industrial (500kg)</option>
-                                    <option value="of2">OFR-002: Bobinas de Cobre (500kg)</option>
-                                    <option value="of3">OFR-003: Lote de Palets Europeos</option>
-                                    <option value="dm1">DEM-001: Buscamos Palés Europeos</option>
-                                    <option value="dm2">DEM-002: Necesito Cobre Reciclado</option>
-                                </select>
-                                <div class="invalid-feedback">Por favor, selecciona una oferta o demanda.</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="empresaDestino" class="form-label text-secondary fw-bold small text-uppercase">Empresa Destino <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="empresaDestino" value="Reciclajes Paco" required="">
-                                <div class="invalid-feedback">Por favor, indica la empresa destino.</div>
+                            <div class="col-12">
+                                <label for="materialIntercambiado" class="form-label text-secondary fw-bold small text-uppercase">Material / Concepto <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="materialIntercambiado" name="materialIntercambiado" value="{{materialIntercambiado}}" required>
+                                <div class="invalid-feedback">Por favor, indica el material.</div>
                             </div>
 
-                            <div class="col-md-5">
-                                <label for="cantidadAcordada" class="form-label text-secondary fw-bold small text-uppercase">Cantidad y Unidad <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="cantidadAcordada" value="500" min="0" required="">
-                                    <select class="form-select" id="unidadMedida" required="">
-                                        <option value="kg" selected="">kg</option>
-                                        <option value="uds">unidades</option>
-                                        <option value="L">litros</option>
-                                        <option value="t">toneladas</option>
-                                        <option value="m2">m²</option>
-                                    </select>
-                                </div>
+                            <div class="col-md-6">
+                                <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="cantidad" name="cantidad" value="{{cantidad}}" step="0.01" min="0" required>
                                 <div class="invalid-feedback">Indica la cantidad.</div>
                             </div>
-                            <div class="col-md-3">
-                                <label for="precioAcordado" class="form-label text-secondary fw-bold small text-uppercase">Precio Acordado (EUR) <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="precioAcordado" value="1200" step="0.01" min="0" required="">
-                                <div class="invalid-feedback">Por favor, indica el precio acordado.</div>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="fechaRecogida" class="form-label text-secondary fw-bold small text-uppercase">Fecha de Recogida <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" id="fechaRecogida" value="2026-03-15" required="">
-                                <div class="invalid-feedback">Por favor, selecciona una fecha.</div>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="estado" class="form-label text-secondary fw-bold small text-uppercase">Estado del Acuerdo <span class="text-danger">*</span></label>
-                                <select class="form-select" id="estado" required="">
-                                    <option value="" disabled="">Seleccionar...</option>
-                                    <option value="pendiente">Pendiente</option>
-                                    <option value="en_curso">En curso</option>
-                                    <option value="completado" selected="">Completado</option>
+
+                            <div class="col-md-6">
+                                <label for="unidad" class="form-label text-secondary fw-bold small text-uppercase">Unidad <span class="text-danger">*</span></label>
+                                <select class="form-select" id="unidad" name="unidad" required>
+                                    <option value="kg" {{#unidad}}selected{{/unidad}}>kg</option>
+                                    <option value="ton" {{#unidad}}selected{{/unidad}}>toneladas</option>
+                                    <option value="uds" {{#unidad}}selected{{/unidad}}>unidades</option>
+                                    <option value="m2" {{#unidad}}selected{{/unidad}}>m²</option>
+                                    <option value="L" {{#unidad}}selected{{/unidad}}>litros</option>
                                 </select>
-                                <div class="invalid-feedback">Por favor, selecciona el estado.</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="precioAcordado" class="form-label text-secondary fw-bold small text-uppercase">Precio Acordado (EUR) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="precioAcordado" name="precioAcordado" value="{{precioAcordado}}" step="0.01" min="0" required>
+                                    <span class="input-group-text">€</span>
+                                </div>
+                                <div class="invalid-feedback">Por favor, indica el precio.</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="estado" class="form-label text-secondary fw-bold small text-uppercase">Estado del Acuerdo <span class="text-danger">*</span></label>
+                                <select class="form-select" id="estado" name="estado" required>
+                                    <option value="PENDIENTE" {{#estado}}selected{{/estado}}>Pendiente de firma</option>
+                                    <option value="EN_CURSO" {{#estado}}selected{{/estado}}>En curso / Procesando</option>
+                                    <option value="COMPLETADO" {{#estado}}selected{{/estado}}>Completado / Finalizado</option>
+                                    <option value="ACEPTADO" {{#estado}}selected{{/estado}}>Aceptado</option>
+                                    <option value="RECHAZADO" {{#estado}}selected{{/estado}}>Rechazado</option>
+                                </select>
                             </div>
 
                             <div class="col-12">
-                                <label for="notas" class="form-label text-secondary fw-bold small text-uppercase">Notas adicionales</label>
-                                <textarea class="form-control" id="notas" rows="3">Recogida realizada el 15/03/2026. Material en buen estado. Albarán firmado por ambas partes.</textarea>
+                                <label for="notas" class="form-label text-secondary fw-bold small text-uppercase">Notas Adicionales</label>
+                                <textarea class="form-control" id="notas" name="notas" rows="4">{{#notas}}{{notas}}{{/notas}}</textarea>
                             </div>
 
                             <div class="col-12 mt-4 d-flex justify-content-end gap-2">
-                                <button type="submit" class="btn btn-primary px-4 fw-bold rounded-pill">
+                                <button type="submit" class="btn btn-success px-5 fw-bold rounded-pill shadow-sm">
                                     <i class="fas fa-save me-2"></i> Guardar Cambios
                                 </button>
                             </div>
@@ -114,10 +96,19 @@
                     </form>
                 </div>
             </div>
+            {{/acuerdo}}
         </main>
     </div>
 </div>
 
-<script src="/js/form-validation.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const main = document.querySelector('main');
+        const unidad = main.getAttribute('data-unidad');
+        const estado = main.getAttribute('data-estado');
+        if (unidad) document.getElementById("unidad").value = unidad;
+        if (estado) document.getElementById("estado").value = estado;
+    });
+</script>
 
 {{> footer}}
