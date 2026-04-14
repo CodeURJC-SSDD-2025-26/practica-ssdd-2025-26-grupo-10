@@ -35,8 +35,20 @@ public class RegistroController {
             @RequestParam String sector,
             @RequestParam String emailContacto,
             @RequestParam String password,
+            @RequestParam String confirmPassword,
             @RequestParam(required = false) MultipartFile logoFile,
             Model model) {
+
+        if (!password.equals(confirmPassword)) {
+            model.addAttribute("errorPassword", "Las contraseñas no coinciden.");
+            // Repoblar modelo para no perder datos
+            model.addAttribute("nombreComercial", nombreComercial);
+            model.addAttribute("cif", cif);
+            model.addAttribute("direccion", direccion);
+            model.addAttribute("sector", sector);
+            model.addAttribute("emailContacto", emailContacto);
+            return "registro";
+        }
 
         try {
             // Mapping fields to new Empresa object

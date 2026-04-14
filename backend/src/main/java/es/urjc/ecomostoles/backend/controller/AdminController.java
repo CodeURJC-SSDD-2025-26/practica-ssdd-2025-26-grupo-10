@@ -297,4 +297,24 @@ public class AdminController {
         writer.flush();
         writer.close();
     }
+
+    @GetMapping("/ajustes")
+    public String ajustes(Model model, Principal principal) {
+        addCommonAttributes(model, principal);
+        model.addAttribute("navAjustes", true);
+        model.addAttribute("emailActual", principal.getName());
+        return "admin_ajustes";
+    }
+
+    @PostMapping("/ajustes")
+    public String guardarAjustes(@RequestParam String emailAdmin, Principal principal, RedirectAttributes redirectAttributes) {
+        Optional<Empresa> adminOpt = empresaService.buscarPorEmail(principal.getName());
+        if (adminOpt.isPresent()) {
+            Empresa admin = adminOpt.get();
+            admin.setEmailContacto(emailAdmin);
+            empresaService.guardar(admin);
+            redirectAttributes.addFlashAttribute("mensaje", "Email de administrador actualizado correctamente.");
+        }
+        return "redirect:/admin/ajustes?exito=true";
+    }
 }

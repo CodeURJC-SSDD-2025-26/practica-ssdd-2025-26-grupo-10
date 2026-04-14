@@ -5,10 +5,10 @@ import es.urjc.ecomostoles.backend.model.Oferta;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 import es.urjc.ecomostoles.backend.service.OfertaService;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.CacheControl;
+import java.util.concurrent.TimeUnit;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -44,11 +44,10 @@ public class ImageController {
         }
 
         byte[] logo = empresaOpt.get().getLogo();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        headers.setContentLength(logo.length);
-
-        return new ResponseEntity<>(logo, headers, HttpStatus.OK);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(7, TimeUnit.DAYS))
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(logo);
     }
 
     // ── Imagen de Oferta ─────────────────────────────────────────────────────
@@ -65,10 +64,9 @@ public class ImageController {
         }
 
         byte[] imagen = ofertaOpt.get().getImagen();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        headers.setContentLength(imagen.length);
-
-        return new ResponseEntity<>(imagen, headers, HttpStatus.OK);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(7, TimeUnit.DAYS))
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(imagen);
     }
 }

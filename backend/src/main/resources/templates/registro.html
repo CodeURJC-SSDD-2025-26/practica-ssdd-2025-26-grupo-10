@@ -23,12 +23,12 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="nombreEmpresa" class="form-label fw-bold small text-uppercase text-secondary">Nombre Comercial</label>
-                            <input type="text" name="nombreComercial" class="form-control" id="nombreEmpresa" placeholder="Ej. Metales del Sur S.L." required="">
+                            <input type="text" name="nombreComercial" class="form-control" id="nombreEmpresa" placeholder="Ej. Metales del Sur S.L." value="{{#nombreComercial}}{{nombreComercial}}{{/nombreComercial}}" required="">
                         </div>
                         
                         <div class="col-md-6">
                             <label for="cif" class="form-label fw-bold small text-uppercase text-secondary">CIF / NIF</label>
-                            <input type="text" name="cif" class="form-control" id="cif" placeholder="B-12345678" required="">
+                            <input type="text" name="cif" class="form-control" id="cif" placeholder="B-12345678" value="{{#cif}}{{cif}}{{/cif}}" required="">
                         </div>
                         
                         <div class="col-12">
@@ -57,7 +57,7 @@
 
                         <div class="col-md-6">
                             <label for="email" class="form-label fw-bold small text-uppercase text-secondary">Email de Contacto</label>
-                            <input type="email" name="emailContacto" class="form-control" id="email" placeholder="contacto@empresa.com" required="">
+                            <input type="email" name="emailContacto" class="form-control" id="email" placeholder="contacto@empresa.com" value="{{#emailContacto}}{{emailContacto}}{{/emailContacto}}" required="">
                         </div>
 
                         <div class="col-md-6">
@@ -67,7 +67,8 @@
                         
                         <div class="col-md-6">
                             <label for="confirmPassword" class="form-label fw-bold small text-uppercase text-secondary">Confirmar Contraseña</label>
-                            <input type="password" class="form-control" id="confirmPassword" required="">
+                            <input type="password" name="confirmPassword" class="form-control" id="confirmPassword" required="">
+                            {{#errorPassword}}<div class="text-danger mt-1 small">{{errorPassword}}</div>{{/errorPassword}}
                         </div>
 
                         <div class="col-12 mt-4">
