@@ -7,8 +7,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 /**
@@ -28,11 +31,13 @@ public class Oferta {
     /**
      * Title of the offer.
      */
+    @NotBlank(message = "El título es obligatorio")
     private String titulo;
 
     /**
      * Detailed description of the offer.
      */
+    @NotBlank(message = "La descripción es obligatoria")
     @Lob
     @Column(columnDefinition = "TEXT")
     private String descripcion;
@@ -40,11 +45,14 @@ public class Oferta {
     /**
      * Type of waste or material.
      */
+    @NotBlank(message = "Debes seleccionar un tipo de residuo")
     private String tipoResiduo;
 
     /**
      * Quantity of the material offered.
      */
+    @NotNull(message = "La cantidad es obligatoria")
+    @DecimalMin(value = "0.0", inclusive = false, message = "La cantidad debe ser mayor que cero")
     private Double cantidad;
 
     /**
@@ -55,6 +63,8 @@ public class Oferta {
     /**
      * Price of the offer.
      */
+    @NotNull(message = "El precio es obligatorio")
+    @DecimalMin(value = "0.0", message = "El precio no puede ser negativo")
     private Double precio;
 
     /**

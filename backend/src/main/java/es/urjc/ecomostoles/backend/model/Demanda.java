@@ -7,9 +7,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 /**
@@ -29,16 +32,19 @@ public class Demanda {
     /**
      * Title of the demand.
      */
+    @NotBlank(message = "El título es obligatorio")
     private String titulo;
 
     /**
      * Category of the requested material.
      */
+    @NotBlank(message = "Debes seleccionar una categoría de material")
     private String categoriaMaterial;
 
     /**
      * Detailed description of the demand.
      */
+    @NotBlank(message = "La descripción es obligatoria")
     @Lob
     @Column(columnDefinition = "TEXT")
     private String descripcion;
@@ -46,6 +52,8 @@ public class Demanda {
     /**
      * Quantity needed.
      */
+    @NotNull(message = "La cantidad es obligatoria")
+    @DecimalMin(value = "0.0", inclusive = false, message = "La cantidad debe ser mayor que cero")
     private Double cantidad;
 
     /**
@@ -61,6 +69,8 @@ public class Demanda {
     /**
      * Maximum budget for this demand.
      */
+    @NotNull(message = "El presupuesto máximo es obligatorio")
+    @DecimalMin(value = "0.0", message = "El presupuesto no puede ser negativo")
     private Double presupuestoMaximo;
 
     /**

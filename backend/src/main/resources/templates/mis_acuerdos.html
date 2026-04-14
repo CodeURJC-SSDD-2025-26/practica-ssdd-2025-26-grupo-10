@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -76,11 +76,11 @@
                                     {{#acuerdos}}
                                     <tr>
                                         <td class="ps-4"><span class="fw-bold text-dark">#ACU-{{id}}</span></td>
-                                        <td class="text-secondary">{{fechaRecogida}}</td>
-                                        <td><span class="fw-bold text-dark">{{empresaDestino.nombreComercial}}</span></td>
-                                        <td class="text-secondary">{{oferta.titulo}}</td>
-                                        <td class="fw-bold text-success">{{precioAcordado}} €</td>
-                                        <td><span class="badge bg-primary rounded-pill">{{estado}}</span></td>
+                                        <td class="text-secondary">{{#fechaRecogida}}{{fechaRecogida}}{{/fechaRecogida}}{{^fechaRecogida}}&mdash;{{/fechaRecogida}}</td>
+                                        <td><span class="fw-bold text-dark">{{#empresaDestino}}{{nombreComercial}}{{/empresaDestino}}{{^empresaDestino}}Sin empresa{{/empresaDestino}}</span></td>
+                                        <td class="text-secondary">{{#oferta}}{{titulo}}{{/oferta}}{{^oferta}}&mdash;{{/oferta}}</td>
+                                        <td class="fw-bold text-success">{{#precioAcordado}}{{precioAcordado}} €{{/precioAcordado}}{{^precioAcordado}}&mdash;{{/precioAcordado}}</td>
+                                        <td><span class="badge bg-primary rounded-pill">{{#estado}}{{estado}}{{/estado}}{{^estado}}Sin estado{{/estado}}</span></td>
                                         <td class="text-end pe-4">
                                             <div class="d-flex gap-1 justify-content-end">
                                                 <button class="btn btn-sm btn-outline-danger rounded-pill text-nowrap"><i class="fas fa-trash-alt me-1"></i></button>

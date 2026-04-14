@@ -124,6 +124,7 @@
                                 {{/exito}}
 
                                 <form action="/perfil/guardar" method="POST" enctype="multipart/form-data">
+                                    {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                                     <div class="mb-3">
                                         <label for="nombreEmpresa" class="form-label fw-bold small text-uppercase text-secondary">Nombre Comercial</label>
                                         <input type="text" class="form-control" id="nombreEmpresa" name="nombreComercial" value="{{empresa.nombreComercial}}">

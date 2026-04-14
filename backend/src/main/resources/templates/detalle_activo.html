@@ -82,6 +82,7 @@
 
                                 <div class="mt-4 pt-4 border-top">
                                     <form action="/mensajes/enviar/{{oferta.id}}" method="POST">
+                                        {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                                         <div class="mb-3">
                                             <label for="contenido" class="form-label text-secondary fw-bold small text-uppercase">Enviar mensaje a la empresa</label>
                                             <textarea class="form-control" name="contenido" id="contenido" rows="3" placeholder="Hola, estoy interesado en este material..." required></textarea>

@@ -57,23 +57,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            // Necesario para que la consola H2 no quede en blanco (iframe)
-            .headers(headers -> headers
-                .frameOptions(frame -> frame.disable())
-            )
             .authorizeHttpRequests(auth -> auth
 
                 // ── Recursos y páginas públicas ──────────────────────────────
                 .requestMatchers(
                     "/", "/index.html",
                     "/login", "/registro",
-                    "/error",                               // página de error personalizada
-                    "/mercado", "/mercado/**",              // listado de ofertas, público
-                    "/oferta/{id:\\d+}",                    // detalle de oferta, público
+                    "/error",                               // custom error page
+                    "/mercado", "/mercado/**",              // public offer listing
+                    "/oferta/{id:\\d+}",                    // public offer detail
                     "/solicitudes", "/solicitudes/**",
-                    "/css/**", "/js/**", "/img/**", "/images/**",
-                    "/h2-console/**"
+                    "/css/**", "/js/**", "/img/**", "/images/**"
                 ).permitAll()
 
                 // ── Panel de administración: solo ADMIN ──────────────────────

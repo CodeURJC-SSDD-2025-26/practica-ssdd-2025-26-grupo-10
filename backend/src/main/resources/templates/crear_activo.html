@@ -1,20 +1,19 @@
-<html lang="es"><head></head><body class="bg-theme-dark">﻿
-
-
-
+<!DOCTYPE html>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
     <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular. Conecta ofertas de residuos y demandas de maquinaria en el ámbito local.">
     <title>Publicar Activo | EcoMóstoles</title>
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="/css/styles.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-
+</head>
+<body class="bg-theme-dark">
 
     <!-- Particles Background -->
     <div id="particles-body"></div>
@@ -37,13 +36,13 @@
                         <li class="nav-item"><a class="nav-link" href="/dashboard/mis-ofertas"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
                         <li class="nav-item"><a class="nav-link active text-success fw-bold" href="/oferta/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
                         <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/dashboard/mis-demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
                         <li class="nav-item"><a class="nav-link" href="/demanda/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Demanda</a></li>
                         <li class="nav-item mt-3"><h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase"><span>Acuerdos</span></h6></li>
                         <li class="nav-item"><a class="nav-link text-dark" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
                         <li class="nav-item"><a class="nav-link text-dark" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
                         <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">2</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes</a></li>
                     </ul>
                 </div>
             </nav>
@@ -61,18 +60,25 @@
 
                 <div class="card card-modern border-top-success">
                     <div class="card-body p-4">
-                        <form action="/oferta/nueva" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate="">
+                        {{#errores}}
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span>{{defaultMessage}}</span>
+                        </div>
+                        {{/errores}}
+                        <form action="/oferta/nueva" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                            {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                             <div class="row g-3">
                                 <div class="col-md-8">
                                     <label for="titulo" class="form-label text-secondary fw-bold small text-uppercase">Título del Activo
                                         <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej. Lote de Palets Europeos" required="">
+                                    <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej. Lote de Palets Europeos" required>
                                     <div class="invalid-feedback">Por favor, completa este campo.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="tipo" class="form-label text-secondary fw-bold small text-uppercase">Tipo <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="tipo" name="categoria" required="">
-                                        <option value="" selected="" disabled="">Seleccionar...</option>
+                                    <select class="form-select" id="tipo" name="tipoResiduo" required>
+                                        <option value="" selected disabled>Seleccionar...</option>
                                         <option value="residuo_metalico">Residuo Metálico</option>
                                         <option value="residuo_madera">Residuo de Madera</option>
                                         <option value="residuo_plastico">Residuo Plástico</option>
@@ -83,18 +89,18 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <label for="descripcion" class="form-label text-secondary fw-bold small text-uppercase">Descripción
-                                        Detallada <span class="text-danger">*</span></label>
-                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Describe el estado, origen y condiciones de recogida..." required=""></textarea>
+                                    <label for="descripcion" class="form-label text-secondary fw-bold small text-uppercase">Descripción Detallada
+                                        <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Describe el estado, origen y condiciones de recogida..." required></textarea>
                                 </div>
 
                                 <div class="col-md-4">
                                     <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad y Unidad
                                         <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Ej. 500" min="0" required="">
-                                        <select class="form-select" id="unidadMedida" name="unidad" required="">
-                                            <option value="kg" selected="">kg</option>
+                                        <input type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Ej. 500" min="0" required>
+                                        <select class="form-select" id="unidadMedida" name="unidad" required>
+                                            <option value="kg" selected>kg</option>
                                             <option value="uds">unidades</option>
                                             <option value="L">litros</option>
                                             <option value="t">toneladas</option>
@@ -105,8 +111,7 @@
                                 </div>
 
                                 <div class="col-md-4">
-                                    <label for="precio" class="form-label text-secondary fw-bold small text-uppercase">Precio
-                                        (€)</label>
+                                    <label for="precio" class="form-label text-secondary fw-bold small text-uppercase">Precio (€)</label>
                                     <input type="number" class="form-control" id="precio" name="precio" placeholder="Ej. 1500" step="0.01" min="0">
                                 </div>
                                 <div class="col-md-4">
@@ -119,10 +124,9 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <label for="imagen" class="form-label text-secondary fw-bold small text-uppercase">Fotografía del
-                                        Activo</label>
-                                    <input class="form-control" type="file" id="imagen" name="imagenFile">
-                                    <div class="form-text">Formatos aceptados: JPG, PNG. Máx 5MB.</div>
+                                    <label for="imagen" class="form-label text-secondary fw-bold small text-uppercase">Fotografía del Activo</label>
+                                    <input class="form-control" type="file" id="imagen" name="imagenFile" accept="image/*">
+                                    <div class="form-text">Formatos aceptados: JPG, PNG, WEBP. Máx 5 MB.</div>
                                 </div>
 
                                 <div class="col-12 mt-4 d-flex justify-content-end">
@@ -138,67 +142,16 @@
         </div>
     </div>
 
-
     {{> footer}}
-
-<!--REMOVED_FOOTER_START
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                    <h5 class="fw-bold text-dark mb-3"><i class="fas fa-recycle text-success me-2"></i>EcoMóstoles</h5>
-                    <p class="text-muted small pe-4">Plataforma B2B de Simbiosis Industrial y Economía Circular.
-                        Transformando los residuos de hoy en los recursos del mañana para el tejido empresarial local.
-                    </p>
-                </div>
-
-                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                    <h6 class="fw-bold text-dark mb-3">Plataforma</h6>
-                    <ul class="list-unstyled text-muted small">
-                        <li class="mb-2"><a href="/mercado" class="text-muted text-decoration-none text-hover-success">Mercado de Ofertas</a></li>
-                        <li class="mb-2"><a href="/dashboard" class="text-muted text-decoration-none text-hover-success">Panel de Control</a></li>
-                        <li class="mb-2"><a href="/crear_activo" class="text-muted text-decoration-none text-hover-success">Publicar Activo</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-4 col-md-12">
-                    <h6 class="fw-bold text-dark mb-3">Legal y Soporte</h6>
-                    <ul class="list-unstyled text-muted small">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none text-hover-success">Aviso
-                                Legal y Privacidad</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none text-hover-success">Política
-                                de Cookies</a></li>
-                        <li class="mb-2"><a href="mailto:soporte@ecomostoles.com" class="text-muted text-decoration-none text-hover-success"><i class="fas fa-envelope me-2"></i>soporte@ecomostoles.com</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="row align-items-center border-top pt-4">
-                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    <span class="text-muted small">© 2026 EcoMóstoles. Todos los derechos reservados.</span>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <a href="#" class="text-secondary me-3 text-decoration-none"><i class="fab fa-linkedin fs-5"></i></a>
-                    <a href="#" class="text-secondary me-3 text-decoration-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-twitter-x mb-1" viewBox="0 0 16 16">
-                            <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"></path>
-                        </svg>
-                    </a>
-                    <a href="#" class="text-secondary text-decoration-none"><i class="fas fa-envelope fs-5"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
 
     <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Particles.js — inline config -->
+    <!-- Particles.js -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="/js/particles-init.js"></script>
     <script src="/js/card-spotlight.js"></script>
-    <!-- Auth Guard -->
-
     <!-- Bootstrap Form Validation -->
     <script src="/js/form-validation.js"></script>
 
-
-</body></html>
+</body>
+</html>

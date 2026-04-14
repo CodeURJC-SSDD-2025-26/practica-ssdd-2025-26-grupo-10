@@ -46,7 +46,14 @@
 
                 <div class="card card-modern border-top-success">
                     <div class="card-body p-4">
+                        {{#errores}}
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span>{{.}}</span>
+                        </div>
+                        {{/errores}}
                         <form action="/acuerdo/nuevo" method="POST" class="needs-validation" novalidate="">
+                            {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label text-secondary fw-bold small text-uppercase">Oferta Relacionada <span class="text-danger">*</span></label>

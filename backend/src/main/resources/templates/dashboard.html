@@ -46,7 +46,7 @@
                 <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                     <div>
                         <h1 class="h2 fw-bold text-dark">Panel de Control</h1>
-                        <p class="text-secondary small mb-0">Bienvenido de nuevo, {{empresa.nombreComercial}}.</p>
+                        <p class="text-secondary small mb-0">Bienvenido de nuevo, {{#empresa}}{{nombreComercial}}{{/empresa}}{{^empresa}}usuario{{/empresa}}.</p>
                     </div>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <a href="/oferta/nueva" class="btn btn-primary rounded-pill shadow-sm">
@@ -139,7 +139,7 @@
                                             <h6 class="fw-bold text-dark mb-1 pe-5">{{titulo}}</h6>
                                             <p class="text-muted small mb-2">{{#empresa}}{{nombreComercial}}{{/empresa}}{{^empresa}}Empresa Anónima{{/empresa}} busca tu sector.</p>
                                             <div class="d-flex align-items-center gap-2 mb-3">
-                                                <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i>{{cantidad}} {{unidad}}</span>
+                                                <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i>{{#cantidad}}{{cantidad}}{{/cantidad}}{{^cantidad}}—{{/cantidad}} {{#unidad}}{{unidad}}{{/unidad}}</span>
                                             </div>
                                             <a href="/demanda/{{id}}" class="btn btn-sm btn-outline-success rounded-pill w-100"><i class="fas fa-eye me-1"></i>Ver Oferta</a>
                                         </div>

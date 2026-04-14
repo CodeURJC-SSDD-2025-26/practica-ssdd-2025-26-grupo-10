@@ -22,13 +22,18 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Inicializador de datos de prueba para la Práctica 2.
+ * Single data initializer for the application.
  *
- * Crea:
- *   - 1 usuario ADMIN   → admin@ecomostoles.es / admin1234
- *   - 2 empresas USER   → contacto@metalesdelsur.es / 1234
- *                       → reciclajes@ecosur.es / 1234
- *   - 3 ofertas de prueba con imágenes BLOB reales
+ * Creates sample data on startup (only when the DB is empty):
+ *   - 1 ADMIN account  → admin@ecomostoles.es     / 1234  (BCrypt-encoded)
+ *   - 3 company users  → contacto@metalesdelsur.es / 1234  (BCrypt-encoded)
+ *                      → reciclajes@ecosur.es       / 1234  (BCrypt-encoded)
+ *                      → paco@reciclajes.es          / 1234  (BCrypt-encoded)
+ *   - 3 offers with real BLOB images
+ *   - 3 demands
+ *   - 1 agreement
+ *
+ * All passwords are hashed via {@link org.springframework.security.crypto.password.PasswordEncoder}.
  */
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -196,6 +201,7 @@ public class DataInitializer implements CommandLineRunner {
         // 5. Demandas y Acuerdos de prueba 
         // ══════════════════════════════════════════
         if (demandaRepository.count() == 0) {
+            // Demand 1: from empresa1 (Metalurgia) — visible to other Metalurgia companies via Smart Matching
             Demanda d = new Demanda();
             d.setTitulo("Se necesita Aluminio para inyección");
             d.setDescripcion("Requerimos aluminio puro para moldes.");
@@ -206,42 +212,39 @@ public class DataInitializer implements CommandLineRunner {
             d.setUrgencia("Alta");
             d.setEstado("Activa");
             d.setFechaPublicacion(LocalDateTime.now().minusDays(1));
-            d.setEmpresa(empresa1); // empresa1 is Metalurgia -> matches empresa2 if sectors match... wait! Empresa2 is 'Reciclaje y Medio Ambiente'.
-            // For Smart Matching to work, empresa2 (Reciclaje y Medio Ambiente) should see demands from its sector OR we change sector rules.
-            // In DashboardController we bound the algorithm to d.getEmpresa().getSectorIndustrial().equalsIgnoreCase(empresa.getSectorIndustrial()).
-            // So if Empresa2 is "Reciclaje", we need a demand from another "Reciclaje", or Empresa1 is "Metalurgia", we need a demand from "Metalurgia".
-            d.setEmpresa(admin); // Just set admin to "Metalurgia"! Admin sector is "Administración".
+            d.setEmpresa(empresa1);
             demandaRepository.save(d);
-            
+
+            // Demand 2: from empresa2 (Reciclaje y Medio Ambiente)
             Demanda d2 = new Demanda();
             d2.setTitulo("Plásticos Mixtos para procesar");
-            d2.setDescripcion("Recortes de plásticos");
+            d2.setDescripcion("Recortes de plásticos mixtos listos para reprocesado industrial.");
             d2.setCategoriaMaterial("Plástico");
             d2.setCantidad(150.0);
             d2.setUnidad("kg");
             d2.setPresupuestoMaximo(2.0);
             d2.setEstado("Activa");
             d2.setFechaPublicacion(LocalDateTime.now());
-            d2.setEmpresa(empresa2); // EcoSur (Reciclaje y Medio Ambiente)
+            d2.setEmpresa(empresa2);
             demandaRepository.save(d2);
-
         }
 
         // ══════════════════════════════════════════
-        // DEBUG: Creando a Paco (Independiente del count)...
+        // 6. Empresa 3 — Reciclajes Paco (same sector as empresa1 for Smart Matching)
         // ══════════════════════════════════════════
-        System.out.println("DEBUG: Creando a Paco...");
         Empresa empresa3 = upsertEmpresa(
-            "paco@reciclajes.es", 
-            "Reciclajes Paco", 
-            "B77777777", 
-            "Metalurgia", 
-            "Polígono Industrial, Nave 44 — Móstoles", 
-            "916 777 777", 
-            "Especialistas en reciclaje de metales no férricos.", 
-            "logo.jfif", 
+            "paco@reciclajes.es",
+            "Reciclajes Paco S.L.",
+            "B77777777",
+            "Metalurgia",
+            "Polígono Industrial, Nave 44 — Móstoles",
+            "916 777 777",
+            "Specialists in non-ferrous metal recycling.",
+            "logo.jfif",
             List.of("EMPRESA")
         );
+        System.out.println("✅ Empresa 3 → " + empresa3.getEmailContacto()
+                + " | roles: " + empresa3.getRoles());
 
         if (demandaRepository.findByEmpresa(empresa3).isEmpty()) {
             Demanda dPaco = new Demanda();
@@ -251,11 +254,11 @@ public class DataInitializer implements CommandLineRunner {
             dPaco.setCantidad(1500.0);
             dPaco.setUnidad("kg");
             dPaco.setPresupuestoMaximo(1.20);
-            dPaco.setEstado("ACTIVA");
+            dPaco.setEstado("Activa");
             dPaco.setFechaPublicacion(LocalDateTime.now());
-            dPaco.setEmpresa(empresa3); 
+            dPaco.setEmpresa(empresa3);
             demandaRepository.save(dPaco);
-            System.out.println("✅ Paco y su demanda creados correctamente desde cero.");
+            System.out.println("✅ Demand created for Empresa 3 (Paco).");
         }
 
         if (acuerdoRepository.count() == 0) {
@@ -272,10 +275,11 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         System.out.println("════════════════════════════════════════════");
-        System.out.println("  Credenciales de prueba:");
-        System.out.println("  ADMIN  → admin@ecomostoles.es     / 1234");
-        System.out.println("  USER 1 → contacto@metalesdelsur.es / 1234");
-        System.out.println("  USER 2 → reciclajes@ecosur.es      / 1234");
+        System.out.println("  Sample credentials (password: 1234 for all):");
+        System.out.println("  ADMIN  → admin@ecomostoles.es");
+        System.out.println("  USER 1 → contacto@metalesdelsur.es");
+        System.out.println("  USER 2 → reciclajes@ecosur.es");
+        System.out.println("  USER 3 → paco@reciclajes.es");
         System.out.println("════════════════════════════════════════════");
     }
 

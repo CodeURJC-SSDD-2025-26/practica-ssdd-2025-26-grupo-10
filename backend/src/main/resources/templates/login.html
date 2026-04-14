@@ -49,6 +49,7 @@
                     {{/error}}
                     
                     <form action="/login" method="POST" class="needs-validation" novalidate="">
+                        {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                         <div class="mb-3">
                             <label for="email" class="form-label fw-bold small text-uppercase text-secondary">Email Corporativo</label>
                             <input type="email" name="username" class="form-control" id="email" placeholder="nombre@empresa.com" required="">

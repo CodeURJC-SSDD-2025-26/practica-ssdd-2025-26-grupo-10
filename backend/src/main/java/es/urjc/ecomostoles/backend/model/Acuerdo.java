@@ -7,6 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -27,21 +30,27 @@ public class Acuerdo {
     /**
      * Description of the material being exchanged.
      */
+    @NotBlank(message = "El material intercambiado es obligatorio")
     private String materialIntercambiado;
 
     /**
      * Quantity of the material.
      */
+    @NotNull(message = "La cantidad es obligatoria")
+    @DecimalMin(value = "0.0", inclusive = false, message = "La cantidad debe ser mayor que cero")
     private Double cantidad;
 
     /**
      * Unit of measurement (e.g., kg, uds).
      */
+    @NotBlank(message = "La unidad de medida es obligatoria")
     private String unidad;
 
     /**
      * The price agreed upon for the transaction.
      */
+    @NotNull(message = "El precio acordado es obligatorio")
+    @DecimalMin(value = "0.0", message = "El precio no puede ser negativo")
     private Double precioAcordado;
 
     /**
@@ -52,6 +61,7 @@ public class Acuerdo {
     /**
      * Current status of the agreement (e.g., Pending, Completed).
      */
+    @NotBlank(message = "El estado del acuerdo es obligatorio")
     private String estado;
 
     /**
