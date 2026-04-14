@@ -86,4 +86,10 @@ public class OfertaService {
     public List<OfertaResumen> buscarOfertasFiltradas(String keyword, String tipoResiduo, String poligono) {
         return ofertaRepository.buscarFiltrado(es.urjc.ecomostoles.backend.model.EstadoOferta.ACTIVA, keyword, tipoResiduo, poligono);
     }
+
+    /** Atomic increment of visits */
+    @Transactional
+    public void registrarVisita(Long id) {
+        ofertaRepository.incrementarVisitas(id);
+    }
 }

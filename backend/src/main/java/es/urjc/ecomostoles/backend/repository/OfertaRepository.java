@@ -6,6 +6,7 @@ import es.urjc.ecomostoles.backend.model.EstadoOferta;
 import es.urjc.ecomostoles.backend.dto.OfertaResumen;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
 
@@ -13,6 +14,10 @@ import java.util.List;
  * Repository interface for Oferta entity.
  */
 public interface OfertaRepository extends JpaRepository<Oferta, Long> {
+
+    @Modifying
+    @Query("UPDATE Oferta o SET o.visitas = o.visitas + 1 WHERE o.id = :id")
+    void incrementarVisitas(@Param("id") Long id);
     
     long countByEstado(EstadoOferta estado);
 

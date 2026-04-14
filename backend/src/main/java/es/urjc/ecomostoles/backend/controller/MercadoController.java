@@ -65,12 +65,10 @@ public class MercadoController {
     public String mostrarDetalleOferta(@PathVariable("id") Long id, Model model, Principal principal) {
         Optional<Oferta> ofertaOpt = ofertaService.buscarPorId(id);
         if (ofertaOpt.isPresent()) {
-            Oferta oferta = ofertaOpt.get();
+            // Unica llamada limpia al servicio para registrar visita atomica
+            ofertaService.registrarVisita(id);
             
-            // Increment visits and persist
-            oferta.setVisitas(oferta.getVisitas() + 1);
-            ofertaService.guardar(oferta);
- 
+            Oferta oferta = ofertaOpt.get();
             model.addAttribute("oferta", oferta);
             if (principal != null) {
                 empresaService.buscarPorEmail(principal.getName())
