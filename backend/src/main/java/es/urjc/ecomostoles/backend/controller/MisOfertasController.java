@@ -126,6 +126,7 @@ public class MisOfertasController {
             Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
             empresaOpt.ifPresent(e -> model.addAttribute("empresa", e));
             model.addAttribute("errores", result.getAllErrors());
+            model.addAttribute("oferta", oferta);
             return "crear_activo";
         }
 
@@ -188,6 +189,7 @@ public class MisOfertasController {
             empresaService.buscarPorEmail(principal.getName())
                           .ifPresent(e -> model.addAttribute("empresa", e));
             model.addAttribute("errores", result.getAllErrors());
+            model.addAttribute("oferta", ofertaForm);
             ofertaForm.setId(id);
             return "editar_activo";
         }

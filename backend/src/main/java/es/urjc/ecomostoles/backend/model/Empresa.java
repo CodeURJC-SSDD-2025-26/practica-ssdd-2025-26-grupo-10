@@ -1,5 +1,6 @@
 package es.urjc.ecomostoles.backend.model;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -50,6 +51,7 @@ public class Empresa {
     private String descripcion;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     @Column(columnDefinition = "LONGBLOB")
     private byte[] logo;
 

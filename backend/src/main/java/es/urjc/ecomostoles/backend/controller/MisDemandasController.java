@@ -106,6 +106,7 @@ public class MisDemandasController {
             empresaService.buscarPorEmail(principal.getName())
                           .ifPresent(e -> model.addAttribute("empresa", e));
             model.addAttribute("errores", result.getAllErrors());
+            model.addAttribute("demanda", demanda);
             return "crear_solicitud";
         }
 

@@ -1,6 +1,5 @@
 package es.urjc.ecomostoles.backend.controller;
 
-import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
-import java.util.Optional;
 
 /**
  * Custom error controller.
@@ -73,14 +71,10 @@ public class CustomErrorController implements ErrorController {
 
         // ── 3. Company for the header (navbar) ───────────────────────────────
         // The partial {{> header}} requires {{empresa.nombreComercial}} for the
-        // avatar and dropdown. If the user is authenticated, load it;
-        // if not, create an empty company to avoid NullPointerException in Mustache.
+        // avatar and dropdown. It should only be added if the user is authenticated.
         if (principal != null) {
-            Optional<Empresa> opt = empresaRepository.findByEmailContacto(principal.getName());
-            model.addAttribute("empresa", opt.orElseGet(Empresa::new));
-        } else {
-            // Unauthenticated user: empty company → Mustache renders empty strings
-            model.addAttribute("empresa", new Empresa());
+            empresaRepository.findByEmailContacto(principal.getName())
+                             .ifPresent(e -> model.addAttribute("empresa", e));
         }
 
         return "error";

@@ -25,7 +25,7 @@
                         <div class="row g-3">
                             <div class="col-md-8">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Título de lo que buscas <span class="text-danger">*</span></label>
-                                <input type="text" name="titulo" class="form-control" placeholder="Ej. Busco Palés Europeos en buen estado" required="">
+                                <input type="text" name="titulo" class="form-control" placeholder="Ej. Busco Palés Europeos en buen estado" value="{{#demanda.titulo}}{{demanda.titulo}}{{/demanda.titulo}}" required="">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Categoría <span class="text-danger">*</span></label>
@@ -41,13 +41,13 @@
                             
                             <div class="col-12">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Descripción detallada <span class="text-danger">*</span></label>
-                                <textarea name="descripcion" class="form-control" rows="4" placeholder="Describe qué material necesitas..." required=""></textarea>
+                                <textarea name="descripcion" class="form-control" rows="4" placeholder="Describe qué material necesitas..." required="">{{#demanda.descripcion}}{{demanda.descripcion}}{{/demanda.descripcion}}</textarea>
                             </div>
 
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad requerida</label>
                                 <div class="input-group">
-                                    <input type="number" name="cantidad" class="form-control" placeholder="Ej. 500" min="0">
+                                    <input type="number" name="cantidad" class="form-control" placeholder="Ej. 500" min="0" value="{{#demanda.cantidad}}{{demanda.cantidad}}{{/demanda.cantidad}}">
                                     <span class="input-group-text">kg/uds</span>
                                 </div>
                             </div>
@@ -61,7 +61,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Presupuesto máx (€)</label>
-                                <input type="number" name="presupuestoMaximo" class="form-control" placeholder="Ej. 2000" step="0.01" min="0">
+                                <input type="number" name="presupuestoMaximo" class="form-control" placeholder="Ej. 2000" step="0.01" min="0" value="{{#demanda.presupuestoMaximo}}{{demanda.presupuestoMaximo}}{{/demanda.presupuestoMaximo}}">
                             </div>
 
                             <div class="col-12 mt-4 d-flex justify-content-end">

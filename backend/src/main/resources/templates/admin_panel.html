@@ -126,8 +126,12 @@
                     <div class="card shadow-sm border-0 h-100">
                         <div class="card-body p-4 text-center">
                             <i class="fas fa-chart-line fs-1 text-muted mb-3 d-block opacity-25"></i>
-                            <h5 class="text-muted">Estadísticas de Actividad</h5>
-                            <p class="small text-muted">Las gráficas de rendimiento se cargarán aquí al integrar el motor de Analytics.</p>
+                            <h5 class="text-muted">Distribución de Acuerdos</h5>
+                            <div style="height: 300px;">
+                                <canvas id="rendimientoChart" width="400" height="200" 
+                                        data-pendientes="{{#totalPendientes}}{{totalPendientes}}{{/totalPendientes}}{{^totalPendientes}}0{{/totalPendientes}}"
+                                        data-completadas="{{#totalCompletadas}}{{totalCompletadas}}{{/totalCompletadas}}{{^totalCompletadas}}0{{/totalCompletadas}}"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -145,5 +149,46 @@
         </main>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.getElementById('rendimientoChart');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        const totalPendientes = parseInt(canvas.getAttribute('data-pendientes')) || 0;
+        const totalCompletadas = parseInt(canvas.getAttribute('data-completadas')) || 0;
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pendientes', 'Completadas'],
+                datasets: [{
+                    label: 'Acuerdos',
+                    data: [totalPendientes, totalCompletadas],
+                    backgroundColor: [
+                        'rgba(255, 193, 7, 0.7)',
+                        'rgba(40, 167, 69, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 193, 7, 1)',
+                        'rgba(40, 167, 69, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
 
 {{> footer}}

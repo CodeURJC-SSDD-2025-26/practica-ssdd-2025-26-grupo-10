@@ -108,6 +108,7 @@ public class AcuerdoController {
                 todasEmpresas.removeIf(e -> e.getId().equals(empresa.getId()));
                 model.addAttribute("todasEmpresas", todasEmpresas);
             }
+            model.addAttribute("acuerdo", acuerdo);
             model.addAttribute("errores", result.getAllErrors());
             return "crear_acuerdo";
         }

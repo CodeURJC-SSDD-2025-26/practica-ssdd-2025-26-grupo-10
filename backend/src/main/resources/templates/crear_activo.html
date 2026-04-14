@@ -31,7 +31,7 @@
                             <div class="col-md-8">
                                 <label for="titulo" class="form-label text-secondary fw-bold small text-uppercase">Título del Activo
                                     <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej. Lote de Palets Europeos" required>
+                                <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej. Lote de Palets Europeos" value="{{#oferta.titulo}}{{oferta.titulo}}{{/oferta.titulo}}" required>
                                 <div class="invalid-feedback">Por favor, completa este campo.</div>
                             </div>
                             <div class="col-md-4">
@@ -50,14 +50,14 @@
                             <div class="col-12">
                                 <label for="descripcion" class="form-label text-secondary fw-bold small text-uppercase">Descripción Detallada
                                     <span class="text-danger">*</span></label>
-                                <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Describe el estado, origen y condiciones de recogida..." required></textarea>
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Describe el estado, origen y condiciones de recogida..." required>{{#oferta.descripcion}}{{oferta.descripcion}}{{/oferta.descripcion}}</textarea>
                             </div>
 
                             <div class="col-md-4">
                                 <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad y Unidad
                                     <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Ej. 500" min="0" required>
+                                    <input type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Ej. 500" min="0" value="{{#oferta.cantidad}}{{oferta.cantidad}}{{/oferta.cantidad}}" required>
                                     <select class="form-select" id="unidadMedida" name="unidad" required>
                                         <option value="kg" selected>kg</option>
                                         <option value="uds">unidades</option>
@@ -71,7 +71,7 @@
 
                             <div class="col-md-4">
                                 <label for="precio" class="form-label text-secondary fw-bold small text-uppercase">Precio (€)</label>
-                                <input type="number" class="form-control" id="precio" name="precio" placeholder="Ej. 1500" step="0.01" min="0">
+                                <input type="number" class="form-control" id="precio" name="precio" placeholder="Ej. 1500" step="0.01" min="0" value="{{#oferta.precio}}{{oferta.precio}}{{/oferta.precio}}">
                             </div>
                             <div class="col-md-4">
                                 <label for="disponibilidad" class="form-label text-secondary fw-bold small text-uppercase">Disponibilidad</label>
