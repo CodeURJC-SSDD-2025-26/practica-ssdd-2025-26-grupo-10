@@ -1,4 +1,4 @@
-﻿<html lang="es"><head></head><body class="bg-theme-dark">﻿
+<html lang="es"><head></head><body class="bg-theme-dark">﻿
 
 
 
@@ -21,49 +21,7 @@
     <!-- Particles Background -->
     <div id="particles-body"></div>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
-        <div class="container">
-            <a class="navbar-brand" href="/admin_panel">
-                <i class="fas fa-recycle me-2"></i>EcoMóstoles <span class="badge bg-danger ms-2 text-uppercase">Admin</span>
-            </a>
-            <button class="navbar-toggler d-md-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle sidebar"><span class="navbar-toggler-icon"></span></button>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/mercado"><i class="fas fa-store me-1"></i> Ofertas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/solicitudes"><i class="fas fa-bullhorn me-1"></i> Demandas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-1"></i> Panel de
-                            Control</a>
-                    </li>
-                    <li class="nav-item dropdown ms-lg-2">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <img src="/img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
-                            <span>Administrador</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 dropdown-rounded">
-                            <li>
-                                <h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6>
-                            </li>
-                             <li><a class="dropdown-item rounded" href="/perfil"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
-                             <li><a class="dropdown-item rounded" href="/perfil"><i class="fas fa-cog me-2"></i> Ajustes</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item rounded text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {{> header_admin}}
 
     <div class="container-fluid">
         <div class="row min-vh-100">

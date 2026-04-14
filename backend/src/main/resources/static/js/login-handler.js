@@ -1,13 +1,6 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const loginForm = document.querySelector('#loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            if (this.checkValidity()) {
-                localStorage.setItem('isLoggedIn', 'true');
-                window.location.href = 'dashboard.html';
-            }
-            this.classList.add('was-validated');
-        });
-    }
-});
+// login-handler.js — eliminado.
+// El formulario de login ya tiene action="/login" method="POST".
+// Spring Security gestiona la autenticación y redirección en el servidor.
+// Este script interceptaba el submit con e.preventDefault() y redirigía
+// a dashboard.html con localStorage — ambos comportamientos son incorrectos
+// en una aplicación Spring Boot con Spring Security.

@@ -49,6 +49,9 @@ public class DemandaController {
         List<Demanda> todasLasDemandas = demandaRepository.findAll();
         model.addAttribute("demandas", todasLasDemandas);
         
+        // Nav highlight: mark Demandas tab as active
+        model.addAttribute("navDemandas", true);
+
         return "solicitudes";
     }
 

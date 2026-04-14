@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+    <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular.">
+    <title>Error {{status}} | EcoMóstoles</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body class="bg-theme-dark">
+    <!-- Particles Background -->
+    <div id="particles-body"></div>
+
+    {{> header}}
+
+    <!-- Error Content — directly over particles, no white card -->
+    <section class="d-flex flex-column min-vh-100 justify-content-center align-items-center text-center px-3">
+        <i class="fas fa-recycle text-success mb-4" style="font-size: 4rem;"></i>
+        <h1 class="display-1 fw-bold text-dark mb-2">{{status}}</h1>
+        <h2 class="fw-bold text-dark mb-3">{{error}}</h2>
+        <p class="text-secondary fs-5 mb-2">
+            Parece que este recurso ya ha sido revalorizado o la página se ha perdido en el ciclo productivo.
+        </p>
+        <p class="text-muted small mb-4">
+            <i class="fas fa-info-circle me-1"></i>
+            La URL que buscas no existe, ha sido movida o el material ya fue intercambiado con éxito.
+        </p>
+        <div class="d-flex flex-column flex-sm-row gap-3">
+            <a href="/dashboard" class="btn btn-success btn-lg px-5 fw-bold rounded-pill shadow-sm">
+                <i class="fas fa-arrow-left me-2"></i>Volver al Panel de Control
+            </a>
+            <a href="/mercado" class="btn btn-outline-success btn-lg px-4 fw-bold rounded-pill">
+                <i class="fas fa-store me-2"></i>Ver Ofertas
+            </a>
+        </div>
+    </section>
+
+    {{> footer}}
+
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="/js/particles-init.js"></script>
+    <script src="/js/card-spotlight.js"></script>
+
+</body>
+</html>

@@ -56,6 +56,8 @@ public class DashboardController {
             Empresa empresa = empresaOpt.get();
             // Injecting the company object for the dynamic navbar and profile display
             model.addAttribute("empresa", empresa);
+            // Nav highlight: mark Dashboard tab as active
+            model.addAttribute("navDashboard", true);
 
             // Fetching sizes for the Dashboard KPIs
             int totalOfertas = ofertaRepository.findByEmpresa(empresa).size();

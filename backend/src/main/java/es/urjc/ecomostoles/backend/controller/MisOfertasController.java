@@ -113,8 +113,8 @@ public class MisOfertasController {
             nuevaOferta.setEmpresa(empresaOpt.get());
             nuevaOferta.setFechaPublicacion(LocalDateTime.now());
             
-            // Set default status
-            nuevaOferta.setEstado("Activo");
+            // Set default status — must match "Activa" used in DB and Mercado filter
+            nuevaOferta.setEstado("Activa");
 
             // Save to database
             ofertaRepository.save(nuevaOferta);

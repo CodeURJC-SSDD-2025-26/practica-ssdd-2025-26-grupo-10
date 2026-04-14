@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html><html lang="es"><head>
+<!DOCTYPE html><html lang="es"><head>
     <!-- Redirect logged-in users to dashboard -->
     <script>
         if (localStorage.getItem('isLoggedIn') === 'true') {
@@ -40,10 +40,10 @@
                         <a class="nav-link" href="/mercado">Ofertas</a>
                     </li>
                     <li class="nav-item nav-visitor">
-                        <a class="nav-link" href="login.html">Login</a>
+                        <a class="nav-link" href="/login">Login</a>
                     </li>
                     <li class="nav-item ms-lg-2 nav-visitor">
-                        <a class="btn btn-eco btn-sm" href="registro.html">Registro Empresa</a>
+                        <a class="btn btn-eco btn-sm" href="/registro">Registro Empresa</a>
                     </li>
                     <!-- LOGGED-IN NAV (hidden by default, shown if logged in) -->
                     <li class="nav-item nav-logged d-none">
@@ -77,7 +77,7 @@
         <div class="container position-relative" style="z-index: 10;">
             <h1 class="display-4 fw-bold mb-4">Convierte tus residuos en recursos</h1>
             <p class="lead mb-5 col-lg-8 mx-auto text-light-muted">Conectamos empresas del Polígono Regordoño y alrededores para fomentar la economía circular.</p>
-            <a href="registro.html" class="btn btn-glow btn-lg px-5">Únete a la Simbiosis</a>
+            <a href="/registro" class="btn btn-glow btn-lg px-5">Únete a la Simbiosis</a>
         </div>
     </header>
 
@@ -98,7 +98,7 @@
                             <span class="badge bg-success mb-2">Residuo Metálico</span>
                             <p class="card-text mt-2">Excelente calidad para fundición. Disponible para recogida inmediata en Polígono Regordoño.</p>
                             <div class="d-grid mt-3">
-                                <a href="detalle_activo.html" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
+                                <a href="/mercado" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
                             </div>
                         </div>
                     </div>
@@ -114,7 +114,7 @@
                             <span class="badge bg-primary mb-2">Maquinaria</span>
                             <p class="card-text mt-2">Disponible por días o semanas. Incluye seguro. Ideal para picos de trabajo.</p>
                             <div class="d-grid mt-3">
-                                <a href="detalle_activo.html" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
+                                <a href="/mercado" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
                             </div>
                         </div>
                     </div>
@@ -130,7 +130,7 @@
                             <span class="badge bg-warning text-dark mb-2">Residuo Madera</span>
                             <p class="card-text mt-2">Palets usados en buen estado. Se regalan a cambio de recogida. Urge liberar espacio.</p>
                             <div class="d-grid mt-3">
-                                <a href="detalle_activo.html" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
+                                <a href="/mercado" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
                             </div>
                         </div>
                     </div>
