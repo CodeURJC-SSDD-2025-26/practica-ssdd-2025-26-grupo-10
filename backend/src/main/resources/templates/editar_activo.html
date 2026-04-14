@@ -46,7 +46,7 @@
 
                 <div class="card card-modern border-top-primary">
                     <div class="card-body p-4">
-                        <form action="/oferta/editar/{{oferta.id}}" method="POST" class="needs-validation" novalidate="">
+                        <form action="/oferta/editar/{{oferta.id}}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate="">
                             <div class="row g-3">
                                 <div class="col-md-8">
                                     <label for="titulo" class="form-label text-secondary fw-bold small text-uppercase">Título del Activo <span class="text-danger">*</span></label>
@@ -87,12 +87,13 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <label for="imagen" class="form-label text-secondary fw-bold small text-uppercase">Fotografía del Activo</label>
+                                    <label for="imagenFile" class="form-label text-secondary fw-bold small text-uppercase">Fotografía del Activo</label>
                                     <div class="mb-2">
                                         <small class="text-muted">Imagen actual:</small><br>
-                                        <img src="/img/bobinas-cobre.webp" alt="Imagen del activo" class="img-thumbnail rounded object-fit-cover mt-2 mb-3 shadow-sm" style="max-height: 200px;">
+                                        <img src="/images/oferta/{{oferta.id}}" alt="Imagen del activo" class="img-thumbnail rounded object-fit-cover mt-2 mb-3 shadow-sm" style="max-height: 200px;" onerror="this.src='/img/bobinas-cobre.webp';">
                                     </div>
-                                    <input class="form-control" type="file" id="imagen">
+                                    <input class="form-control" type="file" id="imagenFile" name="imagenFile" accept="image/*">
+                                    <div class="form-text">Deja vacío para conservar la imagen actual.</div>
                                 </div>
 
                                 <div class="col-12 mt-4 d-flex justify-content-end">
@@ -112,6 +113,5 @@
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="/js/particles-init.js"></script>
     <script src="/js/card-spotlight.js"></script>
-    <script src="/js/auth-guard.js"></script>
 </body>
 </html>

@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface EmpresaRepository extends JpaRepository<Empresa, Long> {
     Optional<Empresa> findByEmailContacto(String emailContacto);
     Optional<Empresa> findByNombreComercial(String nombreComercial);
+    /** Búsqueda por CIF (campo único): evita DataIntegrityViolationException en el upsert. */
+    Optional<Empresa> findByCif(String cif);
 }

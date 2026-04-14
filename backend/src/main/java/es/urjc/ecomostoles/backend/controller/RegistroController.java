@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class RegistroController {
@@ -32,6 +33,7 @@ public class RegistroController {
             @RequestParam String sector,
             @RequestParam String emailContacto,
             @RequestParam String password,
+            @RequestParam(required = false) MultipartFile logoFile,
             Model model) {
 
         // Comprobar si ya existe una empresa con ese email
@@ -50,6 +52,15 @@ public class RegistroController {
 
         // ¡CRÍTICO! Encriptar la contraseña antes de guardar
         empresa.setPassword(passwordEncoder.encode(password));
+
+        // Persistir logo como BLOB si el usuario adjuntó uno
+        if (logoFile != null && !logoFile.isEmpty()) {
+            try {
+                empresa.setLogo(logoFile.getBytes());
+            } catch (Exception e) {
+                System.err.println("⚠️ Error al leer el logo: " + e.getMessage());
+            }
+        }
 
         empresaRepository.save(empresa);
 

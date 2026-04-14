@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
 
@@ -68,6 +69,7 @@ public class PerfilController {
                                 @RequestParam String direccion,
                                 @RequestParam String sector,
                                 @RequestParam String descripcion,
+                                @RequestParam(required = false) MultipartFile logoFile,
                                 Principal principal) {
 
         Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
@@ -78,8 +80,18 @@ public class PerfilController {
             empresa.setNombreComercial(nombreComercial);
             empresa.setTelefono(telefono);
             empresa.setDireccion(direccion);
-            empresa.setSectorIndustrial(sector); // Mapping parameter 'sector' to 'sectorIndustrial'
+            empresa.setSectorIndustrial(sector);
             empresa.setDescripcion(descripcion);
+
+            // Actualizar logo solo si se ha enviado un archivo nuevo
+            if (logoFile != null && !logoFile.isEmpty()) {
+                try {
+                    empresa.setLogo(logoFile.getBytes());
+                } catch (Exception e) {
+                    System.err.println("⚠️ Error al leer el logo: " + e.getMessage());
+                }
+            }
+            // Si logoFile está vacío, se conserva el logo existente en BBDD
 
             // Persisting changes to the database
             empresaRepository.save(empresa);

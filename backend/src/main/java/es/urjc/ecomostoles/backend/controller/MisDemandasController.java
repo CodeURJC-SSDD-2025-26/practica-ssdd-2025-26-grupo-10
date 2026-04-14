@@ -4,13 +4,14 @@ import es.urjc.ecomostoles.backend.model.Demanda;
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.repository.DemandaRepository;
 import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -26,14 +27,37 @@ public class MisDemandasController {
     private final EmpresaRepository empresaRepository;
     private final DemandaRepository demandaRepository;
 
-    /**
-     * Constructor-based dependency injection.
-     * @param empresaRepository repository for company data
-     * @param demandaRepository repository for demand data
-     */
     public MisDemandasController(EmpresaRepository empresaRepository, DemandaRepository demandaRepository) {
         this.empresaRepository = empresaRepository;
         this.demandaRepository = demandaRepository;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Helper: devuelve la demanda si el usuario es el autor o ADMIN.
+    // Lanza 403 en caso contrario.
+    // ─────────────────────────────────────────────────────────────────────────
+    private Demanda verificarPropietarioDemanda(Long demandaId, Principal principal) {
+        Demanda demanda = demandaRepository.findById(demandaId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Demanda no encontrada: " + demandaId));
+
+        Empresa empresaLogueada = empresaRepository.findByEmailContacto(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
+
+        boolean esAdmin = empresaLogueada.getRoles() != null
+                && empresaLogueada.getRoles().contains("ADMIN");
+        boolean esPropietario = demanda.getEmpresa() != null
+                && demanda.getEmpresa().getId().equals(empresaLogueada.getId());
+
+        if (!esAdmin && !esPropietario) {
+            System.err.println("🚫 Acceso denegado: " + principal.getName()
+                    + " intentó modificar demanda #" + demandaId
+                    + " que pertenece a: " + demanda.getEmpresa().getEmailContacto());
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "No tienes permiso para modificar esta demanda.");
+        }
+        return demanda;
     }
 
     /**
@@ -134,8 +158,11 @@ public class MisDemandasController {
      * @return redirect to the "Mis Demandas" dashboard
      */
     @PostMapping("/dashboard/mis-demandas/eliminar/{id}")
-    public String eliminarDemanda(@PathVariable Long id) {
+    public String eliminarDemanda(@PathVariable Long id, Principal principal) {
+        // Verifica propiedad: solo el autor o ADMIN puede borrar
+        verificarPropietarioDemanda(id, principal);
         demandaRepository.deleteById(id);
+        System.out.println("🗑️  Demanda #" + id + " eliminada por: " + principal.getName());
         return "redirect:/dashboard/mis-demandas";
     }
 
@@ -148,12 +175,13 @@ public class MisDemandasController {
      */
     @GetMapping("/demanda/editar/{id}")
     public String mostrarFormularioEditarDemanda(@PathVariable Long id, Model model, Principal principal) {
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
-        Optional<Demanda> demandaOpt = demandaRepository.findById(id);
+        // Verifica propiedad: solo el autor o ADMIN puede editar
+        Demanda demanda = verificarPropietarioDemanda(id, principal);
 
-        if (empresaOpt.isPresent() && demandaOpt.isPresent()) {
+        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
+        if (empresaOpt.isPresent()) {
             model.addAttribute("empresa", empresaOpt.get());
-            model.addAttribute("demanda", demandaOpt.get());
+            model.addAttribute("demanda", demanda);
             return "editar_solicitud";
         }
         return "redirect:/dashboard/mis-demandas";

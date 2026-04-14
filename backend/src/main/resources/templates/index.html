@@ -54,7 +54,7 @@
                     </li>
                     <li class="nav-item dropdown ms-lg-2 nav-logged d-none">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <img src="/img/logo.webp" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar">
+                            <img src="/images/empresa/{{empresa.id}}" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar" onerror="this.src='/img/logo.webp';">
                             <span>{{empresa.nombreComercial}}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 dropdown-rounded">
@@ -86,55 +86,32 @@
         <div class="container">
             <h2 class="text-center mb-5 text-uppercase fw-bold text-secondary">Ofertas Recientes</h2>
             <div class="row g-4">
-                
-                <!-- Card 1 -->
-                <div class="col-md-4">
-                    <div class="card h-100 border-top-success">
-                        <!-- TO CHANGE PHOTO: 1. Save your image in the 'img' folder  2. Update the src below -->
-                        <img src="/img/virutas.webp" class="card-img-top w-100" alt="Viruta de Acero">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">Viruta de Acero (500kg)</h5>
-                            <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> Metales del Sur S.L.</p>
-                            <span class="badge bg-success mb-2">Residuo Metálico</span>
-                            <p class="card-text mt-2">Excelente calidad para fundición. Disponible para recogida inmediata en Polígono Regordoño.</p>
-                            <div class="d-grid mt-3">
-                                <a href="/mercado" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Card 2 -->
+                {{#ofertasRecientes}}
                 <div class="col-md-4">
-                    <div class="card h-100 border-top-primary">
-                         <img src="/img/montacargas.webp" class="card-img-top w-100" alt="Montacargas">
+                    <div class="card h-100 border-top-success card-hover">
+                        <img src="/images/oferta/{{id}}" class="card-img-top" style="height:200px;object-fit:cover;" alt="{{titulo}}" onerror="this.src='/img/virutas.webp';">
                         <div class="card-body">
-                            <h5 class="card-title fw-bold">Alquiler Montacargas 2T</h5>
-                            <p class="card-text text-muted small"><i class="fas fa-warehouse me-1"></i> Logística Móstoles S.A.</p>
-                            <span class="badge bg-primary mb-2">Maquinaria</span>
-                            <p class="card-text mt-2">Disponible por días o semanas. Incluye seguro. Ideal para picos de trabajo.</p>
+                            <h5 class="card-title fw-bold">{{titulo}} ({{cantidadFormateada}} kg)</h5>
+                            <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> {{empresa.nombreComercial}}</p>
+                            <span class="badge bg-success mb-2">{{categoria}}</span>
+                            <p class="card-text mt-2">{{descripcion}}</p>
                             <div class="d-grid mt-3">
-                                <a href="/mercado" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
+                                <a href="/oferta/{{id}}" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
                             </div>
                         </div>
                     </div>
                 </div>
+                {{/ofertasRecientes}}
 
-                <!-- Card 3 -->
-                <div class="col-md-4">
-                    <div class="card h-100 border-top-warning">
-                        <img src="/img/palés.webp" class="card-img-top w-100" alt="Palets Madera">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">Palets de Madera (x200)</h5>
-                            <p class="card-text text-muted small"><i class="fas fa-building me-1"></i> Muebles García e Hijos</p>
-                            <span class="badge bg-warning text-dark mb-2">Residuo Madera</span>
-                            <p class="card-text mt-2">Palets usados en buen estado. Se regalan a cambio de recogida. Urge liberar espacio.</p>
-                            <div class="d-grid mt-3">
-                                <a href="/mercado" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
-                            </div>
-                        </div>
-                    </div>
+                {{^ofertasRecientes}}
+                <!-- Placeholder si no hay datos en la BBDD aún -->
+                <div class="col-12 text-center py-5 text-muted">
+                    <i class="fas fa-box-open fs-1 mb-3 d-block"></i>
+                    <p>Las ofertas aparecerán aquí en cuanto se publiquen en el mercado.</p>
+                    <a href="/mercado" class="btn btn-outline-success">Ir al Mercado</a>
                 </div>
+                {{/ofertasRecientes}}
 
             </div>
             

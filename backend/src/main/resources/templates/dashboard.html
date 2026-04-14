@@ -130,47 +130,26 @@
                                 <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill"><i class="fas fa-robot me-1"></i>Algoritmo IA</span>
                             </div>
                             <div class="card-body p-4">
+                                {{#hasRecommendations}}
                                 <div class="row g-3">
+                                    {{#smartRecommendations}}
                                     <div class="col-md-4">
                                         <div class="border rounded-3 p-3 h-100 position-relative">
-                                            <span class="badge bg-success position-absolute top-0 end-0 m-2 rounded-pill">95% Match</span>
-                                            <h6 class="fw-bold text-dark mb-1 pe-5">Viruta de Acero Inoxidable</h6>
-                                            <p class="text-muted small mb-2">EcoFundiciones S.A. busca exactamente tu tipo de viruta para fundición secundaria.</p>
+                                            <span class="badge bg-success position-absolute top-0 end-0 m-2 rounded-pill">Smart Match</span>
+                                            <h6 class="fw-bold text-dark mb-1 pe-5">{{titulo}}</h6>
+                                            <p class="text-muted small mb-2">{{#empresa}}{{nombreComercial}}{{/empresa}}{{^empresa}}Empresa Anónima{{/empresa}} busca tu sector.</p>
                                             <div class="d-flex align-items-center gap-2 mb-3">
-                                                <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt text-success me-1"></i>A 2 km</span>
-                                                <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i>500 kg</span>
-                                                <span class="badge bg-light text-dark border"><i class="fas fa-euro-sign me-1"></i>1.200 €</span>
+                                                <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i>{{cantidad}} {{unidad}}</span>
                                             </div>
-                                            <a href="#" class="btn btn-sm btn-outline-success rounded-pill w-100"><i class="fas fa-eye me-1"></i>Ver Oferta</a>
+                                            <a href="/demanda/{{id}}" class="btn btn-sm btn-outline-success rounded-pill w-100"><i class="fas fa-eye me-1"></i>Ver Oferta</a>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="border rounded-3 p-3 h-100 position-relative">
-                                            <span class="badge bg-primary position-absolute top-0 end-0 m-2 rounded-pill">82% Match</span>
-                                            <h6 class="fw-bold text-dark mb-1 pe-5">Bobinas de Cobre Reciclado</h6>
-                                            <p class="text-muted small mb-2">Cableados Móstoles necesita cobre para producción de cable industrial.</p>
-                                            <div class="d-flex align-items-center gap-2 mb-3">
-                                                <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt text-primary me-1"></i>A 5 km</span>
-                                                <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i>300 kg</span>
-                                                <span class="badge bg-light text-dark border"><i class="fas fa-euro-sign me-1"></i>2.800 €</span>
-                                            </div>
-                                            <a href="#" class="btn btn-sm btn-outline-primary rounded-pill w-100"><i class="fas fa-eye me-1"></i>Ver Oferta</a>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="border rounded-3 p-3 h-100 position-relative">
-                                            <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 rounded-pill">74% Match</span>
-                                            <h6 class="fw-bold text-dark mb-1 pe-5">Transporte Compartido - Zona Sur</h6>
-                                            <p class="text-muted small mb-2">Logística Express ofrece compartir ruta de recogida en tu polígono.</p>
-                                            <div class="d-flex align-items-center gap-2 mb-3">
-                                                <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt text-warning me-1"></i>A 1 km</span>
-                                                <span class="badge bg-light text-dark border"><i class="fas fa-truck me-1"></i>Servicio</span>
-                                                <span class="badge bg-light text-dark border"><i class="fas fa-euro-sign me-1"></i>150 €/viaje</span>
-                                            </div>
-                                            <a href="#" class="btn btn-sm btn-outline-warning rounded-pill w-100 text-dark"><i class="fas fa-eye me-1"></i>Ver Oferta</a>
-                                        </div>
-                                    </div>
+                                    {{/smartRecommendations}}
                                 </div>
+                                {{/hasRecommendations}}
+                                {{^hasRecommendations}}
+                                <p class="text-muted text-center py-4 mb-0"><i class="fas fa-info-circle me-2"></i>No hay recomendaciones de tu sector en este momento.</p>
+                                {{/hasRecommendations}}
                             </div>
                         </div>
                     </div>
@@ -283,7 +262,7 @@
                                                 <td><span class="badge bg-success rounded-pill">Completado</span></td>
                                                 <td class="text-end pe-4">
                                                     <a href="#" class="btn btn-sm btn-outline-success rounded-pill text-nowrap me-1"><i class="fas fa-eye me-1"></i>Ver</a>
-                                                    <a href="#" class="btn btn-sm btn-outline-danger rounded-pill text-nowrap me-1"><i class="fas fa-file-pdf me-1"></i>Albarán</a>
+                                                    <a href="/acuerdo/1/pdf" target="_blank" class="btn btn-sm btn-outline-danger rounded-pill text-nowrap me-1"><i class="fas fa-file-pdf me-1"></i>Albarán</a>
                                                     <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap"><i class="fas fa-trash-alt me-1"></i></a>
                                                 </td>
                                             </tr>
@@ -312,7 +291,7 @@
                 labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
                 datasets: [{
                     label: 'Kg Reutilizados',
-                    data: [400, 650, 520, 780, 610, 890, 750, 430, 920, 1050, 870, 1200],
+                    data: [{{#chartData}}{{.}},{{/chartData}}],
                     backgroundColor: 'rgba(25, 135, 84, 0.6)',
                     borderColor: 'rgba(25, 135, 84, 1)',
                     borderWidth: 2,
@@ -324,6 +303,5 @@
         });
     </script>
     <script src="/js/card-spotlight.js"></script>
-    <script src="/js/auth-guard.js"></script>
 </body>
 </html>

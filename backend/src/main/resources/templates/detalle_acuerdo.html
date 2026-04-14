@@ -139,7 +139,7 @@
                         <div class="card card-modern border-top-primary mb-4">
                             <div class="card-body p-4 text-center">
                                 <small class="text-uppercase text-muted fw-bold d-block mb-3">Empresa Origen</small>
-                                <img src="/img/logo.webp" alt="Logo Metales del Sur" class="rounded-circle object-fit-cover mb-3 shadow-sm">
+                                <img src="/images/empresa/{{empresa.id}}" alt="Logo Empresa Origen" class="rounded-circle object-fit-cover mb-3 shadow-sm" onerror="this.src='/img/logo.webp';">
                                 <h6 class="fw-bold text-dark">Metales del Sur S.L.</h6>
                                 <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> Pol. Regordoño, Móstoles</p>
                                 <span class="badge bg-light text-dark border px-3 py-1">Metalúrgico</span>
@@ -224,7 +224,6 @@
     <script src="/js/particles-init.js"></script>
     <script src="/js/card-spotlight.js"></script>
     <!-- Auth Guard -->
-    <script src="/js/auth-guard.js"></script>
 
 
 </body></html>

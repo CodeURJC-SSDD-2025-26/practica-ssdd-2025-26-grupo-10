@@ -61,7 +61,7 @@
 
                 <div class="card card-modern border-top-success">
                     <div class="card-body p-4">
-                        <form action="/oferta/nueva" method="POST" class="needs-validation" novalidate="">
+                        <form action="/oferta/nueva" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate="">
                             <div class="row g-3">
                                 <div class="col-md-8">
                                     <label for="titulo" class="form-label text-secondary fw-bold small text-uppercase">Título del Activo
@@ -196,7 +196,6 @@
     <script src="/js/particles-init.js"></script>
     <script src="/js/card-spotlight.js"></script>
     <!-- Auth Guard -->
-    <script src="/js/auth-guard.js"></script>
 
     <!-- Bootstrap Form Validation -->
     <script src="/js/form-validation.js"></script>

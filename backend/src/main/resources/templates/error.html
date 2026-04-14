@@ -21,16 +21,35 @@
 
     <!-- Error Content — directly over particles, no white card -->
     <section class="d-flex flex-column min-vh-100 justify-content-center align-items-center text-center px-3">
+
+        {{#is403}}
+        <!-- ── Bloque específico para 403 Forbidden ── -->
+        <i class="fas fa-lock text-warning mb-4" style="font-size: 4rem;"></i>
+        <h1 class="display-1 fw-bold text-dark mb-2">403</h1>
+        <h2 class="fw-bold text-dark mb-3">Acceso Denegado</h2>
+        <p class="text-secondary fs-5 mb-2">
+            No tienes permisos para editar o borrar este elemento.
+        </p>
+        <p class="text-muted small mb-4">
+            <i class="fas fa-info-circle me-1"></i>
+            Solo el propietario del recurso o un administrador puede realizar esta acción.
+        </p>
+        {{/is403}}
+
+        {{^is403}}
+        <!-- ── Bloque genérico para el resto de errores ── -->
         <i class="fas fa-recycle text-success mb-4" style="font-size: 4rem;"></i>
         <h1 class="display-1 fw-bold text-dark mb-2">{{status}}</h1>
         <h2 class="fw-bold text-dark mb-3">{{error}}</h2>
         <p class="text-secondary fs-5 mb-2">
-            Parece que este recurso ya ha sido revalorizado o la página se ha perdido en el ciclo productivo.
+            {{errorMessage}}
         </p>
         <p class="text-muted small mb-4">
             <i class="fas fa-info-circle me-1"></i>
             La URL que buscas no existe, ha sido movida o el material ya fue intercambiado con éxito.
         </p>
+        {{/is403}}
+
         <div class="d-flex flex-column flex-sm-row gap-3">
             <a href="/dashboard" class="btn btn-success btn-lg px-5 fw-bold rounded-pill shadow-sm">
                 <i class="fas fa-arrow-left me-2"></i>Volver al Panel de Control

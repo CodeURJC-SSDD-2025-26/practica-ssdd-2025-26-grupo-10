@@ -68,7 +68,7 @@
                 {{#ofertas}}
                 <div class="col-md-4">
                     <div class="card h-100 border-top-success card-hover">
-                        <img src="/oferta/{{id}}/imagen" class="card-img-top card-img-uniform" alt="{{titulo}}" onerror="this.src='/img/virutas.webp';">
+                        <img src="/images/oferta/{{id}}" class="card-img-top card-img-uniform" alt="{{titulo}}" onerror="this.src='/img/virutas.webp';">
                         <div class="card-body">
                             <h5 class="card-title fw-bold">{{titulo}} ({{cantidad}}kg)</h5>
                             <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> {{empresa.nombreComercial}}</p>
@@ -99,6 +99,5 @@
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="/js/particles-init.js"></script>
     <script src="/js/card-spotlight.js"></script>
-    <script src="/js/auth-guard.js"></script>
 </body>
 </html>
