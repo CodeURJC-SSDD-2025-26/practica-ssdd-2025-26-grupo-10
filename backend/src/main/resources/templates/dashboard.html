@@ -3,28 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <nav id="sidebarMenu" class="col-md-3 col-lg-2 offcanvas-md offcanvas-start bg-white sidebar" tabindex="-1" aria-labelledby="sidebarMenuLabel">
-            <div class="offcanvas-header d-md-none border-bottom">
-                <h5 class="offcanvas-title" id="sidebarMenuLabel"><i class="fas fa-recycle text-success me-2"></i>Menú</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link active text-success fw-bold" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
-                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small></li>
-                    <li class="nav-item"><a class="nav-link" href="/dashboard/mis-ofertas"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/oferta/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
-                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small></li>
-                    <li class="nav-item"><a class="nav-link" href="/dashboard/mis-demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/demanda/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Demanda</a></li>
-                    <li class="nav-item mt-3"><h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase"><span>Acuerdos</span></h6></li>
-                    <li class="nav-item"><a class="nav-link text-dark link-mis-acuerdos" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark link-crear-acuerdo" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
-                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
-                    <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">{{totalMensajes}}</span></a></li>
-                </ul>
-            </div>
-        </nav>
+        {{> sidebar}}
 
         <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent position-relative" style="z-index: 1;">
@@ -49,6 +28,25 @@
                 </div>
                 <!-- ... other cards ... -->
             </div>
+
+            {{#hasRecommendations}}
+            <div class="card mt-4 shadow-sm border-top-warning">
+              <div class="card-body">
+                <h5 class="fw-bold"><i class="fas fa-lightbulb text-warning"></i> Oportunidades (Smart Matching)</h5>
+                <div class="list-group">
+                  {{#smartRecommendations}}
+                  <a href="/demanda/{{id}}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-0">{{titulo}}</h6>
+                      <small class="text-muted">{{empresa.nombreComercial}} ({{cantidad}} {{unidad}})</small>
+                    </div>
+                    <span class="badge bg-success rounded-pill">Ver</span>
+                  </a>
+                  {{/smartRecommendations}}
+                </div>
+              </div>
+            </div>
+            {{/hasRecommendations}}
         </main>
     </div>
 </div>

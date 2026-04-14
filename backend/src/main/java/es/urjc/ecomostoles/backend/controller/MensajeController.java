@@ -75,4 +75,41 @@ public class MensajeController {
  
         return "redirect:/mensajes";
     }
+
+    /**
+     * Shows the form to compose a new message.
+     */
+    @GetMapping("/mensajes/nuevo")
+    public String nuevoMensaje(@RequestParam Long receptorId, 
+                               @RequestParam(required = false) String asunto, 
+                               Model model, Principal principal) {
+        Empresa receptor = empresaService.buscarPorId(receptorId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa receptora no encontrada"));
+        
+        if (principal != null) {
+            empresaService.buscarPorEmail(principal.getName())
+                          .ifPresent(empresa -> model.addAttribute("empresa", empresa));
+        }
+
+        model.addAttribute("receptor", receptor);
+        model.addAttribute("asunto", asunto != null ? asunto : "");
+        return "redactar_mensaje";
+    }
+
+    /**
+     * Processes the submission of a new message.
+     */
+    @PostMapping("/mensajes/enviar")
+    public String enviarMensaje(@RequestParam Long receptorId, 
+                                @RequestParam String asunto, 
+                                @RequestParam String contenido, 
+                                Principal principal) {
+        Empresa remitente = empresaService.buscarPorEmail(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Remitente no encontrado"));
+        Empresa destinatario = empresaService.buscarPorId(receptorId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Destinatario no encontrado"));
+
+        mensajeService.enviarMensaje(asunto, contenido, remitente, destinatario);
+        return "redirect:/mensajes?exito=true";
+    }
 }

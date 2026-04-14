@@ -26,7 +26,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import es.urjc.ecomostoles.backend.service.ConfiguracionService;
+import com.lowagie.text.Document;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.PdfPCell;
+import java.awt.Color;
 
 /**
  * Administration panel controller.
@@ -64,6 +74,10 @@ public class AdminController {
 
     // ── Helper: puts company + global KPIs in the model ─────────────────────
     private void addCommonAttributes(Model model, Principal principal) {
+        addCommonAttributes(model, principal, null);
+    }
+
+    private void addCommonAttributes(Model model, Principal principal, String filtro) {
         if (principal != null) {
             Optional<Empresa> opt = empresaService.buscarPorEmail(principal.getName());
             opt.ifPresent(e -> model.addAttribute("empresa", e));
@@ -72,12 +86,12 @@ public class AdminController {
         model.addAttribute("totalUsuarios",  empresaService.contarTodas());
         model.addAttribute("totalOfertas",   ofertaService.contarTodas());
         model.addAttribute("totalDemandas",  demandaService.contarTodas());
-        model.addAttribute("totalAcuerdos",  acuerdoService.contarTodos());
+        model.addAttribute("totalAcuerdos",  acuerdoService.contarTodos(filtro));
  
         // Admin-Specific Stats (Real DB counts)
-        model.addAttribute("totalPendientes",  acuerdoService.contarPorEstado(EstadoAcuerdo.PENDIENTE));
+        model.addAttribute("totalPendientes",  acuerdoService.contarPorEstado(EstadoAcuerdo.PENDIENTE, filtro));
         model.addAttribute("totalDenunciadas", ofertaService.contarPorEstado(EstadoOferta.DENUNCIADA));
-        model.addAttribute("totalCompletadas", acuerdoService.contarPorEstado(EstadoAcuerdo.COMPLETADO));
+        model.addAttribute("totalCompletadas", acuerdoService.contarPorEstado(EstadoAcuerdo.COMPLETADO, filtro));
         model.addAttribute("toneladasCO2", acuerdoService.calcularCO2Ahorrado());
     }
 
@@ -89,9 +103,10 @@ public class AdminController {
 
     // ── GET /admin/panel ───────────────────────────────────────────────────────
     @GetMapping("/panel")
-    public String panel(Model model, Principal principal) {
-        addCommonAttributes(model, principal);
+    public String panel(Model model, Principal principal, @RequestParam(required = false) String filtro) {
+        addCommonAttributes(model, principal, filtro);
         model.addAttribute("navPanel", true);
+        model.addAttribute("filtroActual", filtro);
         return "admin_panel";
     }
 
@@ -192,6 +207,70 @@ public class AdminController {
 
         redirectAttributes.addFlashAttribute("mensaje", "La configuración de la plataforma se ha actualizado correctamente en la base de datos.");
         return "redirect:/admin/configuracion";
+    }
+
+    /**
+     * Exports a PDF report (Mock generation for REST flow compliance).
+     */
+    @GetMapping("/exportar/pdf")
+    public void exportarPdf(HttpServletResponse response) throws IOException {
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=\"reporte_ecomostoles.pdf\"");
+
+        Document document = new Document(PageSize.A4);
+        PdfWriter.getInstance(document, response.getOutputStream());
+
+        document.open();
+
+        // Title
+        Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+        fontTitle.setSize(18);
+        fontTitle.setColor(new Color(25, 135, 84)); // EcoMostoles Green
+
+        Paragraph p = new Paragraph("Reporte Administrativo: EcoMostoles", fontTitle);
+        p.setAlignment(Paragraph.ALIGN_CENTER);
+        document.add(p);
+
+        document.add(new Paragraph(" ")); // Spacer
+
+        // Table
+        PdfPTable table = new PdfPTable(4);
+        table.setWidthPercentage(100f);
+        table.setWidths(new float[] {1.5f, 3.5f, 3.5f, 2.0f});
+        table.setSpacingBefore(10);
+
+        // Header Cell Helper
+        writeTableHeader(table);
+
+        // Data
+        List<Empresa> empresas = empresaService.obtenerTodas();
+        for (Empresa emp : empresas) {
+            table.addCell(String.valueOf(emp.getId()));
+            table.addCell(emp.getNombreComercial());
+            table.addCell(emp.getEmailContacto());
+            table.addCell(emp.getRol());
+        }
+
+        document.add(table);
+        document.close();
+    }
+
+    private void writeTableHeader(PdfPTable table) {
+        PdfPCell cell = new PdfPCell();
+        cell.setBackgroundColor(new Color(25, 135, 84));
+        cell.setPadding(5);
+
+        Font font = FontFactory.getFont(FontFactory.HELVETICA);
+        font.setColor(Color.WHITE);
+
+        cell.setPhrase(new com.lowagie.text.Phrase("ID", font));
+        table.addCell(cell);
+        cell.setPhrase(new com.lowagie.text.Phrase("Nombre", font));
+        table.addCell(cell);
+        cell.setPhrase(new com.lowagie.text.Phrase("Email", font));
+        table.addCell(cell);
+        cell.setPhrase(new com.lowagie.text.Phrase("Rol", font));
+        table.addCell(cell);
     }
 
     /**

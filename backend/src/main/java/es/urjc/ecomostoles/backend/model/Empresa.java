@@ -164,4 +164,11 @@ public class Empresa {
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
+
+    public String getRol() {
+        if (roles != null && !roles.isEmpty()) {
+            return roles.get(0);
+        }
+        return "USER";
+    }
 }

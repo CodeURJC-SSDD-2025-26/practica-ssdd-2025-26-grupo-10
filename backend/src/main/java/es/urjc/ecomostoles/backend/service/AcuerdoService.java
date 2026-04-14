@@ -63,11 +63,27 @@ public class AcuerdoService {
 
     @Transactional(readOnly = true)
     public long contarTodos() {
+        return contarTodos(null);
+    }
+
+    @Transactional(readOnly = true)
+    public long contarTodos(String filtro) {
+        if ("semana".equals(filtro)) {
+            return acuerdoRepository.countByFechaRegistroAfter(LocalDateTime.now().minusDays(7));
+        }
         return acuerdoRepository.count();
     }
 
     @Transactional(readOnly = true)
     public long contarPorEstado(es.urjc.ecomostoles.backend.model.EstadoAcuerdo estado) {
+        return contarPorEstado(estado, null);
+    }
+
+    @Transactional(readOnly = true)
+    public long contarPorEstado(es.urjc.ecomostoles.backend.model.EstadoAcuerdo estado, String filtro) {
+        if ("semana".equals(filtro)) {
+            return acuerdoRepository.countByEstadoAndFechaRegistroAfter(estado, LocalDateTime.now().minusDays(7));
+        }
         return acuerdoRepository.countByEstado(estado);
     }
 

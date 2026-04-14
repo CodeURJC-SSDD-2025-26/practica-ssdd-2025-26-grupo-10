@@ -58,4 +58,8 @@ public interface AcuerdoRepository extends JpaRepository<Acuerdo, Long> {
  
     @org.springframework.data.jpa.repository.Query("SELECT SUM(a.cantidad) FROM Acuerdo a WHERE a.estado = 'COMPLETADO'")
     Double sumTotalCantidadByEstadoCompletado();
+
+    long countByFechaRegistroAfter(java.time.LocalDateTime fecha);
+
+    long countByEstadoAndFechaRegistroAfter(EstadoAcuerdo estado, java.time.LocalDateTime fecha);
 }
