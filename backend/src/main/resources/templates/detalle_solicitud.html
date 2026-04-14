@@ -42,6 +42,13 @@
             {{#demanda}}
             <div class="card shadow-sm border-top border-success border-4 rounded-3 overflow-hidden">
                 <div class="card-body p-4">
+                    {{#mensajeFavorito}}
+                    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+                        <i class="fas fa-heart me-2"></i> {{mensajeFavorito}}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {{/mensajeFavorito}}
+
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item"><a href="/" class="text-muted text-decoration-none">Inicio</a></li>
@@ -68,10 +75,13 @@
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="badge bg-warning text-dark px-3 py-2 text-uppercase rounded-pill fw-bold small">{{#categoriaMaterial}}{{categoriaMaterial}}{{/categoriaMaterial}}{{^categoriaMaterial}}Sin categoría{{/categoriaMaterial}}</span>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-outline-danger border-0 rounded-circle p-2 shadow-sm" title="Guardar en favoritos">
-                                        <i class="far fa-heart fs-5"></i>
-                                    </button>
-                                    <button class="btn btn-outline-secondary border-0 rounded-circle p-2 shadow-sm" title="Compartir">
+                                    <form action="/demandas/{{id}}/favorito" method="POST" class="d-inline mb-0">
+                                        {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
+                                        <button type="submit" class="btn btn-outline-danger border-0 rounded-circle p-2 shadow-sm" title="Guardar en favoritos">
+                                            <i class="far fa-heart fs-5"></i>
+                                        </button>
+                                    </form>
+                                    <button class="btn btn-outline-secondary border-0 rounded-circle p-2 shadow-sm" title="Compartir" onclick="navigator.clipboard.writeText(window.location.href); alert('Enlace copiado al portapapeles');">
                                         <i class="fas fa-share-alt fs-5"></i>
                                     </button>
                                 </div>
@@ -117,9 +127,9 @@
 
                             <div class="mt-5 pt-4 border-top">
                                 <div class="d-flex align-items-center gap-3 mb-3">
-                                    <button class="btn btn-success btn-lg px-5 shadow-sm fw-bold rounded-3">
+                                    <a href="/mensajes/nuevo?receptorId={{empresa.id}}&asunto=Acerca de: {{titulo}}" class="btn btn-success btn-lg px-5 shadow-sm fw-bold rounded-3">
                                         <i class="fas fa-paper-plane me-2"></i>Contactar para Ofrecer
-                                    </button>
+                                    </a>
                                     <a href="/solicitudes" class="btn btn-outline-secondary btn-lg px-4 rounded-3">
                                         <i class="fas fa-arrow-left me-2"></i>Volver
                                     </a>

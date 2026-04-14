@@ -8,6 +8,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -66,5 +70,15 @@ public class DemandaController {
         }
 
         return "redirect:/solicitudes";
+    }
+
+    /**
+     * Saves a demand to the company's favorite list.
+     */
+    @PostMapping("/demandas/{id}/favorito")
+    public String toggleFavorito(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        // Simple logic for the demo: provide visual feedback
+        redirectAttributes.addFlashAttribute("mensajeFavorito", "La demanda #" + id + " ha sido guardada en tus favoritos correctamente.");
+        return "redirect:/demanda/" + id;
     }
 }

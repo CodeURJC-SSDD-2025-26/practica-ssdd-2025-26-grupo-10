@@ -12,4 +12,6 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Long> {
     Optional<Empresa> findByCif(String cif);
 
     List<Empresa> findTop50ByOrderByIdDesc();
+
+    List<Empresa> findByNombreComercialContainingIgnoreCaseOrEmailContactoContainingIgnoreCaseOrCifContainingIgnoreCase(String q1, String q2, String q3);
 }

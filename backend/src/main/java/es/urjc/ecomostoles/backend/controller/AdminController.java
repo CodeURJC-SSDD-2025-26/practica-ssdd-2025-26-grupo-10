@@ -20,8 +20,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import es.urjc.ecomostoles.backend.dto.EmpresaDTO;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+import es.urjc.ecomostoles.backend.service.ConfiguracionService;
 
 /**
  * Administration panel controller.
@@ -37,20 +42,25 @@ import es.urjc.ecomostoles.backend.dto.EmpresaDTO;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    private final EmpresaService  empresaService;
-    private final OfertaService   ofertaService;
-    private final DemandaService  demandaService;
-    private final AcuerdoService  acuerdoService;
+    private final EmpresaService       empresaService;
+    private final OfertaService        ofertaService;
+    private final DemandaService       demandaService;
+    private final AcuerdoService       acuerdoService;
+    private final ConfiguracionService configuracionService;
 
     public AdminController(EmpresaService empresaService,
                            OfertaService ofertaService,
                            DemandaService demandaService,
-                           AcuerdoService acuerdoService) {
+                           AcuerdoService acuerdoService,
+                           ConfiguracionService configuracionService) {
         this.empresaService = empresaService;
         this.ofertaService  = ofertaService;
         this.demandaService = demandaService;
         this.acuerdoService = acuerdoService;
+        this.configuracionService = configuracionService;
     }
+
+    // ... (keep private methods)
 
     // ── Helper: puts company + global KPIs in the model ─────────────────────
     private void addCommonAttributes(Model model, Principal principal) {
@@ -87,20 +97,38 @@ public class AdminController {
 
     // ── GET /admin/usuarios ────────────────────────────────────────────────────
     @GetMapping("/usuarios")
-    public String usuarios(Model model, Principal principal) {
+    public String usuarios(Model model, Principal principal, @RequestParam(required = false) String search) {
         addCommonAttributes(model, principal);
         model.addAttribute("navUsuarios", true);
-        // Limited list of registered companies for the table (Top 50)
-        model.addAttribute("empresas", empresaService.obtenerTodas());
+        
+        if (search != null && !search.isEmpty()) {
+            model.addAttribute("empresas", empresaService.filtrarEmpresas(search));
+        } else {
+            // Limited list of registered companies for the table (Top 50)
+            model.addAttribute("empresas", empresaService.obtenerTodas());
+        }
+        
         return "admin_usuarios";
     }
 
     // ── GET /admin/ofertas ─────────────────────────────────────────────────────
     @GetMapping("/ofertas")
-    public String ofertas(Model model, Principal principal) {
+    public String ofertas(Model model, Principal principal, @RequestParam(required = false) String estado) {
         addCommonAttributes(model, principal);
         model.addAttribute("navOfertas", true);
-        model.addAttribute("todasOfertas", ofertaService.obtenerTodas());
+        
+        if (estado != null && !estado.isEmpty()) {
+            try {
+                EstadoOferta enumEstado = EstadoOferta.valueOf(estado.toUpperCase());
+                model.addAttribute("todasOfertas", ofertaService.obtenerPorEstado(enumEstado));
+                model.addAttribute("filtroSeleccionado", estado);
+            } catch (IllegalArgumentException e) {
+                model.addAttribute("todasOfertas", ofertaService.obtenerTodas());
+            }
+        } else {
+            model.addAttribute("todasOfertas", ofertaService.obtenerTodas());
+        }
+        
         return "admin_ofertas";
     }
 
@@ -126,6 +154,14 @@ public class AdminController {
     public String configuracion(Model model, Principal principal) {
         addCommonAttributes(model, principal);
         model.addAttribute("navConfiguracion", true);
+
+        Map<String, Object> configMap = new HashMap<>();
+        configMap.put("modoMantenimiento", "true".equals(configuracionService.obtenerValorConfiguracion("modoMantenimiento", "false")));
+        configMap.put("emailContacto", configuracionService.obtenerValorConfiguracion("emailContacto", "info@ecomostoles.com"));
+        configMap.put("comisionPlataforma", configuracionService.obtenerValorConfiguracion("comisionPlataforma", "2.5"));
+        configMap.put("listaCategorias", configuracionService.obtenerValorConfiguracion("listaCategorias", ""));
+
+        model.addAttribute("config", configMap);
         return "admin_configuracion";
     }
  
@@ -144,11 +180,42 @@ public class AdminController {
      */
     @PostMapping("/configuracion")
     public String guardarConfiguracion(@RequestParam(required = false) String modoMantenimiento,
+                                       @RequestParam(required = false) String emailContacto,
                                        @RequestParam(required = false) Double comisionPlataforma,
                                        @RequestParam(required = false) String listaCategorias,
                                        RedirectAttributes redirectAttributes) {
-        // Logic to persist settings would go here. For now, we simulate success.
-        redirectAttributes.addFlashAttribute("mensaje", "La configuración de la plataforma se ha actualizado correctamente.");
+        
+        configuracionService.guardarOActualizarConfiguracion("modoMantenimiento", modoMantenimiento != null ? "true" : "false");
+        configuracionService.guardarOActualizarConfiguracion("emailContacto", emailContacto);
+        configuracionService.guardarOActualizarConfiguracion("comisionPlataforma", String.valueOf(comisionPlataforma));
+        configuracionService.guardarOActualizarConfiguracion("listaCategorias", listaCategorias);
+
+        redirectAttributes.addFlashAttribute("mensaje", "La configuración de la plataforma se ha actualizado correctamente en la base de datos.");
         return "redirect:/admin/configuracion";
+    }
+
+    /**
+     * Exports all offers as a CSV file.
+     */
+    @GetMapping("/exportar/csv")
+    public void exportarCsv(HttpServletResponse response) throws IOException {
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"ofertas_reporte.csv\"");
+
+        PrintWriter writer = response.getWriter();
+        writer.println("ID;Titulo;Empresa;Cantidad;Estado");
+
+        ofertaService.obtenerTodas().forEach(o -> {
+            writer.println(String.format("%d;%s;%s;%s;%s",
+                    o.getId(),
+                    o.getTitulo(),
+                    o.getEmpresa() != null ? o.getEmpresa().getNombreComercial() : "N/A",
+                    o.getCantidad() != null ? o.getCantidad().toString() : "0",
+                    o.getEstado() != null ? o.getEstado().toString() : "N/A"
+            ));
+        });
+
+        writer.flush();
+        writer.close();
     }
 }

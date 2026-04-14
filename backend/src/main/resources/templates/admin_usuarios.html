@@ -48,10 +48,13 @@
                     <!-- Search Bar -->
                     <div class="row mb-3">
                         <div class="col-md-9">
-                            <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
-                                <input type="text" class="form-control border-start-0 ps-0" id="buscarUsuario" placeholder="Buscar empresa, email o CIF..." aria-label="Buscar usuario">
-                            </div>
+                            <form action="/admin/usuarios" method="GET" class="d-flex">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                                    <input type="text" name="search" class="form-control border-start-0 ps-0" id="buscarUsuario" placeholder="Buscar empresa, email o CIF..." aria-label="Buscar usuario">
+                                    <button type="submit" class="btn btn-success ms-2 rounded-pill px-4">Buscar</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

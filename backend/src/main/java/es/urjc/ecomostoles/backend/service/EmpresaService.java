@@ -66,6 +66,12 @@ public class EmpresaService {
         return empresaRepository.count();
     }
 
+    /** Filters companies by name, email, or CIF. */
+    @Transactional(readOnly = true)
+    public List<Empresa> filtrarEmpresas(String search) {
+        return empresaRepository.findByNombreComercialContainingIgnoreCaseOrEmailContactoContainingIgnoreCaseOrCifContainingIgnoreCase(search, search, search);
+    }
+
     /**
      * Handles the professional registration of a new company, including
      * password encryption and data persistence.
