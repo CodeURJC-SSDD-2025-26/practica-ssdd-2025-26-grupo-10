@@ -19,7 +19,12 @@
                 {{/status}}
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-2">
+                    {{#empresa}}
                     <a href="/dashboard" class="btn btn-primary px-4 py-2 fw-bold rounded-pill mx-1">Ir al Dashboard</a>
+                    {{/empresa}}
+                    {{^empresa}}
+                    <a href="/login" class="btn btn-success px-4 py-2 fw-bold rounded-pill mx-1">Iniciar Sesión</a>
+                    {{/empresa}}
                     <a href="/" class="btn btn-outline-secondary px-4 py-2 fw-bold rounded-pill mx-1">Volver al Inicio</a>
                 </div>
             </div>

@@ -6,8 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+import es.urjc.ecomostoles.backend.dto.RegistroDTO;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,52 +25,47 @@ public class RegistroController {
     }
 
     @GetMapping("/registro")
-    public String mostrarFormularioRegistro() {
+    public String mostrarFormularioRegistro(Model model) {
+        model.addAttribute("registroDTO", new RegistroDTO());
         return "registro";
     }
 
     @PostMapping("/registro")
-    public String registrarEmpresa(
-            @RequestParam String nombreComercial,
-            @RequestParam String cif,
-            @RequestParam String direccion,
-            @RequestParam String sector,
-            @RequestParam String emailContacto,
-            @RequestParam String password,
-            @RequestParam String confirmPassword,
-            @RequestParam(required = false) MultipartFile logoFile,
-            Model model) {
+    public String registrarEmpresa(@Valid @ModelAttribute("registroDTO") RegistroDTO dto, 
+                                   BindingResult bindingResult, 
+                                   Model model) {
 
-        if (!password.equals(confirmPassword)) {
-            model.addAttribute("errorPassword", "Las contraseñas no coinciden.");
-            // Repoblar modelo para no perder datos
-            model.addAttribute("nombreComercial", nombreComercial);
-            model.addAttribute("cif", cif);
-            model.addAttribute("direccion", direccion);
-            model.addAttribute("sector", sector);
-            model.addAttribute("emailContacto", emailContacto);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("hasErrors", true);
+            bindingResult.getFieldErrors().forEach(error -> 
+                model.addAttribute("err_" + error.getField(), error.getDefaultMessage())
+            );
+            // Also global errors (like the password mismatch)
+            bindingResult.getGlobalErrors().forEach(error ->
+                model.addAttribute("err_global", error.getDefaultMessage())
+            );
             return "registro";
         }
 
         try {
-            // Mapping fields to new Empresa object
+            // Mapping DTO to Entity
             Empresa nuevaEmpresa = new Empresa();
-            nuevaEmpresa.setNombreComercial(nombreComercial);
-            nuevaEmpresa.setCif(cif);
-            nuevaEmpresa.setDireccion(direccion);
-            nuevaEmpresa.setSectorIndustrial(sector);
-            nuevaEmpresa.setEmailContacto(emailContacto);
+            nuevaEmpresa.setNombreComercial(dto.getNombreComercial());
+            nuevaEmpresa.setCif(dto.getCif());
+            nuevaEmpresa.setDireccion(dto.getDireccion());
+            nuevaEmpresa.setSectorIndustrial(dto.getSector());
+            nuevaEmpresa.setEmailContacto(dto.getEmailContacto());
 
             byte[] logoBytes = null;
-            if (logoFile != null && !logoFile.isEmpty()) {
-                logoBytes = logoFile.getBytes();
+            if (dto.getLogoFile() != null && !dto.getLogoFile().isEmpty()) {
+                logoBytes = dto.getLogoFile().getBytes();
             }
 
-            // Delegating logic to Service (Professional pattern)
-            empresaService.registrarNuevaEmpresa(nuevaEmpresa, password, logoBytes);
+            empresaService.registrarNuevaEmpresa(nuevaEmpresa, dto.getPassword(), logoBytes);
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", true);
+            model.addAttribute("errorMsg", e.getMessage());
             return "registro";
         } catch (Exception e) {
             log.error("⚠️ Error general en el registro de empresa", e);

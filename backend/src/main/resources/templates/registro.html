@@ -18,21 +18,35 @@
                 
                 {{#error}}
                 <div class="alert alert-danger py-2 small fw-bold text-center" role="alert">
-                    <i class="fas fa-exclamation-triangle me-1"></i> Este email ya está registrado. Por favor, inicia sesión.
+                    <i class="fas fa-exclamation-triangle me-1"></i> {{#errorMsg}}{{errorMsg}}{{/errorMsg}}{{^errorMsg}}Este email ya está registrado. Por favor, inicia sesión.{{/errorMsg}}
                 </div>
                 {{/error}}
+
+                {{#hasErrors}}
+                <div class="alert alert-danger py-2 small fw-bold text-center" role="alert">
+                    <i class="fas fa-exclamation-triangle me-1"></i> Por favor, corrige los errores en el formulario.
+                </div>
+                {{/hasErrors}}
+                
+                {{#err_global}}
+                <div class="alert alert-danger py-2 small fw-bold text-center" role="alert">
+                    <i class="fas fa-exclamation-triangle me-1"></i> {{err_global}}
+                </div>
+                {{/err_global}}
                 
                 <form action="/registro" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate="">
                     {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="nombreEmpresa" class="form-label fw-bold small text-uppercase text-secondary">Nombre Comercial</label>
-                            <input type="text" name="nombreComercial" class="form-control" id="nombreEmpresa" placeholder="Ej. Metales del Sur S.L." value="{{#nombreComercial}}{{nombreComercial}}{{/nombreComercial}}" required="">
+                            <input type="text" name="nombreComercial" class="form-control {{#err_nombreComercial}}is-invalid{{/err_nombreComercial}}" id="nombreEmpresa" placeholder="Ej. Metales del Sur S.L." value="{{#registroDTO.nombreComercial}}{{registroDTO.nombreComercial}}{{/registroDTO.nombreComercial}}" required="">
+                            {{#err_nombreComercial}}<div class="invalid-feedback">{{err_nombreComercial}}</div>{{/err_nombreComercial}}
                         </div>
                         
                         <div class="col-md-6">
                             <label for="cif" class="form-label fw-bold small text-uppercase text-secondary">CIF / NIF</label>
-                            <input type="text" name="cif" class="form-control" id="cif" placeholder="B-12345678" value="{{#cif}}{{cif}}{{/cif}}" required="">
+                            <input type="text" name="cif" class="form-control {{#err_cif}}is-invalid{{/err_cif}}" id="cif" placeholder="B-12345678" value="{{#registroDTO.cif}}{{registroDTO.cif}}{{/registroDTO.cif}}" required="">
+                            {{#err_cif}}<div class="invalid-feedback">{{err_cif}}</div>{{/err_cif}}
                         </div>
                         
                         <div class="col-12">
@@ -61,18 +75,20 @@
 
                         <div class="col-md-6">
                             <label for="email" class="form-label fw-bold small text-uppercase text-secondary">Email de Contacto</label>
-                            <input type="email" name="emailContacto" class="form-control" id="email" placeholder="contacto@empresa.com" value="{{#emailContacto}}{{emailContacto}}{{/emailContacto}}" required="">
+                            <input type="email" name="emailContacto" class="form-control {{#err_emailContacto}}is-invalid{{/err_emailContacto}}" id="email" placeholder="contacto@empresa.com" value="{{#registroDTO.emailContacto}}{{registroDTO.emailContacto}}{{/registroDTO.emailContacto}}" required="">
+                            {{#err_emailContacto}}<div class="invalid-feedback">{{err_emailContacto}}</div>{{/err_emailContacto}}
                         </div>
 
                         <div class="col-md-6">
                             <label for="password" class="form-label fw-bold small text-uppercase text-secondary">Contraseña</label>
-                            <input type="password" name="password" class="form-control" id="password" required="">
+                            <input type="password" name="password" class="form-control {{#err_password}}is-invalid{{/err_password}}" id="password" required="">
+                            {{#err_password}}<div class="invalid-feedback">{{err_password}}</div>{{/err_password}}
                         </div>
                         
                         <div class="col-md-6">
                             <label for="confirmPassword" class="form-label fw-bold small text-uppercase text-secondary">Confirmar Contraseña</label>
-                            <input type="password" name="confirmPassword" class="form-control" id="confirmPassword" required="">
-                            {{#errorPassword}}<div class="text-danger mt-1 small">{{errorPassword}}</div>{{/errorPassword}}
+                            <input type="password" name="confirmPassword" class="form-control {{#err_confirmPassword}}is-invalid{{/err_confirmPassword}}" id="confirmPassword" required="">
+                            {{#err_confirmPassword}}<div class="invalid-feedback">{{err_confirmPassword}}</div>{{/err_confirmPassword}}
                         </div>
 
                         <div class="col-12 mt-4">

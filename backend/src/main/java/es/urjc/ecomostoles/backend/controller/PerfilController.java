@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * Controller for handling company profile view.
@@ -49,6 +50,7 @@ public class PerfilController {
         return "perfil_empresa";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/perfil/{id}")
     public String mostrarPerfilPorId(@PathVariable Long id, Model model) {
         Empresa empresa = empresaService.buscarPorId(id)

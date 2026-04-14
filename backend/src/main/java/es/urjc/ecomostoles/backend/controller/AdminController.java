@@ -20,6 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import es.urjc.ecomostoles.backend.dto.EmpresaDTO;
 import java.util.HashMap;
 import java.util.Map;
@@ -102,6 +104,12 @@ public class AdminController {
         addCommonAttributes(model, principal, filtro);
         model.addAttribute("activePanel", true);
         model.addAttribute("filtroActual", filtro);
+        
+        // Dynamic dates and labels for the view
+        model.addAttribute("fechaActual", LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM yyyy")));
+        model.addAttribute("labelPendientes", "Pendientes");
+        model.addAttribute("labelCompletadas", "Completadas");
+
         return "admin_panel";
     }
 

@@ -10,6 +10,7 @@ import es.urjc.ecomostoles.backend.dto.OfertaResumen;
 import es.urjc.ecomostoles.backend.service.AcuerdoService;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 import es.urjc.ecomostoles.backend.service.OfertaService;
+import es.urjc.ecomostoles.backend.service.EmailService;
 import java.util.List;
 
 @Controller
@@ -18,11 +19,16 @@ public class WebController {
     private final OfertaService  ofertaService;
     private final EmpresaService empresaService;
     private final AcuerdoService acuerdoService;
+    private final EmailService   emailService;
 
-    public WebController(OfertaService ofertaService, EmpresaService empresaService, AcuerdoService acuerdoService) {
+    public WebController(OfertaService ofertaService, 
+                         EmpresaService empresaService, 
+                         AcuerdoService acuerdoService,
+                         EmailService emailService) {
         this.ofertaService  = ofertaService;
         this.empresaService = empresaService;
         this.acuerdoService = acuerdoService;
+        this.emailService   = emailService;
     }
 
     @GetMapping("/")
@@ -56,7 +62,12 @@ public class WebController {
 
     @PostMapping("/recuperar-password")
     public String procesarRecuperarPassword(@RequestParam String email, RedirectAttributes redirectAttributes) {
-        // Lógica de negocio simulada para recuperación de contraseña
+        // Verificamos si el email existe en la BD antes de "enviar"
+        if (empresaService.buscarPorEmail(email).isPresent()) {
+            emailService.enviarEmailRecuperacion(email);
+        }
+        
+        // Mantenemos el mensaje genérico por seguridad (evitar enumeración de usuarios)
         redirectAttributes.addFlashAttribute("mensajeRecuperacion", 
             "Si el correo existe en nuestro sistema, hemos enviado las instrucciones de recuperación.");
         return "redirect:/login";

@@ -1,6 +1,5 @@
 package es.urjc.ecomostoles.backend.controller;
 
-import es.urjc.ecomostoles.backend.model.EstadoOferta;
 
 import es.urjc.ecomostoles.backend.model.Oferta;
 import es.urjc.ecomostoles.backend.dto.OfertaResumen;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Controller to handle market-related (Mercado) web requests.
@@ -44,29 +42,7 @@ public class MercadoController {
             @RequestParam(required = false) String tipoResiduo,
             @RequestParam(required = false) String poligono) {
 
-        List<OfertaResumen> ofertasFiltradas = ofertaService.obtenerPorEstado(EstadoOferta.ACTIVA);
-
-        if (keyword != null && !keyword.isBlank()) {
-            String kw = keyword.toLowerCase();
-            ofertasFiltradas = ofertasFiltradas.stream()
-                    .filter(o -> (o.getTitulo() != null && o.getTitulo().toLowerCase().contains(kw))
-                            || (o.getDescripcion() != null && o.getDescripcion().toLowerCase().contains(kw)))
-                    .collect(Collectors.toList());
-        }
-
-        if (tipoResiduo != null && !tipoResiduo.isBlank()) {
-            ofertasFiltradas = ofertasFiltradas.stream()
-                    .filter(o -> tipoResiduo.equalsIgnoreCase(o.getTipoResiduo()))
-                    .collect(Collectors.toList());
-        }
-
-        if (poligono != null && !poligono.isBlank()) {
-            ofertasFiltradas = ofertasFiltradas.stream()
-                    .filter(o -> o.getEmpresa() != null
-                            && o.getEmpresa().getDireccion() != null
-                            && o.getEmpresa().getDireccion().toLowerCase().contains(poligono.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
+        List<OfertaResumen> ofertasFiltradas = ofertaService.buscarOfertasFiltradas(keyword, tipoResiduo, poligono);
 
         model.addAttribute("ofertas", ofertasFiltradas);
         model.addAttribute("keyword",    keyword    != null ? keyword    : "");

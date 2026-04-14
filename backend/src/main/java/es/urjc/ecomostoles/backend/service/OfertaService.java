@@ -81,4 +81,9 @@ public class OfertaService {
     public long contarPorEstado(es.urjc.ecomostoles.backend.model.EstadoOferta estado) {
         return ofertaRepository.countByEstado(estado);
     }
+
+    @Transactional(readOnly = true)
+    public List<OfertaResumen> buscarOfertasFiltradas(String keyword, String tipoResiduo, String poligono) {
+        return ofertaRepository.buscarFiltrado(es.urjc.ecomostoles.backend.model.EstadoOferta.ACTIVA, keyword, tipoResiduo, poligono);
+    }
 }

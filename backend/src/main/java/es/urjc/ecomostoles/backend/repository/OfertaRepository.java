@@ -3,6 +3,7 @@ package es.urjc.ecomostoles.backend.repository;
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.model.Oferta;
 import es.urjc.ecomostoles.backend.model.EstadoOferta;
+import es.urjc.ecomostoles.backend.dto.OfertaResumen;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,4 +32,11 @@ public interface OfertaRepository extends JpaRepository<Oferta, Long> {
 
     @Query("SELECT o FROM Oferta o JOIN FETCH o.empresa ORDER BY o.fechaPublicacion DESC LIMIT 50")
     <T> List<T> findTop50ByOrderByFechaPublicacionDesc(Class<T> type);
+
+    @Query("SELECT o FROM Oferta o JOIN FETCH o.empresa " +
+           "WHERE o.estado = :estado " +
+           "AND (:kw IS NULL OR :kw = '' OR LOWER(o.titulo) LIKE LOWER(CONCAT('%', :kw, '%')) OR LOWER(o.descripcion) LIKE LOWER(CONCAT('%', :kw, '%'))) " +
+           "AND (:tipo IS NULL OR :tipo = '' OR o.tipoResiduo = :tipo) " +
+           "AND (:poligono IS NULL OR :poligono = '' OR LOWER(o.empresa.direccion) LIKE LOWER(CONCAT('%', :poligono, '%')))")
+    List<OfertaResumen> buscarFiltrado(@Param("estado") EstadoOferta estado, @Param("kw") String kw, @Param("tipo") String tipo, @Param("poligono") String poligono);
 }
