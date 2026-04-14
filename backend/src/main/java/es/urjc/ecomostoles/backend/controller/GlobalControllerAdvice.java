@@ -20,6 +20,16 @@ public class GlobalControllerAdvice {
         this.mensajeService = mensajeService;
     }
 
+    @ModelAttribute("empresa")
+    public es.urjc.ecomostoles.backend.dto.EmpresaDTO user(Principal principal) {
+        if (principal == null) {
+            return null;
+        }
+        return empresaService.buscarPorEmail(principal.getName())
+                             .map(es.urjc.ecomostoles.backend.dto.EmpresaDTO::new)
+                             .orElse(null);
+    }
+
     @ModelAttribute("totalMensajes")
     public int totalMensajes(Principal principal) {
         if (principal == null) {

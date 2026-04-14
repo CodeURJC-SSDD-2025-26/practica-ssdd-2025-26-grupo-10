@@ -1,55 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+{{> head_admin}}
+<body class="bg-theme-dark">
 {{> header_admin}}
 
 <div class="container-fluid">
     <div class="row min-vh-100">
         <!-- Admin Sidebar -->
-        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-            <div class="position-sticky pt-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/panel">
-                            <i class="fas fa-tachometer-alt me-2"></i> Resumen Global
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/usuarios">
-                            <i class="fas fa-users me-2"></i> Gestionar Usuarios
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/ofertas">
-                            <i class="fas fa-recycle me-2"></i> Ofertas y Residuos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/reportes"><i class="fas fa-chart-bar me-2"></i>
-                            Reportes y Estadísticas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/configuracion"><i class="fas fa-cogs me-2"></i>
-                            Configuración de Plataforma
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+        {{> sidebar_admin}}
 
         <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2 text-dark fw-bold">Ajustes de Perfil Administrativo</h1>
-            </div>
+            <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                <div>
+                  <h1 class="h2 text-dark fw-bold">Ajustes de Perfil Administrativo</h1>
+                  <p class="text-secondary small mb-0">Gestiona tus credenciales de acceso al panel de control.</p>
+                </div>
+            </header>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card shadow-sm border-0 rounded-3">
-                        <div class="card-body p-4">
-                            <h5 class="card-title fw-bold mb-4">Información del Administrador</h5>
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card shadow-sm border-0 rounded-4 border-top border-success border-4">
+                        <div class="card-body p-4 p-md-5">
+                            <h5 class="card-title fw-bold mb-4"><i class="fas fa-user-cog text-success me-2"></i>Información del Administrador</h5>
                             
                             {{#mensaje}}
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <i class="fas fa-check-circle me-2"></i> {{mensaje}}
+                            <div class="alert alert-success alert-dismissible fade show small py-2 shadow-sm mb-4" role="alert">
+                                <i class="fas fa-check-circle me-1"></i> {{mensaje}}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                             {{/mensaje}}
@@ -57,13 +34,16 @@
                             <form action="/admin/ajustes" method="POST" class="needs-validation" novalidate="">
                                 {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                                 <div class="mb-4">
-                                    <label class="form-label text-secondary fw-bold small text-uppercase">Email de Administración</label>
-                                    <input type="email" name="emailAdmin" class="form-control" value="{{emailActual}}" required="">
-                                    <div class="form-text">Este email se utiliza para el inicio de sesión y notificaciones del sistema.</div>
+                                    <label for="emailAdmin" class="form-label text-secondary fw-bold small text-uppercase">Email de Administración</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-envelope text-muted"></i></span>
+                                        <input type="email" id="emailAdmin" name="emailAdmin" class="form-control border-start-0" value="{{emailActual}}" required="">
+                                    </div>
+                                    <div class="form-text small mt-2">Este email se utiliza para el inicio de sesión y notificaciones del sistema.</div>
                                 </div>
 
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary fw-bold">
+                                <div class="d-grid pt-3">
+                                    <button type="submit" class="btn btn-primary btn-lg fw-bold rounded-pill shadow-sm">
                                         <i class="fas fa-save me-2"></i> Guardar Ajustes
                                     </button>
                                 </div>
@@ -72,17 +52,24 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="card shadow-sm border-0 rounded-3 h-100">
-                        <div class="card-body p-4">
-                            <h5 class="card-title fw-bold mb-3">Seguridad y Acceso</h5>
-                            <p class="text-muted small">Tu cuenta tiene privilegios de superusuario para gestionar todas las empresas y transacciones de EcoMóstoles.</p>
-                            <hr>
-                            <div class="d-flex align-items-center text-warning">
-                                <i class="fas fa-exclamation-triangle fs-4 me-3"></i>
-                                <span class="small fw-bold">Cualquier cambio de email afectará a tus credenciales de acceso.</span>
+                <div class="col-lg-6">
+                    <div class="card shadow-sm border-0 rounded-4 h-100">
+                      <div class="card-body p-4 p-md-5 d-flex flex-column justify-content-center">
+                          <div class="text-center mb-4">
+                            <div class="bg-warning bg-opacity-10 p-4 rounded-circle d-inline-block mb-3">
+                                <i class="fas fa-shield-alt text-warning fa-3x"></i>
                             </div>
-                        </div>
+                            <h5 class="fw-bold mb-2">Seguridad y Acceso</h5>
+                            <p class="text-muted px-4">Tu cuenta tiene privilegios de superusuario para gestionar todas las empresas y transacciones de EcoMóstoles.</p>
+                          </div>
+                   
+                          <div class="bg-light p-3 rounded-3 border-start border-warning border-4">
+                              <div class="d-flex align-items-center text-warning">
+                                  <i class="fas fa-exclamation-triangle fs-4 me-3"></i>
+                                  <span class="small fw-bold">Cualquier cambio de email afectará a tus credenciales de acceso. Asegúrate de tener acceso al nuevo buzón.</span>
+                              </div>
+                          </div>
+                      </div>
                     </div>
                 </div>
             </div>
@@ -90,6 +77,6 @@
     </div>
 </div>
 
-<script src="/js/form-validation.js"></script>
-
 {{> footer}}
+</body>
+</html>

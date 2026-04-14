@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html lang="es">
+{{> head}}
+<body class="bg-theme-dark">
 {{> header}}
 
 <div class="container-fluid">
@@ -40,11 +44,11 @@
                             <div class="col-md-6">
                                 <label for="unidad" class="form-label text-secondary fw-bold small text-uppercase">Unidad <span class="text-danger">*</span></label>
                                 <select class="form-select" id="unidad" name="unidad" required>
-                                    <option value="kg" {{#unidad}}selected{{/unidad}}>kg</option>
-                                    <option value="ton" {{#unidad}}selected{{/unidad}}>toneladas</option>
-                                    <option value="uds" {{#unidad}}selected{{/unidad}}>unidades</option>
-                                    <option value="m2" {{#unidad}}selected{{/unidad}}>m²</option>
-                                    <option value="L" {{#unidad}}selected{{/unidad}}>litros</option>
+                                    <option value="kg">kg</option>
+                                    <option value="ton">toneladas</option>
+                                    <option value="uds">unidades</option>
+                                    <option value="m2">m²</option>
+                                    <option value="L">litros</option>
                                 </select>
                             </div>
 
@@ -54,17 +58,17 @@
                                     <input type="number" class="form-control" id="precioAcordado" name="precioAcordado" value="{{precioAcordado}}" step="0.01" min="0" required>
                                     <span class="input-group-text">€</span>
                                 </div>
-                                <div class="invalid-feedback">Por favor, indica el precio.</div>
+                                <div class="invalid-feedback">Por favor, indica el price.</div>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="estado" class="form-label text-secondary fw-bold small text-uppercase">Estado del Acuerdo <span class="text-danger">*</span></label>
                                 <select class="form-select" id="estado" name="estado" required>
-                                    <option value="PENDIENTE" {{#estado}}selected{{/estado}}>Pendiente de firma</option>
-                                    <option value="EN_CURSO" {{#estado}}selected{{/estado}}>En curso / Procesando</option>
-                                    <option value="COMPLETADO" {{#estado}}selected{{/estado}}>Completado / Finalizado</option>
-                                    <option value="ACEPTADO" {{#estado}}selected{{/estado}}>Aceptado</option>
-                                    <option value="RECHAZADO" {{#estado}}selected{{/estado}}>Rechazado</option>
+                                    <option value="PENDIENTE">Pendiente de firma</option>
+                                    <option value="EN_CURSO">En curso / Procesando</option>
+                                    <option value="COMPLETADO">Completado / Finalizado</option>
+                                    <option value="ACEPTADO">Aceptado</option>
+                                    <option value="RECHAZADO">Rechazado</option>
                                 </select>
                             </div>
 
@@ -98,3 +102,5 @@
 </script>
 
 {{> footer}}
+</body>
+</html>

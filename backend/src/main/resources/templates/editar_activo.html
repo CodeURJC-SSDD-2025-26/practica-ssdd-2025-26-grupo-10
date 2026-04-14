@@ -1,10 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+{{> head}}
+<body class="bg-theme-dark">
 {{> header}}
 
 <div class="container-fluid">
     <div class="row min-vh-100">
         {{> sidebar}}
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4"
+              data-tipo="{{oferta.tipoResiduo}}" 
+              data-unidad="{{oferta.unidad}}" 
+              data-disponibilidad="{{oferta.disponibilidad}}"
+              data-estado="{{oferta.estado}}">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2 text-dark fw-bold">Editar Activo <span class="text-muted fs-6">#REF-{{oferta.id}}</span></h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
@@ -29,11 +37,13 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="tipo" class="form-label text-secondary fw-bold small text-uppercase">Tipo <span class="text-danger">*</span></label>
-                                <select name="categoria" class="form-select" id="tipo" required="">
-                                    <option value="Metal">Residuo: Metal</option>
-                                    <option value="Madera">Residuo: Madera</option>
-                                    <option value="Plástico">Residuo: Plástico</option>
-                                    <option value="Maquinaria">Maquinaria</option>
+                                <select name="tipoResiduo" class="form-select" id="tipo" required="">
+                                    <option value="residuo_metalico">Residuo: Metal</option>
+                                    <option value="residuo_madera">Residuo: Madera</option>
+                                    <option value="residuo_plastico">Residuo: Plástico</option>
+                                    <option value="residuo_quimico">Residuo: Químico</option>
+                                    <option value="maquinaria">Maquinaria</option>
+                                    <option value="espacio">Espacio</option>
                                 </select>
                             </div>
 
@@ -46,7 +56,13 @@
                                 <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="number" name="cantidad" class="form-control" id="cantidad" value="{{oferta.cantidad}}" min="0" required="">
-                                    <span class="input-group-text">kg/uds</span>
+                                    <select class="form-select" id="unidad" name="unidad" required>
+                                        <option value="kg">kg</option>
+                                        <option value="uds">unidades</option>
+                                        <option value="L">litros</option>
+                                        <option value="t">toneladas</option>
+                                        <option value="m2">m²</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -54,10 +70,18 @@
                                 <input type="number" name="precio" class="form-control" id="precio" value="{{oferta.precio}}" step="0.01" min="0">
                             </div>
                             <div class="col-md-4">
+                                <label for="disponibilidad" class="form-label text-secondary fw-bold small text-uppercase">Disponibilidad</label>
+                                <select class="form-select" id="disponibilidad" name="disponibilidad">
+                                    <option value="inmediata">Inmediata</option>
+                                    <option value="1semana">En 1 semana</option>
+                                    <option value="consultar">Consultar</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
                                 <label for="estado" class="form-label text-secondary fw-bold small text-uppercase">Estado</label>
-                                <select class="form-select" id="estado">
-                                    <option value="Activo" selected="">Activo</option>
-                                    <option value="Pausado">Pausado</option>
+                                <select class="form-select" id="estado" name="estado">
+                                    <option value="ACTIVA">ACTIVA</option>
+                                    <option value="PAUSADA">PAUSADA</option>
                                 </select>
                             </div>
 
@@ -65,7 +89,7 @@
                                 <label for="imagenFile" class="form-label text-secondary fw-bold small text-uppercase">Fotografía del Activo</label>
                                 <div class="mb-2">
                                     <small class="text-muted">Imagen actual:</small><br>
-                                    <img src="/images/oferta/{{oferta.id}}" alt="Imagen del activo" class="img-thumbnail rounded object-fit-cover mt-2 mb-3 shadow-sm" style="max-height: 200px;" onerror="this.src='/img/bobinas-cobre.webp';">
+                                    <img src="/images/oferta/{{oferta.id}}" alt="Imagen del activo" class="img-thumbnail rounded object-fit-cover mt-2 mb-3 shadow-sm" style="max-height: 200px;" onerror="this.src='/img/logo.webp';">
                                 </div>
                                 <input class="form-control" type="file" id="imagenFile" name="imagenFile" accept="image/*">
                                 <div class="form-text">Deja vacío para conservar la imagen actual.</div>
@@ -85,3 +109,19 @@
 </div>
 
 {{> footer}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const main = document.querySelector('main');
+        const tipo = main.getAttribute('data-tipo');
+        const unidad = main.getAttribute('data-unidad');
+        const disponibilidad = main.getAttribute('data-disponibilidad');
+        const estado = main.getAttribute('data-estado');
+
+        if (tipo) document.getElementById("tipo").value = tipo;
+        if (unidad) document.getElementById("unidad").value = unidad;
+        if (disponibilidad) document.getElementById("disponibilidad").value = disponibilidad;
+        if (estado) document.getElementById("estado").value = estado;
+    });
+</script>
+</body>
+</html>

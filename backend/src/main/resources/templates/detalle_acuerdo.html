@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html lang="es">
+{{> head}}
+<body class="bg-theme-dark">
 {{> header}}
 
 {{#acuerdo}}
@@ -94,7 +98,7 @@
                                 <img src="/images/empresa/{{id}}" alt="Logo {{nombreComercial}}" class="rounded-circle object-fit-cover mb-3 shadow-sm" style="width: 80px; height: 80px;" onerror="this.src='/img/logo.webp';">
                                 <h6 class="fw-bold text-dark">{{nombreComercial}}</h6>
                                 <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> {{direccion}}</p>
-                                <span class="badge bg-light text-dark border px-3 py-1">{{sectorIndustrial}}</span>
+                                <span class="badge bg-light text-dark border px-3 py-1">{{sector}}</span>
                             </div>
                             {{/empresaOrigen}}
                         </div>
@@ -107,7 +111,7 @@
                                 <img src="/images/empresa/{{id}}" alt="Logo {{nombreComercial}}" class="rounded-circle object-fit-cover mb-3 shadow-sm" style="width: 80px; height: 80px;" onerror="this.src='/img/logo.webp';">
                                 <h6 class="fw-bold text-dark">{{nombreComercial}}</h6>
                                 <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> {{direccion}}</p>
-                                <span class="badge bg-light text-dark border px-3 py-1">{{sectorIndustrial}}</span>
+                                <span class="badge bg-light text-dark border px-3 py-1">{{sector}}</span>
                             </div>
                             {{/empresaDestino}}
                             {{^empresaDestino}}
@@ -136,3 +140,5 @@
 {{/acuerdo}}
 
 {{> footer}}
+</body>
+</html>

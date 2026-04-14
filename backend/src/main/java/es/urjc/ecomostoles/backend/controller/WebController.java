@@ -6,8 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.security.Principal;
-import es.urjc.ecomostoles.backend.service.EmpresaService;
 import es.urjc.ecomostoles.backend.service.OfertaService;
 import java.util.List;
 import es.urjc.ecomostoles.backend.dto.OfertaResumen;
@@ -15,38 +13,27 @@ import es.urjc.ecomostoles.backend.dto.OfertaResumen;
 @Controller
 public class WebController {
 
-    private final EmpresaService empresaService;
     private final OfertaService ofertaService;
 
-    public WebController(EmpresaService empresaService, OfertaService ofertaService) {
-        this.empresaService = empresaService;
+    public WebController(OfertaService ofertaService) {
         this.ofertaService  = ofertaService;
     }
 
     @GetMapping("/")
-    public String index(Model model, Principal principal) {
-        addCommonAttributes(model, principal);
+    public String index(Model model) {
         List<OfertaResumen> recientes = ofertaService.obtenerRecientesActivas();
         model.addAttribute("ofertasRecientes", recientes);
         return "index";
     }
 
-    private void addCommonAttributes(Model model, Principal principal) {
-        if (principal != null) {
-            empresaService.buscarPorEmail(principal.getName())
-                          .ifPresent(empresa -> model.addAttribute("empresa", empresa));
-        }
-    }
 
     @GetMapping("/terminos")
-    public String terminos(Model model, Principal principal) {
-        addCommonAttributes(model, principal);
+    public String terminos() {
         return "terminos";
     }
 
     @GetMapping("/privacidad")
-    public String privacidad(Model model, Principal principal) {
-        addCommonAttributes(model, principal);
+    public String privacidad() {
         return "privacidad";
     }
 

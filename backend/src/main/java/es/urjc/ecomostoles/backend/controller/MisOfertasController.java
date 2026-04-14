@@ -201,6 +201,9 @@ public class MisOfertasController {
         oferta.setCantidad(ofertaForm.getCantidad());
         oferta.setPrecio(ofertaForm.getPrecio());
         oferta.setTipoResiduo(ofertaForm.getTipoResiduo());
+        oferta.setUnidad(ofertaForm.getUnidad());
+        oferta.setDisponibilidad(ofertaForm.getDisponibilidad());
+        oferta.setEstado(ofertaForm.getEstado());
 
         if (imagenFile != null && !imagenFile.isEmpty()) {
             try {

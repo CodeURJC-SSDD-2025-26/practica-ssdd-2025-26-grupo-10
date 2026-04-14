@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import es.urjc.ecomostoles.backend.model.Empresa;
-import es.urjc.ecomostoles.backend.dto.EmpresaDTO;
 import es.urjc.ecomostoles.backend.service.DashboardService;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 
@@ -37,7 +36,6 @@ public class DashboardController {
 
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
-            model.addAttribute("empresa", new EmpresaDTO(empresa));
             model.addAttribute("navDashboard", true);
 
             // Delegating business logic to Service

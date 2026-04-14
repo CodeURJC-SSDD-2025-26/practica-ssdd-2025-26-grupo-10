@@ -1,0 +1,36 @@
+<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+    <div class="position-sticky pt-3">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {{#activePanel}}active{{/activePanel}}" href="/admin/panel">
+                    <i class="fas fa-tachometer-alt me-2"></i> Resumen Global
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{#activeUsuarios}}active{{/activeUsuarios}}" href="/admin/usuarios">
+                    <i class="fas fa-users me-2"></i> Usuarios
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{#activeOfertas}}active{{/activeOfertas}}" href="/admin/ofertas">
+                    <i class="fas fa-recycle me-2"></i> Ofertas
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{#activeReportes}}active{{/activeReportes}}" href="/admin/reportes">
+                    <i class="fas fa-chart-bar me-2"></i> Reportes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{#activeConfig}}active{{/activeConfig}}" href="/admin/configuracion">
+                    <i class="fas fa-cogs me-2"></i> Plataforma
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link text-danger" href="/logout">
+                    <i class="fas fa-sign-out-alt me-2"></i> Salir
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

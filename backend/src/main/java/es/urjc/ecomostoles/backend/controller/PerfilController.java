@@ -4,9 +4,12 @@ import java.security.Principal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.dto.EmpresaDTO;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
@@ -33,13 +36,25 @@ public class PerfilController {
     @GetMapping("/perfil")
     public String mostrarPerfil(Model model, @RequestParam(required = false) boolean exito, Principal principal) {
         Empresa empresa = empresaService.buscarPorEmail(principal.getName())
-                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Recurso no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
 
         EmpresaDTO empresaSegura = new EmpresaDTO(empresa);
         model.addAttribute("empresa", empresaSegura);
         if (exito) {
             model.addAttribute("exito", true);
         }
+        return "perfil_empresa";
+    }
+
+    @GetMapping("/perfil/{id}")
+    public String mostrarPerfilPorId(@PathVariable Long id, Model model) {
+        Empresa empresa = empresaService.buscarPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa no encontrada"));
+
+        EmpresaDTO empresaDTO = new EmpresaDTO(empresa);
+        model.addAttribute("empresa", empresaDTO);
+        model.addAttribute("esVistaAdmin", true);
+
         return "perfil_empresa";
     }
 
@@ -53,7 +68,7 @@ public class PerfilController {
                                 Principal principal) {
 
         Empresa empresa = empresaService.buscarPorEmail(principal.getName())
-                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Recurso no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
 
         empresa.setNombreComercial(nombreComercial);
         empresa.setTelefono(telefono);

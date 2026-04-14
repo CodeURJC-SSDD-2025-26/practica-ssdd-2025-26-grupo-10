@@ -1,48 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+{{> head_admin}}
+<body class="bg-theme-dark">
 {{> header_admin}}
 
 <div class="container-fluid">
     <div class="row min-vh-100">
         <!-- Admin Sidebar -->
-        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-            <div class="position-sticky pt-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/panel">
-                            <i class="fas fa-tachometer-alt me-2"></i> Resumen Global
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active text-success fw-bold" href="/admin/usuarios">
-                            <i class="fas fa-users me-2"></i> Gestionar Usuarios
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/ofertas">
-                            <i class="fas fa-recycle me-2"></i> Ofertas y Residuos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/reportes"><i class="fas fa-chart-bar me-2"></i>
-                            Reportes y Estadísticas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/configuracion"><i class="fas fa-cogs me-2"></i>
-                            Configuración de Plataforma
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+        {{> sidebar_admin}}
 
         <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent">
 
             <!-- Header -->
-            <section class="card shadow-sm border-0 rounded-3 mb-4">
+            <section class="card shadow-sm border-0 rounded-4 mb-4">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                        <h1 class="h2 fw-bold text-dark"><i class="fas fa-users me-2 text-success"></i> Gestionar Usuarios</h1>
+                        <div>
+                          <h1 class="h2 fw-bold text-dark mb-0"><i class="fas fa-users me-2 text-success"></i> Gestionar Usuarios</h1>
+                          <p class="text-secondary small">Administración y control de las empresas registradas en la plataforma.</p>
+                        </div>
                     </div>
  
                     <!-- Search Bar -->
@@ -50,9 +27,9 @@
                         <div class="col-md-9">
                             <form action="/admin/usuarios" method="GET" class="d-flex">
                                 <div class="input-group">
-                                    <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
                                     <input type="text" name="search" class="form-control border-start-0 ps-0" id="buscarUsuario" placeholder="Buscar empresa, email o CIF..." aria-label="Buscar usuario">
-                                    <button type="submit" class="btn btn-success ms-2 rounded-pill px-4">Buscar</button>
+                                    <button type="submit" class="btn btn-success ms-2 rounded-pill px-4 shadow-sm">Buscar</button>
                                 </div>
                             </form>
                         </div>
@@ -61,19 +38,19 @@
             </section>
 
             <!-- Users Table -->
-            <div class="card shadow-sm border-top border-success border-4 rounded-3 mb-4">
-                <div class="card-header bg-transparent border-bottom-0 fw-bold pt-3 pb-0 px-4">
+            <div class="card shadow-sm border-top border-success border-4 rounded-4 mb-4 overflow-hidden">
+                <div class="card-header bg-white border-bottom-0 fw-bold pt-4 pb-0 px-4">
                     <h5 class="fw-bold text-dark mb-0">Listado de Empresas Registradas</h5>
-                    <small class="text-muted">Mostrando resultados dinámicos de la base de datos</small>
+                    <p class="text-muted small mb-0">Base de datos en tiempo real de EcoMóstoles</p>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="bg-light text-secondary small text-uppercase">
                                 <tr>
-                                    <th class="ps-4">Empresa</th>
-                                    <th>Email</th>
-                                    <th>CIF</th>
+                                    <th class="ps-4 py-3">Empresa</th>
+                                    <th>Email de Contacto</th>
+                                    <th>Identificación (CIF)</th>
                                     <th class="text-end pe-4">Acciones</th>
                                 </tr>
                             </thead>
@@ -82,25 +59,36 @@
                                 <tr>
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-3 avatar-table">
-                                                {{nombreComercial.0}}
+                                            <div class="avatar rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center me-3 border border-success border-opacity-25" style="width: 45px; height: 45px; font-weight: bold;">
+                                                <img src="/images/empresa/{{id}}" alt="" class="rounded-circle object-fit-cover w-100 h-100" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                                <span style="display:none;">{{nombreComercial.0}}</span>
                                             </div>
-                                            <div>
-                                                <a href="/perfil/{{id}}" class="d-block fw-bold text-dark text-decoration-none">{{nombreComercial}}</a>
-                                                <small class="text-muted">ID: {{id}}</small>
-                                            </div>
+                                             <div>
+                                                 <a href="/perfil/{{id}}" class="fw-bold text-dark text-decoration-none text-hover-success">{{nombreComercial}}</a>
+                                                 <small class="text-muted d-block">ID: #USR-{{id}}</small>
+                                             </div>
                                         </div>
                                     </td>
                                     <td class="text-secondary">{{emailContacto}}</td>
                                     <td class="text-secondary fw-bold">{{cif}}</td>
                                     <td class="text-end pe-4">
-                                         <a href="/perfil/{{id}}" class="btn btn-sm btn-outline-success rounded-pill px-3"><i class="fas fa-eye me-1"></i> Ver Perfil Completo</a>
+                                          <div class="d-flex gap-2 justify-content-end">
+                                              <a href="/perfil/{{id}}" class="btn btn-sm btn-outline-success rounded-pill px-3" title="Ver Perfil"><i class="fas fa-eye"></i></a>
+                                              <a href="/admin/usuarios/{{id}}/editar" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="Editar"><i class="fas fa-edit"></i></a>
+                                             <form action="/admin/usuarios/{{id}}/eliminar" method="POST" class="d-inline mb-0">
+                                                 {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
+                                                 <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="return confirm('¿Estás seguro de eliminar esta empresa? Todas sus ofertas y acuerdos se perderán.');" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
+                                             </form>
+                                         </div>
                                      </td>
                                 </tr>
                                 {{/empresas}}
                                 {{^empresas}}
                                 <tr>
-                                    <td colspan="4" class="text-center py-5 text-muted">No hay empresas registradas para mostrar.</td>
+                                    <td colspan="4" class="text-center py-5 text-muted">
+                                        <div class="mb-3"><i class="fas fa-user-slash fs-1 opacity-25"></i></div>
+                                        <p class="mb-0">No se encontraron empresas registradas con ese criterio.</p>
+                                    </td>
                                 </tr>
                                 {{/empresas}}
                             </tbody>
@@ -114,3 +102,5 @@
 </div>
 
 {{> footer}}
+</body>
+</html>

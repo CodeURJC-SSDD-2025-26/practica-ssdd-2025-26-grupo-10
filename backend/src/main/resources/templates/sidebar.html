@@ -16,7 +16,14 @@
             <li class="nav-item"><a class="nav-link text-dark link-mis-acuerdos" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
             <li class="nav-item"><a class="nav-link text-dark link-crear-acuerdo" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
             <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
-            <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes {{#totalMensajes}}<span class="badge bg-danger rounded-pill ms-1">{{totalMensajes}}</span>{{/totalMensajes}}</a></li>
+            <li class="nav-item">
+                <a class="nav-link" href="/mensajes">
+                    <i class="fas fa-envelope me-2"></i> Mensajes 
+                    {{#totalMensajes}}
+                    <span class="badge bg-danger rounded-pill ms-1">{{totalMensajes}}</span>
+                    {{/totalMensajes}}
+                </a>
+            </li>
         </ul>
     </div>
 </nav>

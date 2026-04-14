@@ -1,74 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+{{> head}}
+<body class="bg-theme-dark">
 {{> header}}
 
-    <div class="container-fluid">
-        <div class="row min-vh-100">
-            {{> sidebar}}
+<div class="container-fluid">
+    <div class="row min-vh-100">
+        {{> sidebar}}
 
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-                <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
-                    <div>
-                        <h1 class="h2 fw-bold text-dark">Mis Acuerdos</h1>
-                        <p class="text-secondary small mb-0">Gestiona todos los acuerdos de intercambio formalizados con otras empresas.</p>
-                    </div>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/acuerdo/nuevo" class="btn btn-primary rounded-pill shadow-sm text-nowrap"><i class="fas fa-plus me-2"></i> Registrar Acuerdo</a>
-                    </div>
-                </header>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                <div>
+                    <h1 class="h2 fw-bold text-dark">Mis Acuerdos</h1>
+                    <p class="text-secondary small mb-0">Gestiona todos los acuerdos de intercambio formalizados con otras empresas.</p>
+                </div>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="/acuerdo/nuevo" class="btn btn-primary rounded-pill shadow-sm text-nowrap"><i class="fas fa-plus me-2"></i> Registrar Acuerdo</a>
+                </div>
+            </header>
 
-                <section class="row g-4 mb-4">
-                    <div class="col-md-3"><div class="card border-0 shadow-sm card-modern"><div class="card-body d-flex align-items-center"><div class="bg-success bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-check-circle text-success fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Completados</small><h4 class="fw-bold mb-0 text-dark">{{acuerdosCompletados}}</h4></div></div></div></div>
-                    <div class="col-md-3"><div class="card border-0 shadow-sm card-modern"><div class="card-body d-flex align-items-center"><div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-clock text-warning fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Pendientes</small><h4 class="fw-bold mb-0 text-dark">{{acuerdosPendientes}}</h4></div></div></div></div>
-                </section>
+            <section class="row g-4 mb-4">
+                <div class="col-md-3"><div class="card border-0 shadow-sm card-modern"><div class="card-body d-flex align-items-center"><div class="bg-success bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-check-circle text-success fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Completados</small><h4 class="fw-bold mb-0 text-dark">{{acuerdosCompletados}}</h4></div></div></div></div>
+                <div class="col-md-3"><div class="card border-0 shadow-sm card-modern"><div class="card-body d-flex align-items-center"><div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-clock text-warning fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Pendientes</small><h4 class="fw-bold mb-0 text-dark">{{acuerdosPendientes}}</h4></div></div></div></div>
+            </section>
 
-                <section class="card border-0 shadow-sm card-modern">
-                    <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="fw-bold text-dark mb-0"><i class="fas fa-list-alt text-success me-2"></i>Listado de Acuerdos</h5>
-                        </div>
+            <section class="card border-0 shadow-sm card-modern">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold text-dark mb-0"><i class="fas fa-list-alt text-success me-2"></i>Listado de Acuerdos</h5>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th class="ps-4 text-secondary small text-uppercase">ID</th>
-                                        <th class="text-secondary small text-uppercase">Fecha Recogida</th>
-                                        <th class="text-secondary small text-uppercase">Empresa Destino</th>
-                                        <th class="text-secondary small text-uppercase">Material / Oferta</th>
-                                        <th class="text-secondary small text-uppercase">Precio</th>
-                                        <th class="text-secondary small text-uppercase">Estado</th>
-                                        <th class="text-secondary small text-uppercase text-end pe-4">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {{#acuerdos}}
-                                    <tr>
-                                        <td class="ps-4"><span class="fw-bold text-dark">#ACU-{{id}}</span></td>
-                                        <td class="text-secondary">{{#fechaRecogida}}{{fechaRecogida}}{{/fechaRecogida}}{{^fechaRecogida}}&mdash;{{/fechaRecogida}}</td>
-                                        <td><span class="fw-bold text-dark">{{#empresaDestino}}{{nombreComercial}}{{/empresaDestino}}{{^empresaDestino}}Sin empresa{{/empresaDestino}}</span></td>
-                                        <td class="text-secondary">{{#oferta}}{{titulo}}{{/oferta}}{{^oferta}}{{materialIntercambiado}}{{/oferta}}</td>
-                                        <td class="fw-bold text-success">{{#precioAcordado}}{{precioAcordado}} €{{/precioAcordado}}{{^precioAcordado}}&mdash;{{/precioAcordado}}</td>
-                                        <td><span class="badge bg-primary rounded-pill">{{#estado}}{{estado}}{{/estado}}{{^estado}}Sin estado{{/estado}}</span></td>
-                                        <td class="text-end pe-4">
-                                            <div class="d-flex gap-1 justify-content-end">
-                                                <a href="/acuerdos/{{id}}" class="btn btn-sm btn-outline-success rounded-pill text-nowrap"><i class="fas fa-eye me-1"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {{/acuerdos}}
-                                    
-                                    {{^acuerdos}}
-                                    <tr>
-                                        <td colspan="7" class="text-center py-4 text-muted">Aún no has registrado ningún acuerdo comercial.</td>
-                                    </tr>
-                                    {{/acuerdos}}
-                                </tbody>
-                            </table>
-                        </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4 text-secondary small text-uppercase">ID</th>
+                                    <th class="text-secondary small text-uppercase">Fecha Recogida</th>
+                                    <th class="text-secondary small text-uppercase">Empresa Destino</th>
+                                    <th class="text-secondary small text-uppercase">Material / Oferta</th>
+                                    <th class="text-secondary small text-uppercase">Precio</th>
+                                    <th class="text-secondary small text-uppercase">Estado</th>
+                                    <th class="text-secondary small text-uppercase text-end pe-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#acuerdos}}
+                                <tr>
+                                    <td class="ps-4"><span class="fw-bold text-dark">#ACU-{{id}}</span></td>
+                                    <td class="text-secondary">{{#fechaRecogida}}{{fechaRecogida}}{{/fechaRecogida}}{{^fechaRecogida}}&mdash;{{/fechaRecogida}}</td>
+                                    <td><span class="fw-bold text-dark">{{#empresaDestino}}{{nombreComercial}}{{/empresaDestino}}{{^empresaDestino}}Sin empresa{{/empresaDestino}}</span></td>
+                                    <td class="text-secondary">{{#oferta}}{{titulo}}{{/oferta}}{{^oferta}}{{materialIntercambiado}}{{/oferta}}</td>
+                                    <td class="fw-bold text-success">{{#precioAcordado}}{{precioAcordado}} €{{/precioAcordado}}{{^precioAcordado}}&mdash;{{/precioAcordado}}</td>
+                                    <td><span class="badge bg-primary rounded-pill">{{#estado}}{{estado}}{{/estado}}{{^estado}}Sin estado{{/estado}}</span></td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex gap-1 justify-content-end">
+                                            <a href="/acuerdos/{{id}}" class="btn btn-sm btn-outline-success rounded-pill text-nowrap"><i class="fas fa-eye me-1"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{/acuerdos}}
+                                
+                                {{^acuerdos}}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">Aún no has registrado ningún acuerdo comercial.</td>
+                                </tr>
+                                {{/acuerdos}}
+                            </tbody>
+                        </table>
                     </div>
-                </section>
-            </main>
-        </div>
+                </div>
+            </section>
+        </main>
     </div>
+</div>
 
 {{> footer}}
+</body>
+</html>

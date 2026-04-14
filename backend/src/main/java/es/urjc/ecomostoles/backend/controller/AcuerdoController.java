@@ -171,8 +171,9 @@ public class AcuerdoController {
      */
     @PostMapping("/acuerdos/{id}/editar")
     public String actualizarAcuerdo(@PathVariable Long id, @Valid @ModelAttribute Acuerdo acuerdoActualizado,
-                                    BindingResult result, Principal principal) {
+                                    BindingResult result, Model model, Principal principal) {
         if (result.hasErrors()) {
+            model.addAttribute("errores", result.getAllErrors());
             return "editar_acuerdo";
         }
  

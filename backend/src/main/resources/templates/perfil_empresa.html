@@ -1,16 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+{{> head}}
+<body class="bg-theme-dark">
 {{> header}}
 
 <div class="container-fluid">
     <div class="row min-vh-100">
         <!-- Sidebar -->
-        {{> sidebar}}
+        {{#esVistaAdmin}}{{> sidebar_admin}}{{/esVistaAdmin}}
+        {{^esVistaAdmin}}{{> sidebar}}{{/esVistaAdmin}}
 
         <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
             <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                 <div>
-                    <h1 class="h2 fw-bold text-dark"><i class="fas fa-user-circle text-success me-2"></i>Mi Perfil de Empresa</h1>
-                    <p class="text-secondary small mb-0">Gestiona la información pública de tu empresa en EcoMóstoles.</p>
+                    <h1 class="h2 fw-bold text-dark"><i class="fas fa-building text-success me-2"></i>{{#esVistaAdmin}}Inspeccionar Perfil de Empresa{{/esVistaAdmin}}{{^esVistaAdmin}}Mi Perfil de Empresa{{/esVistaAdmin}}</h1>
+                    <p class="text-secondary small mb-0">{{#esVistaAdmin}}Vista detallada de la empresa seleccionada para control administrativo.{{/esVistaAdmin}}{{^esVistaAdmin}}Gestiona la información pública de tu empresa en EcoMóstoles.{{/esVistaAdmin}}</p>
                 </div>
             </header>
 
@@ -35,11 +40,13 @@
                                 <h5 class="fw-bold mb-1">{{#empresa}}{{nombreComercial}}{{/empresa}}</h5>
                                 <p class="text-muted small mb-4">{{#empresa}}{{sector}}{{/empresa}} • {{#empresa}}{{direccion}}{{/empresa}}</p>
 
+                                {{^esVistaAdmin}}
                                 <label for="logoUpload" class="btn btn-outline-success rounded-pill w-100 mb-3">
                                     <i class="fas fa-camera me-2"></i> Cambiar Logo / Foto
                                 </label>
                                 <input type="file" id="logoUpload" name="logoFile" accept="image/*" class="d-none">
                                 <p class="text-muted small mb-0">JPG, PNG o SVG. Máx 2MB.</p>
+                                {{/esVistaAdmin}}
 
                                 <hr class="my-4">
 
@@ -66,7 +73,7 @@
 
                                 <div class="mb-3">
                                     <label for="nombreEmpresa" class="form-label fw-bold small text-uppercase text-secondary">Nombre Comercial</label>
-                                    <input type="text" class="form-control" id="nombreEmpresa" name="nombreComercial" value="{{#empresa}}{{nombreComercial}}{{/empresa}}">
+                                    <input type="text" class="form-control" id="nombreEmpresa" name="nombreComercial" value="{{#empresa}}{{nombreComercial}}{{/empresa}}" {{#esVistaAdmin}}disabled{{/esVistaAdmin}}>
                                 </div>
 
                                 <div class="row g-3 mb-3">
@@ -76,25 +83,32 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label for="telefono" class="form-label fw-bold small text-uppercase text-secondary">Teléfono</label>
-                                        <input type="tel" class="form-control" id="telefono" name="telefono" value="{{#empresa}}{{telefono}}{{/empresa}}">
+                                        <input type="tel" class="form-control" id="telefono" name="telefono" value="{{#empresa}}{{telefono}}{{/empresa}}" {{#esVistaAdmin}}disabled{{/esVistaAdmin}}>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="direccion" class="form-label fw-bold small text-uppercase text-secondary">Dirección / Polígono</label>
-                                    <input type="text" class="form-control" id="direccion" name="direccion" value="{{#empresa}}{{direccion}}{{/empresa}}">
+                                    <input type="text" class="form-control" id="direccion" name="direccion" value="{{#empresa}}{{direccion}}{{/empresa}}" {{#esVistaAdmin}}disabled{{/esVistaAdmin}}>
                                 </div>
 
                                 <div class="mb-4">
                                     <label for="descripcion" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
-                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4">{{#empresa}}{{descripcion}}{{/empresa}}</textarea>
+                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" {{#esVistaAdmin}}disabled{{/esVistaAdmin}}>{{#empresa}}{{descripcion}}{{/empresa}}</textarea>
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center">
+                                    {{#esVistaAdmin}}
+                                    <a href="/admin/usuarios" class="btn btn-primary px-5 py-2 fw-bold rounded-pill shadow-sm">
+                                         <i class="fas fa-arrow-left me-2"></i>Volver al Panel Admin
+                                    </a>
+                                    {{/esVistaAdmin}}
+                                    {{^esVistaAdmin}}
                                     <a href="/dashboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i> Volver al Dashboard</a>
                                     <button type="submit" class="btn btn-success px-5 py-2 fw-bold rounded-pill shadow-sm">
                                         <i class="fas fa-save me-2"></i>Guardar Cambios
                                     </button>
+                                    {{/esVistaAdmin}}
                                 </div>
                             </div>
                         </div>
@@ -106,3 +120,5 @@
 </div>
 
 {{> footer}}
+</body>
+</html>
