@@ -154,6 +154,9 @@ public class MisDemandasController {
                                         Model model,
                                         Principal principal) {
 
+        // SECURITY: Verify ownership BEFORE validation to prevent Data Leak
+        Demanda demandaExistente = verificarPropietarioDemanda(id, principal);
+
         if (result.hasErrors()) {
             empresaService.buscarPorEmail(principal.getName())
                           .ifPresent(e -> model.addAttribute("empresa", e));
@@ -162,16 +165,13 @@ public class MisDemandasController {
             return "editar_solicitud";
         }
 
-        Optional<Demanda> demandaOpt = demandaService.buscarPorId(id);
-        if (demandaOpt.isPresent()) {
-            Demanda demandaExistente = demandaOpt.get();
-            demandaExistente.setTitulo(demandaForm.getTitulo());
-            demandaExistente.setDescripcion(demandaForm.getDescripcion());
-            demandaExistente.setCategoriaMaterial(demandaForm.getCategoriaMaterial());
-            demandaExistente.setCantidad(demandaForm.getCantidad());
-            demandaExistente.setPresupuestoMaximo(demandaForm.getPresupuestoMaximo());
-            demandaService.guardar(demandaExistente);
-        }
+        demandaExistente.setTitulo(demandaForm.getTitulo());
+        demandaExistente.setDescripcion(demandaForm.getDescripcion());
+        demandaExistente.setCategoriaMaterial(demandaForm.getCategoriaMaterial());
+        demandaExistente.setCantidad(demandaForm.getCantidad());
+        demandaExistente.setPresupuestoMaximo(demandaForm.getPresupuestoMaximo());
+        
+        demandaService.guardar(demandaExistente);
 
         return "redirect:/dashboard/mis-demandas";
     }

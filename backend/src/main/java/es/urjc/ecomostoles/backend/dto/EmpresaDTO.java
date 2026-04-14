@@ -33,6 +33,7 @@ public class EmpresaDTO {
     private String descripcion;
     private String rol;
     private Double co2Ahorrado = 0.0;
+    private Integer ranking;
 
     // Default constructor for Spring binding/Mustache
     public EmpresaDTO() {
@@ -135,5 +136,13 @@ public class EmpresaDTO {
 
     public void setCo2Ahorrado(Double co2Ahorrado) {
         this.co2Ahorrado = co2Ahorrado;
+    }
+
+    public Integer getRanking() {
+        return ranking;
+    }
+
+    public void setRanking(Integer ranking) {
+        this.ranking = ranking;
     }
 }

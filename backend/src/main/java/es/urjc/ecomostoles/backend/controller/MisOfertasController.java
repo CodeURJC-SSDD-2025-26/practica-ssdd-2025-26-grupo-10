@@ -185,6 +185,9 @@ public class MisOfertasController {
                                        Model model,
                                        Principal principal) {
 
+        // SECURITY: Verify ownership BEFORE validation to prevent Data Leak
+        Oferta oferta = verificarPropietario(id, principal);
+
         if (result.hasErrors()) {
             empresaService.buscarPorEmail(principal.getName())
                           .ifPresent(e -> model.addAttribute("empresa", e));
@@ -193,8 +196,6 @@ public class MisOfertasController {
             ofertaForm.setId(id);
             return "editar_activo";
         }
-
-        Oferta oferta = verificarPropietario(id, principal);
 
         oferta.setTitulo(ofertaForm.getTitulo());
         oferta.setDescripcion(ofertaForm.getDescripcion());

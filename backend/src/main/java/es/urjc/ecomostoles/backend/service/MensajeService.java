@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+
 
 /**
  * Service layer for Mensaje business logic.
@@ -39,6 +41,12 @@ public class MensajeService {
     @Transactional(readOnly = true)
     public long contarTodos() {
         return mensajeRepository.count();
+    }
+
+    /** Returns a message by its ID, or empty if not found. */
+    @Transactional(readOnly = true)
+    public Optional<Mensaje> buscarPorId(Long id) {
+        return mensajeRepository.findById(id);
     }
 
     /** Persists a new or updated message. */

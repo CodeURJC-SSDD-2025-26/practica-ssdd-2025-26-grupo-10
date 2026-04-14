@@ -1,0 +1,135 @@
+{{> head}}
+<body class="bg-theme-dark overflow-x-hidden">
+    <style>
+        .message-detail-card {
+            border-radius: 1.25rem;
+            border: none;
+            overflow: hidden;
+        }
+        .message-header-gradient {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .avatar-circle {
+            width: 50px;
+            height: 50px;
+            background-color: #198754;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(25, 135, 84, 0.2);
+        }
+        .message-body {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #2d3436;
+            white-space: pre-wrap;
+        }
+        .meta-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            color: #6c757d;
+            margin-bottom: 0.25rem;
+        }
+        .back-link {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .back-link:hover {
+            transform: translateX(-5px);
+        }
+    </style>
+
+    {{> header}}
+
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            {{> sidebar}}
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/mensajes" class="text-decoration-none text-success">Mensajes</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Lectura</li>
+                    </ol>
+                </nav>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="h3 fw-bold text-dark mb-0">Detalle del Mensaje</h1>
+                        <p class="text-secondary small mb-0">Conversación con {{mensaje.remitente.nombreComercial}}</p>
+                    </div>
+                    <div class="btn-toolbar">
+                        <a href="/mensajes" class="btn btn-light border shadow-sm back-link px-3">
+                            <i class="fas fa-arrow-left me-2 text-success"></i> Volver a la bandeja
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card message-detail-card shadow-sm">
+                    <div class="card-header message-header-gradient p-4">
+                        <div class="row align-items-center g-3">
+                            <div class="col-auto">
+                                <div class="avatar-circle">
+                                    {{#mensaje.remitente.nombreComercial}}
+                                        {{.}}
+                                    {{/mensaje.remitente.nombreComercial}}
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h4 class="fw-bold text-dark mb-1">{{mensaje.asunto}}</h4>
+                                <div class="d-flex flex-wrap gap-3 align-items-center">
+                                    <div>
+                                        <div class="meta-label">Remitente</div>
+                                        <div class="fw-medium text-dark">{{mensaje.remitente.nombreComercial}}</div>
+                                    </div>
+                                    <div class="vr mx-1 opacity-25 d-none d-md-block"></div>
+                                    <div>
+                                        <div class="meta-label">Fecha de Envío</div>
+                                        <div class="text-muted small"><i class="far fa-clock me-1"></i> {{mensaje.fechaEnvio}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-auto text-md-end">
+                                {{#mensaje.leido}}
+                                <span class="badge rounded-pill bg-light text-secondary border px-3 py-2"><i class="fas fa-check-double me-1 text-success"></i> Leído</span>
+                                {{/mensaje.leido}}
+                                {{^mensaje.leido}}
+                                <span class="badge rounded-pill bg-success px-3 py-2">Nuevo</span>
+                                {{/mensaje.leido}}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body p-4 p-md-5">
+                        <div class="message-body">
+{{mensaje.contenido}}
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white p-4 border-top-0">
+                        <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                            <div class="d-flex gap-2">
+                                <a href="/mensajes/nuevo?receptorId={{mensaje.remitente.id}}&asunto=Re: {{mensaje.asunto}}" class="btn btn-success px-4 py-2">
+                                    <i class="fas fa-reply me-2"></i> Redactar Respuesta
+                                </a>
+                                <button class="btn btn-outline-danger px-4 py-2" onclick="alert('Funcionalidad de borrado no implementada en este release.')">
+                                    <i class="fas fa-trash-alt me-2"></i> Eliminar
+                                </button>
+                            </div>
+                            <div class="text-muted small italic">
+                                ECO-ID: #MSG-{{mensaje.id}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    {{> footer}}

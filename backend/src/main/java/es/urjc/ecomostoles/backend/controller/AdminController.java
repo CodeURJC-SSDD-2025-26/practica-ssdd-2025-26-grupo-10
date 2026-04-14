@@ -174,7 +174,13 @@ public class AdminController {
             EmpresaDTO dto = new EmpresaDTO(e);
             dto.setCo2Ahorrado(acuerdoService.calcularCO2AhorradoPorEmpresa(e.getId()));
             return dto;
-        }).collect(Collectors.toList());
+        }).sorted((a, b) -> b.getCo2Ahorrado().compareTo(a.getCo2Ahorrado())) // Order by CO2 descending
+          .collect(Collectors.toList());
+
+        // Pre-calculating indices for Mustache rendering (Strongly Typed index)
+        for (int i = 0; i < empresas.size(); i++) {
+            empresas.get(i).setRanking(i + 1);
+        }
 
         model.addAttribute("empresas", empresas);
         return "admin_reportes";

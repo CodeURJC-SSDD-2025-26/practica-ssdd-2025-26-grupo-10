@@ -1,11 +1,10 @@
 package es.urjc.ecomostoles.backend.service;
 
+import es.urjc.ecomostoles.backend.dto.DashboardStatsDTO;
 import es.urjc.ecomostoles.backend.model.Demanda;
 import es.urjc.ecomostoles.backend.model.Empresa;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Service to handle business logic for the Dashboard.
@@ -30,38 +29,41 @@ public class DashboardService {
      * Calculates all KPIs, charts data and recommendations for a given company (or admin).
      * 
      * @param empresa The company for which stats are calculated.
-     * @return A map containing all dashboard attributes.
+     * @return A DTO containing all dashboard attributes.
      */
-    public Map<String, Object> obtenerEstadisticas(Empresa empresa) {
-        Map<String, Object> stats = new HashMap<>();
+    public DashboardStatsDTO obtenerEstadisticas(Empresa empresa) {
+        DashboardStatsDTO stats = new DashboardStatsDTO();
         
         boolean esAdmin = empresa.getRoles() != null && empresa.getRoles().contains("ADMIN");
-        stats.put("esAdmin", esAdmin);
+        stats.setEsAdmin(esAdmin);
 
         if (esAdmin) {
             // ── Admin: Global KPIs ──────────────────────────────────────────
-            stats.put("totalOfertas",  (int) ofertaService.contarTodas());
-            stats.put("totalDemandas", (int) demandaService.contarTodas());
-            stats.put("acuerdosActivos", (int) acuerdoService.contarTodos());
+            stats.setTotalOfertas((int) ofertaService.contarTodas());
+            stats.setTotalDemandas((int) demandaService.contarTodas());
+            stats.setAcuerdosActivos((int) acuerdoService.contarTodos());
             
-            stats.put("chartData", List.of(
+            stats.setChartData(List.of(
                 (int) ofertaService.contarTodas(),
                 (int) demandaService.contarTodas(),
                 (int) acuerdoService.contarTodos()
             ));
         } else {
             // ── Empresa: Personal KPIs ──────────────────────────────────────
-            stats.put("totalOfertas",  (int) ofertaService.contarPorEmpresa(empresa));
-            stats.put("totalDemandas", (int) demandaService.contarPorEmpresa(empresa));
-            stats.put("acuerdosActivos", (int) acuerdoService.contarPorEmpresa(empresa));
-            stats.put("impactoCO2", acuerdoService.sumarMaterialReintroducido(empresa));
+            stats.setTotalOfertas((int) ofertaService.contarPorEmpresa(empresa));
+            stats.setTotalDemandas((int) demandaService.contarPorEmpresa(empresa));
+            stats.setAcuerdosActivos((int) acuerdoService.contarPorEmpresa(empresa));
+            
+            double reintroducido = acuerdoService.sumarMaterialReintroducido(empresa);
+            stats.setMaterialReintroducido(reintroducido);
+            stats.setImpactoCO2(reintroducido * 0.45);
 
             // Smart Matching
             List<Demanda> recommendedDemandas = demandaService.obtenerSmartRecommendations(empresa);
-            stats.put("smartRecommendations", recommendedDemandas);
-            stats.put("hasRecommendations", !recommendedDemandas.isEmpty());
+            stats.setSmartRecommendations(recommendedDemandas);
+            stats.setHasRecommendations(!recommendedDemandas.isEmpty());
             
-            stats.put("chartData", List.of(
+            stats.setChartData(List.of(
                 (int) ofertaService.contarPorEmpresa(empresa),
                 (int) demandaService.contarPorEmpresa(empresa),
                 (int) acuerdoService.contarPorEmpresa(empresa)

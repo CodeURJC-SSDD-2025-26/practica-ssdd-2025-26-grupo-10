@@ -57,6 +57,37 @@ public class MensajeController {
  
         return "mensajes";
     }
+
+    /**
+     * Shows the detail of a specific message.
+     */
+    @GetMapping("/mensajes/{id}")
+    public String mostrarDetalleMensaje(@PathVariable Long id, Model model, Principal principal) {
+        Mensaje mensaje = mensajeService.buscarPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Mensaje no encontrado"));
+
+        Empresa empresa = empresaService.buscarPorEmail(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa no encontrada"));
+
+        // Seguridad: Solo el remitente o el destinatario pueden ver el mensaje
+        boolean esDestinatario = mensaje.getDestinatario().getId().equals(empresa.getId());
+        boolean esRemitente = mensaje.getRemitente().getId().equals(empresa.getId());
+
+        if (!esDestinatario && !esRemitente) {
+             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para ver este mensaje");
+        }
+
+        // Marcar como leído si el destinatario es el usuario logueado
+        if (esDestinatario && !mensaje.isLeido()) {
+            mensaje.setLeido(true);
+            mensajeService.guardar(mensaje);
+        }
+
+        model.addAttribute("mensaje", mensaje);
+        model.addAttribute("empresa", empresa);
+
+        return "detalle_mensaje";
+    }
  
     /**
      * Envia un mensaje al propietario de una oferta.
