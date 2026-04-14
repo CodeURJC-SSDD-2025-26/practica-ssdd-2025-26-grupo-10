@@ -175,7 +175,7 @@ public class DataInitializer implements CommandLineRunner {
         // ══════════════════════════════════════════
         // 4. Test offers with BLOB images
         // ══════════════════════════════════════════
-        var ofertasEmpresa1 = ofertaRepository.findByEmpresa(empresa1);
+        List<Oferta> ofertasEmpresa1 = ofertaRepository.findByEmpresa(empresa1, Oferta.class);
 
         if (ofertasEmpresa1.isEmpty()) {
             crearOferta(empresa1,
@@ -202,7 +202,7 @@ public class DataInitializer implements CommandLineRunner {
                 });
         }
 
-        var ofertasEmpresa2 = ofertaRepository.findByEmpresa(empresa2);
+        List<Oferta> ofertasEmpresa2 = ofertaRepository.findByEmpresa(empresa2, Oferta.class);
         if (ofertasEmpresa2.isEmpty()) {
             crearOferta(empresa2,
                 "Retales de PVC Industrial",

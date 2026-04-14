@@ -3,6 +3,7 @@ package es.urjc.ecomostoles.backend.controller;
 import es.urjc.ecomostoles.backend.model.EstadoOferta;
 
 import es.urjc.ecomostoles.backend.model.Oferta;
+import es.urjc.ecomostoles.backend.dto.OfertaResumen;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 import es.urjc.ecomostoles.backend.service.OfertaService;
 import org.springframework.http.HttpHeaders;
@@ -43,7 +44,7 @@ public class MercadoController {
             @RequestParam(required = false) String tipoResiduo,
             @RequestParam(required = false) String poligono) {
 
-        List<Oferta> ofertasFiltradas = ofertaService.obtenerPorEstado(EstadoOferta.ACTIVA);
+        List<OfertaResumen> ofertasFiltradas = ofertaService.obtenerPorEstado(EstadoOferta.ACTIVA);
 
         if (keyword != null && !keyword.isBlank()) {
             String kw = keyword.toLowerCase();

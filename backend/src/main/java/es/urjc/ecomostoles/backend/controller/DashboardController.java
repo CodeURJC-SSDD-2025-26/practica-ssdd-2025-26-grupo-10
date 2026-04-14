@@ -1,7 +1,5 @@
 package es.urjc.ecomostoles.backend.controller;
 
-import es.urjc.ecomostoles.backend.model.EstadoDemanda;
-
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +12,6 @@ import es.urjc.ecomostoles.backend.service.AcuerdoService;
 import es.urjc.ecomostoles.backend.service.DemandaService;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 import es.urjc.ecomostoles.backend.service.OfertaService;
-import es.urjc.ecomostoles.backend.service.MensajeService;
 
 /**
  * Controller for handling the Dashboard view.
@@ -33,18 +30,15 @@ public class DashboardController {
     private final OfertaService    ofertaService;
     private final DemandaService   demandaService;
     private final AcuerdoService   acuerdoService;
-    private final MensajeService   mensajeService;
 
     public DashboardController(EmpresaService empresaService,
                                OfertaService ofertaService,
                                DemandaService demandaService,
-                               AcuerdoService acuerdoService,
-                               MensajeService mensajeService) {
+                               AcuerdoService acuerdoService) {
         this.empresaService    = empresaService;
         this.ofertaService     = ofertaService;
         this.demandaService    = demandaService;
         this.acuerdoService    = acuerdoService;
-        this.mensajeService    = mensajeService;
     }
 
     @GetMapping("/dashboard")
@@ -68,9 +62,12 @@ public class DashboardController {
 
             } else {
                 // ── Empresa normal: KPIs propios ────────────────────────────
-                model.addAttribute("totalOfertas",  ofertaService.obtenerPorEmpresa(empresa).size());
-                model.addAttribute("totalDemandas", demandaService.obtenerPorEmpresa(empresa).size());
-                model.addAttribute("totalAcuerdos", acuerdoService.obtenerPorEmpresa(empresa).size());
+                model.addAttribute("totalOfertas",  (int) ofertaService.contarPorEmpresa(empresa));
+                model.addAttribute("totalDemandas", (int) demandaService.contarPorEmpresa(empresa));
+                model.addAttribute("totalAcuerdos", (int) acuerdoService.contarPorEmpresa(empresa));
+                
+                // New dynamic KPI: Total re-introduced material
+                model.addAttribute("materialReintroducido", acuerdoService.sumarMaterialReintroducido(empresa));
 
 
                 // --- SMART MATCHING ALGORITHM ---
@@ -90,9 +87,9 @@ public class DashboardController {
                 );
             } else {
                 activityStats = List.of(
-                    ofertaService.obtenerPorEmpresa(empresa).size(),
-                    demandaService.obtenerPorEmpresa(empresa).size(),
-                    acuerdoService.obtenerPorEmpresa(empresa).size()
+                    (int) ofertaService.contarPorEmpresa(empresa),
+                    (int) demandaService.contarPorEmpresa(empresa),
+                    (int) acuerdoService.contarPorEmpresa(empresa)
                 );
             }
             model.addAttribute("chartData", activityStats);

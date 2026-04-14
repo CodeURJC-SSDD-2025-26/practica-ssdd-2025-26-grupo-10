@@ -1,100 +1,80 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
-    <title>Mensajes | EcoMóstoles</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="/css/styles.css" rel="stylesheet">
-    <style>
-        .chat-bubble { max-width: 75%; padding: 12px 16px; border-radius: 16px; font-size: 0.9rem; line-height: 1.5; }
-        .chat-bubble-received { background: #f0f2f5; color: #1a1a2e; border-bottom-left-radius: 4px; }
-        .chat-bubble-sent { background: #198754; color: #fff; border-bottom-right-radius: 4px; }
-        .contact-item { cursor: pointer; transition: background 0.2s; border-left: 3px solid transparent; background: #ffffff !important; color: #212529 !important; }
-        .contact-item h6 { color: #212529 !important; }
-        .contact-item p, .contact-item small { color: #6c757d !important; }
-        .contact-item:hover { background: #f8f9fa !important; border-left-color: #198754; }
-        .contact-item.active { background: #f1fcf5 !important; border-left-color: #198754; }
-        .contact-item.active h6 { color: #0f5132 !important; }
-        .chat-area { height: 480px; overflow-y: auto; background: #fafbfc !important; }
-        .contacts-list { height: 540px; overflow-y: auto; background: #ffffff !important; }
-    </style>
-</head>
-<body class="bg-theme-dark">
+{{> header}}
 
-    <div id="particles-body"></div>
+<style>
+    .chat-bubble { max-width: 75%; padding: 12px 16px; border-radius: 16px; font-size: 0.9rem; line-height: 1.5; }
+    .chat-bubble-received { background: #f0f2f5; color: #1a1a2e; border-bottom-left-radius: 4px; }
+    .chat-bubble-sent { background: #198754; color: #fff; border-bottom-right-radius: 4px; }
+    .contact-item { cursor: pointer; transition: background 0.2s; border-left: 3px solid transparent; background: #ffffff !important; color: #212529 !important; }
+    .contact-item h6 { color: #212529 !important; }
+    .contact-item p, .contact-item small { color: #6c757d !important; }
+    .contact-item:hover { background: #f8f9fa !important; border-left-color: #198754; }
+    .contact-item.active { background: #f1fcf5 !important; border-left-color: #198754; }
+    .contact-item.active h6 { color: #0f5132 !important; }
+    .chat-area { height: 480px; overflow-y: auto; background: #fafbfc !important; }
+    .contacts-list { height: 540px; overflow-y: auto; background: #ffffff !important; }
+</style>
 
-    {{> header}}
+<div class="container-fluid">
+    <div class="row min-vh-100">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard/mis-ofertas"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/oferta/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard/mis-demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/demanda/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Demanda</a></li>
+                    <li class="nav-item mt-3"><h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted text-uppercase"><span>Acuerdos</span></h6></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
+                    <li class="nav-item"><a class="nav-link active text-success fw-bold" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes</a></li>
+                </ul>
+            </div>
+        </nav>
 
-    <div class="container-fluid">
-        <div class="row min-vh-100">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-                <div class="position-sticky pt-3">
-                    <ul class="nav flex-column">
-                        <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/dashboard/mis-ofertas"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/oferta/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/dashboard/mis-demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/demanda/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Demanda</a></li>
-                        <li class="nav-item mt-3"><h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted text-uppercase"><span>Acuerdos</span></h6></li>
-                        <li class="nav-item"><a class="nav-link text-dark" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
-                        <li class="nav-item"><a class="nav-link text-dark" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
-                        <li class="nav-item"><a class="nav-link active text-success fw-bold" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes</a></li>
-                    </ul>
-                </div>
-            </nav>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                <div><h1 class="h2 fw-bold text-dark">Buzón de Mensajes</h1><p class="text-secondary small mb-0">Comunicaciones con otras empresas.</p></div>
+            </header>
 
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-                <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
-                    <div><h1 class="h2 fw-bold text-dark">Buzón de Mensajes</h1><p class="text-secondary small mb-0">Comunicaciones con otras empresas.</p></div>
-                </header>
-
-                <div class="row g-0">
-                    <div class="col-lg-4 col-md-5">
-                        <div class="p-3">
-                            <div class="list-group list-group-flush shadow-sm rounded-3 border">
-                                {{#mensajes}}
-                                <a href="/mensajes/{{id}}" class="list-group-item list-group-item-action py-3 border-bottom contact-item">
-                                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                        <h6 class="mb-0 fw-bold text-dark">{{asunto}}</h6>
-                                    </div>
-                                    <p class="mb-0 small text-muted text-truncate">{{contenido}}</p>
-                                </a>
-                                {{/mensajes}}
-                                
-                                {{^mensajes}}
-                                <div class="p-4 text-center text-muted small">
-                                    <i class="fas fa-inbox fs-3 mb-2"></i><br>No hay mensajes.
+            <div class="row g-0">
+                <div class="col-lg-4 col-md-5">
+                    <div class="p-3">
+                        <div class="list-group list-group-flush shadow-sm rounded-3 border">
+                            {{#mensajes}}
+                            <a href="/mensajes/{{id}}" class="list-group-item list-group-item-action py-3 border-bottom contact-item">
+                                <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                    <h6 class="mb-0 fw-bold text-dark">{{asunto}}</h6>
                                 </div>
-                                {{/mensajes}}
+                                <p class="mb-0 small text-muted text-truncate">{{contenido}}</p>
+                            </a>
+                            {{/mensajes}}
+                            
+                            {{^mensajes}}
+                            <div class="p-4 text-center text-muted small">
+                                <i class="fas fa-inbox fs-3 mb-2"></i><br>No hay mensajes.
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-8 col-md-7">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-header bg-white border-bottom p-3 d-flex align-items-center">
-                                <div class="flex-grow-1"><h6 class="mb-0 fw-bold text-dark">Bandeja de Entrada</h6></div>
-                            </div>
-                            <div class="card-body chat-area p-4 d-flex align-items-center justify-content-center">
-                                <p class="text-muted">Selecciona un mensaje a la izquierda para leerlo.</p>
-                            </div>
+                            {{/mensajes}}
                         </div>
                     </div>
                 </div>
-            </main>
-        </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="/js/particles-init.js"></script>
-    <script src="/js/card-spotlight.js"></script>
-    {{> footer}}
-</body>
-</html>
+                <div class="col-lg-8 col-md-7">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-bottom p-3 d-flex align-items-center">
+                            <div class="flex-grow-1"><h6 class="mb-0 fw-bold text-dark">Bandeja de Entrada</h6></div>
+                        </div>
+                        <div class="card-body chat-area p-4 d-flex align-items-center justify-content-center">
+                            <p class="text-muted">Selecciona un mensaje a la izquierda para leerlo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+{{> footer}}

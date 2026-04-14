@@ -8,7 +8,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.draw.LineSeparator;
 import es.urjc.ecomostoles.backend.model.Acuerdo;
-import es.urjc.ecomostoles.backend.repository.AcuerdoRepository;
+import es.urjc.ecomostoles.backend.service.AcuerdoService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,15 +20,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.security.Principal;
-import java.util.Optional;
 
 @Controller
 public class PdfExportController {
 
-    private final AcuerdoRepository acuerdoRepository;
+    private final AcuerdoService acuerdoService;
 
-    public PdfExportController(AcuerdoRepository acuerdoRepository) {
-        this.acuerdoRepository = acuerdoRepository;
+    public PdfExportController(AcuerdoService acuerdoService) {
+        this.acuerdoService = acuerdoService;
     }
 
     @GetMapping("/acuerdo/{id}/pdf")
@@ -37,7 +36,7 @@ public class PdfExportController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Acuerdo agreement = acuerdoRepository.findById(id)
+        Acuerdo agreement = acuerdoService.buscarPorId(id)
                 .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
 
         String userEmail = principal.getName();
@@ -55,7 +54,6 @@ public class PdfExportController {
 
             // --- Estilos de Fuente ---
             Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, Color.DARK_GRAY);
-            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Color.BLACK);
             Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10, Color.BLACK);
             Font labelFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Color.DARK_GRAY);
 

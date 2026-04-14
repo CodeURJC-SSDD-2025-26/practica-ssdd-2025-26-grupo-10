@@ -1,7 +1,6 @@
 package es.urjc.ecomostoles.backend.controller;
 
 import es.urjc.ecomostoles.backend.model.Demanda;
-import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.service.DemandaService;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 import org.springframework.stereotype.Controller;

@@ -1,19 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
-    <title>Mis Acuerdos | EcoMóstoles</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/styles.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="bg-theme-dark">
-
-    <div id="particles-body"></div>
-
-    {{> header}}
+{{> header}}
 
     <div class="container-fluid">
         <div class="row min-vh-100">
@@ -48,11 +33,11 @@
                 </header>
 
                 <section class="row g-4 mb-4">
-                    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body d-flex align-items-center"><div class="bg-success bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-check-circle text-success fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Completados</small><h4 class="fw-bold mb-0 text-dark">0</h4></div></div></div></div>
-                    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body d-flex align-items-center"><div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-clock text-warning fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Pendientes</small><h4 class="fw-bold mb-0 text-dark">0</h4></div></div></div></div>
+                    <div class="col-md-3"><div class="card border-0 shadow-sm card-modern"><div class="card-body d-flex align-items-center"><div class="bg-success bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-check-circle text-success fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Completados</small><h4 class="fw-bold mb-0 text-dark">{{acuerdosCompletados}}</h4></div></div></div></div>
+                    <div class="col-md-3"><div class="card border-0 shadow-sm card-modern"><div class="card-body d-flex align-items-center"><div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-clock text-warning fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Pendientes</small><h4 class="fw-bold mb-0 text-dark">{{acuerdosPendientes}}</h4></div></div></div></div>
                 </section>
 
-                <section class="card border-0 shadow-sm">
+                <section class="card border-0 shadow-sm card-modern">
                     <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="fw-bold text-dark mb-0"><i class="fas fa-list-alt text-success me-2"></i>Listado de Acuerdos</h5>
@@ -78,12 +63,12 @@
                                         <td class="ps-4"><span class="fw-bold text-dark">#ACU-{{id}}</span></td>
                                         <td class="text-secondary">{{#fechaRecogida}}{{fechaRecogida}}{{/fechaRecogida}}{{^fechaRecogida}}&mdash;{{/fechaRecogida}}</td>
                                         <td><span class="fw-bold text-dark">{{#empresaDestino}}{{nombreComercial}}{{/empresaDestino}}{{^empresaDestino}}Sin empresa{{/empresaDestino}}</span></td>
-                                        <td class="text-secondary">{{#oferta}}{{titulo}}{{/oferta}}{{^oferta}}&mdash;{{/oferta}}</td>
+                                        <td class="text-secondary">{{#oferta}}{{titulo}}{{/oferta}}{{^oferta}}{{materialIntercambiado}}{{/oferta}}</td>
                                         <td class="fw-bold text-success">{{#precioAcordado}}{{precioAcordado}} €{{/precioAcordado}}{{^precioAcordado}}&mdash;{{/precioAcordado}}</td>
                                         <td><span class="badge bg-primary rounded-pill">{{#estado}}{{estado}}{{/estado}}{{^estado}}Sin estado{{/estado}}</span></td>
                                         <td class="text-end pe-4">
                                             <div class="d-flex gap-1 justify-content-end">
-                                                <button class="btn btn-sm btn-outline-danger rounded-pill text-nowrap"><i class="fas fa-trash-alt me-1"></i></button>
+                                                <a href="/acuerdos/{{id}}" class="btn btn-sm btn-outline-success rounded-pill text-nowrap"><i class="fas fa-eye me-1"></i></a>
                                             </div>
                                         </td>
                                     </tr>
@@ -103,10 +88,4 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="/js/particles-init.js"></script>
-    <script src="/js/card-spotlight.js"></script>
-    {{> footer}}
-</body>
-</html>
+{{> footer}}

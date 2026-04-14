@@ -121,9 +121,9 @@ public class MisDemandasController {
     }
 
     // -------------------------------------------------------------------------
-    // POST /dashboard/mis-demandas/eliminar/{id} — Delete demand (ownership check)
+    // POST /demandas/{id}/eliminar — Delete demand (ownership check)
     // -------------------------------------------------------------------------
-    @PostMapping("/dashboard/mis-demandas/eliminar/{id}")
+    @PostMapping("/demandas/{id}/eliminar")
     public String eliminarDemanda(@PathVariable Long id, Principal principal) {
         verificarPropietarioDemanda(id, principal);
         demandaService.eliminar(id);

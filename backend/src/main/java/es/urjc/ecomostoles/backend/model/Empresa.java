@@ -8,6 +8,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -17,18 +20,29 @@ public class Empresa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El nombre comercial es obligatorio")
     private String nombreComercial;
 
+    @NotBlank(message = "El CIF es obligatorio")
     @Column(unique = true)
     private String cif;
 
+    @NotBlank(message = "El email de contacto es obligatorio")
+    @Email(message = "El formato del email no es válido")
     @Column(unique = true)
     private String emailContacto;
 
+    @NotBlank(message = "La contraseña es obligatoria")
+    @Size(min = 4, message = "La contraseña debe tener al menos 4 caracteres")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private String password;
+
+    @NotBlank(message = "La dirección es obligatoria")
     private String direccion;
+
     private String telefono;
+
+    @NotBlank(message = "El sector industrial es obligatorio")
     private String sectorIndustrial;
 
     @Lob

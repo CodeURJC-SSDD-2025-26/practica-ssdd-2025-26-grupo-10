@@ -1,127 +1,106 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
-    <title>Registrar Acuerdo | EcoMóstoles</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/styles.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="bg-theme-dark">
+{{> header}}
 
-    <div id="particles-body"></div>
+<div class="container-fluid">
+    <div class="row min-vh-100">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard/mis-ofertas"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/oferta/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard/mis-demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/demanda/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Demanda</a></li>
+                    <li class="nav-item mt-3"><h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted text-uppercase"><span>Acuerdos</span></h6></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
+                    <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">{{#totalMensajes}}{{totalMensajes}}{{/totalMensajes}}{{^totalMensajes}}0{{/totalMensajes}}</span></a></li>
+                </ul>
+            </div>
+        </nav>
 
-    {{> header}}
-
-    <div class="container-fluid">
-        <div class="row min-vh-100">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-                <div class="position-sticky pt-3">
-                    <ul class="nav flex-column">
-                        <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/dashboard/mis-ofertas"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/oferta/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/dashboard/mis-demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/demanda/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Demanda</a></li>
-                        <li class="nav-item mt-3"><h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted text-uppercase"><span>Acuerdos</span></h6></li>
-                        <li class="nav-item"><a class="nav-link text-dark" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">{{#totalMensajes}}{{totalMensajes}}{{/totalMensajes}}{{^totalMensajes}}0{{/totalMensajes}}</span></a></li>
-                    </ul>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2 text-dark fw-bold">Registrar Nuevo Acuerdo</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="/acuerdos" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-1"></i> Cancelar</a>
                 </div>
-            </nav>
+            </div>
 
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2 text-dark fw-bold">Registrar Nuevo Acuerdo</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/acuerdos" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-1"></i> Cancelar</a>
-                    </div>
-                </div>
+            <div class="card card-modern border-top-success">
+                <div class="card-body p-4">
+                    {{#errores}}
+                      <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i> {{defaultMessage}}
+                      </div>
+                    {{/errores}}
+                    <form action="/acuerdo/nuevo" method="POST" class="needs-validation" novalidate="">
+                        {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
+                        <input type="hidden" name="unidad" value="kg/uds">
+                        <input type="hidden" name="materialIntercambiado" value="Material a convenir">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Oferta Relacionada <span class="text-danger">*</span></label>
+                                <select name="ofertaId" class="form-select" required="">
+                                    <option value="" selected="" disabled="">Seleccionar tu oferta...</option>
+                                    {{#ofertas}}
+                                    <option value="{{id}}">REF-{{id}}: {{titulo}}</option>
+                                    {{/ofertas}}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Empresa Destino <span class="text-danger">*</span></label>
+                                <select name="empresaDestinoId" class="form-select" required="">
+                                    <option value="" selected="" disabled="">Seleccionar empresa...</option>
+                                    {{#todasEmpresas}}
+                                    <option value="{{id}}">{{nombreComercial}}</option>
+                                    {{/todasEmpresas}}
+                                </select>
+                            </div>
 
-                <div class="card card-modern border-top-success">
-                    <div class="card-body p-4">
-                        {{#errores}}
-                          <div class="alert alert-danger" role="alert">
-                            <i class="fas fa-exclamation-triangle"></i> {{defaultMessage}}
-                          </div>
-                        {{/errores}}
-                        <form action="/acuerdo/nuevo" method="POST" class="needs-validation" novalidate="">
-                            {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
-                            <input type="hidden" name="unidad" value="kg/uds">
-                            <input type="hidden" name="materialIntercambiado" value="Material a convenir">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label text-secondary fw-bold small text-uppercase">Oferta Relacionada <span class="text-danger">*</span></label>
-                                    <select name="ofertaId" class="form-select" required="">
-                                        <option value="" selected="" disabled="">Seleccionar tu oferta...</option>
-                                        {{#ofertas}}
-                                        <option value="{{id}}">REF-{{id}}: {{titulo}}</option>
-                                        {{/ofertas}}
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-secondary fw-bold small text-uppercase">Empresa Destino <span class="text-danger">*</span></label>
-                                    <select name="empresaDestinoId" class="form-select" required="">
-                                        <option value="" selected="" disabled="">Seleccionar empresa...</option>
-                                        {{#todasEmpresas}}
-                                        <option value="{{id}}">{{nombreComercial}}</option>
-                                        {{/todasEmpresas}}
-                                    </select>
-                                </div>
-
-                                <div class="col-md-5">
-                                    <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <input type="number" name="cantidad" class="form-control" placeholder="Ej. 500" min="0" required="">
-                                        <span class="input-group-text">kg/uds</span>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3">
-                                    <label class="form-label text-secondary fw-bold small text-uppercase">Precio Acordado (€) <span class="text-danger">*</span></label>
-                                    <input type="number" name="precioAcordado" class="form-control" placeholder="Ej. 1200" step="0.01" min="0" required="">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label text-secondary fw-bold small text-uppercase">Fecha de Recogida <span class="text-danger">*</span></label>
-                                    <input type="date" name="fechaRecogida" class="form-control" required="">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label text-secondary fw-bold small text-uppercase">Estado <span class="text-danger">*</span></label>
-                                    <select name="estado" class="form-select" required="">
-                                        <option value="PENDIENTE" selected="">Pendiente</option>
-                                        <option value="ACEPTADO">Aceptado</option>
-                                        <option value="RECHAZADO">Rechazado</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label text-secondary fw-bold small text-uppercase">Notas adicionales</label>
-                                    <textarea name="notas" class="form-control" rows="3" placeholder="Condiciones especiales, requisitos..."></textarea>
-                                </div>
-
-                                <div class="col-12 mt-4 d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary px-4 fw-bold">
-                                        <i class="fas fa-handshake me-2"></i> Registrar Acuerdo
-                                    </button>
+                            <div class="col-md-5">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" name="cantidad" class="form-control" placeholder="Ej. 500" min="0" required="">
+                                    <span class="input-group-text">kg/uds</span>
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="/js/particles-init.js"></script>
-    <script src="/js/card-spotlight.js"></script>
-    {{> footer}}
-</body>
-</html>
+                            <div class="col-md-3">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Precio Acordado (€) <span class="text-danger">*</span></label>
+                                <input type="number" name="precioAcordado" class="form-control" placeholder="Ej. 1200" step="0.01" min="0" required="">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Fecha de Recogida <span class="text-danger">*</span></label>
+                                <input type="date" name="fechaRecogida" class="form-control" required="">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Estado <span class="text-danger">*</span></label>
+                                <select name="estado" class="form-select" required="">
+                                    <option value="PENDIENTE" selected="">Pendiente</option>
+                                    <option value="ACEPTADO">Aceptado</option>
+                                    <option value="RECHAZADO">Rechazado</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Notas adicionales</label>
+                                <textarea name="notas" class="form-control" rows="3" placeholder="Condiciones especiales, requisitos..."></textarea>
+                            </div>
+
+                            <div class="col-12 mt-4 d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary px-4 fw-bold">
+                                    <i class="fas fa-handshake me-2"></i> Registrar Acuerdo
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+{{> footer}}

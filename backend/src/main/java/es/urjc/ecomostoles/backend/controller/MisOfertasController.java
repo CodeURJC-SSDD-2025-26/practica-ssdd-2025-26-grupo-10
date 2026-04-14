@@ -4,6 +4,7 @@ import es.urjc.ecomostoles.backend.model.EstadoOferta;
 
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.model.Oferta;
+import es.urjc.ecomostoles.backend.dto.OfertaResumen;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 import es.urjc.ecomostoles.backend.service.OfertaService;
 import jakarta.validation.Valid;
@@ -83,7 +84,7 @@ public class MisOfertasController {
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("empresa", empresa);
-            List<Oferta> misOfertas = ofertaService.obtenerPorEmpresa(empresa);
+            List<OfertaResumen> misOfertas = ofertaService.obtenerPorEmpresa(empresa);
             model.addAttribute("ofertas", misOfertas);
             return "mis_activos";
         }
@@ -142,9 +143,9 @@ public class MisOfertasController {
     }
 
     // -------------------------------------------------------------------------
-    // POST /dashboard/mis-ofertas/eliminar/{id} — Delete offer (ownership check)
+    // POST /ofertas/{id}/eliminar — Delete offer (ownership check)
     // -------------------------------------------------------------------------
-    @PostMapping("/dashboard/mis-ofertas/eliminar/{id}")
+    @PostMapping("/ofertas/{id}/eliminar")
     public String eliminarOferta(@PathVariable Long id, Principal principal) {
         verificarPropietario(id, principal);
         ofertaService.eliminar(id);

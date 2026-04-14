@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
     List<Mensaje> findByDestinatario(Empresa destinatario);
+
+    List<Mensaje> findTop100ByOrderByFechaEnvioDesc();
 }

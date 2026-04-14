@@ -1,108 +1,87 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
-    <title>Mis Demandas | EcoMóstoles</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="/css/styles.css" rel="stylesheet">
-</head>
-<body class="bg-theme-dark">
+{{> header}}
 
-    <div id="particles-body"></div>
+<div class="container-fluid">
+    <div class="row min-vh-100">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3 sidebar-label">Ofertas</small></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard/mis-ofertas"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/oferta/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3 sidebar-label">Demandas</small></li>
+                    <li class="nav-item"><a class="nav-link active" href="/dashboard/mis-demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/demanda/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Demanda</a></li>
+                    <li class="nav-item mt-3"><h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted text-uppercase sidebar-label"><span>Acuerdos</span></h6></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3 sidebar-label">Comunicación</small></li>
+                    <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">{{#totalMensajes}}{{totalMensajes}}{{/totalMensajes}}{{^totalMensajes}}0{{/totalMensajes}}</span></a></li>
+                </ul>
+            </div>
+        </nav>
 
-    {{> header}}
-
-    <div class="container-fluid">
-        <div class="row min-vh-100">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-                <div class="position-sticky pt-3">
-                    <ul class="nav flex-column">
-                        <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3 sidebar-label">Ofertas</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/dashboard/mis-ofertas"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/oferta/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3 sidebar-label">Demandas</small></li>
-                        <li class="nav-item"><a class="nav-link active" href="/dashboard/mis-demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/demanda/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Demanda</a></li>
-                        <li class="nav-item mt-3"><h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted text-uppercase sidebar-label"><span>Acuerdos</span></h6></li>
-                        <li class="nav-item"><a class="nav-link text-dark" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
-                        <li class="nav-item"><a class="nav-link text-dark" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3 sidebar-label">Comunicación</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">{{#totalMensajes}}{{totalMensajes}}{{/totalMensajes}}{{^totalMensajes}}0{{/totalMensajes}}</span></a></li>
-                    </ul>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                <div>
+                    <h1 class="h2 fw-bold text-dark">Mis Demandas Publicadas</h1>
+                    <p class="text-secondary small mb-0">Gestiona las solicitudes de materiales que has publicado en el tablón.</p>
                 </div>
-            </nav>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="/demanda/nueva" class="btn btn-success rounded-pill shadow-sm text-nowrap">
+                        <i class="fas fa-plus me-2"></i> Nueva Demanda
+                    </a>
+                </div>
+            </header>
 
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-                <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
-                    <div>
-                        <h1 class="h2 fw-bold text-dark">Mis Demandas Publicadas</h1>
-                        <p class="text-secondary small mb-0">Gestiona las solicitudes de materiales que has publicado en el tablón.</p>
-                    </div>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/demanda/nueva" class="btn btn-success rounded-pill shadow-sm text-nowrap">
-                            <i class="fas fa-plus me-2"></i> Nueva Demanda
-                        </a>
-                    </div>
-                </header>
+            <section class="row g-4 mb-4">
+                <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body d-flex align-items-center"><div class="bg-success bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-check-circle text-success fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Activas</small><h4 class="fw-bold mb-0 text-dark">{{#totalDemandasActivas}}{{totalDemandasActivas}}{{/totalDemandasActivas}}{{^totalDemandasActivas}}0{{/totalDemandasActivas}}</h4></div></div></div></div>
+            </section>
 
-                <section class="row g-4 mb-4">
-                    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body d-flex align-items-center"><div class="bg-success bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-check-circle text-success fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Activas</small><h4 class="fw-bold mb-0 text-dark">2</h4></div></div></div></div>
-                </section>
-
-                <div class="row g-4">
-                    {{#demandas}}
-                    <div class="col-md-4">
-                        <div class="card h-100 shadow-sm card-hover border-top-success">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title fw-bold"><i class="fas fa-bullhorn text-success me-2"></i>{{titulo}}</h5>
-                                <div class="d-flex gap-2 mb-2 mt-2">
-                                    <span class="badge bg-success">{{categoriaMaterial}}</span>
-                                    <span class="badge bg-success rounded-pill">Activa</span>
-                                </div>
-                                <p class="card-text">{{descripcion}}</p>
-                                <p class="card-text text-muted small"><i class="fas fa-weight-hanging me-1"></i> {{cantidad}} kg</p>
-                                <h5 class="text-success fw-bold mt-2 mb-1">Max: € {{presupuestoMaximo}}</h5>
+            <div class="row g-4">
+                {{#demandas}}
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm card-hover border-top-success">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold"><i class="fas fa-bullhorn text-success me-2"></i>{{titulo}}</h5>
+                            <div class="d-flex gap-2 mb-2 mt-2">
+                                <span class="badge bg-success">{{categoriaMaterial}}</span>
+                                <span class="badge bg-success rounded-pill">Activa</span>
                             </div>
-                            <div class="card-footer bg-transparent border-top-0 pt-0 pb-3">
-                                <div class="d-flex gap-2">
-                                    <a href="/demandas/{{id}}/editar" class="btn btn-outline-primary w-50 rounded-pill">
-                                        <i class="fas fa-edit me-1"></i> Editar
-                                    </a>
-                                    <form action="/dashboard/mis-demandas/eliminar/{{id}}" method="POST" class="w-50 mb-0">
-                                        {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
-                                        <button type="submit" class="btn btn-outline-danger w-100 rounded-pill">
-                                            <i class="fas fa-trash-alt me-1"></i> Eliminar
-                                        </button>
-                                    </form>
-                                </div>
+                            <p class="card-text">{{descripcion}}</p>
+                            <p class="card-text text-muted small"><i class="fas fa-weight-hanging me-1"></i> {{cantidad}} kg</p>
+                            <h5 class="text-success fw-bold mt-2 mb-1">Max: € {{presupuestoMaximo}}</h5>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 pt-0 pb-3">
+                            <div class="d-flex gap-2">
+                                <a href="/demandas/{{id}}/editar" class="btn btn-outline-primary w-50 rounded-pill">
+                                    <i class="fas fa-edit me-1"></i> Editar
+                                </a>
+                                <form action="/demandas/{{id}}/eliminar" method="POST" class="w-50 mb-0">
+                                    {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
+                                    <button type="submit" class="btn btn-outline-danger w-100 rounded-pill">
+                                        <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                    {{/demandas}}
-
-                    {{^demandas}}
-                    <div class="col-12 text-center py-5">
-                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="fas fa-clipboard-list fs-2 text-muted"></i>
-                        </div>
-                        <h5 class="fw-bold text-dark">Aún no has publicado ninguna demanda</h5>
-                        <p class="text-muted">Las solicitudes de materiales que necesites aparecerán aquí.</p>
-                        <a href="/demanda/nueva" class="btn btn-success mt-2 rounded-pill shadow-sm">Publicar mi primera demanda</a>
-                    </div>
-                    {{/demandas}}
                 </div>
-            </main>
-        </div>
+                {{/demandas}}
+
+                {{^demandas}}
+                <div class="col-12 text-center py-5">
+                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-clipboard-list fs-2 text-muted"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Aún no has publicado ninguna demanda</h5>
+                    <p class="text-muted">Las solicitudes de materiales que necesites aparecerán aquí.</p>
+                    <a href="/demanda/nueva" class="btn btn-success mt-2 rounded-pill shadow-sm">Publicar mi primera demanda</a>
+                </div>
+                {{/demandas}}
+            </div>
+        </main>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="/js/particles-init.js"></script>
-    <script src="/js/card-spotlight.js"></script>
-    {{> footer}}
-</body>
-</html>
+{{> footer}}

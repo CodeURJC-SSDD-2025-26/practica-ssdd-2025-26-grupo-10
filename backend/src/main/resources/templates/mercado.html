@@ -1,103 +1,45 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
-    <meta name="description" content="EcoMóstoles - Mercado de Residuos">
-    <title>Mercado de Residuos | EcoMóstoles</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/styles.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="bg-theme-dark">
+{{> header}}
 
-    <div id="particles-body"></div>
-
-    {{> header}}
-
-    <div class="bg-white shadow-sm border-bottom mb-4 py-4 position-relative filter-bar-z">
-        <div class="container">
-            <div class="row align-items-center mb-4">
-                <div class="col-md-8">
-                    <h1 class="h2 fw-bold text-dark mb-1"><i class="fas fa-store text-success me-2"></i> Mercado de Residuos</h1>
-                    <p class="text-muted mb-0">Encuentra materiales disponibles de otras empresas o publica tu propia oferta</p>
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-success text-white py-4 text-center">
+                    <h2 class="fw-bold mb-0"><i class="fas fa-store me-2"></i>Mercado de Simbiosis Industrial</h2>
+                    <p class="mb-0 opacity-75">Residuos disponibles en el Polígono Regordoño y alrededores</p>
                 </div>
-                <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="/oferta/nueva" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
-                        <i class="fas fa-plus me-2"></i>Publicar Nueva Oferta
-                    </a>
-                </div>
-            </div>
-            <form action="/mercado" method="GET" class="row g-3">
-                <div class="col-md-4"><input type="text" name="keyword" class="form-control" placeholder="Buscar oferta..." value="{{keyword}}"></div>
-                <div class="col-md-3">
-                    <select name="tipoResiduo" class="form-select">
-                        <option value="">Todos los Tipos</option>
-                        <option value="Metal">Metal</option>
-                        <option value="Plástico">Plástico</option>
-                        <option value="Madera">Madera</option>
-                        <option value="Papel">Papel</option>
-                        <option value="Vidrio">Vidrio</option>
-                        <option value="Químico">Químico</option>
-                        <option value="Electrónico">Electrónico</option>
-                        <option value="Orgánico">Orgánico</option>
-                        <option value="Textil">Textil</option>
-                        <option value="Otro">Otro</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select name="poligono" class="form-select">
-                        <option value="">Todos los Polígonos</option>
-                        <option value="Norte">Norte</option>
-                        <option value="Sur">Sur</option>
-                        <option value="Este">Este</option>
-                        <option value="Oeste">Oeste</option>
-                    </select>
-                </div>
-                <div class="col-md-1 d-grid"><button type="submit" class="btn btn-eco">Filtrar</button></div>
-                <div class="col-md-1 d-grid"><a href="/mercado" class="btn btn-outline-secondary">Limpiar</a></div>
-            </form>
-        </div>
-    </div>
-
-    <section class="py-5">
-        <div class="container">
-            <div class="row g-4">
                 
-                {{#ofertas}}
-                <div class="col-md-4">
-                    <div class="card h-100 border-top-success card-hover">
-                        <img src="/images/oferta/{{id}}" class="card-img-top card-img-uniform" alt="{{titulo}}" onerror="this.src='/img/virutas.webp';">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">{{titulo}} ({{cantidad}}kg)</h5>
-                            <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> {{empresa.nombreComercial}}</p>
-                            <span class="badge bg-success mb-2">{{categoria}}</span>
-                            <p class="card-text mt-2">{{descripcion}}</p>
-                            <h5 class="text-success fw-bold mt-3 mb-0">€ {{precio}}</h5>
-                            <div class="d-grid mt-3">
-                                <a href="/oferta/{{id}}" class="btn btn-outline-secondary btn-sm">Ver Detalles</a>
+                <div class="card-body p-4 p-lg-5">
+                    <div class="row g-4">
+                        {{#ofertas}}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm card-hover">
+                                <img src="/images/oferta/{{id}}" class="card-img-top" style="height:180px;object-fit:cover;" alt="{{titulo}}" onerror="this.src='/img/virutas.webp';">
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold text-dark">{{titulo}}</h5>
+                                    <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> {{empresa.nombreComercial}}</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <span class="badge bg-success-soft text-success">{{cantidadFormateada}} kg</span>
+                                        <a href="/oferta/{{id}}" class="btn btn-outline-success btn-sm rounded-pill">Ver detalles</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        {{/ofertas}}
+                        
+                        {{^ofertas}}
+                        <div class="col-12 text-center py-5">
+                            <i class="fas fa-search fs-1 text-muted mb-3 d-block opacity-25"></i>
+                            <h4 class="text-muted">No hay ofertas activas en este momento</h4>
+                            <p class="text-muted">¡Sé el primero en publicar un activo!</p>
+                            <a href="/oferta/nueva" class="btn btn-success rounded-pill px-4">Publicar Oferta</a>
+                        </div>
+                        {{/ofertas}}
                     </div>
                 </div>
-                {{/ofertas}}
-
-                {{^ofertas}}
-                <div class="col-12 text-center py-5">
-                    <h4 class="text-muted">No hay ninguna oferta publicada en el mercado actualmente.</h4>
-                </div>
-                {{/ofertas}}
-
             </div>
         </div>
-    </section>
+    </div>
+</div>
 
-    {{> footer}}
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="/js/particles-init.js"></script>
-    <script src="/js/card-spotlight.js"></script>
-</body>
-</html>
+{{> footer}}

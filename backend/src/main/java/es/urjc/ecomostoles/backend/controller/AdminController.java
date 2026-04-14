@@ -75,7 +75,7 @@ public class AdminController {
     public String usuarios(Model model, Principal principal) {
         addCommonAttributes(model, principal);
         model.addAttribute("navUsuarios", true);
-        // Complete list of registered companies for the table
+        // Limited list of registered companies for the table (Top 50)
         model.addAttribute("empresas", empresaService.obtenerTodas());
         return "admin_usuarios";
     }

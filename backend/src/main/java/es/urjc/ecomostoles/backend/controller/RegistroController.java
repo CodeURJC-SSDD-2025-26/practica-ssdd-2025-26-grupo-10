@@ -1,9 +1,7 @@
 package es.urjc.ecomostoles.backend.controller;
 
 import es.urjc.ecomostoles.backend.model.Empresa;
-import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import es.urjc.ecomostoles.backend.service.EmpresaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,13 +16,10 @@ public class RegistroController {
 
     private static final Logger log = LoggerFactory.getLogger(RegistroController.class);
 
-    private final EmpresaRepository empresaRepository;
+    private final EmpresaService empresaService;
 
-    private final PasswordEncoder passwordEncoder;
-
-    public RegistroController(EmpresaRepository empresaRepository, PasswordEncoder passwordEncoder) {
-        this.empresaRepository = empresaRepository;
-        this.passwordEncoder = passwordEncoder;
+    public RegistroController(EmpresaService empresaService) {
+        this.empresaService = empresaService;
     }
 
     @GetMapping("/registro")
@@ -43,33 +38,31 @@ public class RegistroController {
             @RequestParam(required = false) MultipartFile logoFile,
             Model model) {
 
-        // Comprobar si ya existe una empresa con ese email
-        if (empresaRepository.findByEmailContacto(emailContacto).isPresent()) {
+        try {
+            // Mapping fields to new Empresa object
+            Empresa nuevaEmpresa = new Empresa();
+            nuevaEmpresa.setNombreComercial(nombreComercial);
+            nuevaEmpresa.setCif(cif);
+            nuevaEmpresa.setDireccion(direccion);
+            nuevaEmpresa.setSectorIndustrial(sector);
+            nuevaEmpresa.setEmailContacto(emailContacto);
+
+            byte[] logoBytes = null;
+            if (logoFile != null && !logoFile.isEmpty()) {
+                logoBytes = logoFile.getBytes();
+            }
+
+            // Delegating logic to Service (Professional pattern)
+            empresaService.registrarNuevaEmpresa(nuevaEmpresa, password, logoBytes);
+
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", true);
+            return "registro";
+        } catch (Exception e) {
+            log.error("⚠️ Error general en el registro de empresa", e);
             model.addAttribute("error", true);
             return "registro";
         }
-
-        // Crear nueva empresa
-        Empresa empresa = new Empresa();
-        empresa.setNombreComercial(nombreComercial);
-        empresa.setCif(cif);
-        empresa.setDireccion(direccion);
-        empresa.setSectorIndustrial(sector);
-        empresa.setEmailContacto(emailContacto);
-
-        // ¡CRÍTICO! Encriptar la contraseña antes de guardar
-        empresa.setPassword(passwordEncoder.encode(password));
-
-        // Persistir logo como BLOB si el usuario adjuntó uno
-        if (logoFile != null && !logoFile.isEmpty()) {
-            try {
-                empresa.setLogo(logoFile.getBytes());
-            } catch (Exception e) {
-                log.error("⚠️ Error al leer el logo", e);
-            }
-        }
-
-        empresaRepository.save(empresa);
 
         return "redirect:/login?registrado";
     }

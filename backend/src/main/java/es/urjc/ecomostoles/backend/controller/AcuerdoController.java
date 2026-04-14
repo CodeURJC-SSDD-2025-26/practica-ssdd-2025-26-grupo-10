@@ -1,10 +1,9 @@
 package es.urjc.ecomostoles.backend.controller;
 
-import es.urjc.ecomostoles.backend.model.EstadoOferta;
 
 import es.urjc.ecomostoles.backend.model.Acuerdo;
 import es.urjc.ecomostoles.backend.model.Empresa;
-import es.urjc.ecomostoles.backend.model.Oferta;
+import es.urjc.ecomostoles.backend.dto.OfertaResumen;
 import es.urjc.ecomostoles.backend.service.AcuerdoService;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 import es.urjc.ecomostoles.backend.service.OfertaService;
@@ -14,10 +13,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 import jakarta.validation.Valid;
 
-import java.time.LocalDateTime;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +52,7 @@ public class AcuerdoController {
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("empresa", empresa);
-            List<Oferta> misOfertas = ofertaService.obtenerPorEmpresa(empresa);
+            List<OfertaResumen> misOfertas = ofertaService.obtenerPorEmpresa(empresa);
             model.addAttribute("ofertas", misOfertas);
 
             List<Empresa> todasEmpresas = empresaService.obtenerTodas();
@@ -74,6 +75,11 @@ public class AcuerdoController {
             model.addAttribute("empresa", empresa);
             List<Acuerdo> misAcuerdos = acuerdoService.obtenerPorEmpresa(empresa);
             model.addAttribute("acuerdos", misAcuerdos);
+
+            // Dynamic KPI counts for status section
+            model.addAttribute("acuerdosCompletados", acuerdoService.contarPorEmpresaYEstado(empresa, "COMPLETADO"));
+            model.addAttribute("acuerdosPendientes",  acuerdoService.contarPorEmpresaYEstado(empresa, "PENDIENTE"));
+            
             return "mis_acuerdos";
         }
 
@@ -112,5 +118,30 @@ public class AcuerdoController {
         }
 
         return "redirect:/acuerdos";
+    }
+
+    /**
+     * Shows detail of a specific agreement (with IDOR protection).
+     */
+    @GetMapping("/acuerdos/{id}")
+    public String mostrarDetalleAcuerdo(@PathVariable Long id, Model model, Principal principal) {
+        Acuerdo acuerdo = acuerdoService.buscarPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
+
+        String userEmail = principal.getName();
+        Empresa logueada = empresaService.buscarPorEmail(userEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+        boolean esAdmin = logueada.getRoles() != null && logueada.getRoles().contains("ADMIN");
+        boolean esOrigen = acuerdo.getEmpresaOrigen() != null && acuerdo.getEmpresaOrigen().getEmailContacto().equals(userEmail);
+        boolean esDestino = acuerdo.getEmpresaDestino() != null && acuerdo.getEmpresaDestino().getEmailContacto().equals(userEmail);
+
+        if (!esAdmin && !esOrigen && !esDestino) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para ver este acuerdo");
+        }
+
+        model.addAttribute("acuerdo", acuerdo);
+        model.addAttribute("empresa", logueada);
+        return "detalle_acuerdo";
     }
 }

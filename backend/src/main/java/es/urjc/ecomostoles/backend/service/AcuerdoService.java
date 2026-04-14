@@ -12,13 +12,10 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
-/**
- * Service layer for Acuerdo (Agreement) business logic.
- * Intermediary between controllers and the AcuerdoRepository, following
- * the Controller > Service > Repository architecture pattern.
- */
 @Service
+@Transactional
 public class AcuerdoService {
 
     private final AcuerdoRepository acuerdoRepository;
@@ -31,51 +28,49 @@ public class AcuerdoService {
         this.ofertaService = ofertaService;
     }
 
-    /** Returns all agreements in the system. */
+    @Transactional(readOnly = true)
     public List<Acuerdo> obtenerTodos() {
-        return acuerdoRepository.findAll();
+        return acuerdoRepository.findTop50ByOrderByFechaRegistroDesc();
     }
 
-    /**
-     * Returns all agreements where the company is involved as origin OR destination.
-     * Used by the Dashboard KPI counter and Mis Acuerdos view.
-     */
+    @Transactional(readOnly = true)
     public List<Acuerdo> obtenerPorEmpresa(Empresa empresa) {
         return acuerdoRepository.findByEmpresa(empresa);
     }
 
-    /** Returns agreements where the company is the originator (source). */
+    @Transactional(readOnly = true)
     public List<Acuerdo> obtenerPorEmpresaOrigen(Empresa empresa) {
         return acuerdoRepository.findByEmpresaOrigen(empresa);
     }
 
-    /** Returns agreements where the company is the recipient (destination). */
+    @Transactional(readOnly = true)
     public List<Acuerdo> obtenerPorEmpresaDestino(Empresa empresa) {
         return acuerdoRepository.findByEmpresaDestino(empresa);
     }
 
-    /** Returns an agreement by its ID, or empty if not found. */
+    @Transactional(readOnly = true)
     public Optional<Acuerdo> buscarPorId(Long id) {
         return acuerdoRepository.findById(id);
     }
 
-    /** Persists a new or updated agreement. */
     public Acuerdo guardar(Acuerdo acuerdo) {
         return acuerdoRepository.save(acuerdo);
     }
 
-    /** Deletes an agreement by its ID. */
     public void eliminar(Long id) {
         acuerdoRepository.deleteById(id);
     }
 
-    /** Returns the total count of agreements. */
+    @Transactional(readOnly = true)
     public long contarTodos() {
         return acuerdoRepository.count();
     }
 
-    /** Registra un nuevo acuerdo y reserva la oferta, todo de forma transaccional. */
-    @Transactional
+    @Transactional(readOnly = true)
+    public long contarPorEmpresa(Empresa empresa) {
+        return acuerdoRepository.countByEmpresa(empresa);
+    }
+
     public void registrarNuevoAcuerdo(Acuerdo acuerdo, String emailUsuario, Long ofertaId, Long empresaDestinoId) {
         Oferta oferta = ofertaService.buscarPorId(ofertaId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Oferta no encontrada"));
@@ -83,14 +78,13 @@ public class AcuerdoService {
         Empresa origen = empresaService.buscarPorEmail(emailUsuario)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        // Business logic: mark the offer as Reserved
         oferta.setEstado(EstadoOferta.RESERVADA);
         ofertaService.guardar(oferta);
 
         acuerdo.setOferta(oferta);
         acuerdo.setMaterialIntercambiado(oferta.getTitulo() != null ? oferta.getTitulo() : "Material Acordado");
         acuerdo.setUnidad("kg/uds");
-        acuerdo.setFechaRegistro(java.time.LocalDateTime.now());
+        acuerdo.setFechaRegistro(LocalDateTime.now());
         acuerdo.setEmpresaOrigen(origen);
 
         if (empresaDestinoId != null) {
@@ -101,5 +95,16 @@ public class AcuerdoService {
         }
 
         acuerdoRepository.save(acuerdo);
+    }
+
+    @Transactional(readOnly = true)
+    public double sumarMaterialReintroducido(Empresa empresa) {
+        Double total = acuerdoRepository.sumCantidadByEmpresaAndEstadoCompletado(empresa);
+        return total != null ? total : 0.0;
+    }
+
+    @Transactional(readOnly = true)
+    public long contarPorEmpresaYEstado(Empresa empresa, String estado) {
+        return acuerdoRepository.countByEmpresaAndEstado(empresa, estado);
     }
 }

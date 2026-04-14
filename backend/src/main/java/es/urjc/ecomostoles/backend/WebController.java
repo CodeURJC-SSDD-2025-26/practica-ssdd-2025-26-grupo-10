@@ -1,13 +1,10 @@
 package es.urjc.ecomostoles.backend;
 
-import es.urjc.ecomostoles.backend.model.EstadoOferta;
-
 import java.security.Principal;
 import java.util.List;
 import es.urjc.ecomostoles.backend.model.Empresa;
-import es.urjc.ecomostoles.backend.model.Oferta;
+import es.urjc.ecomostoles.backend.dto.OfertaResumen;
 import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
-import es.urjc.ecomostoles.backend.repository.OfertaRepository;
 import java.util.Optional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,7 +34,7 @@ public class WebController {
         }
 
         // ── Últimas 3 ofertas activas (null-safe en fecha) ─────────────────────
-        List<Oferta> recientes = ofertaService.obtenerRecientesActivas();
+        List<OfertaResumen> recientes = ofertaService.obtenerRecientesActivas();
         model.addAttribute("ofertasRecientes", recientes);
 
         return "index";

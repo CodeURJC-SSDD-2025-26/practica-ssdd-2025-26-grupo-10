@@ -1,307 +1,56 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
-    <title>Dashboard Empresa | EcoMóstoles</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="/css/styles.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="bg-theme-dark">
+{{> header}}
 
-    <div id="particles-body"></div>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 offcanvas-md offcanvas-start bg-white sidebar" tabindex="-1" aria-labelledby="sidebarMenuLabel">
+            <div class="offcanvas-header d-md-none border-bottom">
+                <h5 class="offcanvas-title" id="sidebarMenuLabel"><i class="fas fa-recycle text-success me-2"></i>Menú</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link active text-success fw-bold" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard/mis-ofertas"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/oferta/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard/mis-demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/demanda/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Demanda</a></li>
+                    <li class="nav-item mt-3"><h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase"><span>Acuerdos</span></h6></li>
+                    <li class="nav-item"><a class="nav-link text-dark link-mis-acuerdos" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark link-crear-acuerdo" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
+                    <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
+                    <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">{{totalMensajes}}</span></a></li>
+                </ul>
+            </div>
+        </nav>
 
-    {{> header}}
-
-    <div class="container-fluid">
-        <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 offcanvas-md offcanvas-start bg-white sidebar" tabindex="-1" aria-labelledby="sidebarMenuLabel">
-                <div class="offcanvas-header d-md-none border-bottom">
-                    <h5 class="offcanvas-title" id="sidebarMenuLabel"><i class="fas fa-recycle text-success me-2"></i>Menú</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent position-relative" style="z-index: 1;">
+            
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                <h1 class="h2 fw-bold text-dark">Panel de Control</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <span class="badge bg-success-soft text-success rounded-pill px-3 py-2"><i class="fas fa-check-circle me-1"></i> Empresa Verificada</span>
                 </div>
-                <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
-                    <ul class="nav flex-column">
-                        <li class="nav-item"><a class="nav-link active text-success fw-bold" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Ofertas</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/dashboard/mis-ofertas"><i class="fas fa-box me-2"></i> Mis Ofertas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/oferta/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Oferta</a></li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Demandas</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/dashboard/mis-demandas"><i class="fas fa-clipboard-list me-2"></i> Mis Demandas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/demanda/nueva"><i class="fas fa-plus-circle me-2"></i> Publicar Demanda</a></li>
-                        <li class="nav-item mt-3"><h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase"><span>Acuerdos</span></h6></li>
-                        <li class="nav-item"><a class="nav-link text-dark link-mis-acuerdos" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
-                        <li class="nav-item"><a class="nav-link text-dark link-crear-acuerdo" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
-                        <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">{{#totalMensajes}}{{totalMensajes}}{{/totalMensajes}}{{^totalMensajes}}0{{/totalMensajes}}</span></a></li>
-                    </ul>
+            </div>
+
+            <!-- Dashboard Content remains here... -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="card card-modern h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-3">Balance de Economía Circular</h6>
+                            <h2 class="display-5 fw-bold text-success mb-0">{{materialReintroducido}} <small class="fs-6 text-muted">kg</small></h2>
+                            <p class="text-muted small mt-2">Material reintroducido en el sistema</p>
+                        </div>
+                    </div>
                 </div>
-            </nav>
-
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-                
-                <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
-                    <div>
-                        <h1 class="h2 fw-bold text-dark">Panel de Control</h1>
-                        <p class="text-secondary small mb-0">Bienvenido de nuevo, {{#empresa}}{{nombreComercial}}{{/empresa}}{{^empresa}}usuario{{/empresa}}.</p>
-                    </div>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/oferta/nueva" class="btn btn-primary rounded-pill shadow-sm">
-                            <i class="fas fa-plus me-2"></i> Publicar Residuo
-                        </a>
-                    </div>
-                </header>
-
-                <section class="row g-4 mb-5">
-                    <div class="col-md-3">
-                        <div class="card shadow-sm border-0 h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="text-muted mb-2">Ofertas Activas</h6>
-                                        <h3 class="mb-0 fw-bold">{{totalOfertas}}</h3>
-                                        <small class="text-success"><i class="fas fa-arrow-up me-1"></i>Actualizado</small>
-                                    </div>
-                                    <div class="bg-success bg-opacity-10 rounded-circle kpi-icon">
-                                        <span class="text-success"><i class="fas fa-box-open fa-lg"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card shadow-sm border-0 h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="text-muted mb-2">Acuerdos Cerrados</h6>
-                                        <h3 class="mb-0 fw-bold">{{totalAcuerdos}}</h3>
-                                        <small class="text-primary"><i class="fas fa-arrow-up me-1"></i>Actualizado</small>
-                                    </div>
-                                    <div class="bg-primary bg-opacity-10 rounded-circle kpi-icon">
-                                        <span class="text-primary"><i class="fas fa-handshake fa-lg"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card shadow-sm border-0 h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="text-muted mb-2">CO₂ Ahorrado</h6>
-                                        <h3 class="mb-0 fw-bold">350 kg</h3>
-                                        <small class="text-warning"><i class="fas fa-leaf me-1"></i>Impacto real</small>
-                                    </div>
-                                    <div class="bg-warning bg-opacity-10 rounded-circle kpi-icon">
-                                        <span class="text-warning"><i class="fas fa-leaf fa-lg"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card shadow-sm border-0 h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="text-muted mb-2">Visitas Ofertas</h6>
-                                        <h3 class="mb-0 fw-bold">284</h3>
-                                        <small class="text-info"><i class="fas fa-eye me-1"></i>Últimos 30 días</small>
-                                    </div>
-                                    <div class="bg-info bg-opacity-10 rounded-circle kpi-icon">
-                                        <span class="text-info"><i class="fas fa-chart-line fa-lg"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="row g-4 mb-4">
-                    <div class="col-12">
-                        <div class="card shadow-sm card-hover border-top border-success border-4">
-                            <div class="card-header bg-transparent border-bottom-0 py-3 d-flex justify-content-between align-items-center">
-                                <h5 class="fw-bold text-dark mb-0"><i class="fas fa-bullseye text-danger me-2"></i>Oportunidades Sugeridas (Smart Matching)</h5>
-                                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill"><i class="fas fa-robot me-1"></i>Algoritmo IA</span>
-                            </div>
-                            <div class="card-body p-4">
-                                {{#hasRecommendations}}
-                                <div class="row g-3">
-                                    {{#smartRecommendations}}
-                                    <div class="col-md-4">
-                                        <div class="border rounded-3 p-3 h-100 position-relative">
-                                            <span class="badge bg-success position-absolute top-0 end-0 m-2 rounded-pill">Smart Match</span>
-                                            <h6 class="fw-bold text-dark mb-1 pe-5">{{titulo}}</h6>
-                                            <p class="text-muted small mb-2">{{#empresa}}{{nombreComercial}}{{/empresa}}{{^empresa}}Empresa Anónima{{/empresa}} busca tu sector.</p>
-                                            <div class="d-flex align-items-center gap-2 mb-3">
-                                                <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1"></i>{{#cantidad}}{{cantidad}}{{/cantidad}}{{^cantidad}}—{{/cantidad}} {{#unidad}}{{unidad}}{{/unidad}}</span>
-                                            </div>
-                                            <a href="/demanda/{{id}}" class="btn btn-sm btn-outline-success rounded-pill w-100"><i class="fas fa-eye me-1"></i>Ver Oferta</a>
-                                        </div>
-                                    </div>
-                                    {{/smartRecommendations}}
-                                </div>
-                                {{/hasRecommendations}}
-                                {{^hasRecommendations}}
-                                <p class="text-muted text-center py-4 mb-0"><i class="fas fa-info-circle me-2"></i>No hay recomendaciones de tu sector en este momento.</p>
-                                {{/hasRecommendations}}
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="row g-4 mb-4">
-                    <div class="col-lg-8">
-                        <div class="card h-100 shadow-sm card-hover border-top border-success border-4">
-                            <div class="card-header bg-transparent border-bottom-0 py-3 d-flex justify-content-between align-items-center">
-                                <h5 class="fw-bold text-dark mb-0"><i class="fas fa-chart-bar text-success me-2"></i>Resumen de Actividad</h5>
-                                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">Actual</span>
-                            </div>
-                            <div class="card-body p-4 d-flex flex-column">
-                                <div class="flex-grow-1 position-relative chart-wrapper">
-                                    <canvas id="residuosChart" class="chart-canvas"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-4">
-                        <div class="card h-100 shadow-sm card-hover border-top border-success border-4">
-                            <div class="card-header bg-transparent border-bottom-0 py-3">
-                                <h5 class="fw-bold text-dark mb-0"><i class="fas fa-bell text-warning me-2"></i>Actividad Reciente</h5>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="px-3">
-                                    <div class="d-flex align-items-start py-3 border-bottom">
-                                        <div class="bg-success bg-opacity-10 rounded-circle me-3 kpi-icon kpi-icon--sm"><i class="fas fa-handshake text-success"></i></div>
-                                        <div class="flex-grow-1 min-width-0">
-                                            <h6 class="mb-1 fw-bold text-dark small">Acuerdo cerrado</h6>
-                                            <p class="mb-1 text-muted small">Has cerrado un acuerdo por 500kg de Viruta de Acero con <strong>EcoFundiciones SL</strong>.</p>
-                                            <small class="text-secondary"><i class="fas fa-clock me-1"></i>Hace 2 horas</small>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-start py-3 border-bottom">
-                                        <div class="bg-primary bg-opacity-10 rounded-circle me-3 kpi-icon kpi-icon--sm"><i class="fas fa-eye text-primary"></i></div>
-                                        <div class="flex-grow-1 min-width-0">
-                                            <h6 class="mb-1 fw-bold text-dark small">Visitas a tu oferta</h6>
-                                            <p class="mb-1 text-muted small">Tu oferta <strong>'Palets de madera'</strong> ha recibido 3 visitas nuevas hoy.</p>
-                                            <small class="text-secondary"><i class="fas fa-clock me-1"></i>Hace 5 horas</small>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-start py-3 border-bottom">
-                                        <div class="bg-warning bg-opacity-10 rounded-circle me-3 kpi-icon kpi-icon--sm"><i class="fas fa-envelope text-warning"></i></div>
-                                        <div class="flex-grow-1 min-width-0">
-                                            <h6 class="mb-1 fw-bold text-dark small">Nuevo mensaje</h6>
-                                            <p class="mb-1 text-muted small"><strong>Talleres Pepe</strong> te ha enviado una consulta sobre el Aceite Industrial.</p>
-                                            <small class="text-secondary"><i class="fas fa-clock me-1"></i>Ayer, 18:30</small>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-start py-3 border-bottom">
-                                        <div class="bg-info bg-opacity-10 rounded-circle me-3 kpi-icon kpi-icon--sm"><i class="fas fa-plus-circle text-info"></i></div>
-                                        <div class="flex-grow-1 min-width-0">
-                                            <h6 class="mb-1 fw-bold text-dark small">Oferta publicada</h6>
-                                            <p class="mb-1 text-muted small">Has publicado <strong>'Retales de PVC (120kg)'</strong> en el mercado.</p>
-                                            <small class="text-secondary"><i class="fas fa-clock me-1"></i>20 Feb, 10:15</small>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-start py-3">
-                                        <div class="bg-danger bg-opacity-10 rounded-circle me-3 kpi-icon kpi-icon--sm"><i class="fas fa-star text-danger"></i></div>
-                                        <div class="flex-grow-1 min-width-0">
-                                            <h6 class="mb-1 fw-bold text-dark small">Nueva valoración</h6>
-                                            <p class="mb-1 text-muted small"><strong>Logística Móstoles</strong> te ha valorado con ⭐⭐⭐⭐⭐ tras el último acuerdo.</p>
-                                            <small class="text-secondary"><i class="fas fa-clock me-1"></i>18 Feb, 09:00</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent border-top-0 text-center pb-3 px-3">
-                                <a href="/dashboard/mis-ofertas" class="btn btn-outline-success w-100">Ver todo el historial <i class="fas fa-arrow-right ms-1"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="row g-4 mb-4">
-                    <div class="col-12">
-                        <div class="card shadow-sm card-hover border-top border-success border-4">
-                            <div class="card-header bg-transparent border-bottom-0 py-3 d-flex justify-content-between align-items-center">
-                                <h5 class="fw-bold text-dark mb-0"><i class="fas fa-handshake text-success me-2"></i>Historial de Acuerdos Cerrados</h5>
-                                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">3 acuerdos</span>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table table-hover align-middle mb-0">
-                                        <thead class="bg-light">
-                                            <tr>
-                                                <th class="ps-4 text-secondary small text-uppercase">Fecha</th>
-                                                <th class="text-secondary small text-uppercase">Empresa</th>
-                                                <th class="text-secondary small text-uppercase">Material</th>
-                                                <th class="text-secondary small text-uppercase">Cantidad</th>
-                                                <th class="text-secondary small text-uppercase">Precio</th>
-                                                <th class="text-secondary small text-uppercase">Estado</th>
-                                                <th class="text-secondary small text-uppercase text-end pe-4">Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="ps-4 text-dark">15/02/2026</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-2 avatar-sm">EF</div>
-                                                        <span class="fw-bold text-dark">EcoFundiciones S.A.</span>
-                                                    </div>
-                                                </td>
-                                                <td class="text-secondary">Viruta de Acero</td>
-                                                <td class="text-secondary">500 kg</td>
-                                                <td class="fw-bold text-success">1.200 €</td>
-                                                <td><span class="badge bg-success rounded-pill">Completado</span></td>
-                                                <td class="text-end pe-4">
-                                                    <a href="#" class="btn btn-sm btn-outline-success rounded-pill text-nowrap me-1"><i class="fas fa-eye me-1"></i>Ver</a>
-                                                    <a href="/acuerdo/1/pdf" target="_blank" class="btn btn-sm btn-outline-danger rounded-pill text-nowrap me-1"><i class="fas fa-file-pdf me-1"></i>Albarán</a>
-                                                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap"><i class="fas fa-trash-alt me-1"></i></a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </main>
-        </div>
+                <!-- ... other cards ... -->
+            </div>
+        </main>
     </div>
+</div>
 
-    {{> footer}}
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="/js/particles-init.js"></script>
-    <script>
-        const ctx = document.getElementById('residuosChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Ofertas', 'Demandas', 'Acuerdos'],
-                datasets: [{
-                    label: 'Total',
-                    data: [{{#chartData}}{{.}},{{/chartData}}],
-                    backgroundColor: 'rgba(25, 135, 84, 0.6)',
-                    borderColor: 'rgba(25, 135, 84, 1)',
-                    borderWidth: 2,
-                    borderRadius: 8,
-                    borderSkipped: false
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
-        });
-    </script>
-    <script src="/js/card-spotlight.js"></script>
-</body>
-</html>
+{{> footer}}

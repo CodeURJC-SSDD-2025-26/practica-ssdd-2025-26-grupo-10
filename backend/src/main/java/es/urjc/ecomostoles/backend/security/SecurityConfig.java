@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -75,8 +74,8 @@ public class SecurityConfig {
 
                 // ── Creation and edition: any authenticated user ────────
                 .requestMatchers(
-                    "/oferta/nueva", "/ofertas/**/editar",
-                    "/demanda/nueva", "/demandas/**/editar",
+                    "/oferta/nueva", "/ofertas/*/editar",
+                    "/demanda/nueva", "/demandas/*/editar",
                     "/dashboard/**", "/perfil/**",
                     "/mensajes/**", "/acuerdos/**", "/acuerdo/**"
                 ).authenticated()
