@@ -74,6 +74,7 @@ public class MisDemandasController {
             model.addAttribute("empresa", empresa);
             List<Demanda> misDemandas = demandaService.obtenerPorEmpresa(empresa);
             model.addAttribute("demandas", misDemandas);
+            model.addAttribute("totalDemandasActivas", demandaService.contarActivasPorEmpresa(empresa));
             return "mis_demandas";
         }
         return "redirect:/";

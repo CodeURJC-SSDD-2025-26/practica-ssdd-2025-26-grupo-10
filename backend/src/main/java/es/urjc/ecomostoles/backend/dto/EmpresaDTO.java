@@ -1,23 +1,42 @@
 package es.urjc.ecomostoles.backend.dto;
 
 import es.urjc.ecomostoles.backend.model.Empresa;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * Data Transfer Object (DTO) for Empresa.
- * Used to avoid exposing sensitive information like password hashes to the view layer.
+ * Used for form binding and to avoid exposing sensitive information like password hashes.
  */
 public class EmpresaDTO {
 
-    private final Long id;
-    private final String nombreComercial;
-    private final String emailContacto;
-    private final String cif;
-    private final String direccion;
-    private final String telefono;
-    private final String sectorIndustrial;
-    private final String descripcion;
-    private final String rol;
+    private Long id;
+
+    @NotBlank(message = "El nombre comercial es obligatorio")
+    private String nombreComercial;
+
+    @NotBlank(message = "El email de contacto es obligatorio")
+    @Email(message = "El formato del email no es válido")
+    private String emailContacto;
+
+    @NotBlank(message = "El CIF es obligatorio")
+    private String cif;
+
+    @NotBlank(message = "La dirección es obligatoria")
+    private String direccion;
+
+    private String telefono;
+
+    @NotBlank(message = "El sector industrial es obligatorio")
+    private String sectorIndustrial;
+
+    private String descripcion;
+    private String rol;
     private Double co2Ahorrado = 0.0;
+
+    // Default constructor for Spring binding/Mustache
+    public EmpresaDTO() {
+    }
 
     public EmpresaDTO(Empresa empresa) {
         this.id = empresa.getId();
@@ -36,40 +55,78 @@ public class EmpresaDTO {
         }
     }
 
+    // Getters and Setters
+
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNombreComercial() {
         return nombreComercial;
     }
 
+    public void setNombreComercial(String nombreComercial) {
+        this.nombreComercial = nombreComercial;
+    }
+
     public String getEmailContacto() {
         return emailContacto;
+    }
+
+    public void setEmailContacto(String emailContacto) {
+        this.emailContacto = emailContacto;
     }
 
     public String getCif() {
         return cif;
     }
 
+    public void setCif(String cif) {
+        this.cif = cif;
+    }
+
     public String getDireccion() {
         return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
     public String getTelefono() {
         return telefono;
     }
 
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
     public String getSectorIndustrial() {
         return sectorIndustrial;
+    }
+
+    public void setSectorIndustrial(String sectorIndustrial) {
+        this.sectorIndustrial = sectorIndustrial;
     }
 
     public String getDescripcion() {
         return descripcion;
     }
 
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
     public String getRol() {
         return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 
     public Double getCo2Ahorrado() {

@@ -6,23 +6,35 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import es.urjc.ecomostoles.backend.dto.OfertaResumen;
+import es.urjc.ecomostoles.backend.service.AcuerdoService;
+import es.urjc.ecomostoles.backend.service.EmpresaService;
 import es.urjc.ecomostoles.backend.service.OfertaService;
 import java.util.List;
-import es.urjc.ecomostoles.backend.dto.OfertaResumen;
 
 @Controller
 public class WebController {
 
-    private final OfertaService ofertaService;
+    private final OfertaService  ofertaService;
+    private final EmpresaService empresaService;
+    private final AcuerdoService acuerdoService;
 
-    public WebController(OfertaService ofertaService) {
+    public WebController(OfertaService ofertaService, EmpresaService empresaService, AcuerdoService acuerdoService) {
         this.ofertaService  = ofertaService;
+        this.empresaService = empresaService;
+        this.acuerdoService = acuerdoService;
     }
 
     @GetMapping("/")
     public String index(Model model) {
         List<OfertaResumen> recientes = ofertaService.obtenerRecientesActivas();
         model.addAttribute("ofertasRecientes", recientes);
+        
+        // Inyectamos métricas reales de la base de datos
+        model.addAttribute("totalEmpresas", empresaService.contarTodas());
+        model.addAttribute("totalOfertas",   ofertaService.contarTodas());
+        model.addAttribute("totalCo2",       acuerdoService.calcularCO2Ahorrado());
+        
         return "index";
     }
 

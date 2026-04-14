@@ -15,6 +15,9 @@ import es.urjc.ecomostoles.backend.dto.EmpresaDTO;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  * Controller for handling company profile view.
@@ -59,22 +62,25 @@ public class PerfilController {
     }
 
     @PostMapping("/perfil/guardar")
-    public String guardarPerfil(@RequestParam String nombreComercial,
-                                @RequestParam String telefono,
-                                @RequestParam String direccion,
-                                @RequestParam String sector,
-                                @RequestParam String descripcion,
+    public String guardarPerfil(@Valid @ModelAttribute("empresa") EmpresaDTO empresaDTO,
+                                BindingResult bindingResult,
                                 @RequestParam(required = false) MultipartFile logoFile,
+                                Model model,
                                 Principal principal) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("empresa", empresaDTO);
+            return "perfil_empresa";
+        }
 
         Empresa empresa = empresaService.buscarPorEmail(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
 
-        empresa.setNombreComercial(nombreComercial);
-        empresa.setTelefono(telefono);
-        empresa.setDireccion(direccion);
-        empresa.setSectorIndustrial(sector);
-        empresa.setDescripcion(descripcion);
+        empresa.setNombreComercial(empresaDTO.getNombreComercial());
+        empresa.setTelefono(empresaDTO.getTelefono());
+        empresa.setDireccion(empresaDTO.getDireccion());
+        empresa.setSectorIndustrial(empresaDTO.getSectorIndustrial());
+        empresa.setDescripcion(empresaDTO.getDescripcion());
 
         if (logoFile != null && !logoFile.isEmpty()) {
             try {

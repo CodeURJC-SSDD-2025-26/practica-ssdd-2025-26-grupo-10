@@ -21,22 +21,14 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import es.urjc.ecomostoles.backend.dto.EmpresaDTO;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import es.urjc.ecomostoles.backend.service.ReportService;
 import es.urjc.ecomostoles.backend.service.ConfiguracionService;
-import com.lowagie.text.Document;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.pdf.PdfPCell;
-import java.awt.Color;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
 
 /**
  * Administration panel controller.
@@ -57,17 +49,20 @@ public class AdminController {
     private final DemandaService       demandaService;
     private final AcuerdoService       acuerdoService;
     private final ConfiguracionService configuracionService;
+    private final ReportService       reportService;
 
     public AdminController(EmpresaService empresaService,
                            OfertaService ofertaService,
                            DemandaService demandaService,
                            AcuerdoService acuerdoService,
-                           ConfiguracionService configuracionService) {
+                           ConfiguracionService configuracionService,
+                           ReportService reportService) {
         this.empresaService = empresaService;
         this.ofertaService  = ofertaService;
         this.demandaService = demandaService;
         this.acuerdoService = acuerdoService;
         this.configuracionService = configuracionService;
+        this.reportService = reportService;
     }
 
     // ... (keep private methods)
@@ -105,7 +100,7 @@ public class AdminController {
     @GetMapping("/panel")
     public String panel(Model model, Principal principal, @RequestParam(required = false) String filtro) {
         addCommonAttributes(model, principal, filtro);
-        model.addAttribute("navPanel", true);
+        model.addAttribute("activePanel", true);
         model.addAttribute("filtroActual", filtro);
         return "admin_panel";
     }
@@ -114,7 +109,7 @@ public class AdminController {
     @GetMapping("/usuarios")
     public String usuarios(Model model, Principal principal, @RequestParam(required = false) String search) {
         addCommonAttributes(model, principal);
-        model.addAttribute("navUsuarios", true);
+        model.addAttribute("activeUsuarios", true);
         
         if (search != null && !search.isEmpty()) {
             model.addAttribute("empresas", empresaService.filtrarEmpresas(search));
@@ -126,11 +121,24 @@ public class AdminController {
         return "admin_usuarios";
     }
 
+    @PostMapping("/usuarios/{id}/eliminar")
+    public String eliminarUsuario(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        empresaService.eliminar(id);
+        redirectAttributes.addFlashAttribute("mensaje", "La empresa y todos sus datos han sido eliminados permanentemente por el administrador.");
+        return "redirect:/admin/usuarios";
+    }
+
+    @GetMapping("/usuarios/{id}/editar")
+    public String editarUsuario(@PathVariable Long id) {
+        // We reuse the existing profile view with ID path, which we recently refactored to support admin inspections/edits
+        return "redirect:/perfil/" + id;
+    }
+
     // ── GET /admin/ofertas ─────────────────────────────────────────────────────
     @GetMapping("/ofertas")
     public String ofertas(Model model, Principal principal, @RequestParam(required = false) String estado) {
         addCommonAttributes(model, principal);
-        model.addAttribute("navOfertas", true);
+        model.addAttribute("activeOfertas", true);
         
         if (estado != null && !estado.isEmpty()) {
             try {
@@ -151,7 +159,7 @@ public class AdminController {
     @GetMapping("/reportes")
     public String reportes(Model model, Principal principal) {
         addCommonAttributes(model, principal);
-        model.addAttribute("navReportes", true);
+        model.addAttribute("activeReportes", true);
 
         // Fetch companies and enrich with CO2 stats
         List<EmpresaDTO> empresas = empresaService.obtenerTodas().stream().map(e -> {
@@ -168,7 +176,7 @@ public class AdminController {
     @GetMapping("/configuracion")
     public String configuracion(Model model, Principal principal) {
         addCommonAttributes(model, principal);
-        model.addAttribute("navConfiguracion", true);
+        model.addAttribute("activeConfig", true);
 
         Map<String, Object> configMap = new HashMap<>();
         configMap.put("modoMantenimiento", "true".equals(configuracionService.obtenerValorConfiguracion("modoMantenimiento", "false")));
@@ -210,92 +218,29 @@ public class AdminController {
     }
 
     /**
-     * Exports a PDF report (Mock generation for REST flow compliance).
+     * Exports a PDF report of registered companies.
      */
     @GetMapping("/exportar/pdf")
-    public void exportarPdf(HttpServletResponse response) throws IOException {
-        response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", "attachment; filename=\"reporte_ecomostoles.pdf\"");
-
-        Document document = new Document(PageSize.A4);
-        PdfWriter.getInstance(document, response.getOutputStream());
-
-        document.open();
-
-        // Title
-        Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-        fontTitle.setSize(18);
-        fontTitle.setColor(new Color(25, 135, 84)); // EcoMostoles Green
-
-        Paragraph p = new Paragraph("Reporte Administrativo: EcoMostoles", fontTitle);
-        p.setAlignment(Paragraph.ALIGN_CENTER);
-        document.add(p);
-
-        document.add(new Paragraph(" ")); // Spacer
-
-        // Table
-        PdfPTable table = new PdfPTable(4);
-        table.setWidthPercentage(100f);
-        table.setWidths(new float[] {1.5f, 3.5f, 3.5f, 2.0f});
-        table.setSpacingBefore(10);
-
-        // Header Cell Helper
-        writeTableHeader(table);
-
-        // Data
-        List<Empresa> empresas = empresaService.obtenerTodas();
-        for (Empresa emp : empresas) {
-            table.addCell(String.valueOf(emp.getId()));
-            table.addCell(emp.getNombreComercial());
-            table.addCell(emp.getEmailContacto());
-            table.addCell(emp.getRol());
-        }
-
-        document.add(table);
-        document.close();
-    }
-
-    private void writeTableHeader(PdfPTable table) {
-        PdfPCell cell = new PdfPCell();
-        cell.setBackgroundColor(new Color(25, 135, 84));
-        cell.setPadding(5);
-
-        Font font = FontFactory.getFont(FontFactory.HELVETICA);
-        font.setColor(Color.WHITE);
-
-        cell.setPhrase(new com.lowagie.text.Phrase("ID", font));
-        table.addCell(cell);
-        cell.setPhrase(new com.lowagie.text.Phrase("Nombre", font));
-        table.addCell(cell);
-        cell.setPhrase(new com.lowagie.text.Phrase("Email", font));
-        table.addCell(cell);
-        cell.setPhrase(new com.lowagie.text.Phrase("Rol", font));
-        table.addCell(cell);
+    public ResponseEntity<byte[]> exportarPdf() {
+        byte[] pdf = reportService.generarPdfUsuarios(empresaService.obtenerTodas());
+        
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte_usuarios.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 
     /**
      * Exports all offers as a CSV file.
      */
     @GetMapping("/exportar/csv")
-    public void exportarCsv(HttpServletResponse response) throws IOException {
-        response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; filename=\"ofertas_reporte.csv\"");
-
-        PrintWriter writer = response.getWriter();
-        writer.println("ID;Titulo;Empresa;Cantidad;Estado");
-
-        ofertaService.obtenerTodas().forEach(o -> {
-            writer.println(String.format("%d;%s;%s;%s;%s",
-                    o.getId(),
-                    o.getTitulo(),
-                    o.getEmpresa() != null ? o.getEmpresa().getNombreComercial() : "N/A",
-                    o.getCantidad() != null ? o.getCantidad().toString() : "0",
-                    o.getEstado() != null ? o.getEstado().toString() : "N/A"
-            ));
-        });
-
-        writer.flush();
-        writer.close();
+    public ResponseEntity<byte[]> exportarCsv() {
+        byte[] csv = reportService.generarCsvOfertas(ofertaService.obtenerTodas());
+        
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte_ofertas.csv")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(csv);
     }
 
     @GetMapping("/ajustes")

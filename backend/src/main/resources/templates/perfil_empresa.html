@@ -38,7 +38,7 @@
                                 </div>
 
                                 <h5 class="fw-bold mb-1">{{#empresa}}{{nombreComercial}}{{/empresa}}</h5>
-                                <p class="text-muted small mb-4">{{#empresa}}{{sector}}{{/empresa}} • {{#empresa}}{{direccion}}{{/empresa}}</p>
+                                <p class="text-muted small mb-4">{{#empresa}}{{sectorIndustrial}}{{/empresa}} • {{#empresa}}{{direccion}}{{/empresa}}</p>
 
                                 {{^esVistaAdmin}}
                                 <label for="logoUpload" class="btn btn-outline-success rounded-pill w-100 mb-3">
@@ -77,13 +77,17 @@
                                 </div>
 
                                 <div class="row g-3 mb-3">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <label for="emailContacto" class="form-label fw-bold small text-uppercase text-secondary">Email de Contacto</label>
                                         <input type="email" class="form-control" id="emailContacto" value="{{#empresa}}{{emailContacto}}{{/empresa}}" disabled>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <label for="telefono" class="form-label fw-bold small text-uppercase text-secondary">Teléfono</label>
                                         <input type="tel" class="form-control" id="telefono" name="telefono" value="{{#empresa}}{{telefono}}{{/empresa}}" {{#esVistaAdmin}}disabled{{/esVistaAdmin}}>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="sectorIndustrial" class="form-label fw-bold small text-uppercase text-secondary">Sector Industrial</label>
+                                        <input type="text" class="form-control" id="sectorIndustrial" name="sectorIndustrial" value="{{#empresa}}{{sectorIndustrial}}{{/empresa}}" {{#esVistaAdmin}}disabled{{/esVistaAdmin}} required>
                                     </div>
                                 </div>
 

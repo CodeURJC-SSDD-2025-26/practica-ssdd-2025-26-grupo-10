@@ -61,6 +61,11 @@ public class DemandaService {
     public long contarPorEmpresa(Empresa empresa) {
         return demandaRepository.countByEmpresa(empresa);
     }
+    
+    @Transactional(readOnly = true)
+    public long contarActivasPorEmpresa(Empresa empresa) {
+        return demandaRepository.countByEmpresaAndEstado(empresa, es.urjc.ecomostoles.backend.model.EstadoDemanda.ACTIVA);
+    }
 
     /** Returns a demand by its ID, or empty if not found. */
     @Transactional(readOnly = true)

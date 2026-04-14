@@ -42,7 +42,7 @@ public class DashboardService {
             // ── Admin: Global KPIs ──────────────────────────────────────────
             stats.put("totalOfertas",  (int) ofertaService.contarTodas());
             stats.put("totalDemandas", (int) demandaService.contarTodas());
-            stats.put("totalAcuerdos", (int) acuerdoService.contarTodos());
+            stats.put("acuerdosActivos", (int) acuerdoService.contarTodos());
             
             stats.put("chartData", List.of(
                 (int) ofertaService.contarTodas(),
@@ -53,8 +53,8 @@ public class DashboardService {
             // ── Empresa: Personal KPIs ──────────────────────────────────────
             stats.put("totalOfertas",  (int) ofertaService.contarPorEmpresa(empresa));
             stats.put("totalDemandas", (int) demandaService.contarPorEmpresa(empresa));
-            stats.put("totalAcuerdos", (int) acuerdoService.contarPorEmpresa(empresa));
-            stats.put("materialReintroducido", acuerdoService.sumarMaterialReintroducido(empresa));
+            stats.put("acuerdosActivos", (int) acuerdoService.contarPorEmpresa(empresa));
+            stats.put("impactoCO2", acuerdoService.sumarMaterialReintroducido(empresa));
 
             // Smart Matching
             List<Demanda> recommendedDemandas = demandaService.obtenerSmartRecommendations(empresa);
