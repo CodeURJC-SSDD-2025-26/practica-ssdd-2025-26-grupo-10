@@ -14,14 +14,14 @@ import java.security.Principal;
 import java.util.Optional;
 
 /**
- * Controlador personalizado de errores.
+ * Custom error controller.
  *
- * Sustituye al DefaultErrorController de Spring Boot para garantizar que
- * error.html se renderice con todas las variables que el layout (header/footer)
- * necesita. Sin él, Mustache lanza una excepción al intentar resolver
- * {{empresa.nombreComercial}} → página en blanco.
+ * Replaces Spring Boot's DefaultErrorController to ensure that
+ * error.html is rendered with all variables required by the layout (header/footer).
+ * Without it, Mustache throws an exception when attempting to resolve
+ * {{empresa.nombreComercial}} → blank page.
  *
- * Proporciona mensajes amigables diferenciados por código HTTP:
+ * Provides user-friendly messages distinguished by HTTP code:
  *   403 → "No tienes permiso para realizar esta acción."
  *   404 → "La página que buscas no existe."
  *   500 → "Error interno del servidor."
@@ -38,7 +38,7 @@ public class CustomErrorController implements ErrorController {
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request, Model model, Principal principal) {
 
-        // ── 1. Código de estado HTTP ───────────────────────────────────────────
+        // ── 1. HTTP Status Code ──────────────────────────────────────────────
         Object statusObj = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         int status = 500;
         if (statusObj != null) {
@@ -46,7 +46,7 @@ public class CustomErrorController implements ErrorController {
         }
         model.addAttribute("status", status);
 
-        // ── 2. Título y mensaje según el código ────────────────────────────────
+        // ── 2. Title and message according to status code ────────────────────
         String errorTitle;
         String errorMessage;
 
@@ -71,15 +71,15 @@ public class CustomErrorController implements ErrorController {
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("is403", status == 403);
 
-        // ── 3. Empresa para el header (navbar) ─────────────────────────────────
-        // El partial {{> header}} requiere {{empresa.nombreComercial}} para el
-        // avatar y el dropdown. Si el usuario está autenticado lo cargamos;
-        // si no, creamos una empresa vacía para evitar NullPointerException en Mustache.
+        // ── 3. Company for the header (navbar) ───────────────────────────────
+        // The partial {{> header}} requires {{empresa.nombreComercial}} for the
+        // avatar and dropdown. If the user is authenticated, load it;
+        // if not, create an empty company to avoid NullPointerException in Mustache.
         if (principal != null) {
             Optional<Empresa> opt = empresaRepository.findByEmailContacto(principal.getName());
             model.addAttribute("empresa", opt.orElseGet(Empresa::new));
         } else {
-            // Usuario no autenticado: empresa vacía → Mustache renderiza cadenas vacías
+            // Unauthenticated user: empty company → Mustache renders empty strings
             model.addAttribute("empresa", new Empresa());
         }
 

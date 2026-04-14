@@ -10,6 +10,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
@@ -86,7 +88,8 @@ public class Demanda {
     /**
      * Status of the demand (e.g., Open, Closed).
      */
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    private EstadoDemanda estado;
 
     /**
      * Date and time when the demand was published.
@@ -122,7 +125,7 @@ public class Demanda {
      * @param empresa company
      */
     public Demanda(String titulo, String categoriaMaterial, String descripcion, Double cantidad, String unidad, 
-                   String urgencia, Double presupuestoMaximo, String zonaRecogida, String vigencia, String estado, 
+                   String urgencia, Double presupuestoMaximo, String zonaRecogida, String vigencia, EstadoDemanda estado, 
                    LocalDateTime fechaPublicacion, Empresa empresa) {
         this.titulo = titulo;
         this.categoriaMaterial = categoriaMaterial;
@@ -246,11 +249,11 @@ public class Demanda {
         this.vigencia = vigencia;
     }
 
-    public String getEstado() {
+    public EstadoDemanda getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoDemanda estado) {
         this.estado = estado;
     }
 

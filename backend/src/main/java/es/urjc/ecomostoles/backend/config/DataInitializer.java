@@ -4,11 +4,16 @@ import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.model.Oferta;
 import es.urjc.ecomostoles.backend.model.Demanda;
 import es.urjc.ecomostoles.backend.model.Acuerdo;
+import es.urjc.ecomostoles.backend.model.EstadoOferta;
+import es.urjc.ecomostoles.backend.model.EstadoDemanda;
+import es.urjc.ecomostoles.backend.model.EstadoAcuerdo;
 import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
 import es.urjc.ecomostoles.backend.repository.OfertaRepository;
 import es.urjc.ecomostoles.backend.repository.DemandaRepository;
 import es.urjc.ecomostoles.backend.repository.AcuerdoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,47 +43,61 @@ import java.util.Optional;
 @Component
 public class DataInitializer implements CommandLineRunner {
 
-    @Autowired private EmpresaRepository empresaRepository;
-    @Autowired private OfertaRepository  ofertaRepository;
-    @Autowired private DemandaRepository demandaRepository;
-    @Autowired private AcuerdoRepository acuerdoRepository;
-    @Autowired private PasswordEncoder   passwordEncoder;
+    private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
+
+    private final EmpresaRepository empresaRepository;
+    private final OfertaRepository  ofertaRepository;
+    private final DemandaRepository demandaRepository;
+    private final AcuerdoRepository acuerdoRepository;
+    private final PasswordEncoder   passwordEncoder;
+
+    public DataInitializer(EmpresaRepository empresaRepository,
+                           OfertaRepository ofertaRepository,
+                           DemandaRepository demandaRepository,
+                           AcuerdoRepository acuerdoRepository,
+                           PasswordEncoder passwordEncoder) {
+        this.empresaRepository = empresaRepository;
+        this.ofertaRepository  = ofertaRepository;
+        this.demandaRepository = demandaRepository;
+        this.acuerdoRepository = acuerdoRepository;
+        this.passwordEncoder   = passwordEncoder;
+    }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Lee un fichero de static/img/ y devuelve sus bytes (StreamUtils = Spring)
+    // Reads a file from static/img/ and returns its bytes (StreamUtils = Spring)
     // ─────────────────────────────────────────────────────────────────────────
     private byte[] cargarImagen(String nombreFichero) {
         String ruta = "static/img/" + nombreFichero;
         try {
             ClassPathResource res = new ClassPathResource(ruta);
             if (!res.exists()) {
-                System.err.println("⚠️  Imagen no encontrada: " + ruta);
+                log.warn("⚠️  Image not found: {}", ruta);
                 return null;
             }
             try (InputStream is = res.getInputStream()) {
                 byte[] bytes = StreamUtils.copyToByteArray(is);
-                System.out.println("   📷 '" + nombreFichero + "' → " + bytes.length + " bytes");
+                log.info("   📷 '{}' → {} bytes", nombreFichero, bytes.length);
                 return bytes;
             }
         } catch (IOException e) {
-            System.err.println("❌ Error leyendo '" + ruta + "': " + e.getMessage());
+            log.error("❌ Error reading '{}': {}", ruta, e.getMessage());
             return null;
         }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Crea o actualiza una empresa con la información dada
+    // Creates or updates a company with the given information
     // ─────────────────────────────────────────────────────────────────────────
     /**
-     * Crea o actualiza una empresa buscando POR CIF (campo único),
-     * no por email, para evitar DataIntegrityViolationException cuando
-     * la BD ya tiene un registro con ese CIF de una ejecución anterior.
+     * Creates or updates a company searching BY CIF (unique field),
+     * not by email, to avoid DataIntegrityViolationException when
+     * the DB already has a record with that CIF from a previous run.
      */
     private Empresa upsertEmpresa(String email, String nombre, String cif,
                                    String sector, String direccion, String tel,
                                    String descripcion, String logoFichero,
                                    List<String> roles) {
-        // ← Búsqueda por CIF (unique key real), no por email
+        // ← Search by CIF (real unique key), not by email
         Optional<Empresa> opt = empresaRepository.findByCif(cif);
         Empresa e = opt.orElseGet(Empresa::new);
 
@@ -101,9 +120,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("════════════════════════════════════════════");
-        System.out.println("  DataInitializer — Práctica 2 SSDD");
-        System.out.println("════════════════════════════════════════════");
+        log.info("════════════════════════════════════════════");
+        log.info("  DataInitializer — Práctica 2 SSDD");
+        log.info("════════════════════════════════════════════");
 
         // ══════════════════════════════════════════
         // 1. ADMIN del sistema
@@ -119,8 +138,7 @@ public class DataInitializer implements CommandLineRunner {
             "logo.jfif",
             List.of("ADMIN")          // ← rol ADMIN
         );
-        System.out.println("✅ ADMIN creado/actualizado → " + admin.getEmailContacto()
-                + " | password: 1234 | roles: " + admin.getRoles());
+        log.info("✅ ADMIN created/updated → {} | password: 1234 | roles: {}", admin.getEmailContacto(), admin.getRoles());
 
         // ══════════════════════════════════════════
         // 2. Empresa 1 — Metales del Sur (USER)
@@ -136,8 +154,7 @@ public class DataInitializer implements CommandLineRunner {
             "logo.jfif",
             List.of("EMPRESA")        // ← rol USER/EMPRESA
         );
-        System.out.println("✅ Empresa 1 → " + empresa1.getEmailContacto()
-                + " | roles: " + empresa1.getRoles());
+        log.info("✅ Company 1 → {} | roles: {}", empresa1.getEmailContacto(), empresa1.getRoles());
 
         // ══════════════════════════════════════════
         // 3. Empresa 2 — EcoSur Reciclajes (USER)
@@ -153,11 +170,10 @@ public class DataInitializer implements CommandLineRunner {
             "logo.jfif",
             List.of("EMPRESA")
         );
-        System.out.println("✅ Empresa 2 → " + empresa2.getEmailContacto()
-                + " | roles: " + empresa2.getRoles());
+        log.info("✅ Company 2 → {} | roles: {}", empresa2.getEmailContacto(), empresa2.getRoles());
 
         // ══════════════════════════════════════════
-        // 4. Ofertas de prueba con imágenes BLOB
+        // 4. Test offers with BLOB images
         // ══════════════════════════════════════════
         var ofertasEmpresa1 = ofertaRepository.findByEmpresa(empresa1);
 
@@ -174,15 +190,15 @@ public class DataInitializer implements CommandLineRunner {
                 "Metal", 120.0, "kg", 4.80, "Esta semana",
                 LocalDateTime.now().minusDays(2), "bobinas-cobre.webp");
 
-            System.out.println("✅ 2 ofertas creadas para Empresa 1.");
+            log.info("✅ 2 offers created for Company 1.");
         } else {
-            // Reparar imágenes vacías si existen
+            // Repair empty images if they exist
             ofertasEmpresa1.stream()
                 .filter(o -> o.getImagen() == null || o.getImagen().length == 0)
                 .forEach(o -> {
                     o.setImagen(cargarImagen("virutas.webp"));
                     ofertaRepository.save(o);
-                    System.out.println("   🔄 Imagen reparada en: " + o.getTitulo());
+                    log.info("   🔄 Image repaired in: {}", o.getTitulo());
                 });
         }
 
@@ -194,11 +210,11 @@ public class DataInitializer implements CommandLineRunner {
                 "Plástico", 80.0, "kg", 0.20, "Consultar",
                 LocalDateTime.now().minusDays(1), "retales-pvc.webp");
 
-            System.out.println("✅ 1 oferta creada para Empresa 2.");
+            log.info("✅ 1 offer created for Company 2.");
         }
 
         // ══════════════════════════════════════════
-        // 5. Demandas y Acuerdos de prueba 
+        // 5. Test Demands and Agreements 
         // ══════════════════════════════════════════
         if (demandaRepository.count() == 0) {
             // Demand 1: from empresa1 (Metalurgia) — visible to other Metalurgia companies via Smart Matching
@@ -210,7 +226,7 @@ public class DataInitializer implements CommandLineRunner {
             d.setUnidad("kg");
             d.setPresupuestoMaximo(1.50);
             d.setUrgencia("Alta");
-            d.setEstado("Activa");
+            d.setEstado(EstadoDemanda.ACTIVA);
             d.setFechaPublicacion(LocalDateTime.now().minusDays(1));
             d.setEmpresa(empresa1);
             demandaRepository.save(d);
@@ -223,7 +239,7 @@ public class DataInitializer implements CommandLineRunner {
             d2.setCantidad(150.0);
             d2.setUnidad("kg");
             d2.setPresupuestoMaximo(2.0);
-            d2.setEstado("Activa");
+            d2.setEstado(EstadoDemanda.ACTIVA);
             d2.setFechaPublicacion(LocalDateTime.now());
             d2.setEmpresa(empresa2);
             demandaRepository.save(d2);
@@ -243,8 +259,7 @@ public class DataInitializer implements CommandLineRunner {
             "logo.jfif",
             List.of("EMPRESA")
         );
-        System.out.println("✅ Empresa 3 → " + empresa3.getEmailContacto()
-                + " | roles: " + empresa3.getRoles());
+        log.info("✅ Company 3 → {} | roles: {}", empresa3.getEmailContacto(), empresa3.getRoles());
 
         if (demandaRepository.findByEmpresa(empresa3).isEmpty()) {
             Demanda dPaco = new Demanda();
@@ -254,11 +269,11 @@ public class DataInitializer implements CommandLineRunner {
             dPaco.setCantidad(1500.0);
             dPaco.setUnidad("kg");
             dPaco.setPresupuestoMaximo(1.20);
-            dPaco.setEstado("Activa");
+            dPaco.setEstado(EstadoDemanda.ACTIVA);
             dPaco.setFechaPublicacion(LocalDateTime.now());
             dPaco.setEmpresa(empresa3);
             demandaRepository.save(dPaco);
-            System.out.println("✅ Demand created for Empresa 3 (Paco).");
+            log.info("✅ Demand created for Empresa 3 (Paco).");
         }
 
         if (acuerdoRepository.count() == 0) {
@@ -267,20 +282,20 @@ public class DataInitializer implements CommandLineRunner {
             a.setCantidad(500.0);
             a.setUnidad("kg");
             a.setPrecioAcordado(1200.0);
-            a.setEstado("Completado");
+            a.setEstado(EstadoAcuerdo.COMPLETADO);
             a.setFechaRegistro(LocalDateTime.now().minusDays(2));
             a.setEmpresaOrigen(empresa1);
             a.setEmpresaDestino(empresa2);
             acuerdoRepository.save(a);
         }
 
-        System.out.println("════════════════════════════════════════════");
-        System.out.println("  Sample credentials (password: 1234 for all):");
-        System.out.println("  ADMIN  → admin@ecomostoles.es");
-        System.out.println("  USER 1 → contacto@metalesdelsur.es");
-        System.out.println("  USER 2 → reciclajes@ecosur.es");
-        System.out.println("  USER 3 → paco@reciclajes.es");
-        System.out.println("════════════════════════════════════════════");
+        log.info("════════════════════════════════════════════");
+        log.info("  Sample credentials (password: 1234 for all):");
+        log.info("  ADMIN  → admin@ecomostoles.es");
+        log.info("  USER 1 → contacto@metalesdelsur.es");
+        log.info("  USER 2 → reciclajes@ecosur.es");
+        log.info("  USER 3 → paco@reciclajes.es");
+        log.info("════════════════════════════════════════════");
     }
 
     private void crearOferta(Empresa empresa, String titulo, String descripcion,
@@ -295,7 +310,7 @@ public class DataInitializer implements CommandLineRunner {
         o.setUnidad(unidad);
         o.setPrecio(precio);
         o.setDisponibilidad(disponibilidad);
-        o.setEstado("Activa");
+        o.setEstado(EstadoOferta.ACTIVA);
         o.setFechaPublicacion(fecha);
         o.setEmpresa(empresa);
         o.setImagen(cargarImagen(imagenFichero));

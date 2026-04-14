@@ -1,5 +1,7 @@
 package es.urjc.ecomostoles.backend;
 
+import es.urjc.ecomostoles.backend.model.EstadoOferta;
+
 import java.security.Principal;
 import java.util.List;
 import es.urjc.ecomostoles.backend.model.Empresa;
@@ -36,7 +38,7 @@ public class WebController {
 
         // ── Últimas 3 ofertas activas (null-safe en fecha) ─────────────────────
         List<Oferta> recientes = ofertaRepository.findAll().stream()
-                .filter(o -> "Activa".equals(o.getEstado()))
+                .filter(o -> EstadoOferta.ACTIVA.equals(o.getEstado()))
                 .filter(o -> o.getFechaPublicacion() != null)   // evita NPE en sorted
                 .sorted((a, b) -> b.getFechaPublicacion().compareTo(a.getFechaPublicacion()))
                 .limit(3)

@@ -1,10 +1,10 @@
 package es.urjc.ecomostoles.backend.controller;
 
 import es.urjc.ecomostoles.backend.model.Empresa;
-import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
-import es.urjc.ecomostoles.backend.repository.OfertaRepository;
-import es.urjc.ecomostoles.backend.repository.DemandaRepository;
-import es.urjc.ecomostoles.backend.repository.AcuerdoRepository;
+import es.urjc.ecomostoles.backend.service.EmpresaService;
+import es.urjc.ecomostoles.backend.service.OfertaService;
+import es.urjc.ecomostoles.backend.service.DemandaService;
+import es.urjc.ecomostoles.backend.service.AcuerdoService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,12 +15,12 @@ import java.security.Principal;
 import java.util.Optional;
 
 /**
- * Controlador del panel de administración.
+ * Administration panel controller.
  *
- * Todas las rutas están bajo /admin/** y protegidas por @PreAuthorize("hasRole('ADMIN')")
- * (refuerzo adicional sobre la regla de SecurityConfig).
+ * All paths are under /admin/** and protected by @PreAuthorize("hasRole('ADMIN')")
+ * (additional reinforcement over the SecurityConfig rule).
  *
- * Vistas usadas (ya existentes):
+ * Used views (existing):
  *   admin_panel, admin_usuarios, admin_ofertas, admin_reportes, admin_configuracion
  */
 @Controller
@@ -28,35 +28,35 @@ import java.util.Optional;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    private final EmpresaRepository  empresaRepository;
-    private final OfertaRepository   ofertaRepository;
-    private final DemandaRepository  demandaRepository;
-    private final AcuerdoRepository  acuerdoRepository;
+    private final EmpresaService  empresaService;
+    private final OfertaService   ofertaService;
+    private final DemandaService  demandaService;
+    private final AcuerdoService  acuerdoService;
 
-    public AdminController(EmpresaRepository empresaRepository,
-                           OfertaRepository ofertaRepository,
-                           DemandaRepository demandaRepository,
-                           AcuerdoRepository acuerdoRepository) {
-        this.empresaRepository = empresaRepository;
-        this.ofertaRepository  = ofertaRepository;
-        this.demandaRepository = demandaRepository;
-        this.acuerdoRepository = acuerdoRepository;
+    public AdminController(EmpresaService empresaService,
+                           OfertaService ofertaService,
+                           DemandaService demandaService,
+                           AcuerdoService acuerdoService) {
+        this.empresaService = empresaService;
+        this.ofertaService  = ofertaService;
+        this.demandaService = demandaService;
+        this.acuerdoService = acuerdoService;
     }
 
-    // ── Helper: pone empresa + KPIs globales en el modelo ─────────────────────
+    // ── Helper: puts company + global KPIs in the model ─────────────────────
     private void addCommonAttributes(Model model, Principal principal) {
         if (principal != null) {
-            Optional<Empresa> opt = empresaRepository.findByEmailContacto(principal.getName());
+            Optional<Empresa> opt = empresaService.buscarPorEmail(principal.getName());
             opt.ifPresent(e -> model.addAttribute("empresa", e));
         }
-        // KPIs globales de la plataforma
-        model.addAttribute("totalUsuarios",  empresaRepository.count());
-        model.addAttribute("totalOfertas",   ofertaRepository.count());
-        model.addAttribute("totalDemandas",  demandaRepository.count());
-        model.addAttribute("totalAcuerdos",  acuerdoRepository.count());
+        // Global platform KPIs
+        model.addAttribute("totalUsuarios",  empresaService.contarTodas());
+        model.addAttribute("totalOfertas",   ofertaService.contarTodas());
+        model.addAttribute("totalDemandas",  demandaService.contarTodas());
+        model.addAttribute("totalAcuerdos",  acuerdoService.contarTodos());
     }
 
-    // ── GET /admin  →  redirige a /admin/panel ─────────────────────────────────
+    // ── GET /admin  →  redirects to /admin/panel ───────────────────────────
     @GetMapping
     public String adminRoot() {
         return "redirect:/admin/panel";
@@ -75,8 +75,8 @@ public class AdminController {
     public String usuarios(Model model, Principal principal) {
         addCommonAttributes(model, principal);
         model.addAttribute("navUsuarios", true);
-        // Lista completa de empresas registradas para la tabla
-        model.addAttribute("empresas", empresaRepository.findAll());
+        // Complete list of registered companies for the table
+        model.addAttribute("empresas", empresaService.obtenerTodas());
         return "admin_usuarios";
     }
 
@@ -85,7 +85,7 @@ public class AdminController {
     public String ofertas(Model model, Principal principal) {
         addCommonAttributes(model, principal);
         model.addAttribute("navOfertas", true);
-        model.addAttribute("todasOfertas", ofertaRepository.findAll());
+        model.addAttribute("todasOfertas", ofertaService.obtenerTodas());
         return "admin_ofertas";
     }
 

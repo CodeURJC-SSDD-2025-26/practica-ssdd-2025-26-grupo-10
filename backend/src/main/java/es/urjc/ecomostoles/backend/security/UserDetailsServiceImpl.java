@@ -2,7 +2,9 @@ package es.urjc.ecomostoles.backend.security;
 
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,40 +14,44 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Implementación de UserDetailsService que carga un usuario desde la entidad Empresa.
+ * UserDetailsService implementation that loads a user from the Empresa entity.
  *
- * Los roles se leen directamente de Empresa.roles (campo @ElementCollection).
- * Si la lista está vacía o es nula, se asigna EMPRESA por defecto.
+ * Roles are read directly from Empresa.roles (@ElementCollection field).
+ * If the list is empty or null, EMPRESA is assigned by default.
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private EmpresaRepository empresaRepository;
+    private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+
+    private final EmpresaRepository empresaRepository;
+
+    public UserDetailsServiceImpl(EmpresaRepository empresaRepository) {
+        this.empresaRepository = empresaRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        System.out.println("🔍 Intentando loguear al usuario: " + email);
+        log.info("🔍 Attempting to log in user: {}", email);
 
         Empresa empresa = empresaRepository.findByEmailContacto(email)
                 .orElseThrow(() -> {
-                    System.err.println("❌ Usuario no encontrado en la BBDD: " + email);
+                    log.error("❌ User not found in DB: {}", email);
                     return new UsernameNotFoundException("Empresa no encontrada: " + email);
                 });
 
-        // Leer roles de la entidad; si no tiene, asignar EMPRESA por defecto
+        // Read roles from the entity; if none, assign EMPRESA by default
         List<String> roles = empresa.getRoles();
         String[] rolesArray = (roles != null && !roles.isEmpty())
                 ? roles.toArray(new String[0])
                 : new String[]{"EMPRESA"};
 
-        System.out.println("✅ Sesión iniciada: " + empresa.getNombreComercial()
-                + " | Roles: " + List.of(rolesArray));
+        log.info("✅ Session started: {} | Roles: {}", empresa.getNombreComercial(), List.of(rolesArray));
 
         return User.builder()
                 .username(empresa.getEmailContacto())
                 .password(empresa.getPassword())
-                .roles(rolesArray)   // Spring añade automáticamente el prefijo ROLE_
+                .roles(rolesArray)   // Spring automatically adds the ROLE_ prefix
                 .build();
     }
 }

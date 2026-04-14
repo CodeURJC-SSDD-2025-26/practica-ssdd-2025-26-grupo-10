@@ -1,5 +1,7 @@
 package es.urjc.ecomostoles.backend.controller;
 
+import es.urjc.ecomostoles.backend.model.EstadoOferta;
+
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.model.Oferta;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
@@ -119,7 +121,7 @@ public class MisOfertasController {
         if (empresaOpt.isPresent()) {
             oferta.setEmpresa(empresaOpt.get());
             oferta.setFechaPublicacion(LocalDateTime.now());
-            oferta.setEstado("Activa");
+            oferta.setEstado(EstadoOferta.ACTIVA);
 
             if (imagenFile != null && !imagenFile.isEmpty()) {
                 try {

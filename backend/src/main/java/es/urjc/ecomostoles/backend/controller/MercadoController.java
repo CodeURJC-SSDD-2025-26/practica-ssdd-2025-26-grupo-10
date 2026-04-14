@@ -1,5 +1,7 @@
 package es.urjc.ecomostoles.backend.controller;
 
+import es.urjc.ecomostoles.backend.model.EstadoOferta;
+
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.model.Oferta;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
@@ -43,7 +45,7 @@ public class MercadoController {
             @RequestParam(required = false) String poligono) {
 
         List<Oferta> ofertasFiltradas = ofertaService.obtenerTodas().stream()
-                .filter(o -> "Activa".equalsIgnoreCase(o.getEstado()))
+                .filter(o -> EstadoOferta.ACTIVA.equals(o.getEstado()))
                 .collect(Collectors.toList());
 
         if (keyword != null && !keyword.isBlank()) {

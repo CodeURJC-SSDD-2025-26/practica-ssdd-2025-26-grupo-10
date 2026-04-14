@@ -93,7 +93,7 @@ public class PdfExportController {
             
             addTableCell(table, "Empresa Proveedora:", originName, labelFont, normalFont);
             addTableCell(table, "Empresa Receptora:", destName, labelFont, normalFont);
-            addTableCell(table, "Estado del Acuerdo:", agreement.getEstado(), labelFont, normalFont);
+            addTableCell(table, "Estado del Acuerdo:", agreement.getEstado().name(), labelFont, normalFont);
             addTableCell(table, "Fecha de Registro:", agreement.getFechaRegistro().toString(), labelFont, normalFont);
 
             document.add(table);

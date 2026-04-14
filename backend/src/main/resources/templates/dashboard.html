@@ -36,7 +36,7 @@
                         <li class="nav-item"><a class="nav-link text-dark link-mis-acuerdos" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
                         <li class="nav-item"><a class="nav-link text-dark link-crear-acuerdo" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
                         <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">{{totalMensajes}}</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">{{#totalMensajes}}{{totalMensajes}}{{/totalMensajes}}{{^totalMensajes}}0{{/totalMensajes}}</span></a></li>
                     </ul>
                 </div>
             </nav>
@@ -159,8 +159,8 @@
                     <div class="col-lg-8">
                         <div class="card h-100 shadow-sm card-hover border-top border-success border-4">
                             <div class="card-header bg-transparent border-bottom-0 py-3 d-flex justify-content-between align-items-center">
-                                <h5 class="fw-bold text-dark mb-0"><i class="fas fa-chart-bar text-success me-2"></i>Residuos Reutilizados por Mes</h5>
-                                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">2024</span>
+                                <h5 class="fw-bold text-dark mb-0"><i class="fas fa-chart-bar text-success me-2"></i>Resumen de Actividad</h5>
+                                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">Actual</span>
                             </div>
                             <div class="card-body p-4 d-flex flex-column">
                                 <div class="flex-grow-1 position-relative chart-wrapper">
@@ -288,9 +288,9 @@
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                labels: ['Ofertas', 'Demandas', 'Acuerdos'],
                 datasets: [{
-                    label: 'Kg Reutilizados',
+                    label: 'Total',
                     data: [{{#chartData}}{{.}},{{/chartData}}],
                     backgroundColor: 'rgba(25, 135, 84, 0.6)',
                     borderColor: 'rgba(25, 135, 84, 1)',

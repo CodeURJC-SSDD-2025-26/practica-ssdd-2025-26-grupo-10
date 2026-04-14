@@ -18,15 +18,15 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * Configuración de Spring Security con RBAC (Role-Based Access Control).
+ * Spring Security configuration with RBAC (Role-Based Access Control).
  *
- *  Roles del sistema:
- *   - ROLE_ADMIN   → administrador de la plataforma → redirige a /admin/panel
- *   - ROLE_EMPRESA → empresa registrada (usuario normal) → redirige a /dashboard
+ * System roles:
+ *  - ROLE_ADMIN   → platform administrator → redirects to /admin/panel
+ *  - ROLE_EMPRESA → registered company (normal user) → redirects to /dashboard
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity   // habilita @PreAuthorize en métodos de controlador
+@EnableMethodSecurity   // enables @PreAuthorize on controller methods
 public class SecurityConfig {
 
     @Bean
@@ -35,7 +35,7 @@ public class SecurityConfig {
     }
 
     /**
-     * Handler de éxito de login que redirige según el rol:
+     * Login success handler that redirects according to role:
      *   ROLE_ADMIN   → /admin/panel
      *   ROLE_EMPRESA → /dashboard
      */
@@ -43,10 +43,10 @@ public class SecurityConfig {
     public AuthenticationSuccessHandler roleBasedSuccessHandler() {
         return (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            String targetUrl = "/dashboard";            // destino por defecto (empresa)
+            String targetUrl = "/dashboard";            // default destination (company)
             for (GrantedAuthority authority : authorities) {
                 if ("ROLE_ADMIN".equals(authority.getAuthority())) {
-                    targetUrl = "/admin/panel";         // admin → panel de control admin
+                    targetUrl = "/admin/panel";         // admin → admin control panel
                     break;
                 }
             }
@@ -59,7 +59,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
 
-                // ── Recursos y páginas públicas ──────────────────────────────
+                // ── Public resources and pages ──────────────────────────────
                 .requestMatchers(
                     "/", "/index.html",
                     "/login", "/registro",
@@ -70,10 +70,10 @@ public class SecurityConfig {
                     "/css/**", "/js/**", "/img/**", "/images/**"
                 ).permitAll()
 
-                // ── Panel de administración: solo ADMIN ──────────────────────
+                // ── Administration panel: ADMIN only ──────────────────────
                 .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
 
-                // ── Creación y edición: cualquier usuario autenticado ────────
+                // ── Creation and edition: any authenticated user ────────
                 .requestMatchers(
                     "/oferta/nueva", "/oferta/editar/**",
                     "/demanda/nueva", "/demanda/editar/**",
@@ -81,12 +81,12 @@ public class SecurityConfig {
                     "/mensajes/**", "/acuerdos/**", "/acuerdo/**"
                 ).authenticated()
 
-                // ── El resto requiere autenticación ─────────────────────────
+                // ── The rest requires authentication ─────────────────────────
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .successHandler(roleBasedSuccessHandler())  // ← redirige por rol
+                .successHandler(roleBasedSuccessHandler())  // ← redirect by role
                 .permitAll()
             )
             .logout(logout -> logout

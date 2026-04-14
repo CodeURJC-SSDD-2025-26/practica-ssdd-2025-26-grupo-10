@@ -1,5 +1,7 @@
 package es.urjc.ecomostoles.backend.controller;
 
+import es.urjc.ecomostoles.backend.model.EstadoDemanda;
+
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -12,14 +14,14 @@ import es.urjc.ecomostoles.backend.service.AcuerdoService;
 import es.urjc.ecomostoles.backend.service.DemandaService;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 import es.urjc.ecomostoles.backend.service.OfertaService;
-import es.urjc.ecomostoles.backend.repository.MensajeRepository;
+import es.urjc.ecomostoles.backend.service.MensajeService;
 
 /**
  * Controller for handling the Dashboard view.
  *
  * Follows Controller > Service > Repository architecture:
  * delegates all domain data access to the four services.
- * MensajeRepository remains direct (a MensajeService can be added in a future iteration).
+ * Now uses MensajeService instead of direct repository access.
  *
  * - ADMIN: ve KPIs globales de toda la plataforma.
  * - EMPRESA: ve KPIs propios (sus ofertas, demandas, acuerdos, mensajes).
@@ -31,18 +33,18 @@ public class DashboardController {
     private final OfertaService    ofertaService;
     private final DemandaService   demandaService;
     private final AcuerdoService   acuerdoService;
-    private final MensajeRepository mensajeRepository;
+    private final MensajeService   mensajeService;
 
     public DashboardController(EmpresaService empresaService,
                                OfertaService ofertaService,
                                DemandaService demandaService,
                                AcuerdoService acuerdoService,
-                               MensajeRepository mensajeRepository) {
+                               MensajeService mensajeService) {
         this.empresaService    = empresaService;
         this.ofertaService     = ofertaService;
         this.demandaService    = demandaService;
         this.acuerdoService    = acuerdoService;
-        this.mensajeRepository = mensajeRepository;
+        this.mensajeService    = mensajeService;
     }
 
     @GetMapping("/dashboard")
@@ -63,17 +65,17 @@ public class DashboardController {
                 model.addAttribute("totalOfertas",  (int) ofertaService.contarTodas());
                 model.addAttribute("totalDemandas", (int) demandaService.contarTodas());
                 model.addAttribute("totalAcuerdos", (int) acuerdoService.contarTodos());
-                model.addAttribute("totalMensajes",  (int) mensajeRepository.count());
+
             } else {
                 // ── Empresa normal: KPIs propios ────────────────────────────
                 model.addAttribute("totalOfertas",  ofertaService.obtenerPorEmpresa(empresa).size());
                 model.addAttribute("totalDemandas", demandaService.obtenerPorEmpresa(empresa).size());
                 model.addAttribute("totalAcuerdos", acuerdoService.obtenerPorEmpresa(empresa).size());
-                model.addAttribute("totalMensajes",  mensajeRepository.findByDestinatario(empresa).size());
+
 
                 // --- SMART MATCHING ALGORITHM ---
                 List<Demanda> recommendedDemandas = demandaService.obtenerTodas().stream()
-                        .filter(d -> "Activa".equalsIgnoreCase(d.getEstado()))
+                        .filter(d -> EstadoDemanda.ACTIVA.equals(d.getEstado()))
                         .filter(d -> d.getEmpresa() != null && !d.getEmpresa().getId().equals(empresa.getId()))
                         .filter(d -> d.getEmpresa().getSectorIndustrial() != null &&
                                      d.getEmpresa().getSectorIndustrial().equalsIgnoreCase(empresa.getSectorIndustrial()))
@@ -85,8 +87,21 @@ public class DashboardController {
             }
 
             // --- DYNAMIC CHART DATA GENERATION ---
-            List<Integer> monthlyStats = List.of(400, 650, 520, 780, 610, 890, 750, 430, 920, 1050, 870, 1200);
-            model.addAttribute("chartData", monthlyStats);
+            List<Integer> activityStats;
+            if (esAdmin) {
+                activityStats = List.of(
+                    (int) ofertaService.contarTodas(),
+                    (int) demandaService.contarTodas(),
+                    (int) acuerdoService.contarTodos()
+                );
+            } else {
+                activityStats = List.of(
+                    ofertaService.obtenerPorEmpresa(empresa).size(),
+                    demandaService.obtenerPorEmpresa(empresa).size(),
+                    acuerdoService.obtenerPorEmpresa(empresa).size()
+                );
+            }
+            model.addAttribute("chartData", activityStats);
 
             return "dashboard";
         }

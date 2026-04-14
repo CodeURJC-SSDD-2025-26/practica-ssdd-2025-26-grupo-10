@@ -10,6 +10,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.Locale;
@@ -75,7 +77,8 @@ public class Oferta {
     /**
      * Current state of the offer (e.g., active, ended).
      */
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    private EstadoOferta estado;
 
     /**
      * Date and time when the offer was published.
@@ -117,7 +120,7 @@ public class Oferta {
      * @param empresa           associated company
      */
     public Oferta(String titulo, String descripcion, String tipoResiduo, Double cantidad, String unidad,
-                  Double precio, String disponibilidad, String estado, LocalDateTime fechaPublicacion,
+                  Double precio, String disponibilidad, EstadoOferta estado, LocalDateTime fechaPublicacion,
                   byte[] imagen, Empresa empresa) {
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -228,11 +231,11 @@ public class Oferta {
         this.disponibilidad = disponibilidad;
     }
 
-    public String getEstado() {
+    public EstadoOferta getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoOferta estado) {
         this.estado = estado;
     }
 

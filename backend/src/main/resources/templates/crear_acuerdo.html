@@ -31,7 +31,7 @@
                         <li class="nav-item"><a class="nav-link text-dark" href="/acuerdos"><i class="fas fa-handshake me-2"></i> Mis Acuerdos</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/acuerdo/nuevo"><i class="fas fa-plus-circle me-2"></i> Registrar Acuerdo</a></li>
                         <li class="nav-item mt-3"><small class="text-muted text-uppercase fw-bold px-3">Comunicación</small></li>
-                        <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">2</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="/mensajes"><i class="fas fa-envelope me-2"></i> Mensajes <span class="badge bg-danger rounded-pill ms-1">{{#totalMensajes}}{{totalMensajes}}{{/totalMensajes}}{{^totalMensajes}}0{{/totalMensajes}}</span></a></li>
                     </ul>
                 </div>
             </nav>
@@ -47,10 +47,9 @@
                 <div class="card card-modern border-top-success">
                     <div class="card-body p-4">
                         {{#errores}}
-                        <div class="alert alert-danger d-flex align-items-center" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <span>{{.}}</span>
-                        </div>
+                          <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle"></i> {{defaultMessage}}
+                          </div>
                         {{/errores}}
                         <form action="/acuerdo/nuevo" method="POST" class="needs-validation" novalidate="">
                             {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
@@ -66,13 +65,18 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-secondary fw-bold small text-uppercase">Empresa Destino <span class="text-danger">*</span></label>
-                                    <input type="text" name="empresaDestino" class="form-control" placeholder="Ej. Reciclajes Paco" required="">
+                                    <select name="empresaDestinoId" class="form-select" required="">
+                                        <option value="" selected="" disabled="">Seleccionar empresa...</option>
+                                        {{#todasEmpresas}}
+                                        <option value="{{id}}">{{nombreComercial}}</option>
+                                        {{/todasEmpresas}}
+                                    </select>
                                 </div>
 
                                 <div class="col-md-5">
                                     <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <input type="number" name="cantidadAcordada" class="form-control" placeholder="Ej. 500" min="0" required="">
+                                        <input type="number" name="cantidad" class="form-control" placeholder="Ej. 500" min="0" required="">
                                         <span class="input-group-text">kg/uds</span>
                                     </div>
                                 </div>

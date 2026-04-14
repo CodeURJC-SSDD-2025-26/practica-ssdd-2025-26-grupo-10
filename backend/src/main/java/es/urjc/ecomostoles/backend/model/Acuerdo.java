@@ -10,6 +10,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -61,8 +63,9 @@ public class Acuerdo {
     /**
      * Current status of the agreement (e.g., Pending, Completed).
      */
-    @NotBlank(message = "El estado del acuerdo es obligatorio")
-    private String estado;
+    @NotNull(message = "El estado del acuerdo es obligatorio")
+    @Enumerated(EnumType.STRING)
+    private EstadoAcuerdo estado;
 
     /**
      * Additional notes regarding the agreement.
@@ -123,7 +126,7 @@ public class Acuerdo {
      * @param demanda               associated demand (can be null)
      */
     public Acuerdo(String materialIntercambiado, Double cantidad, String unidad, Double precioAcordado,
-                   LocalDate fechaRecogida, String estado, String notas, LocalDateTime fechaRegistro,
+                   LocalDate fechaRecogida, EstadoAcuerdo estado, String notas, LocalDateTime fechaRegistro,
                    Empresa empresaOrigen, Empresa empresaDestino, Oferta oferta, Demanda demanda) {
         this.materialIntercambiado = materialIntercambiado;
         this.cantidad = cantidad;
@@ -189,11 +192,11 @@ public class Acuerdo {
         this.fechaRecogida = fechaRecogida;
     }
 
-    public String getEstado() {
+    public EstadoAcuerdo getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoAcuerdo estado) {
         this.estado = estado;
     }
 

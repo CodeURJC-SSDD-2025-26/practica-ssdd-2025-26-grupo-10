@@ -1,5 +1,7 @@
 package es.urjc.ecomostoles.backend.controller;
 
+import es.urjc.ecomostoles.backend.model.EstadoDemanda;
+
 import es.urjc.ecomostoles.backend.model.Demanda;
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.service.DemandaService;
@@ -111,7 +113,7 @@ public class MisDemandasController {
         if (empresaOpt.isPresent()) {
             demanda.setEmpresa(empresaOpt.get());
             demanda.setFechaPublicacion(LocalDateTime.now());
-            demanda.setEstado("Activa");
+            demanda.setEstado(EstadoDemanda.ACTIVA);
             demandaService.guardar(demanda);
             return "redirect:/dashboard/mis-demandas";
         }
