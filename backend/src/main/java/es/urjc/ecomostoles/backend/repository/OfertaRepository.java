@@ -17,4 +17,8 @@ public interface OfertaRepository extends JpaRepository<Oferta, Long> {
      * @return a list of offers belonging to the given company
      */
     List<Oferta> findByEmpresa(Empresa empresa);
+
+    List<Oferta> findTop3ByEstadoOrderByFechaPublicacionDesc(es.urjc.ecomostoles.backend.model.EstadoOferta estado);
+
+    List<Oferta> findByEstado(es.urjc.ecomostoles.backend.model.EstadoOferta estado);
 }

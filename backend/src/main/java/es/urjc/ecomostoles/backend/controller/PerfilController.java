@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Controller for handling company profile view.
@@ -20,6 +22,8 @@ import es.urjc.ecomostoles.backend.service.EmpresaService;
 @Controller
 public class PerfilController {
 
+    private static final Logger log = LoggerFactory.getLogger(PerfilController.class);
+
     private final EmpresaService empresaService;
 
     public PerfilController(EmpresaService empresaService) {
@@ -28,17 +32,14 @@ public class PerfilController {
 
     @GetMapping("/perfil")
     public String mostrarPerfil(Model model, @RequestParam(required = false) boolean exito, Principal principal) {
-        Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
+        Empresa empresa = empresaService.buscarPorEmail(principal.getName())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Recurso no encontrado"));
 
-        if (empresaOpt.isPresent()) {
-            model.addAttribute("empresa", empresaOpt.get());
-            if (exito) {
-                model.addAttribute("exito", true);
-            }
-            return "perfil_empresa";
+        model.addAttribute("empresa", empresa);
+        if (exito) {
+            model.addAttribute("exito", true);
         }
-
-        return "redirect:/";
+        return "perfil_empresa";
     }
 
     @PostMapping("/perfil/guardar")
@@ -50,28 +51,24 @@ public class PerfilController {
                                 @RequestParam(required = false) MultipartFile logoFile,
                                 Principal principal) {
 
-        Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
+        Empresa empresa = empresaService.buscarPorEmail(principal.getName())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Recurso no encontrado"));
 
-        if (empresaOpt.isPresent()) {
-            Empresa empresa = empresaOpt.get();
-            empresa.setNombreComercial(nombreComercial);
-            empresa.setTelefono(telefono);
-            empresa.setDireccion(direccion);
-            empresa.setSectorIndustrial(sector);
-            empresa.setDescripcion(descripcion);
+        empresa.setNombreComercial(nombreComercial);
+        empresa.setTelefono(telefono);
+        empresa.setDireccion(direccion);
+        empresa.setSectorIndustrial(sector);
+        empresa.setDescripcion(descripcion);
 
-            if (logoFile != null && !logoFile.isEmpty()) {
-                try {
-                    empresa.setLogo(logoFile.getBytes());
-                } catch (Exception e) {
-                    System.err.println("⚠️ Error al leer el logo: " + e.getMessage());
-                }
+        if (logoFile != null && !logoFile.isEmpty()) {
+            try {
+                empresa.setLogo(logoFile.getBytes());
+            } catch (Exception e) {
+                log.error("⚠️ Error al leer el logo", e);
             }
-
-            empresaService.guardar(empresa);
-            return "redirect:/perfil?exito=true";
         }
 
-        return "redirect:/perfil?error=true";
+        empresaService.guardar(empresa);
+        return "redirect:/perfil?exito=true";
     }
 }

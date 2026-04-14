@@ -43,20 +43,16 @@ public class MensajeController {
     @GetMapping("/mensajes")
     public String mostrarMensajes(Model model, Principal principal) {
         // Obteniendo empresa activa desde sesión real
-        Optional<Empresa> empresaOpt = empresaRepository.findByEmailContacto(principal.getName());
+        Empresa empresa = empresaRepository.findByEmailContacto(principal.getName())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Recurso no encontrado"));
 
-        if (empresaOpt.isPresent()) {
-            Empresa empresa = empresaOpt.get();
-            model.addAttribute("empresa", empresa);
+        model.addAttribute("empresa", empresa);
 
-            // Recupera lista de mensajes donde la empresa actual es la destinataria
-            List<Mensaje> misMensajes = mensajeRepository.findByDestinatario(empresa);
-            model.addAttribute("mensajes", misMensajes);
+        // Recupera lista de mensajes donde la empresa actual es la destinataria
+        List<Mensaje> misMensajes = mensajeRepository.findByDestinatario(empresa);
+        model.addAttribute("mensajes", misMensajes);
 
-            return "mensajes";
-        }
-
-        return "redirect:/";
+        return "mensajes";
     }
 
     /**
@@ -64,24 +60,22 @@ public class MensajeController {
      */
     @PostMapping("/mensajes/enviar/{ofertaId}")
     public String enviarMensajeOferta(@PathVariable Long ofertaId, @RequestParam String contenido, Principal principal) {
-        Optional<Oferta> ofertaOpt = ofertaRepository.findById(ofertaId);
-        Optional<Empresa> remitenteOpt = empresaRepository.findByEmailContacto(principal.getName());
+        Oferta oferta = ofertaRepository.findById(ofertaId)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Recurso no encontrado"));
+        Empresa remitente = empresaRepository.findByEmailContacto(principal.getName())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Recurso no encontrado"));
 
-        if (ofertaOpt.isPresent() && remitenteOpt.isPresent()) {
-            Oferta oferta = ofertaOpt.get();
-            Empresa remitente = remitenteOpt.get();
-            Empresa destinatario = oferta.getEmpresa();
+        Empresa destinatario = oferta.getEmpresa();
 
-            Mensaje nuevoMensaje = new Mensaje();
-            nuevoMensaje.setAsunto("Re: " + oferta.getTitulo());
-            nuevoMensaje.setContenido(contenido);
-            nuevoMensaje.setRemitente(remitente);
-            nuevoMensaje.setDestinatario(destinatario);
-            nuevoMensaje.setFechaEnvio(LocalDateTime.now());
-            nuevoMensaje.setLeido(false);
+        Mensaje nuevoMensaje = new Mensaje();
+        nuevoMensaje.setAsunto("Re: " + oferta.getTitulo());
+        nuevoMensaje.setContenido(contenido);
+        nuevoMensaje.setRemitente(remitente);
+        nuevoMensaje.setDestinatario(destinatario);
+        nuevoMensaje.setFechaEnvio(LocalDateTime.now());
+        nuevoMensaje.setLeido(false);
 
-            mensajeRepository.save(nuevoMensaje);
-        }
+        mensajeRepository.save(nuevoMensaje);
 
         return "redirect:/mensajes";
     }

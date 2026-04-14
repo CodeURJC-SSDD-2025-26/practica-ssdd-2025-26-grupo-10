@@ -27,6 +27,24 @@ public class DemandaService {
         return demandaRepository.findAll();
     }
 
+    /** Returns all demands filtered by state */
+    public List<Demanda> obtenerPorEstado(es.urjc.ecomostoles.backend.model.EstadoDemanda estado) {
+        return demandaRepository.findByEstado(estado);
+    }
+
+    /** Returns top 3 smart recommendations matching company sector directly from DB */
+    public List<Demanda> obtenerSmartRecommendations(Empresa empresa) {
+        if (empresa.getSectorIndustrial() == null) {
+            return java.util.Collections.emptyList();
+        }
+        return demandaRepository.findSmartRecommendations(
+            es.urjc.ecomostoles.backend.model.EstadoDemanda.ACTIVA,
+            empresa.getId(),
+            empresa.getSectorIndustrial(),
+            org.springframework.data.domain.PageRequest.of(0, 3)
+        );
+    }
+
     /** Returns all demands belonging to a specific company. */
     public List<Demanda> obtenerPorEmpresa(Empresa empresa) {
         return demandaRepository.findByEmpresa(empresa);

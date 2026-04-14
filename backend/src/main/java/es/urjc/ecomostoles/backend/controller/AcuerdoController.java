@@ -106,40 +106,9 @@ public class AcuerdoController {
             return "crear_acuerdo";
         }
 
-        // ── Processing: all fields are valid ────────────────────────────────────
-        Optional<Oferta> ofertaOpt = ofertaService.buscarPorId(ofertaId);
-
-        if (ofertaOpt.isPresent() && acuerdo != null) {
-            Oferta oferta = ofertaOpt.get();
-
-            // Business logic: mark the offer as Reserved
-            oferta.setEstado(EstadoOferta.RESERVADA);
-            ofertaService.guardar(oferta);
-
-            Optional<Empresa> destinoOpt = Optional.empty();
-            if (empresaDestinoId != null) {
-                destinoOpt = empresaService.buscarPorId(empresaDestinoId);
-            }
-
-            acuerdo.setOferta(oferta);
-            acuerdo.setMaterialIntercambiado(oferta.getTitulo() != null ? oferta.getTitulo() : "Material Acordado");
-            acuerdo.setUnidad("kg/uds");
-
-            if (destinoOpt.isPresent()) {
-                acuerdo.setEmpresaDestino(destinoOpt.get());
-            }
-
-            acuerdo.setFechaRegistro(LocalDateTime.now());
-
-            Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
-            empresaOpt.ifPresent(acuerdo::setEmpresaOrigen);
-
-            // Fallback: if destination company is not found, use origin company
-            if (destinoOpt.isEmpty() && empresaOpt.isPresent()) {
-                acuerdo.setEmpresaDestino(empresaOpt.get());
-            }
-
-            acuerdoService.guardar(acuerdo);
+        // ── Lógica de Negocio delegada al Service ────────────────────────────────────
+        if (ofertaId != null && acuerdo != null) {
+            acuerdoService.registrarNuevoAcuerdo(acuerdo, principal.getName(), ofertaId, empresaDestinoId);
         }
 
         return "redirect:/acuerdos";

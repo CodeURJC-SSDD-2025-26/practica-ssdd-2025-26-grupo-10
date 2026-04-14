@@ -88,7 +88,7 @@
                             </div>
                             
                             <div class="card-footer bg-transparent border-top-0 d-flex gap-2 p-3">
-                                <a href="/oferta/editar/{{id}}" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
+                                <a href="/ofertas/{{id}}/editar" class="btn btn-sm btn-outline-primary rounded-pill flex-fill">
                                     <i class="fas fa-edit me-1"></i> Editar
                                 </a>
                                 <form action="/dashboard/mis-ofertas/eliminar/{{id}}" method="POST" class="flex-fill mb-0">
@@ -121,5 +121,6 @@
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="/js/particles-init.js"></script>
     <script src="/js/card-spotlight.js"></script>
+    {{> footer}}
 </body>
 </html>

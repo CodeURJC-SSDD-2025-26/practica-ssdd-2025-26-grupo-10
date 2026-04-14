@@ -2,8 +2,13 @@ package es.urjc.ecomostoles.backend.service;
 
 import es.urjc.ecomostoles.backend.model.Acuerdo;
 import es.urjc.ecomostoles.backend.model.Empresa;
+import es.urjc.ecomostoles.backend.model.Oferta;
+import es.urjc.ecomostoles.backend.model.EstadoOferta;
 import es.urjc.ecomostoles.backend.repository.AcuerdoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,9 +22,13 @@ import java.util.Optional;
 public class AcuerdoService {
 
     private final AcuerdoRepository acuerdoRepository;
+    private final EmpresaService empresaService;
+    private final OfertaService ofertaService;
 
-    public AcuerdoService(AcuerdoRepository acuerdoRepository) {
+    public AcuerdoService(AcuerdoRepository acuerdoRepository, EmpresaService empresaService, OfertaService ofertaService) {
         this.acuerdoRepository = acuerdoRepository;
+        this.empresaService = empresaService;
+        this.ofertaService = ofertaService;
     }
 
     /** Returns all agreements in the system. */
@@ -63,5 +72,34 @@ public class AcuerdoService {
     /** Returns the total count of agreements. */
     public long contarTodos() {
         return acuerdoRepository.count();
+    }
+
+    /** Registra un nuevo acuerdo y reserva la oferta, todo de forma transaccional. */
+    @Transactional
+    public void registrarNuevoAcuerdo(Acuerdo acuerdo, String emailUsuario, Long ofertaId, Long empresaDestinoId) {
+        Oferta oferta = ofertaService.buscarPorId(ofertaId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Oferta no encontrada"));
+
+        Empresa origen = empresaService.buscarPorEmail(emailUsuario)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        // Business logic: mark the offer as Reserved
+        oferta.setEstado(EstadoOferta.RESERVADA);
+        ofertaService.guardar(oferta);
+
+        acuerdo.setOferta(oferta);
+        acuerdo.setMaterialIntercambiado(oferta.getTitulo() != null ? oferta.getTitulo() : "Material Acordado");
+        acuerdo.setUnidad("kg/uds");
+        acuerdo.setFechaRegistro(java.time.LocalDateTime.now());
+        acuerdo.setEmpresaOrigen(origen);
+
+        if (empresaDestinoId != null) {
+            Empresa destino = empresaService.buscarPorId(empresaDestinoId).orElse(origen);
+            acuerdo.setEmpresaDestino(destino);
+        } else {
+            acuerdo.setEmpresaDestino(origen);
+        }
+
+        acuerdoRepository.save(acuerdo);
     }
 }

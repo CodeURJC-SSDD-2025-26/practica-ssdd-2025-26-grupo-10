@@ -52,7 +52,7 @@
                             <span>{{defaultMessage}}</span>
                         </div>
                         {{/errores}}
-                        <form action="/oferta/editar/{{oferta.id}}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate="">
+                        <form action="/ofertas/{{oferta.id}}/editar" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate="">
                             {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                             <div class="row g-3">
                                 <div class="col-md-8">
@@ -120,5 +120,6 @@
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="/js/particles-init.js"></script>
     <script src="/js/card-spotlight.js"></script>
+    {{> footer}}
 </body>
 </html>

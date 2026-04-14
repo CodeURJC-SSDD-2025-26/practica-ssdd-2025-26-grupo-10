@@ -33,13 +33,20 @@ public class PdfExportController {
 
     @GetMapping("/acuerdo/{id}/pdf")
     public ResponseEntity<byte[]> generateAgreementPdf(@PathVariable Long id, Principal principal) {
-        Optional<Acuerdo> agreementOpt = acuerdoRepository.findById(id);
-        if (agreementOpt.isEmpty() || principal == null) {
+        if (principal == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Acuerdo agreement = agreementOpt.get();
-        // (En un entorno real aquí se verificaría que el principal.getName() es el origen o el destino)
+        Acuerdo agreement = acuerdoRepository.findById(id)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
+
+        String userEmail = principal.getName();
+        boolean isOwner = (agreement.getEmpresaOrigen() != null && agreement.getEmpresaOrigen().getEmailContacto().equals(userEmail)) ||
+                          (agreement.getEmpresaDestino() != null && agreement.getEmpresaDestino().getEmailContacto().equals(userEmail));
+        
+        if (!isOwner) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para acceder a este recurso");
+        }
         
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             Document document = new Document(PageSize.A4, 36, 36, 54, 36);

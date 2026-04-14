@@ -25,6 +25,7 @@ public class Empresa {
     @Column(unique = true)
     private String emailContacto;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private String password;
     private String direccion;
     private String telefono;

@@ -69,7 +69,7 @@
                             </div>
                             <div class="card-footer bg-transparent border-top-0 pt-0 pb-3">
                                 <div class="d-flex gap-2">
-                                    <a href="/demanda/editar/{{id}}" class="btn btn-outline-primary w-50 rounded-pill">
+                                    <a href="/demandas/{{id}}/editar" class="btn btn-outline-primary w-50 rounded-pill">
                                         <i class="fas fa-edit me-1"></i> Editar
                                     </a>
                                     <form action="/dashboard/mis-demandas/eliminar/{{id}}" method="POST" class="w-50 mb-0">
@@ -103,5 +103,6 @@
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="/js/particles-init.js"></script>
     <script src="/js/card-spotlight.js"></script>
+    {{> footer}}
 </body>
 </html>

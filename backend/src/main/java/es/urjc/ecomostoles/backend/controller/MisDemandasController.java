@@ -133,7 +133,7 @@ public class MisDemandasController {
     // -------------------------------------------------------------------------
     // GET /demanda/editar/{id} — Show edit form (ownership check)
     // -------------------------------------------------------------------------
-    @GetMapping("/demanda/editar/{id}")
+    @GetMapping("/demandas/{id}/editar")
     public String mostrarFormularioEditarDemanda(@PathVariable Long id, Model model, Principal principal) {
         Demanda demanda = verificarPropietarioDemanda(id, principal);
         empresaService.buscarPorEmail(principal.getName())
@@ -145,7 +145,7 @@ public class MisDemandasController {
     // -------------------------------------------------------------------------
     // POST /demanda/editar/{id} — Save changes with Bean Validation
     // -------------------------------------------------------------------------
-    @PostMapping("/demanda/editar/{id}")
+    @PostMapping("/demandas/{id}/editar")
     public String guardarEdicionDemanda(@PathVariable Long id,
                                         @Valid @ModelAttribute("demanda") Demanda demandaForm,
                                         BindingResult result,

@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class WebController {
 
     private final EmpresaRepository empresaRepository;
-    private final OfertaRepository ofertaRepository;
+    private final es.urjc.ecomostoles.backend.service.OfertaService ofertaService;
 
-    public WebController(EmpresaRepository empresaRepository, OfertaRepository ofertaRepository) {
+    public WebController(EmpresaRepository empresaRepository, es.urjc.ecomostoles.backend.service.OfertaService ofertaService) {
         this.empresaRepository = empresaRepository;
-        this.ofertaRepository  = ofertaRepository;
+        this.ofertaService  = ofertaService;
     }
 
     @GetMapping("/")
@@ -37,12 +37,7 @@ public class WebController {
         }
 
         // ── Últimas 3 ofertas activas (null-safe en fecha) ─────────────────────
-        List<Oferta> recientes = ofertaRepository.findAll().stream()
-                .filter(o -> EstadoOferta.ACTIVA.equals(o.getEstado()))
-                .filter(o -> o.getFechaPublicacion() != null)   // evita NPE en sorted
-                .sorted((a, b) -> b.getFechaPublicacion().compareTo(a.getFechaPublicacion()))
-                .limit(3)
-                .toList();
+        List<Oferta> recientes = ofertaService.obtenerRecientesActivas();
         model.addAttribute("ofertasRecientes", recientes);
 
         return "index";

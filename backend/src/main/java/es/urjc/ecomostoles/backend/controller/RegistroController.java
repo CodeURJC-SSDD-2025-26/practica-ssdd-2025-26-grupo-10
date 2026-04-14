@@ -10,15 +10,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class RegistroController {
 
-    @Autowired
-    private EmpresaRepository empresaRepository;
+    private static final Logger log = LoggerFactory.getLogger(RegistroController.class);
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final EmpresaRepository empresaRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    public RegistroController(EmpresaRepository empresaRepository, PasswordEncoder passwordEncoder) {
+        this.empresaRepository = empresaRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @GetMapping("/registro")
     public String mostrarFormularioRegistro() {
@@ -58,7 +65,7 @@ public class RegistroController {
             try {
                 empresa.setLogo(logoFile.getBytes());
             } catch (Exception e) {
-                System.err.println("⚠️ Error al leer el logo: " + e.getMessage());
+                log.error("⚠️ Error al leer el logo", e);
             }
         }
 

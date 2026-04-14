@@ -74,13 +74,7 @@ public class DashboardController {
 
 
                 // --- SMART MATCHING ALGORITHM ---
-                List<Demanda> recommendedDemandas = demandaService.obtenerTodas().stream()
-                        .filter(d -> EstadoDemanda.ACTIVA.equals(d.getEstado()))
-                        .filter(d -> d.getEmpresa() != null && !d.getEmpresa().getId().equals(empresa.getId()))
-                        .filter(d -> d.getEmpresa().getSectorIndustrial() != null &&
-                                     d.getEmpresa().getSectorIndustrial().equalsIgnoreCase(empresa.getSectorIndustrial()))
-                        .limit(3)
-                        .toList();
+                List<Demanda> recommendedDemandas = demandaService.obtenerSmartRecommendations(empresa);
 
                 model.addAttribute("smartRecommendations", recommendedDemandas);
                 model.addAttribute("hasRecommendations", !recommendedDemandas.isEmpty());

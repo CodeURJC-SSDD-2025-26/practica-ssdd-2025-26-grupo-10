@@ -27,6 +27,16 @@ public class OfertaService {
         return ofertaRepository.findAll();
     }
 
+    /** Returns all offers filtered by state */
+    public List<Oferta> obtenerPorEstado(es.urjc.ecomostoles.backend.model.EstadoOferta estado) {
+        return ofertaRepository.findByEstado(estado);
+    }
+
+    /** Returns top 3 recent active offers directly from DB */
+    public List<Oferta> obtenerRecientesActivas() {
+        return ofertaRepository.findTop3ByEstadoOrderByFechaPublicacionDesc(es.urjc.ecomostoles.backend.model.EstadoOferta.ACTIVA);
+    }
+
     /** Returns all offers belonging to a specific company. */
     public List<Oferta> obtenerPorEmpresa(Empresa empresa) {
         return ofertaRepository.findByEmpresa(empresa);

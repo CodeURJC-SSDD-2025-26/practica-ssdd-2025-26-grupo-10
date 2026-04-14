@@ -23,6 +23,8 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages offers for the authenticated user (CRUD + ownership logic).
@@ -36,6 +38,8 @@ import java.util.Optional;
  */
 @Controller
 public class MisOfertasController {
+
+    private static final Logger log = LoggerFactory.getLogger(MisOfertasController.class);
 
     private final EmpresaService empresaService;
     private final OfertaService ofertaService;
@@ -127,7 +131,7 @@ public class MisOfertasController {
                 try {
                     oferta.setImagen(imagenFile.getBytes());
                 } catch (Exception e) {
-                    System.err.println("Error reading image: " + e.getMessage());
+                    log.error("Error reading image", e);
                 }
             }
 
@@ -150,7 +154,7 @@ public class MisOfertasController {
     // -------------------------------------------------------------------------
     // GET /oferta/editar/{id} — Show edit form (ownership check)
     // -------------------------------------------------------------------------
-    @GetMapping("/oferta/editar/{id}")
+    @GetMapping("/ofertas/{id}/editar")
     public String mostrarFormularioEditarOferta(@PathVariable Long id,
                                                 Model model,
                                                 Principal principal) {
@@ -164,7 +168,7 @@ public class MisOfertasController {
     // -------------------------------------------------------------------------
     // POST /oferta/editar/{id} — Save changes with Bean Validation
     // -------------------------------------------------------------------------
-    @PostMapping("/oferta/editar/{id}")
+    @PostMapping("/ofertas/{id}/editar")
     public String guardarCambiosOferta(@PathVariable Long id,
                                        @Valid @ModelAttribute("oferta") Oferta ofertaForm,
                                        BindingResult result,
@@ -192,7 +196,7 @@ public class MisOfertasController {
             try {
                 oferta.setImagen(imagenFile.getBytes());
             } catch (Exception e) {
-                System.err.println("Error reading updated image: " + e.getMessage());
+                log.error("Error reading updated image", e);
             }
         }
 
