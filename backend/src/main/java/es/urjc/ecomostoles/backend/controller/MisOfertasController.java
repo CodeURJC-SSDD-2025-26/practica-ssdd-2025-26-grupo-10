@@ -186,20 +186,6 @@ public class MisOfertasController {
         opcionesTipo.add(new SelectOption("espacio", "Espacio", "espacio".equals(oferta.getTipoResiduo())));
         model.addAttribute("opcionesTipo", opcionesTipo);
 
-        // Dynamic Select Options for units
-        List<SelectOption> opcionesUnidad = new ArrayList<>();
-        for (String u : List.of("kg", "uds", "L", "t", "m2")) {
-            opcionesUnidad.add(new SelectOption(u, u, u.equals(oferta.getUnidad())));
-        }
-        model.addAttribute("opcionesUnidad", opcionesUnidad);
-
-        // Dynamic Select Options for availability
-        List<SelectOption> opcionesDisp = new ArrayList<>();
-        opcionesDisp.add(new SelectOption("inmediata", "Inmediata", "inmediata".equals(oferta.getDisponibilidad())));
-        opcionesDisp.add(new SelectOption("1semana", "En 1 semana", "1semana".equals(oferta.getDisponibilidad())));
-        opcionesDisp.add(new SelectOption("consultar", "Consultar", "consultar".equals(oferta.getDisponibilidad())));
-        model.addAttribute("opcionesDisp", opcionesDisp);
-
         // Dynamic Select Options for status
         List<SelectOption> opcionesEstado = new ArrayList<>();
         opcionesEstado.add(new SelectOption("ACTIVA", "ACTIVA", "ACTIVA".equals(oferta.getEstado().toString())));

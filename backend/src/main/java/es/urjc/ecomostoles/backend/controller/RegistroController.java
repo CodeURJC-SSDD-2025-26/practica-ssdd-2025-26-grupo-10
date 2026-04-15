@@ -41,8 +41,11 @@ public class RegistroController {
         String categoriasStr = configuracionService.obtenerValorAuto("listaCategorias");
         List<String> sectores = Arrays.asList(categoriasStr.split("\\r?\\n"));
 
+        String poligonosStr = configuracionService.obtenerValorConfiguracion("listaPoligonos", "Polígono Regordoño\nPolígono Las Nieves\nMóstoles Tecnológico\nOtro (Especificar)");
+        List<String> poligonos = Arrays.asList(poligonosStr.split("\\r?\\n"));
+
         model.addAttribute("sectores", sectores);
-        model.addAttribute("poligonos", List.of("Polígono Industrial Regordoño", "Polígono Industrial Las Nieves", "Polígono Arroyomolinos", "Polígono Industrial Norte", "Móstoles Tecnológico"));
+        model.addAttribute("poligonos", poligonos);
     }
 
     @PostMapping("/registro")
@@ -68,7 +71,15 @@ public class RegistroController {
             Empresa nuevaEmpresa = new Empresa();
             nuevaEmpresa.setNombreComercial(dto.getNombreComercial());
             nuevaEmpresa.setCif(dto.getCif());
-            nuevaEmpresa.setDireccion(dto.getDireccion());
+            
+            // Handle dynamic "Other" location logic
+            String direccionFinal = dto.getDireccion();
+            if (("Otro".equals(direccionFinal) || "Otro (Especificar)".equals(direccionFinal)) 
+                    && dto.getDireccionOtro() != null && !dto.getDireccionOtro().isBlank()) {
+                direccionFinal = dto.getDireccionOtro();
+            }
+            nuevaEmpresa.setDireccion(direccionFinal);
+            
             nuevaEmpresa.setSectorIndustrial(dto.getSector());
             nuevaEmpresa.setEmailContacto(dto.getEmailContacto());
 

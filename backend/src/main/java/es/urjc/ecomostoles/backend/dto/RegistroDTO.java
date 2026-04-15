@@ -35,6 +35,8 @@ public class RegistroDTO {
 
     private MultipartFile logoFile;
 
+    private String direccionOtro;
+
     public RegistroDTO() {}
 
     // Method for cross-field validation
@@ -68,4 +70,7 @@ public class RegistroDTO {
 
     public MultipartFile getLogoFile() { return logoFile; }
     public void setLogoFile(MultipartFile logoFile) { this.logoFile = logoFile; }
+
+    public String getDireccionOtro() { return direccionOtro; }
+    public void setDireccionOtro(String direccionOtro) { this.direccionOtro = direccionOtro; }
 }

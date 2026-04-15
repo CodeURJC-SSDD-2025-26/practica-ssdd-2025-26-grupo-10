@@ -13,8 +13,12 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import es.urjc.ecomostoles.backend.component.SustainabilityEngine;
+import es.urjc.ecomostoles.backend.exception.SelfAgreementException;
 
 @Service
 @Transactional
@@ -106,6 +110,10 @@ public class AcuerdoService {
         Empresa origen = empresaService.buscarPorEmail(emailUsuario)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
+        if (origen.getId().equals(empresaDestinoId)) {
+            throw new SelfAgreementException("El origen y el destino no pueden ser la misma entidad.");
+        }
+
         oferta.setEstado(EstadoOferta.RESERVADA);
         ofertaService.guardar(oferta);
 
@@ -161,7 +169,8 @@ public class AcuerdoService {
 
         if (totalTonsCO2 == 0) return "0";
   
-        java.text.DecimalFormat df = new java.text.DecimalFormat("#,###.###");
+        DecimalFormat df = (DecimalFormat) NumberFormat.getInstance(Locale.of("es", "ES"));
+        df.applyPattern("#,###.###");
         return df.format(totalTonsCO2);
     }
 }

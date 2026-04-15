@@ -14,6 +14,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Represents a transaction agreement (Acuerdo) between two companies.
@@ -246,5 +248,11 @@ public class Acuerdo {
 
     public void setDemanda(Demanda demanda) {
         this.demanda = demanda;
+    }
+
+    public String getPrecioAcordadoFormateado() {
+        if (this.precioAcordado == null) return "0,00 €";
+        NumberFormat formatoMoneda = NumberFormat.getCurrencyInstance(Locale.of("es", "ES"));
+        return formatoMoneda.format(this.precioAcordado);
     }
 }

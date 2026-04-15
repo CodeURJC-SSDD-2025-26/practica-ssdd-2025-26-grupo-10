@@ -49,7 +49,7 @@
                                     <td class="text-secondary">{{#fechaRecogida}}{{fechaRecogida}}{{/fechaRecogida}}{{^fechaRecogida}}&mdash;{{/fechaRecogida}}</td>
                                     <td><span class="fw-bold text-dark">{{#empresaDestino}}{{nombreComercial}}{{/empresaDestino}}{{^empresaDestino}}Sin empresa{{/empresaDestino}}</span></td>
                                     <td class="text-secondary">{{#oferta}}{{titulo}}{{/oferta}}{{^oferta}}{{materialIntercambiado}}{{/oferta}}</td>
-                                    <td class="fw-bold text-success">{{#precioAcordado}}{{precioAcordado}} €{{/precioAcordado}}{{^precioAcordado}}&mdash;{{/precioAcordado}}</td>
+                                    <td class="fw-bold text-success">{{#precioAcordado}}{{precioAcordadoFormateado}}{{/precioAcordado}}{{^precioAcordado}}&mdash;{{/precioAcordado}}</td>
                                     <td><span class="badge bg-primary rounded-pill">{{#estado}}{{estado}}{{/estado}}{{^estado}}Sin estado{{/estado}}</span></td>
                                     <td class="text-end pe-4">
                                         <div class="d-flex gap-1 justify-content-end">

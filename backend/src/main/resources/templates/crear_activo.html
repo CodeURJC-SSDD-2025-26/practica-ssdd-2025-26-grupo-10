@@ -61,11 +61,9 @@
                                 <div class="input-group">
                                     <input type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Ej. 500" min="0" value="{{#oferta.cantidad}}{{oferta.cantidad}}{{/oferta.cantidad}}" required>
                                     <select class="form-select" id="unidadMedida" name="unidad" required>
-                                        <option value="kg" selected>kg</option>
-                                        <option value="uds">unidades</option>
-                                        <option value="L">litros</option>
-                                        <option value="t">toneladas</option>
-                                        <option value="m2">m²</option>
+                                        {{#listaUnidades}}
+                                        <option value="{{.}}">{{.}}</option>
+                                        {{/listaUnidades}}
                                     </select>
                                 </div>
                                 <div class="invalid-feedback">Indica la cantidad.</div>
@@ -78,9 +76,9 @@
                             <div class="col-md-4">
                                 <label for="disponibilidad" class="form-label text-secondary fw-bold small text-uppercase">Disponibilidad</label>
                                 <select class="form-select" id="disponibilidad" name="disponibilidad">
-                                    <option value="inmediata">Inmediata</option>
-                                    <option value="1semana">En 1 semana</option>
-                                    <option value="consultar">Consultar</option>
+                                    {{#listaDisponibilidades}}
+                                    <option value="{{.}}">{{.}}</option>
+                                    {{/listaDisponibilidades}}
                                 </select>
                             </div>
 

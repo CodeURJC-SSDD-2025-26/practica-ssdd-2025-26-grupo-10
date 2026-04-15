@@ -47,10 +47,10 @@
                                 <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="number" name="cantidad" class="form-control" id="cantidad" value="{{oferta.cantidad}}" min="0" required="">
-                                    <select class="form-select" id="unidad" name="unidad" required>
-                                        {{#opcionesUnidad}}
-                                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                                        {{/opcionesUnidad}}
+                                    <select class="form-select" id="unidad" name="unidad" data-selected="{{oferta.unidad}}" required>
+                                        {{#listaUnidades}}
+                                        <option value="{{.}}">{{.}}</option>
+                                        {{/listaUnidades}}
                                     </select>
                                 </div>
                             </div>
@@ -60,10 +60,10 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="disponibilidad" class="form-label text-secondary fw-bold small text-uppercase">Disponibilidad</label>
-                                <select class="form-select" id="disponibilidad" name="disponibilidad">
-                                    {{#opcionesDisp}}
-                                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                                    {{/opcionesDisp}}
+                                <select class="form-select" id="disponibilidad" name="disponibilidad" data-selected="{{oferta.disponibilidad}}">
+                                    {{#listaDisponibilidades}}
+                                    <option value="{{.}}">{{.}}</option>
+                                    {{/listaDisponibilidades}}
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -98,4 +98,13 @@
     </div>
 </div>
 
+<script>
+    // Pre-select values for dynamic lists
+    document.querySelectorAll('select[data-selected]').forEach(select => {
+        const selectedValue = select.getAttribute('data-selected');
+        if (selectedValue) {
+            select.value = selectedValue;
+        }
+    });
+</script>
 {{> footer}}

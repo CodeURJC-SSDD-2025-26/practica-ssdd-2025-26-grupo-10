@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
 import es.urjc.ecomostoles.backend.dto.SelectOption;
+import es.urjc.ecomostoles.backend.exception.SelfAgreementException;
 
 /**
  * Controller responsible for displaying and registering new commercial agreements.
@@ -104,18 +105,6 @@ public class AcuerdoController {
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
         Empresa empresaLogueada = empresaOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
-        // Business Validation: Prevent self-agreement
-        if (empresaDestinoId != null && empresaLogueada.getId().equals(empresaDestinoId)) {
-            model.addAttribute("error", "No puedes crear un acuerdo comercial contigo mismo.");
-            model.addAttribute("empresa", empresaLogueada);
-            model.addAttribute("ofertas", ofertaService.obtenerPorEmpresa(empresaLogueada));
-            List<Empresa> todasEmpresas = empresaService.obtenerTodas();
-            todasEmpresas.removeIf(e -> e.getId().equals(empresaLogueada.getId()));
-            model.addAttribute("todasEmpresas", todasEmpresas);
-            model.addAttribute("acuerdo", acuerdo);
-            return "crear_acuerdo";
-        }
-
         if (result.hasErrors()) {
             model.addAttribute("empresa", empresaLogueada);
             model.addAttribute("ofertas", ofertaService.obtenerPorEmpresa(empresaLogueada));
@@ -130,8 +119,12 @@ public class AcuerdoController {
         }
 
         // ── Lógica de Negocio delegada al Service ────────────────────────────────────
-        if (ofertaId != null && acuerdo != null) {
-            acuerdoService.registrarNuevoAcuerdo(acuerdo, principal.getName(), ofertaId, empresaDestinoId);
+        try {
+            if (ofertaId != null && acuerdo != null) {
+                acuerdoService.registrarNuevoAcuerdo(acuerdo, principal.getName(), ofertaId, empresaDestinoId);
+            }
+        } catch (SelfAgreementException e) {
+            return "redirect:/mercado?error=AutoAcuerdo";
         }
 
         return "redirect:/acuerdos";
