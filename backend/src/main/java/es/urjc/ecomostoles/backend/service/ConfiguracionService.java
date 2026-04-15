@@ -12,6 +12,11 @@ public class ConfiguracionService {
 
     private final ConfiguracionRepository configuracionRepository;
 
+    // Standard Platform Defaults
+    public static final String DEFAULT_EMAIL    = "soporte@ecomostoles.com";
+    public static final String DEFAULT_COMISION = "2.5";
+    public static final String DEFAULT_CATEGORIAS = "Residuo Metálico\nResiduo Peligroso\nResiduo Madera\nReciclaje Plástico\nResiduo Electrónico (RAEE)\nResiduo Textil\nExcedentes de Obra";
+
     public ConfiguracionService(ConfiguracionRepository configuracionRepository) {
         this.configuracionRepository = configuracionRepository;
     }
@@ -29,5 +34,20 @@ public class ConfiguracionService {
         return configuracionRepository.findByClave(clave)
                 .map(ConfiguracionGlobal::getValor)
                 .orElse(valorPorDefecto);
+    }
+
+    /**
+     * Specialized lookup that automatically injects the official platform defaults
+     * if the key is missing from the database.
+     */
+    public String obtenerValorAuto(String clave) {
+        String fallback = switch (clave) {
+            case "emailContacto" -> DEFAULT_EMAIL;
+            case "comisionPlataforma" -> DEFAULT_COMISION;
+            case "listaCategorias" -> DEFAULT_CATEGORIAS;
+            case "modoMantenimiento" -> "false";
+            default -> "";
+        };
+        return obtenerValorConfiguracion(clave, fallback);
     }
 }

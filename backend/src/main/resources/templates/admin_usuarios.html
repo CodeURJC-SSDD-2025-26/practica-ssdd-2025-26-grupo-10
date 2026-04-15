@@ -93,6 +93,36 @@
                         </table>
                     </div>
                 </div>
+
+                {{^isSearch}}
+                <div class="card-footer bg-white border-top-0 p-4">
+                    <nav aria-label="Navegación de usuarios">
+                        <ul class="pagination pagination-rounded justify-content-center mb-0 gap-2">
+                            {{#hasPrevious}}
+                            <li class="page-item">
+                                <a class="page-link border-0 shadow-sm rounded-pill px-4" href="/admin/usuarios?page={{previousPage}}">
+                                    <i class="fas fa-chevron-left me-2"></i> Anterior
+                                </a>
+                            </li>
+                            {{/hasPrevious}}
+                            
+                            <li class="page-item">
+                                <span class="page-link border-0 bg-success text-white shadow-sm rounded-pill px-4 fw-bold">
+                                    Página {{currentPagePlusOne}} de {{totalPages}}
+                                </span>
+                            </li>
+                            
+                            {{#hasNext}}
+                            <li class="page-item">
+                                <a class="page-link border-0 shadow-sm rounded-pill px-4" href="/admin/usuarios?page={{nextPage}}">
+                                    Siguiente <i class="fas fa-chevron-right ms-2"></i>
+                                </a>
+                            </li>
+                            {{/hasNext}}
+                        </ul>
+                    </nav>
+                </div>
+                {{/isSearch}}
             </div>
 
         </main>

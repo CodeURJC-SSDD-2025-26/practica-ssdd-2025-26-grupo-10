@@ -30,6 +30,7 @@ import es.urjc.ecomostoles.backend.service.ReportService;
 import es.urjc.ecomostoles.backend.service.ConfiguracionService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -117,15 +118,25 @@ public class AdminController {
 
     // ── GET /admin/usuarios ────────────────────────────────────────────────────
     @GetMapping("/usuarios")
-    public String usuarios(Model model, Principal principal, @RequestParam(required = false) String search) {
+    public String usuarios(Model model, Principal principal, 
+                           @RequestParam(required = false) String search,
+                           @RequestParam(defaultValue = "0") int page) {
         addCommonAttributes(model, principal);
         model.addAttribute("activeUsuarios", true);
         
         if (search != null && !search.isEmpty()) {
             model.addAttribute("empresas", empresaService.filtrarEmpresas(search));
+            model.addAttribute("isSearch", true);
         } else {
-            // Limited list of registered companies for the table (Top 50)
-            model.addAttribute("empresas", empresaService.obtenerTodas());
+            Page<Empresa> paginaEmpresas = empresaService.obtenerEmpresasPaginadas(page, 50);
+            model.addAttribute("empresas", paginaEmpresas.getContent());
+            model.addAttribute("hasPrevious", paginaEmpresas.hasPrevious());
+            model.addAttribute("hasNext", paginaEmpresas.hasNext());
+            model.addAttribute("currentPage", paginaEmpresas.getNumber());
+            model.addAttribute("currentPagePlusOne", paginaEmpresas.getNumber() + 1);
+            model.addAttribute("nextPage", paginaEmpresas.getNumber() + 1);
+            model.addAttribute("previousPage", paginaEmpresas.getNumber() - 1);
+            model.addAttribute("totalPages", paginaEmpresas.getTotalPages());
         }
         
         return "admin_usuarios";
@@ -195,10 +206,10 @@ public class AdminController {
         model.addAttribute("activeConfig", true);
 
         Map<String, Object> configMap = new HashMap<>();
-        configMap.put("modoMantenimiento", "true".equals(configuracionService.obtenerValorConfiguracion("modoMantenimiento", "false")));
-        configMap.put("emailContacto", configuracionService.obtenerValorConfiguracion("emailContacto", "info@ecomostoles.com"));
-        configMap.put("comisionPlataforma", configuracionService.obtenerValorConfiguracion("comisionPlataforma", "2.5"));
-        configMap.put("listaCategorias", configuracionService.obtenerValorConfiguracion("listaCategorias", ""));
+        configMap.put("modoMantenimiento", "true".equals(configuracionService.obtenerValorAuto("modoMantenimiento")));
+        configMap.put("emailContacto", configuracionService.obtenerValorAuto("emailContacto"));
+        configMap.put("comisionPlataforma", configuracionService.obtenerValorAuto("comisionPlataforma"));
+        configMap.put("listaCategorias", configuracionService.obtenerValorAuto("listaCategorias"));
 
         model.addAttribute("config", configMap);
         return "admin_configuracion";
@@ -282,7 +293,9 @@ public class AdminController {
             request.getSession().invalidate();
             SecurityContextHolder.clearContext();
             
-            return "redirect:/login?emailActualizado=true";
+            // Añadir mensaje para la pantalla de login
+            redirectAttributes.addFlashAttribute("emailActualizado", true);
+            return "redirect:/login";
         }
         return "redirect:/admin/panel";
     }

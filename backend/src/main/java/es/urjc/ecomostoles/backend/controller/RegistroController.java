@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.List;
 
 @Controller
 public class RegistroController {
@@ -27,7 +28,13 @@ public class RegistroController {
     @GetMapping("/registro")
     public String mostrarFormularioRegistro(Model model) {
         model.addAttribute("registroDTO", new RegistroDTO());
+        injectDynamicOptions(model);
         return "registro";
+    }
+
+    private void injectDynamicOptions(Model model) {
+        model.addAttribute("sectores", List.of("Metalurgia", "Reciclaje y Medio Ambiente", "Tecnología", "Logística", "Construcción", "Industria", "Comercio", "Hostelería"));
+        model.addAttribute("poligonos", List.of("Polígono Industrial Regordoño", "Polígono Industrial Las Nieves", "Polígono Arroyomolinos", "Polígono Industrial Norte", "Móstoles Tecnológico"));
     }
 
     @PostMapping("/registro")
@@ -44,6 +51,7 @@ public class RegistroController {
             bindingResult.getGlobalErrors().forEach(error ->
                 model.addAttribute("err_global", error.getDefaultMessage())
             );
+            injectDynamicOptions(model);
             return "registro";
         }
 

@@ -111,7 +111,6 @@ public class AcuerdoService {
 
         acuerdo.setOferta(oferta);
         acuerdo.setMaterialIntercambiado(oferta.getTitulo() != null ? oferta.getTitulo() : "Material Acordado");
-        acuerdo.setUnidad("kg/uds");
         acuerdo.setFechaRegistro(LocalDateTime.now());
         acuerdo.setEmpresaOrigen(origen);
 

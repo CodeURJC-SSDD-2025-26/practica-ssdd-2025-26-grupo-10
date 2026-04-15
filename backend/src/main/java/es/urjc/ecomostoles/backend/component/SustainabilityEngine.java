@@ -1,6 +1,9 @@
 package es.urjc.ecomostoles.backend.component;
 
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import es.urjc.ecomostoles.backend.service.ConfiguracionService;
 
 /**
  * Centralized engine for calculating environmental impact and sustainability metrics.
@@ -9,11 +12,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class SustainabilityEngine {
 
+    private static final Logger log = LoggerFactory.getLogger(SustainabilityEngine.class);
+
     private static final double FACTOR_EMISION_CO2 = 0.45;
 
-    private final es.urjc.ecomostoles.backend.service.ConfiguracionService configuracionService;
+    private final ConfiguracionService configuracionService;
 
-    public SustainabilityEngine(es.urjc.ecomostoles.backend.service.ConfiguracionService configuracionService) {
+    public SustainabilityEngine(ConfiguracionService configuracionService) {
         this.configuracionService = configuracionService;
     }
 
@@ -29,7 +34,8 @@ public class SustainabilityEngine {
         double factor;
         try {
             factor = Double.parseDouble(factorStr);
-        } catch (Exception e) {
+        } catch (NumberFormatException | NullPointerException e) {
+            log.warn("⚠️ ERROR CRÍTICO DE CONFIGURACIÓN: El factor 'CO2_FACTOR' en BD ('{}') no es un número válido. Usando valor hardcoded de seguridad: {}. Fallo: {}", factorStr, FACTOR_EMISION_CO2, e.getMessage());
             factor = FACTOR_EMISION_CO2;
         }
         return kilosMaterial * factor;

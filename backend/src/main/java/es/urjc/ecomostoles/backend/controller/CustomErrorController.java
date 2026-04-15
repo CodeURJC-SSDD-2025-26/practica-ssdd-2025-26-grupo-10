@@ -1,6 +1,6 @@
 package es.urjc.ecomostoles.backend.controller;
 
-import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
+import es.urjc.ecomostoles.backend.service.EmpresaService;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -27,10 +27,10 @@ import java.security.Principal;
 @Controller
 public class CustomErrorController implements ErrorController {
 
-    private final EmpresaRepository empresaRepository;
+    private final EmpresaService empresaService;
 
-    public CustomErrorController(EmpresaRepository empresaRepository) {
-        this.empresaRepository = empresaRepository;
+    public CustomErrorController(EmpresaService empresaService) {
+        this.empresaService = empresaService;
     }
 
     @RequestMapping("/error")
@@ -73,8 +73,8 @@ public class CustomErrorController implements ErrorController {
         // The partial {{> header}} requires {{empresa.nombreComercial}} for the
         // avatar and dropdown. It should only be added if the user is authenticated.
         if (principal != null) {
-            empresaRepository.findByEmailContacto(principal.getName())
-                             .ifPresent(e -> model.addAttribute("empresa", e));
+            empresaService.buscarPorEmail(principal.getName())
+                          .ifPresent(e -> model.addAttribute("empresa", e));
         }
 
         return "error";

@@ -6,6 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +32,12 @@ public class EmpresaService {
     @Transactional(readOnly = true)
     public List<Empresa> obtenerTodas() {
         return empresaRepository.findTop50ByOrderByIdDesc();
+    }
+
+    /** Returns a page of companies for administrative management. */
+    @Transactional(readOnly = true)
+    public Page<Empresa> obtenerEmpresasPaginadas(int page, int size) {
+        return empresaRepository.findAll(PageRequest.of(page, size, org.springframework.data.domain.Sort.by("id").descending()));
     }
 
     /** Finds a company by its contact email (used as username). */
