@@ -51,7 +51,7 @@
                                     <td><span class="fw-bold text-dark">{{#destinationCompany}}{{commercialName}}{{/destinationCompany}}{{^destinationCompany}}Sin empresa{{/destinationCompany}}</span></td>
                                     <td class="text-secondary">{{#offer}}{{title}}{{/offer}}{{^offer}}{{exchangedMaterial}}{{/offer}}</td>
                                     <td class="fw-bold text-success">{{#agreedPrice}}{{formattedAgreedPrice}}{{/agreedPrice}}{{^agreedPrice}}&mdash;{{/agreedPrice}}</td>
-                                    <td><span class="badge bg-primary rounded-pill">{{#status}}{{status}}{{/status}}{{^status}}Sin estado{{/status}}</span></td>
+                                    <td><span class="badge bg-primary rounded-pill">{{#status}}{{status.displayName}}{{/status}}{{^status}}Sin estado{{/status}}</span></td>
                                     <td class="text-end pe-4">
                                         <div class="d-flex gap-1 justify-content-end">
                                             <a href="/acuerdo/{{id}}" class="btn btn-sm btn-outline-success rounded-pill text-nowrap"><i class="fas fa-eye me-1"></i></a>

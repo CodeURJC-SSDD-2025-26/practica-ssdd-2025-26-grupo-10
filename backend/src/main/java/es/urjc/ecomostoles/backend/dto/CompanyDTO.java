@@ -3,6 +3,7 @@ package es.urjc.ecomostoles.backend.dto;
 import es.urjc.ecomostoles.backend.model.Company;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 /**
  * Data Transfer Object (DTO) for Company.
@@ -31,6 +32,7 @@ public class CompanyDTO {
     @NotBlank(message = "El sector industrial es obligatorio")
     private String industrialSector;
 
+    @Size(max = 255, message = "La descripción no puede superar los 255 caracteres")
     private String description;
     private String role;
     private Double co2Saved = 0.0;

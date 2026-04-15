@@ -115,13 +115,13 @@ public class MyOffersController {
 
             // KPI stats based on ALL user offers (for consistency)
             List<OfferSummary> allMyOffers = offerService.getByCompany(company);
-            model.addAttribute("activeTotal",
-                    allMyOffers.stream().filter(o -> "ACTIVE".equals(o.getStatus().name())).count());
-            model.addAttribute("pausedTotal",
-                    allMyOffers.stream().filter(o -> "PAUSED".equals(o.getStatus().name())).count());
-            model.addAttribute("negotiationTotal",
-                    allMyOffers.stream().filter(o -> "IN_NEGOTIATION".equals(o.getStatus().name())).count());
-            model.addAttribute("totalVisits", allMyOffers.stream().mapToInt(OfferSummary::getVisits).sum());
+            model.addAttribute("activeCount",
+                    allMyOffers.stream().filter(o -> OfferStatus.ACTIVE.equals(o.getStatus())).count());
+            model.addAttribute("pausedCount",
+                    allMyOffers.stream().filter(o -> OfferStatus.PAUSED.equals(o.getStatus())).count());
+            model.addAttribute("negotiationCount",
+                    allMyOffers.stream().filter(o -> OfferStatus.IN_NEGOTIATION.equals(o.getStatus())).count());
+            model.addAttribute("totalViews", allMyOffers.stream().mapToInt(OfferSummary::getVisits).sum());
 
             return "mis_activos";
         }

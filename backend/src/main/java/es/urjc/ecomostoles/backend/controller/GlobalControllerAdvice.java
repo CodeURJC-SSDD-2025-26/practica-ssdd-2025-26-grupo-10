@@ -4,16 +4,27 @@ import es.urjc.ecomostoles.backend.model.Company;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.service.MessageService;
 import es.urjc.ecomostoles.backend.service.ConfigurationService;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.multipart.MultipartException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.Optional;
 
 @ControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class GlobalControllerAdvice {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalControllerAdvice.class);
 
     private final CompanyService companyService;
     private final MessageService messageService;
@@ -81,8 +92,23 @@ public class GlobalControllerAdvice {
     }
 
     @ModelAttribute("sectorList")
-    public java.util.List<String> sectorList() {
-        return configurationService.getSanitizedList("sectorList");
+    public java.util.List<java.util.Map<String, Object>> sectorList(Principal principal) {
+        String currentSector = "";
+        if (principal != null) {
+            java.util.Optional<es.urjc.ecomostoles.backend.model.Company> company = companyService.findByEmail(principal.getName());
+            if (company.isPresent()) {
+                currentSector = company.get().getIndustrialSector();
+            }
+        }
+
+        final String selected = currentSector;
+        return configurationService.getSanitizedList("sectorList").stream().map(s -> {
+            java.util.Map<String, Object> map = new java.util.HashMap<>();
+            map.put("name", s);
+            map.put("displayName", s);
+            map.put("selected", s.equals(selected));
+            return map;
+        }).collect(java.util.stream.Collectors.toList());
     }
 
     @ModelAttribute("mainUnit")
@@ -116,6 +142,11 @@ public class GlobalControllerAdvice {
         return auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().contains("ADMIN"));
     }
 
+    @ModelAttribute("cacheBuster")
+    public long getCacheBuster() {
+        return System.currentTimeMillis();
+    }
+
     @ModelAttribute("socialLinkedin")
     public String socialLinkedin() {
         return configurationService.getAutoValue("social_linkedin");
@@ -145,5 +176,11 @@ public class GlobalControllerAdvice {
     public boolean isAdminPanel(HttpServletRequest request) {
         String uri = request.getRequestURI();
         return uri != null && uri.startsWith("/admin");
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public String handleMaxSizeException() {
+        log.warn("⚠️ Max upload size exceeded. Redirecting with query param.");
+        return "redirect:/registro?error=size";
     }
 }

@@ -53,7 +53,7 @@
                                     <i class="fas fa-handshake text-primary fa-2x"></i>
                                 </div>
                                 <h6 class="text-muted text-uppercase small fw-bold mb-3">Acuerdos Activos</h6>
-                                <h2 class="display-5 fw-bold text-primary mb-0">{{activeAgreements}}</h2>
+                                <h2 class="display-5 fw-bold text-primary mb-0">{{totalActiveAgreements}}</h2>
                                 <p class="text-muted small mt-2">Transacciones en proceso de finalización</p>
                             </div>
                         </div>
@@ -94,56 +94,43 @@
 
                 <div class="row g-4">
                     <div class="col-lg-8">
-                        {{#hasRecommendations}}
-                        <div
-                            class="card shadow-sm border-0 rounded-4 overflow-hidden border-top border-warning border-4">
-                            <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
-                                <h5 class="fw-bold text-dark mb-0"><i
-                                        class="fas fa-lightbulb text-warning me-2"></i>Oportunidades de Simbiosis</h5>
-                                <p class="text-muted small mt-1">Sugerencias inteligentes basadas en tus excedentes y
-                                    necesidades.</p>
-                            </div>
-                            <div class="card-body p-4">
-                                <div class="list-group list-group-flush border rounded-4 overflow-hidden">
-                                    {{#smartRecommendations}}
-                                    <a href="/oferta/{{id}}"
-                                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
-                                        <div class="d-flex align-items-center">
-                                            <div class="bg-light rounded p-2 me-3"><i
-                                                    class="fas fa-shopping-bag text-success"></i></div>
-                                            <div>
-                                                <h6 class="mb-0 fw-bold text-dark">{{title}}</h6>
-                                                <small class="text-muted">{{company.commercialName}} &bull;
-                                                    {{formattedQuantity}} {{unit}} &bull; <span
-                                                        class="text-success fw-bold">{{formattedPrice}}</span></small>
-                                            </div>
-                                        </div>
-                                        <span class="badge bg-primary rounded-pill px-3 py-2 shadow-sm">Ver
-                                            Oferta</span>
-                                    </a>
-                                    {{/smartRecommendations}}
-                                </div>
-                            </div>
-                        </div>
-                        {{/hasRecommendations}}
-                        {{^hasRecommendations}}
-                        {{^isAdminView}}
-                        <div class="card shadow-sm border-0 rounded-4 bg-light p-5 text-center">
-                            <div class="mb-3 text-muted"><i class="fas fa-search fs-2 opacity-50"></i></div>
-                            <h6 class="fw-bold text-dark">Buscando oportunidades para ti...</h6>
-                            <p class="text-muted small mb-0 px-5">Cuando una oferta o demanda encaje con tu perfil de
-                                empresa, aparecerá aquí automáticamente.</p>
-                        </div>
-                        {{/isAdminView}}
-                        {{#isAdminView}}
+                        {{#userIsAdmin}}
                         <div class="card shadow-sm border-0 rounded-4 bg-light p-5 text-center">
                             <div class="mb-3 text-muted"><i class="fas fa-shield-alt fs-2 opacity-50"></i></div>
                             <h6 class="fw-bold text-dark">Panel de Administrador</h6>
-                            <p class="text-muted small mb-0 px-5">Supervisando actividad global de la red de simbiosis
-                                industrial EcoMóstoles.</p>
+                            <p class="text-muted small mb-0 px-5">Supervisando actividad global de la red de simbiosis industrial EcoMóstoles.</p>
                         </div>
-                        {{/isAdminView}}
-                        {{/hasRecommendations}}
+                        {{/userIsAdmin}}
+
+                        {{^userIsAdmin}}
+                        <div class="card shadow-sm border-0 rounded-4 overflow-hidden border-top border-warning border-4">
+                            <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+                                <h5 class="fw-bold text-dark mb-0"><i class="fas fa-lightbulb text-warning me-2"></i>Oportunidades de Simbiosis</h5>
+                                <p class="text-muted small mt-1">Sugerencias inteligentes basadas en tus excedentes y necesidades.</p>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="list-group list-group-flush border rounded-4 overflow-hidden">
+                                    {{#matchingOffers}}
+                                    <a href="/oferta/{{id}}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-light rounded p-2 me-3"><i class="fas fa-shopping-bag text-success"></i></div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">{{title}}</h6>
+                                                <small class="text-muted">{{company.commercialName}} &bull; {{formattedQuantity}} {{unit}} &bull; <span class="text-success fw-bold">{{formattedPrice}}</span></small>
+                                            </div>
+                                        </div>
+                                        <span class="badge bg-primary rounded-pill px-3 py-2 shadow-sm">Ver Oferta</span>
+                                    </a>
+                                    {{/matchingOffers}}
+                                </div>
+                                {{^matchingOffers}}
+                                <div class="text-center py-3">
+                                    <p class="text-muted">No hay ofertas que coincidan con tus demandas en este momento.</p>
+                                </div>
+                                {{/matchingOffers}}
+                            </div>
+                        </div>
+                        {{/userIsAdmin}}
                     </div>
 
                     <div class="col-lg-4">

@@ -19,8 +19,8 @@
                     {{#error}}
                     <div class="alert alert-danger py-2 small fw-bold text-center" role="alert">
                         <i class="fas fa-exclamation-triangle me-1"></i>
-                        {{#errorMsg}}{{errorMsg}}{{/errorMsg}}{{^errorMsg}}Este email ya está registrado. Por favor,
-                        inicia sesión.{{/errorMsg}}
+                        {{#errorMsg}}{{errorMsg}}{{/errorMsg}}
+                        {{^errorMsg}}Este email ya está registrado. Por favor, inicia sesión.{{/errorMsg}}
                     </div>
                     {{/error}}
 
@@ -37,7 +37,7 @@
                     </div>
                     {{/error_global}}
 
-                    <form action="/registro" method="POST" enctype="multipart/form-data" class="needs-validation">
+                    <form action="/registro" method="POST" enctype="multipart/form-data">
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -47,8 +47,8 @@
                                 <input type="text" name="commercialName"
                                     class="form-control {{#error_commercialName}}is-invalid{{/error_commercialName}}"
                                     id="nombreEmpresa" placeholder="Ej. Metales del Sur S.L."
-                                    value="{{#registrationDTO.commercialName}}{{registrationDTO.commercialName}}{{/registrationDTO.commercialName}}"
-                                    required="">
+                                    value="{{#registrationDTO.commercialName}}{{.}}{{/registrationDTO.commercialName}}"
+                                    required>
                                 {{#error_commercialName}}<div class="invalid-feedback">{{error_commercialName}}</div>
                                 {{/error_commercialName}}
                             </div>
@@ -58,7 +58,7 @@
                                     NIF</label>
                                 <input type="text" name="taxId" class="form-control {{#error_taxId}}is-invalid{{/error_taxId}}"
                                     id="taxId" placeholder="B-12345678"
-                                    value="{{#registrationDTO.taxId}}{{registrationDTO.taxId}}{{/registrationDTO.taxId}}" required="">
+                                    value="{{#registrationDTO.taxId}}{{.}}{{/registrationDTO.taxId}}" required>
                                 {{#error_taxId}}<div class="invalid-feedback">{{error_taxId}}</div>{{/error_taxId}}
                             </div>
 
@@ -68,13 +68,14 @@
                                     Polígono</label>
                                 <select name="address"
                                     class="form-select {{#error_address}}is-invalid{{/error_address}}" id="direccion"
-                                    required="">
-                                    {{#industrialAreaList}}
+                                    required>
+                                    <option value="" disabled>Seleccionar ubicación...</option>
+                                    {{#areaOptions}}
                                     <option value="{{.}}">{{.}}</option>
-                                    {{/industrialAreaList}}
+                                    {{/areaOptions}}
                                 </select>
                                 <input type="text" id="otherAddress" name="otherAddress"
-                                    class="form-control d-none mt-2" placeholder="Especifica tu ubicación...">
+                                    class="form-control d-none mt-2" placeholder="Especifica tu ubicación..." value="{{#registrationDTO.otherAddress}}{{.}}{{/registrationDTO.otherAddress}}">
                                 {{#error_address}}<div class="invalid-feedback">{{error_address}}</div>
                                 {{/error_address}}
                             </div>
@@ -83,36 +84,31 @@
                                 <label for="sector"
                                     class="form-label fw-bold small text-uppercase text-secondary">Sector
                                     Industrial</label>
-                                <select name="sector" class="form-select {{#err_sector}}is-invalid{{/err_sector}}"
-                                    id="sector" required="">
-                                    <option value="" selected="" disabled="">Seleccionar sector industrial...</option>
-                                    {{#sectorList}}
-                                    <option value="{{name}}">{{display}}</option>
-                                    {{/sectorList}}
-                                    {{^sectorList}}
-                                    {{#sectorList}}
-                                    <option value="{{.}}">{{.}}</option>
-                                    {{/sectorList}}
-                                    {{/sectorList}}
+                                <select name="sector" class="form-select {{#error_sector}}is-invalid{{/error_sector}}"
+                                    id="sector" required>
+                                    <option value="" selected disabled>Seleccionar sector...</option>
+                                    {{#sectorOptions}}
+                                    <option value="{{name}}">{{displayName}}</option>
+                                    {{/sectorOptions}}
                                 </select>
                                 {{#error_sector}}<div class="invalid-feedback">{{error_sector}}</div>{{/error_sector}}
                             </div>
 
                             <div class="col-md-6">
                                 <label for="email" class="form-label fw-bold small text-uppercase text-secondary">Email de Contacto</label>
-                                <input type="email" name="contactEmail" class="form-control {{#error_contactEmail}}is-invalid{{/error_contactEmail}}" id="email" placeholder="contacto@empresa.com" value="{{#registrationDTO.contactEmail}}{{registrationDTO.contactEmail}}{{/registrationDTO.contactEmail}}" required>
+                                <input type="email" name="contactEmail" class="form-control {{#error_contactEmail}}is-invalid{{/error_contactEmail}}" id="email" placeholder="contacto@empresa.com" value="{{#registrationDTO.contactEmail}}{{.}}{{/registrationDTO.contactEmail}}" required>
                                 {{#error_contactEmail}}<div class="invalid-feedback">{{error_contactEmail}}</div>{{/error_contactEmail}}
                             </div>
 
                             <div class="col-md-6">
                                 <label for="telefonoRegister" class="form-label fw-bold small text-uppercase text-secondary">Teléfono de Contacto</label>
-                                <input type="tel" name="phone" class="form-control {{#error_phone}}is-invalid{{/error_phone}}" id="telefonoRegister" placeholder="Ej. 916 123 456" value="{{#registrationDTO.phone}}{{registrationDTO.phone}}{{/registrationDTO.phone}}" required>
+                                <input type="tel" name="phone" class="form-control {{#error_phone}}is-invalid{{/error_phone}}" id="telefonoRegister" placeholder="Ej. 916 123 456" value="{{#registrationDTO.phone}}{{.}}{{/registrationDTO.phone}}" required>
                                 {{#error_phone}}<div class="invalid-feedback">{{error_phone}}</div>{{/error_phone}}
                             </div>
 
                             <div class="col-12">
                                 <label for="descripcionRegister" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
-                                <textarea name="description" class="form-control {{#error_description}}is-invalid{{/error_description}}" id="descripcionRegister" rows="3" placeholder="Describe brevemente la actividad de tu empresa y qué tipo de simbiosis buscas..." required>{{#registrationDTO.description}}{{registrationDTO.description}}{{/registrationDTO.description}}</textarea>
+                                <textarea name="description" class="form-control {{#error_description}}is-invalid{{/error_description}}" id="descripcionRegister" rows="3" placeholder="Describe brevemente la actividad de tu empresa..." required>{{#registrationDTO.description}}{{.}}{{/registrationDTO.description}}</textarea>
                                 {{#error_description}}<div class="invalid-feedback">{{error_description}}</div>{{/error_description}}
                             </div>
 
@@ -175,6 +171,14 @@
                 inputOtro.classList.add('d-none');
                 inputOtro.removeAttribute('required');
                 inputOtro.value = '';
+            }
+        });
+
+        // Validación de tamaño de archivo (Logo)
+        document.getElementById('logoFile').addEventListener('change', function() {
+            if (this.files[0] && this.files[0].size > 5 * 1024 * 1024) {
+                alert('El archivo es demasiado grande. El tamaño máximo permitido es de 5MB.');
+                this.value = '';
             }
         });
     </script>

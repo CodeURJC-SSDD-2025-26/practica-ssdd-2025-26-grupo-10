@@ -65,9 +65,6 @@ public class SecurityConfig {
                     "/login", "/registro", "/recuperar_password",
                     "/privacidad", "/terminos",
                     "/error",                               // custom error page
-                    "/mercado", "/mercado/**",              // public offer listing
-                    "/oferta/{id:\\d+}",                    // public offer detail
-                    "/solicitudes", "/solicitudes/**",
                     "/css/**", "/js/**", "/img/**", "/images/**"
                 ).permitAll()
 
@@ -75,8 +72,11 @@ public class SecurityConfig {
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/admin/configuracion").hasRole("ADMIN")
                 .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
 
-                // ── Creation and edition: any authenticated user ────────
+                // ── Creation, edition and marketplace: any authenticated user ────────
                 .requestMatchers(
+                    "/mercado", "/mercado/**",              // private offer listing
+                    "/oferta/{id:\\d+}",                    // private offer detail
+                    "/solicitudes", "/solicitudes/**",
                     "/oferta/nueva", "/offers/*/editar",
                     "/demand/nueva", "/demands/*/editar",
                     "/dashboard/**", "/perfil/**",

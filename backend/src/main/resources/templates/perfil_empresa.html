@@ -33,7 +33,7 @@
                         <div class="card border-0 shadow-sm card-hover border-top border-success border-4 rounded-4 h-100">
                             <div class="card-body text-center p-4">
                                 <div class="position-relative d-inline-block mb-4">
-                                    <img src="/images/empresa/{{#inspectedCompany}}{{inspectedCompany.id}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.id}}{{/inspectedCompany}}" alt="Logo Empresa" class="rounded-circle object-fit-cover shadow-sm mb-3 avatar-profile" onerror="this.src='/img/logo.webp';">
+                                    <img src="/images/empresa/{{#inspectedCompany}}{{inspectedCompany.id}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.id}}{{/inspectedCompany}}?t={{cacheBuster}}" alt="Logo Empresa" class="rounded-circle object-fit-cover shadow-sm mb-3 avatar-profile" id="logoPreview" onerror="this.src='/img/logo.webp';">
                                 </div>
  
                                 <h5 class="fw-bold mb-1">{{#inspectedCompany}}{{inspectedCompany.commercialName}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.commercialName}}{{/inspectedCompany}}</h5>
@@ -43,7 +43,8 @@
                                 <label for="logoUpload" class="btn btn-outline-success rounded-pill w-100 mb-3">
                                     <i class="fas fa-camera me-2"></i> Cambiar Logo / Foto
                                 </label>
-                                <input type="file" id="logoUpload" name="logoFile" accept="image/*" class="d-none">
+                                <input type="file" id="logoUpload" name="logoFile" accept="image/*" class="d-none" onchange="document.getElementById('fileName').textContent = this.files[0].name; const reader = new FileReader(); reader.onload = (e) => document.getElementById('logoPreview').src = e.target.result; reader.readAsDataURL(this.files[0]);">
+                                <p id="fileName" class="text-success small fw-bold mb-1"></p>
                                 <p class="text-muted small mb-0">JPG, PNG o SVG. Máx 2MB.</p>
                                 {{/isAdminView}}
 
@@ -88,7 +89,7 @@
                                         <label for="sectorIndustrial" class="form-label fw-bold small text-uppercase text-secondary">Sector Industrial</label>
                                         <select class="form-select" id="sectorIndustrial" name="industrialSector" required>
                                             {{#sectorList}}
-                                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{display}}</option>
+                                            <option value="{{name}}" {{#selected}}selected{{/selected}}>{{displayName}}</option>
                                             {{/sectorList}}
                                             {{^sectorList}}
                                             <option value="{{#inspectedCompany}}{{inspectedCompany.industrialSector}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.industrialSector}}{{/inspectedCompany}}" selected>
@@ -106,7 +107,10 @@
 
                                 <div class="mb-4">
                                     <label for="description" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
-                                    <textarea class="form-control" id="description" name="description" rows="4" required>{{#inspectedCompany}}{{inspectedCompany.description}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.description}}{{/inspectedCompany}}</textarea>
+                                    <textarea class="form-control {{#errors.description}}is-invalid{{/errors.description}}" id="description" name="description" rows="4" maxlength="255" required>{{#inspectedCompany}}{{inspectedCompany.description}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.description}}{{/inspectedCompany}}</textarea>
+                                    {{#errors.description}}
+                                    <div class="invalid-feedback">{{errors.description}}</div>
+                                    {{/errors.description}}
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center">

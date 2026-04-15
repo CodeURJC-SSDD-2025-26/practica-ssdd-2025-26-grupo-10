@@ -98,7 +98,7 @@ public class CompanyService {
      */
     public Company registerNewCompany(Company company, String rawPassword, byte[] logoBytes) {
         if (companyRepository.findByContactEmail(company.getContactEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already registered");
+            throw new IllegalArgumentException("Este email ya está registrado");
         }
 
         company.setPassword(passwordEncoder.encode(rawPassword));

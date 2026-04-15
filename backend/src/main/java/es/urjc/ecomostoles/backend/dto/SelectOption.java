@@ -29,6 +29,14 @@ public class SelectOption {
         this.label = label;
     }
 
+    public String getName() {
+        return value;
+    }
+
+    public String getDisplayName() {
+        return label;
+    }
+
     public boolean isSelected() {
         return selected;
     }

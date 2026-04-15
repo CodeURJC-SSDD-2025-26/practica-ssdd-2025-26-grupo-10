@@ -8,6 +8,9 @@ import es.urjc.ecomostoles.backend.service.AgreementService;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.service.OfferService;
 import java.util.List;
+import org.springframework.security.core.Authentication;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 
 @Controller
 public class WebController {
@@ -46,5 +49,16 @@ public class WebController {
     @GetMapping("/privacidad")
     public String privacy() {
         return "privacidad";
+    }
+
+    @GetMapping("/home")
+    public String homeRouter(Authentication auth, HttpServletRequest request) {
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            return "redirect:/";
+        }
+        if (request.isUserInRole("ROLE_ADMIN")) {
+            return "redirect:/admin";
+        }
+        return "redirect:/dashboard";
     }
 }

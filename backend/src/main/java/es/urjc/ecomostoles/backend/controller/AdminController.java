@@ -435,8 +435,8 @@ public class AdminController {
 
         List<Map<String, Object>> sectorsList = sectors.stream().map(s -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("value", s);
-            map.put("display", s);
+            map.put("name", s);
+            map.put("displayName", s);
             map.put("selected", s.equals(currentSector));
             return map;
         }).collect(Collectors.toList());

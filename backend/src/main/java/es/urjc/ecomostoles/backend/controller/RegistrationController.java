@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import es.urjc.ecomostoles.backend.service.ConfigurationService;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,8 +34,20 @@ public class RegistrationController {
     }
 
     @GetMapping("/registro")
-    public String showRegistrationForm(Model model) {
+    public String showRegistrationForm(@org.springframework.web.bind.annotation.RequestParam(value = "error", required = false) String error, Model model) {
+        // Redirigir si ya está autenticado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
+            return "redirect:/dashboard";
+        }
+
         model.addAttribute("registrationDTO", new RegistrationDTO());
+        
+        if ("size".equals(error)) {
+            model.addAttribute("error", true);
+            model.addAttribute("errorMsg", "El archivo es demasiado grande. El tamaño máximo permitido es de 5MB.");
+        }
+        
         injectDynamicOptions(model);
         return "registro";
     }
@@ -49,14 +64,13 @@ public class RegistrationController {
         List<String> sectors = Arrays.asList(sectorListStr.split("\\r?\\n"));
 
         model.addAttribute("categoryList", categories);
-        model.addAttribute("sectorList", sectors);
-        model.addAttribute("industrialAreaList", industrialAreas);
+        model.addAttribute("areaOptions", industrialAreas);
 
         // Formatted list for select components
-        model.addAttribute("sectorList", sectors.stream().map(s -> {
+        model.addAttribute("sectorOptions", sectors.stream().map(s -> {
             java.util.Map<String, Object> map = new java.util.HashMap<>();
             map.put("name", s);
-            map.put("display", s);
+            map.put("displayName", s);
             return map;
         }).collect(Collectors.toList()));
     }
@@ -126,10 +140,12 @@ public class RegistrationController {
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", true);
             model.addAttribute("errorMsg", e.getMessage());
+            injectDynamicOptions(model);
             return "registro";
         } catch (Exception e) {
             log.error("⚠️ General error in company registration", e);
             model.addAttribute("error", true);
+            injectDynamicOptions(model);
             return "registro";
         }
 
