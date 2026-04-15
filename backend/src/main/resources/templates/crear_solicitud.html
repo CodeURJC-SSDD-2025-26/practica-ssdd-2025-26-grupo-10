@@ -4,7 +4,8 @@
 
 <div class="container-fluid">
     <div class="row min-vh-100">
-        {{> sidebar}}
+        {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
+        {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -27,21 +28,24 @@
                         <div class="row g-3">
                             <div class="col-md-8">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Título de lo que buscas <span class="text-danger">*</span></label>
-                                <input type="text" name="titulo" class="form-control" placeholder="Ej. Busco Palés Europeos en buen estado" value="{{#demanda.titulo}}{{demanda.titulo}}{{/demanda.titulo}}" required="">
+                                <input type="text" name="titulo" class="form-control {{#error_titulo}}is-invalid{{/error_titulo}}" placeholder="Ej. Busco Palés Europeos en buen estado" value="{{#demanda.titulo}}{{demanda.titulo}}{{/demanda.titulo}}" required="">
+                                <div class="invalid-feedback">Por favor, indica un título descriptivo.</div>
                             </div>
                              <div class="col-md-4">
                                  <label class="form-label text-secondary fw-bold small text-uppercase">Categoría <span class="text-danger">*</span></label>
-                                 <select name="categoriaMaterial" class="form-select" required>
+                                 <select name="categoriaMaterial" class="form-select {{#error_categoriaMaterial}}is-invalid{{/error_categoriaMaterial}}" required>
                                      <option value="" selected="" disabled="">Seleccionar...</option>
                                      {{#listaCategorias}}
                                      <option value="{{.}}">{{.}}</option>
                                      {{/listaCategorias}}
                                  </select>
+                                 <div class="invalid-feedback">Selecciona una categoría.</div>
                              </div>
                              
                              <div class="col-12">
                                  <label class="form-label text-secondary fw-bold small text-uppercase">Descripción detallada <span class="text-danger">*</span></label>
-                                 <textarea name="descripcion" class="form-control" rows="4" placeholder="Describe qué material necesitas..." required="">{{#demanda.descripcion}}{{demanda.descripcion}}{{/demanda.descripcion}}</textarea>
+                                 <textarea name="descripcion" class="form-control {{#error_descripcion}}is-invalid{{/error_descripcion}}" rows="4" placeholder="Describe qué material necesitas..." required="">{{#demanda.descripcion}}{{demanda.descripcion}}{{/demanda.descripcion}}</textarea>
+                                 <div class="invalid-feedback">La descripción es obligatoria.</div>
                              </div>
  
                              <div class="col-md-4">
@@ -49,6 +53,7 @@
                                  <div class="input-group">
                                      <input type="number" name="cantidad" class="form-control" placeholder="Ej. 500" min="0" value="{{#demanda.cantidad}}{{demanda.cantidad}}{{/demanda.cantidad}}">
                                      <select name="unidad" class="form-select" style="max-width: 120px;" required>
+                                         <option value="" selected disabled>Und...</option>
                                          {{#listaUnidades}}
                                          <option value="{{.}}">{{.}}</option>
                                          {{/listaUnidades}}
@@ -57,10 +62,11 @@
                              </div>
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Urgencia</label>
-                                <select name="urgencia" class="form-select">
-                                    <option value="alta">🔴 Alta</option>
-                                    <option value="media">🟡 Media</option>
-                                    <option value="baja">🟢 Baja</option>
+                                <select name="urgencia" class="form-select" required>
+                                    <option value="" selected disabled>Seleccionar...</option>
+                                    {{#listaDisponibilidades}}
+                                    <option value="{{.}}">{{.}}</option>
+                                    {{/listaDisponibilidades}}
                                 </select>
                             </div>
                             <div class="col-md-4">

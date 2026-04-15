@@ -5,7 +5,8 @@
 
     <div class="container-fluid">
         <div class="row min-vh-100">
-            {{> sidebar}}
+            {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
+            {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 <div
@@ -34,26 +35,29 @@
                                     <label for="titulo"
                                         class="form-label text-secondary fw-bold small text-uppercase">Título del Activo
                                         <span class="text-danger">*</span></label>
-                                    <input type="text" name="titulo" class="form-control" id="titulo"
+                                    <input type="text" name="titulo" class="form-control {{#error_titulo}}is-invalid{{/error_titulo}}" id="titulo"
                                         value="{{oferta.titulo}}" required="">
+                                    <div class="invalid-feedback">Por favor, indica un título válido.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="tipo"
                                         class="form-label text-secondary fw-bold small text-uppercase">Tipo <span
                                             class="text-danger">*</span></label>
-                                    <select name="tipoResiduo" class="form-select" id="tipo" required="">
+                                    <select name="tipoResiduo" class="form-select {{#error_tipoResiduo}}is-invalid{{/error_tipoResiduo}}" id="tipo" required="">
                                         {{#opcionesTipo}}
                                         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                         {{/opcionesTipo}}
                                     </select>
+                                    <div class="invalid-feedback">Selecciona una categoría.</div>
                                 </div>
 
                                 <div class="col-12">
                                     <label for="descripcion"
                                         class="form-label text-secondary fw-bold small text-uppercase">Descripción
                                         Detallada <span class="text-danger">*</span></label>
-                                    <textarea name="descripcion" class="form-control" id="descripcion" rows="4"
+                                    <textarea name="descripcion" class="form-control {{#error_descripcion}}is-invalid{{/error_descripcion}}" id="descripcion" rows="4"
                                         required="">{{oferta.descripcion}}</textarea>
+                                    <div class="invalid-feedback">La descripción es obligatoria.</div>
                                 </div>
 
                                 <div class="col-md-4">
@@ -63,11 +67,10 @@
                                     <div class="input-group">
                                         <input type="number" name="cantidad" class="form-control" id="cantidad"
                                             value="{{oferta.cantidad}}" min="0" required="">
-                                        <select class="form-select" id="unidad" name="unidad"
-                                            data-selected="{{oferta.unidad}}" required>
-                                            {{#listaUnidades}}
-                                            <option value="{{.}}">{{.}}</option>
-                                            {{/listaUnidades}}
+                                        <select class="form-select" id="unidad" name="unidad" required>
+                                            {{#opcionesUnidad}}
+                                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                            {{/opcionesUnidad}}
                                         </select>
                                     </div>
                                 </div>
@@ -75,17 +78,17 @@
                                     <label for="precio"
                                         class="form-label text-secondary fw-bold small text-uppercase">Precio
                                         (€)</label>
-                                    <input type="number" name="precio" class="form-control" id="precio"
+                                    <input type="number" name="precio" class="form-control {{#error_precio}}is-invalid{{/error_precio}}" id="precio"
                                         value="{{oferta.precio}}" step="0.01" min="0">
+                                    <div class="invalid-feedback">Introduce un precio válido.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="disponibilidad"
                                         class="form-label text-secondary fw-bold small text-uppercase">Disponibilidad</label>
-                                    <select class="form-select" id="disponibilidad" name="disponibilidad"
-                                        data-selected="{{oferta.disponibilidad}}">
-                                        {{#listaDisponibilidades}}
-                                        <option value="{{.}}">{{.}}</option>
-                                        {{/listaDisponibilidades}}
+                                    <select class="form-select" id="disponibilidad" name="disponibilidad">
+                                        {{#opcionesDisponibilidad}}
+                                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                        {{/opcionesDisponibilidad}}
                                     </select>
                                 </div>
                                 <div class="col-md-4">
@@ -126,13 +129,5 @@
         </div>
     </div>
 
-    <script>
-        // Pre-select values for dynamic lists
-        document.querySelectorAll('select[data-selected]').forEach(select => {
-            const selectedValue = select.getAttribute('data-selected');
-            if (selectedValue) {
-                select.value = selectedValue;
-            }
-        });
-    </script>
+
     {{> footer}}

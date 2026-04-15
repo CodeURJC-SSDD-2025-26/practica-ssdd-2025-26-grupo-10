@@ -11,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,14 +74,31 @@ public class MisDemandasController {
     // GET /dashboard/mis-demandas
     // -------------------------------------------------------------------------
     @GetMapping("/dashboard/mis-demandas")
-    public String mostrarMisDemandas(Model model, Principal principal) {
+    public String mostrarMisDemandas(Model model, Principal principal,
+            @PageableDefault(size = 5) Pageable pageable) {
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("activeDemandas", true);
             model.addAttribute("isDashboard", true);
-            List<Demanda> misDemandas = demandaService.obtenerPorEmpresa(empresa);
-            model.addAttribute("demandas", misDemandas);
+            
+            Page<Demanda> paginaDemandas = demandaService.obtenerPorEmpresaPaginada(empresa, pageable);
+            model.addAttribute("demandas", paginaDemandas.getContent());
+            model.addAttribute("hasDemandas", !paginaDemandas.isEmpty());
+
+            // Pagination metadata
+            model.addAttribute("currentPage", paginaDemandas.getNumber() + 1);
+            model.addAttribute("totalPages",  paginaDemandas.getTotalPages());
+            model.addAttribute("hasNext",     paginaDemandas.hasNext());
+            model.addAttribute("hasPrev",     paginaDemandas.hasPrevious());
+            model.addAttribute("prevPage",    paginaDemandas.getNumber() - 1);
+            model.addAttribute("nextPage",    paginaDemandas.getNumber() + 1);
+            model.addAttribute("totalItems",  paginaDemandas.getTotalElements());
+
+            // Dynamic base URL for pagination partial
+            model.addAttribute("pagBaseUrl", "/dashboard/mis-demandas");
+            model.addAttribute("pagQueryString", "");
+
             model.addAttribute("totalDemandasActivas", demandaService.contarActivasPorEmpresa(empresa));
             return "mis_demandas";
         }
@@ -95,16 +115,16 @@ public class MisDemandasController {
             model.addAttribute("activeNuevaDemanda", true);
             model.addAttribute("isDashboard", true);
             model.addAttribute("demanda", new Demanda());
-            injectDynamicCategories(model);
+            injectDynamicOptions(model);
             return "crear_solicitud";
         }
         return "redirect:/";
     }
 
-    private void injectDynamicCategories(Model model) {
-        String catsStr = configuracionService.obtenerValorAuto("listaCategorias");
-        java.util.List<String> categorias = java.util.Arrays.asList(catsStr.split("\\r?\\n"));
-        model.addAttribute("listaCategorias", categorias);
+    private void injectDynamicOptions(Model model) {
+        model.addAttribute("listaCategorias", configuracionService.obtenerListaSanitizada("listaCategorias"));
+        model.addAttribute("listaUnidades", configuracionService.obtenerListaSanitizada("listaUnidades"));
+        model.addAttribute("listaDisponibilidades", configuracionService.obtenerListaSanitizada("listaDisponibilidades"));
     }
 
     // -------------------------------------------------------------------------
@@ -117,9 +137,10 @@ public class MisDemandasController {
                                       Principal principal) {
 
         if (result.hasErrors()) {
+            result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             model.addAttribute("errores", result.getAllErrors());
             model.addAttribute("demanda", demanda);
-            injectDynamicCategories(model);
+            injectDynamicOptions(model);
             return "crear_solicitud";
         }
 
@@ -148,14 +169,35 @@ public class MisDemandasController {
     // GET /demanda/editar/{id} — Show edit form (ownership check)
     // -------------------------------------------------------------------------
     private void cargarOpcionesSelect(Model model, Demanda demanda) {
-        String catsStr = configuracionService.obtenerValorAuto("listaCategorias");
-        java.util.List<String> categorias = java.util.Arrays.asList(catsStr.split("\\r?\\n"));
-        
+        // Dynamic Categories
+        List<String> categorias = configuracionService.obtenerListaSanitizada("listaCategorias");
         List<SelectOption> opcionesCategoria = new ArrayList<>();
         for(String cat : categorias) {
             opcionesCategoria.add(new SelectOption(cat, cat, cat.equals(demanda.getCategoriaMaterial())));
         }
         model.addAttribute("opcionesCategoria", opcionesCategoria);
+
+        // Dynamic Units
+        List<String> unidadesList = configuracionService.obtenerListaSanitizada("listaUnidades");
+        List<SelectOption> opcionesUnidad = new ArrayList<>();
+        for(String u : unidadesList) {
+            opcionesUnidad.add(new SelectOption(u, u, u.equals(demanda.getUnidad())));
+        }
+        model.addAttribute("opcionesUnidad", opcionesUnidad);
+
+        // Dynamic Urgency (reusing listaDisponibilidades)
+        List<String> disponibilidadesList = configuracionService.obtenerListaSanitizada("listaDisponibilidades");
+        List<SelectOption> opcionesUrgencia = new ArrayList<>();
+        for(String d : disponibilidadesList) {
+            opcionesUrgencia.add(new SelectOption(d, d, d.equals(demanda.getUrgencia())));
+        }
+        model.addAttribute("opcionesUrgencia", opcionesUrgencia);
+
+        // Dynamic Select Options for status
+        List<SelectOption> opcionesEstado = new ArrayList<>();
+        opcionesEstado.add(new SelectOption("ACTIVA", "ACTIVA", EstadoDemanda.ACTIVA.equals(demanda.getEstado())));
+        opcionesEstado.add(new SelectOption("CERRADA", "CERRADA", EstadoDemanda.CERRADA.equals(demanda.getEstado())));
+        model.addAttribute("opcionesEstado", opcionesEstado);
     }
 
     // -------------------------------------------------------------------------
@@ -186,7 +228,7 @@ public class MisDemandasController {
         Demanda demandaExistente = verificarPropietarioDemanda(id, principal);
 
         if (result.hasErrors()) {
-            
+            result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             cargarOpcionesSelect(model, demandaForm);
             
             model.addAttribute("errores", result.getAllErrors());
@@ -198,7 +240,12 @@ public class MisDemandasController {
         demandaExistente.setDescripcion(demandaForm.getDescripcion());
         demandaExistente.setCategoriaMaterial(demandaForm.getCategoriaMaterial());
         demandaExistente.setCantidad(demandaForm.getCantidad());
+        demandaExistente.setUnidad(demandaForm.getUnidad());
+        demandaExistente.setUrgencia(demandaForm.getUrgencia());
         demandaExistente.setPresupuestoMaximo(demandaForm.getPresupuestoMaximo());
+        demandaExistente.setVigencia(demandaForm.getVigencia());
+        demandaExistente.setZonaRecogida(demandaForm.getZonaRecogida());
+        demandaExistente.setEstado(demandaForm.getEstado());
         
         demandaService.guardar(demandaExistente);
 

@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.ArrayList;
 import es.urjc.ecomostoles.backend.dto.SelectOption;
 import es.urjc.ecomostoles.backend.exception.SelfAgreementException;
+import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
 
 /**
  * Controller responsible for displaying and registering new commercial
@@ -40,13 +41,16 @@ public class AcuerdoController {
     private final AcuerdoService acuerdoService;
     private final EmpresaService empresaService;
     private final OfertaService ofertaService;
+    private final es.urjc.ecomostoles.backend.service.ConfiguracionService configuracionService;
 
     public AcuerdoController(AcuerdoService acuerdoService,
             EmpresaService empresaService,
-            OfertaService ofertaService) {
+            OfertaService ofertaService,
+            es.urjc.ecomostoles.backend.service.ConfiguracionService configuracionService) {
         this.acuerdoService = acuerdoService;
         this.empresaService = empresaService;
         this.ofertaService = ofertaService;
+        this.configuracionService = configuracionService;
     }
 
     /** Shows the form to register a new agreement. */
@@ -134,7 +138,7 @@ public class AcuerdoController {
     /**
      * Shows detail of a specific agreement (with IDOR protection).
      */
-    @GetMapping("/acuerdos/{id}")
+    @GetMapping("/acuerdo/{id}")
     public String mostrarDetalleAcuerdo(@PathVariable Long id, Model model, Principal principal) {
         Acuerdo acuerdo = acuerdoService.buscarPorId(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
@@ -143,18 +147,16 @@ public class AcuerdoController {
         Empresa logueada = empresaService.buscarPorEmail(userEmail)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
-        boolean esAdmin = logueada.getRoles() != null && logueada.getRoles().contains("ADMIN");
-        boolean esOrigen = acuerdo.getEmpresaOrigen() != null
-                && acuerdo.getEmpresaOrigen().getEmailContacto().equals(userEmail);
-        boolean esDestino = acuerdo.getEmpresaDestino() != null
-                && acuerdo.getEmpresaDestino().getEmailContacto().equals(userEmail);
-
-        if (!esAdmin && !esOrigen && !esDestino) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para ver este acuerdo");
+        boolean esAdmin = esAdmin(logueada);
+        if (!tienePermisoSobreAcuerdo(acuerdo, logueada, esAdmin)) {
+            return "redirect:/acuerdos?error=forbidden";
         }
 
         model.addAttribute("acuerdo", acuerdo);
         model.addAttribute("isDashboard", true);
+        model.addAttribute("esVistaAdmin", esAdmin);
+        model.addAttribute("emailSoporte", configuracionService.obtenerValorAuto("emailContacto"));
+
         return "detalle_acuerdo";
     }
 
@@ -166,39 +168,19 @@ public class AcuerdoController {
         Acuerdo acuerdo = acuerdoService.buscarPorId(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
 
-        String userEmail = principal.getName();
-        boolean esOrigen = acuerdo.getEmpresaOrigen() != null
-                && acuerdo.getEmpresaOrigen().getEmailContacto().equals(userEmail);
-        boolean esDestino = acuerdo.getEmpresaDestino() != null
-                && acuerdo.getEmpresaDestino().getEmailContacto().equals(userEmail);
+        Empresa logueada = empresaService.buscarPorEmail(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
-        if (!esOrigen && !esDestino) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para editar este acuerdo");
+        if (!tienePermisoSobreAcuerdo(acuerdo, logueada, esAdmin(logueada))) {
+            return "redirect:/acuerdos?error=forbidden";
         }
 
         model.addAttribute("acuerdo", acuerdo);
         model.addAttribute("isDashboard", true);
 
-        // Dynamic Select Options for unit
-        List<SelectOption> opcionesUnidad = new ArrayList<>();
-        opcionesUnidad.add(new SelectOption("kg", "kg", "kg".equals(acuerdo.getUnidad())));
-        opcionesUnidad.add(new SelectOption("ton", "toneladas", "ton".equals(acuerdo.getUnidad())));
-        opcionesUnidad.add(new SelectOption("uds", "unidades", "uds".equals(acuerdo.getUnidad())));
-        opcionesUnidad.add(new SelectOption("m2", "m²", "m2".equals(acuerdo.getUnidad())));
-        opcionesUnidad.add(new SelectOption("L", "litros", "L".equals(acuerdo.getUnidad())));
-        model.addAttribute("opcionesUnidad", opcionesUnidad);
-
-        // Dynamic Select Options for status
-        List<SelectOption> opcionesEstado = new ArrayList<>();
-        opcionesEstado
-                .add(new SelectOption("PENDIENTE", "Pendiente de firma", EstadoAcuerdo.PENDIENTE.equals(acuerdo.getEstado())));
-        opcionesEstado
-                .add(new SelectOption("EN_CURSO", "En curso / Procesando", EstadoAcuerdo.EN_CURSO.equals(acuerdo.getEstado())));
-        opcionesEstado.add(
-                new SelectOption("COMPLETADO", "Completado / Finalizado", EstadoAcuerdo.COMPLETADO.equals(acuerdo.getEstado())));
-        opcionesEstado.add(new SelectOption("ACEPTADO", "Aceptado", EstadoAcuerdo.ACEPTADO.equals(acuerdo.getEstado())));
-        opcionesEstado.add(new SelectOption("RECHAZADO", "Rechazado", EstadoAcuerdo.RECHAZADO.equals(acuerdo.getEstado())));
-        model.addAttribute("opcionesEstado", opcionesEstado);
+        // Centralized utility for form options (DRY)
+        model.addAttribute("opcionesUnidad", FormOptionsHelper.getOpcionesUnidad(configuracionService, acuerdo.getUnidad()));
+        model.addAttribute("opcionesEstado", FormOptionsHelper.getOpcionesEstadoAcuerdo(acuerdo.getEstado()));
 
         return "editar_acuerdo";
     }
@@ -217,18 +199,51 @@ public class AcuerdoController {
         Acuerdo acuerdoExistente = acuerdoService.buscarPorId(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
 
-        String userEmail = principal.getName();
-        boolean esOrigen = acuerdoExistente.getEmpresaOrigen() != null
-                && acuerdoExistente.getEmpresaOrigen().getEmailContacto().equals(userEmail);
-        boolean esDestino = acuerdoExistente.getEmpresaDestino() != null
-                && acuerdoExistente.getEmpresaDestino().getEmailContacto().equals(userEmail);
+        Empresa logueada = empresaService.buscarPorEmail(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
-        if (!esOrigen && !esDestino) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para editar este acuerdo");
+        if (!tienePermisoSobreAcuerdo(acuerdoExistente, logueada, esAdmin(logueada))) {
+            return "redirect:/acuerdos?error=forbidden";
         }
 
         acuerdoService.actualizarAcuerdo(id, acuerdoActualizado);
 
         return "redirect:/acuerdos/" + id;
+    }
+
+    /**
+     * Delete an agreement as a user (Cancellation).
+     * Security: Verifies that the logged-in company is either the origin or destination.
+     */
+    @PostMapping("/mis_acuerdos/eliminar/{id}")
+    public String eliminarAcuerdoComoUsuario(@PathVariable Long id, Principal principal) {
+        Acuerdo acuerdo = acuerdoService.buscarPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
+
+        Empresa logueada = empresaService.buscarPorEmail(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+        if (!tienePermisoSobreAcuerdo(acuerdo, logueada, esAdmin(logueada))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para eliminar este acuerdo.");
+        }
+
+        if (EstadoAcuerdo.COMPLETADO.equals(acuerdo.getEstado())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se pueden eliminar acuerdos ya completados para preservar el historial de impacto.");
+        }
+
+        acuerdoService.eliminar(id);
+        return "redirect:/acuerdos?exito=eliminado";
+    }
+    
+    private boolean tienePermisoSobreAcuerdo(Acuerdo acuerdo, Empresa logueada, boolean esAdmin) {
+        if (esAdmin) return true;
+        String email = logueada.getEmailContacto();
+        boolean esOrigen = acuerdo.getEmpresaOrigen() != null && acuerdo.getEmpresaOrigen().getEmailContacto().equals(email);
+        boolean esDestino = acuerdo.getEmpresaDestino() != null && acuerdo.getEmpresaDestino().getEmailContacto().equals(email);
+        return esOrigen || esDestino;
+    }
+
+    private boolean esAdmin(Empresa empresa) {
+        return empresa.getRoles() != null && empresa.getRoles().contains("ADMIN");
     }
 }

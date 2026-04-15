@@ -41,7 +41,7 @@ public class Acuerdo {
      * Quantity of the material.
      */
     @NotNull(message = "La cantidad es obligatoria")
-    @DecimalMin(value = "0.0", inclusive = false, message = "La cantidad debe ser mayor que cero")
+    @jakarta.validation.constraints.Min(value = 1, message = "La cantidad debe ser de al menos 1 unidad")
     private Double cantidad;
 
     /**
@@ -54,7 +54,7 @@ public class Acuerdo {
      * The price agreed upon for the transaction.
      */
     @NotNull(message = "El precio acordado es obligatorio")
-    @DecimalMin(value = "0.0", message = "El precio no puede ser negativo")
+    @jakarta.validation.constraints.DecimalMin(value = "0.0", message = "El precio no puede ser negativo")
     private Double precioAcordado;
 
     /**
@@ -106,6 +106,16 @@ public class Acuerdo {
     private Demanda demanda;
 
     /**
+     * Profit earned by the platform for this transaction (commission).
+     */
+    private Double beneficioPlataforma;
+
+    /**
+     * Calculated CO2 impact (tons) saved by this agreement.
+     */
+    private Double impactoCO2;
+
+    /**
      * Default constructor for JPA.
      */
     public Acuerdo() {
@@ -113,23 +123,10 @@ public class Acuerdo {
 
     /**
      * Full constructor for Acuerdo.
-     *
-     * @param materialIntercambiado material description
-     * @param cantidad              quantity
-     * @param unidad                measurement unit
-     * @param precioAcordado        final price
-     * @param fechaRecogida         pickup date
-     * @param estado                agreement status
-     * @param notas                 extra information
-     * @param fechaRegistro         registration timestamp
-     * @param empresaOrigen         source company
-     * @param empresaDestino        target company
-     * @param oferta                associated offer (can be null)
-     * @param demanda               associated demand (can be null)
      */
     public Acuerdo(String materialIntercambiado, Double cantidad, String unidad, Double precioAcordado,
                    LocalDate fechaRecogida, EstadoAcuerdo estado, String notas, LocalDateTime fechaRegistro,
-                   Empresa empresaOrigen, Empresa empresaDestino, Oferta oferta, Demanda demanda) {
+                   Empresa empresaOrigen, Empresa empresaDestino, Oferta oferta, Demanda demanda, Double beneficioPlataforma) {
         this.materialIntercambiado = materialIntercambiado;
         this.cantidad = cantidad;
         this.unidad = unidad;
@@ -142,6 +139,7 @@ public class Acuerdo {
         this.empresaDestino = empresaDestino;
         this.oferta = oferta;
         this.demanda = demanda;
+        this.beneficioPlataforma = beneficioPlataforma;
     }
 
     // Getters and Setters
@@ -184,6 +182,28 @@ public class Acuerdo {
 
     public void setPrecioAcordado(Double precioAcordado) {
         this.precioAcordado = precioAcordado;
+    }
+
+    public Double getBeneficioPlataforma() {
+        return beneficioPlataforma;
+    }
+
+    public void setBeneficioPlataforma(Double beneficioPlataforma) {
+        this.beneficioPlataforma = beneficioPlataforma;
+    }
+
+    public Double getImpactoCO2() {
+        return impactoCO2;
+    }
+
+    public void setImpactoCO2(Double impactoCO2) {
+        this.impactoCO2 = impactoCO2;
+    }
+
+    public String getBeneficioPlataformaFormateado() {
+        if (this.beneficioPlataforma == null) return "0,00 €";
+        NumberFormat formatoMoneda = NumberFormat.getCurrencyInstance(Locale.of("es", "ES"));
+        return formatoMoneda.format(this.beneficioPlataforma);
     }
 
     public LocalDate getFechaRecogida() {

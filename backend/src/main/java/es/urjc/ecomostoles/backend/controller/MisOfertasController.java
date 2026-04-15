@@ -29,6 +29,10 @@ import org.slf4j.LoggerFactory;
 import es.urjc.ecomostoles.backend.dto.SelectOption;
 import java.util.ArrayList;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+
 /**
  * Manages offers for the authenticated user (CRUD + ownership logic).
  *
@@ -83,20 +87,37 @@ public class MisOfertasController {
     // GET /dashboard/mis-ofertas
     // -------------------------------------------------------------------------
     @GetMapping("/dashboard/mis-ofertas")
-    public String mostrarMisOfertas(Model model, Principal principal) {
+    public String mostrarMisOfertas(Model model, Principal principal,
+            @PageableDefault(size = 5) Pageable pageable) {
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("activeOfertas", true);
             model.addAttribute("isDashboard", true);
-            List<OfertaResumen> misOfertas = ofertaService.obtenerPorEmpresa(empresa);
-            model.addAttribute("ofertas", misOfertas);
- 
-            // Dynamic KPIs for the user dashboard
-            model.addAttribute("totalActivas",     misOfertas.stream().filter(o -> "ACTIVA".equals(o.getEstado().toString())).count());
-            model.addAttribute("totalPausadas",    misOfertas.stream().filter(o -> "PAUSADA".equals(o.getEstado().toString())).count());
-            model.addAttribute("totalNegociacion", misOfertas.stream().filter(o -> "EN_NEGOCIACION".equals(o.getEstado().toString())).count());
-            model.addAttribute("totalVisitas",     misOfertas.stream().mapToInt(OfertaResumen::getVisitas).sum());
+            
+            Page<OfertaResumen> paginaOfertas = ofertaService.obtenerPorEmpresaPaginado(empresa, pageable);
+            model.addAttribute("ofertas", paginaOfertas.getContent());
+            model.addAttribute("hasOfertas", !paginaOfertas.isEmpty());
+
+            // Pagination metadata
+            model.addAttribute("currentPage", paginaOfertas.getNumber() + 1);
+            model.addAttribute("totalPages",  paginaOfertas.getTotalPages());
+            model.addAttribute("hasNext",     paginaOfertas.hasNext());
+            model.addAttribute("hasPrev",     paginaOfertas.hasPrevious());
+            model.addAttribute("prevPage",    paginaOfertas.getNumber() - 1);
+            model.addAttribute("nextPage",    paginaOfertas.getNumber() + 1);
+            model.addAttribute("totalItems",  paginaOfertas.getTotalElements());
+
+            // Dynamic base URL for pagination partial
+            model.addAttribute("pagBaseUrl", "/dashboard/mis-ofertas");
+            model.addAttribute("pagQueryString", "");
+
+            // KPI stats based on ALL user offers (for consistency)
+            List<OfertaResumen> misOfertasTotal = ofertaService.obtenerPorEmpresa(empresa);
+            model.addAttribute("totalActivas",     misOfertasTotal.stream().filter(o -> "ACTIVA".equals(o.getEstado().toString())).count());
+            model.addAttribute("totalPausadas",    misOfertasTotal.stream().filter(o -> "PAUSADA".equals(o.getEstado().toString())).count());
+            model.addAttribute("totalNegociacion", misOfertasTotal.stream().filter(o -> "EN_NEGOCIACION".equals(o.getEstado().toString())).count());
+            model.addAttribute("totalVisitas",     misOfertasTotal.stream().mapToInt(OfertaResumen::getVisitas).sum());
  
             return "mis_activos";
         }
@@ -113,16 +134,16 @@ public class MisOfertasController {
             model.addAttribute("activeNuevaOferta", true);
             model.addAttribute("isDashboard", true);
             model.addAttribute("oferta", new Oferta());
-            injectDynamicResidueTypes(model);
+            injectDynamicOptions(model);
             return "crear_activo";
         }
         return "redirect:/";
     }
 
-    private void injectDynamicResidueTypes(Model model) {
-        String catsStr = configuracionService.obtenerValorAuto("listaCategorias");
-        List<String> categorias = java.util.Arrays.asList(catsStr.split("\\r?\\n"));
-        model.addAttribute("listaCategorias", categorias);
+    private void injectDynamicOptions(Model model) {
+        model.addAttribute("listaCategorias", configuracionService.obtenerListaSanitizada("listaCategorias"));
+        model.addAttribute("listaUnidades", configuracionService.obtenerListaSanitizada("listaUnidades"));
+        model.addAttribute("listaDisponibilidades", configuracionService.obtenerListaSanitizada("listaDisponibilidades"));
     }
 
     // -------------------------------------------------------------------------
@@ -136,9 +157,10 @@ public class MisOfertasController {
                                      Principal principal) {
 
         if (result.hasErrors()) {
+            result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             model.addAttribute("errores", result.getAllErrors());
             model.addAttribute("oferta", oferta);
-            injectDynamicResidueTypes(model);
+            injectDynamicOptions(model);
             return "crear_activo";
         }
 
@@ -182,15 +204,29 @@ public class MisOfertasController {
         opcionesEstado.add(new SelectOption("PAUSADA", "PAUSADA", "PAUSADA".equals(oferta.getEstado() != null ? oferta.getEstado().toString() : "")));
         model.addAttribute("opcionesEstado", opcionesEstado);
 
-        // Inject Dynamic Categories from Settings
-        String catsStr = configuracionService.obtenerValorAuto("listaCategorias");
-        List<String> categorias = java.util.Arrays.asList(catsStr.split("\\r?\\n"));
-        
+        // Dynamic Categories
+        List<String> categorias = configuracionService.obtenerListaSanitizada("listaCategorias");
         List<SelectOption> opcionesTipo = new ArrayList<>();
         for(String cat : categorias) {
             opcionesTipo.add(new SelectOption(cat, cat, cat.equals(oferta.getTipoResiduo())));
         }
         model.addAttribute("opcionesTipo", opcionesTipo);
+
+        // Dynamic Units
+        List<String> unidadesList = configuracionService.obtenerListaSanitizada("listaUnidades");
+        List<SelectOption> opcionesUnidad = new ArrayList<>();
+        for(String u : unidadesList) {
+            opcionesUnidad.add(new SelectOption(u, u, u.equals(oferta.getUnidad())));
+        }
+        model.addAttribute("opcionesUnidad", opcionesUnidad);
+
+        // Dynamic Availability
+        List<String> disponibilidadesList = configuracionService.obtenerListaSanitizada("listaDisponibilidades");
+        List<SelectOption> opcionesDisponibilidad = new ArrayList<>();
+        for(String d : disponibilidadesList) {
+            opcionesDisponibilidad.add(new SelectOption(d, d, d.equals(oferta.getDisponibilidad())));
+        }
+        model.addAttribute("opcionesDisponibilidad", opcionesDisponibilidad);
     }
 
     // -------------------------------------------------------------------------
@@ -224,7 +260,7 @@ public class MisOfertasController {
         Oferta oferta = verificarPropietario(id, principal);
 
         if (result.hasErrors()) {
-            
+            result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             cargarOpcionesSelect(model, ofertaForm);
             
             model.addAttribute("errores", result.getAllErrors());

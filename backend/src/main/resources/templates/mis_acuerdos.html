@@ -4,7 +4,8 @@
 
 <div class="container-fluid">
     <div class="row min-vh-100">
-        {{> sidebar}}
+        {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
+        {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
             <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
@@ -29,9 +30,9 @@
                     </div>
                 </div>
                 <div class="card-body p-0">
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light">
+                            <thead class="bg-light sticky-top">
                                 <tr>
                                     <th class="ps-4 text-secondary small text-uppercase">ID</th>
                                     <th class="text-secondary small text-uppercase">Fecha Recogida</th>
@@ -53,7 +54,11 @@
                                     <td><span class="badge bg-primary rounded-pill">{{#estado}}{{estado}}{{/estado}}{{^estado}}Sin estado{{/estado}}</span></td>
                                     <td class="text-end pe-4">
                                         <div class="d-flex gap-1 justify-content-end">
-                                            <a href="/acuerdos/{{id}}" class="btn btn-sm btn-outline-success rounded-pill text-nowrap"><i class="fas fa-eye me-1"></i></a>
+                                            <a href="/acuerdo/{{id}}" class="btn btn-sm btn-outline-success rounded-pill text-nowrap"><i class="fas fa-eye me-1"></i></a>
+                                            <form action="/mis_acuerdos/eliminar/{{id}}" method="POST" class="d-inline mb-0" onsubmit="return confirm('¿Estás seguro de que deseas cancelar este acuerdo?');">
+                                                {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
+                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fas fa-times"></i></button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>

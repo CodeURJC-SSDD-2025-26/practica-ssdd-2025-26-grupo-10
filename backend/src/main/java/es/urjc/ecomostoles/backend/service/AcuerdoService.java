@@ -19,6 +19,8 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import es.urjc.ecomostoles.backend.component.SustainabilityEngine;
 import es.urjc.ecomostoles.backend.exception.SelfAgreementException;
@@ -31,20 +33,28 @@ public class AcuerdoService {
     private final EmpresaService empresaService;
     private final OfertaService ofertaService;
     private final SustainabilityEngine sustainabilityEngine;
+    private final ConfiguracionService configuracionService;
 
     public AcuerdoService(AcuerdoRepository acuerdoRepository, 
                           EmpresaService empresaService, 
                           OfertaService ofertaService,
-                          SustainabilityEngine sustainabilityEngine) {
+                          SustainabilityEngine sustainabilityEngine,
+                          ConfiguracionService configuracionService) {
         this.acuerdoRepository = acuerdoRepository;
         this.empresaService = empresaService;
         this.ofertaService = ofertaService;
         this.sustainabilityEngine = sustainabilityEngine;
+        this.configuracionService = configuracionService;
     }
 
     @Transactional(readOnly = true)
     public List<Acuerdo> obtenerTodos() {
         return acuerdoRepository.findTop50ByOrderByFechaRegistroDesc();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Acuerdo> obtenerTodosPaginados(Pageable pageable) {
+        return acuerdoRepository.findAllPaginated(pageable);
     }
 
     @Transactional(readOnly = true)
@@ -125,6 +135,28 @@ public class AcuerdoService {
         acuerdo.setFechaRegistro(LocalDateTime.now());
         acuerdo.setEmpresaOrigen(origen);
 
+        // --- CALCULO DE IMPACTO CO2 ---
+        double co2 = sustainabilityEngine.calcularImpactoCO2(acuerdo.getCantidad(), 
+                        oferta.getTipoResiduo());
+        acuerdo.setImpactoCO2(co2);
+        // ------------------------------
+
+        // --- CALCULO DE COMISION ---
+        String comisionStr = configuracionService.obtenerValorAuto("comisionPlataforma");
+        double porcentaje = 0.0;
+        try {
+            porcentaje = Double.parseDouble(comisionStr);
+        } catch (NumberFormatException e) {
+            // Log fallback or handle error
+        }
+
+        if (acuerdo.getPrecioAcordado() != null) {
+            double beneficio = acuerdo.getPrecioAcordado() * (porcentaje / 100.0);
+            beneficio = Math.round(beneficio * 100.0) / 100.0;
+            acuerdo.setBeneficioPlataforma(beneficio);
+        }
+        // ---------------------------
+
         if (empresaDestinoId != null) {
             Empresa destino = empresaService.buscarPorId(empresaDestinoId).orElse(origen);
             acuerdo.setEmpresaDestino(destino);
@@ -152,20 +184,8 @@ public class AcuerdoService {
         Optional<Empresa> empresa = empresaService.buscarPorId(empresaId);
         if (empresa.isEmpty()) return 0.0;
         
-        // Optimized: direct sum from DB if possible, or at least filtered list
-        Double totalCantidad = acuerdoRepository.sumCantidadByEmpresaAndEstado(empresa.get(), EstadoAcuerdo.COMPLETADO);
-        if (totalCantidad == null) return 0.0;
-
-        // Note: For ranking/exact CO2 per material we still need the list or a more complex sum query
-        // But for an individual company, this is faster than fetching everything.
-        // However, since factors depend on material, we actually need the group by or individual fetch.
-        // I'll keep the list fetch but ensure it's filtered and joined.
-        List<Acuerdo> acuerdos = acuerdoRepository.findByEmpresa(empresa.get());
-        return acuerdos.stream()
-                .filter(a -> es.urjc.ecomostoles.backend.model.EstadoAcuerdo.COMPLETADO.equals(a.getEstado()))
-                .mapToDouble(a -> sustainabilityEngine.calcularImpactoCO2(a.getCantidad(), 
-                    a.getOferta() != null ? a.getOferta().getTipoResiduo() : null))
-                .sum();
+        Double total = acuerdoRepository.sumImpactoCO2ByEmpresaCompletado(empresa.get());
+        return total != null ? total : 0.0;
     }
 
     @Transactional(readOnly = true)
@@ -180,8 +200,7 @@ public class AcuerdoService {
         
         Map<Long, Double> ranking = new HashMap<>();
         for (Acuerdo a : completados) {
-            double co2 = sustainabilityEngine.calcularImpactoCO2(a.getCantidad(), 
-                a.getOferta() != null ? a.getOferta().getTipoResiduo() : null);
+            double co2 = (a.getImpactoCO2() != null) ? a.getImpactoCO2() : 0.0;
             
             if (a.getEmpresaOrigen() != null) {
                 ranking.merge(a.getEmpresaOrigen().getId(), co2, Double::sum);
@@ -194,20 +213,20 @@ public class AcuerdoService {
     }
 
     @Transactional(readOnly = true)
-    public String calcularCO2Ahorrado() {
-        // Optimized: only fetch completed agreements
-        List<Acuerdo> completados = acuerdoRepository.findAllByEstado(es.urjc.ecomostoles.backend.model.EstadoAcuerdo.COMPLETADO); 
-        
-        double totalTonsCO2 = completados.stream()
-                .mapToDouble(a -> sustainabilityEngine.calcularImpactoCO2(a.getCantidad(), 
-                    a.getOferta() != null ? a.getOferta().getTipoResiduo() : null))
-                .sum();
+    public Double obtenerImpactoCO2Crudo() {
+        Double total = acuerdoRepository.sumTotalImpactoCO2Completado();
+        return total != null ? total : 0.0;
+    }
 
-        if (totalTonsCO2 == 0) return "0";
+    @Transactional(readOnly = true)
+    public String calcularCO2Ahorrado() {
+        Double total = acuerdoRepository.sumTotalImpactoCO2Completado();
+        
+        if (total == null || total == 0) return "0";
    
         DecimalFormat df = (DecimalFormat) NumberFormat.getInstance(Locale.of("es", "ES"));
         df.applyPattern("#,###.###");
-        return df.format(totalTonsCO2);
+        return df.format(total);
     }
 
     /**
@@ -217,13 +236,42 @@ public class AcuerdoService {
         Acuerdo acuerdoExistente = acuerdoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
 
+        // If transitioning to COMPLETADO, freeze the CO2 impact
+        if (EstadoAcuerdo.COMPLETADO.equals(datosActualizados.getEstado()) && 
+           !EstadoAcuerdo.COMPLETADO.equals(acuerdoExistente.getEstado())) {
+            
+            double co2 = sustainabilityEngine.calcularImpactoCO2(datosActualizados.getCantidad(), 
+                            acuerdoExistente.getOferta() != null ? acuerdoExistente.getOferta().getTipoResiduo() : null);
+            acuerdoExistente.setImpactoCO2(co2);
+        }
+
         // Update allowed fields
         acuerdoExistente.setMaterialIntercambiado(datosActualizados.getMaterialIntercambiado());
         acuerdoExistente.setCantidad(datosActualizados.getCantidad());
         acuerdoExistente.setUnidad(datosActualizados.getUnidad());
-        acuerdoExistente.setPrecioAcordado(datosActualizados.getPrecioAcordado());
         acuerdoExistente.setFechaRecogida(datosActualizados.getFechaRecogida());
         acuerdoExistente.setEstado(datosActualizados.getEstado());
+
+        // Recalculate profit if price changed
+        if (datosActualizados.getPrecioAcordado() != null && 
+           !datosActualizados.getPrecioAcordado().equals(acuerdoExistente.getPrecioAcordado())) {
+            
+            acuerdoExistente.setPrecioAcordado(datosActualizados.getPrecioAcordado());
+            
+            String comisionStr = configuracionService.obtenerValorAuto("comisionPlataforma");
+            double porcentaje = 0.0;
+            try {
+                porcentaje = Double.parseDouble(comisionStr);
+            } catch (NumberFormatException e) {
+                // Ignore or log
+            }
+            
+            double beneficio = acuerdoExistente.getPrecioAcordado() * (porcentaje / 100.0);
+            beneficio = Math.round(beneficio * 100.0) / 100.0;
+            acuerdoExistente.setBeneficioPlataforma(beneficio);
+        } else {
+            acuerdoExistente.setPrecioAcordado(datosActualizados.getPrecioAcordado());
+        }
 
         return acuerdoRepository.save(acuerdoExistente);
     }

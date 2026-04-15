@@ -2,44 +2,61 @@ package es.urjc.ecomostoles.backend.controller;
 
 import es.urjc.ecomostoles.backend.model.Demanda;
 import es.urjc.ecomostoles.backend.service.DemandaService;
-import es.urjc.ecomostoles.backend.service.EmpresaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 
 /**
  * Controller to handle demand-related (Demanda/Solicitudes) web requests.
  *
  * Follows Controller > Service > Repository architecture:
- * delegates all data access to DemandaService and EmpresaService.
+ * delegates all data access to DemandaService.
  */
 @Controller
 public class DemandaController {
 
     private final DemandaService demandaService;
-    private final EmpresaService empresaService;
 
-    public DemandaController(DemandaService demandaService, EmpresaService empresaService) {
+    public DemandaController(DemandaService demandaService) {
         this.demandaService  = demandaService;
-        this.empresaService  = empresaService;
     }
 
     /**
-     * Retrieves all demands and displays the solicitudes marketplace page.
+     * Retrieves active demands and displays the solicitudes marketplace page with pagination.
      */
     @GetMapping("/solicitudes")
-    public String mostrarTablonDemandas(Model model, Principal principal) {
-        List<Demanda> todasLasDemandas = demandaService.obtenerTodas();
-        model.addAttribute("demandas", todasLasDemandas);
+    public String mostrarTablonDemandas(Model model, Principal principal,
+            @PageableDefault(size = 9) Pageable pageable) {
+        
+        Page<Demanda> paginaDemandas = demandaService.obtenerPorEstadoPaginada(es.urjc.ecomostoles.backend.model.EstadoDemanda.ACTIVA, pageable);
+        
+        model.addAttribute("demandas", paginaDemandas.getContent());
+        model.addAttribute("hasDemandas", !paginaDemandas.isEmpty());
+
+        // Pagination metadata
+        model.addAttribute("currentPage", paginaDemandas.getNumber() + 1);
+        model.addAttribute("totalPages",  paginaDemandas.getTotalPages());
+        model.addAttribute("hasNext",     paginaDemandas.hasNext());
+        model.addAttribute("hasPrev",     paginaDemandas.hasPrevious());
+        model.addAttribute("prevPage",    paginaDemandas.getNumber() - 1);
+        model.addAttribute("nextPage",    paginaDemandas.getNumber() + 1);
+        model.addAttribute("totalItems",  paginaDemandas.getTotalElements());
+
+        // Dynamic base URL for pagination partial
+        model.addAttribute("pagBaseUrl", "/solicitudes");
+        model.addAttribute("pagQueryString", "");
+
         model.addAttribute("navDemandas", true);
 
         return "solicitudes";

@@ -56,7 +56,7 @@ public class DashboardService {
             
             // Admin Global Impact Stats
             stats.setMaterialReintroducido(acuerdoService.sumarTotalMaterialReintroducido());
-            stats.setImpactoCO2(Double.parseDouble(acuerdoService.calcularCO2Ahorrado().replace(".", "").replace(",", ".")));
+            stats.setImpactoCO2(acuerdoService.obtenerImpactoCO2Crudo());
         } else {
             // ── Empresa: Personal KPIs ──────────────────────────────────────
             int misOfertas = (int) ofertaService.contarPorEmpresa(empresa);
@@ -72,9 +72,9 @@ public class DashboardService {
             stats.setImpactoCO2(acuerdoService.calcularCO2AhorradoPorEmpresa(empresa.getId()));
 
             // Smart Matching
-            List<Demanda> recommendedDemandas = demandaService.obtenerSmartRecommendations(empresa);
-            stats.setSmartRecommendations(recommendedDemandas);
-            stats.setHasRecommendations(!recommendedDemandas.isEmpty());
+            List<?> recommendedOffers = demandaService.obtenerSmartRecommendations(empresa);
+            stats.setSmartRecommendations(recommendedOffers);
+            stats.setHasRecommendations(!recommendedOffers.isEmpty());
             
             stats.setChartData(List.of(misOfertas, misDemandas, misAcuerdos));
         }

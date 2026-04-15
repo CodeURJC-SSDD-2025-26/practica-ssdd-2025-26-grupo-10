@@ -36,16 +36,7 @@
                         <div class="mb-4">
                             <label for="password" class="form-label fw-bold small text-uppercase text-secondary">Contraseña</label>
                             <input type="password" name="password" class="form-control" id="password" placeholder="••••••••" required="">
-                            <div class="text-end mt-2">
-                                <a href="/recuperar_password" class="small text-muted text-decoration-none">¿Olvidaste tu contraseña?</a>
-                            </div>
                         </div>
-                        
-                        {{#mensajeRecuperacion}}
-                        <div class="alert alert-success py-2 small fw-bold text-center" role="alert">
-                            <i class="fas fa-check-circle me-1"></i> {{mensajeRecuperacion}}
-                        </div>
-                        {{/mensajeRecuperacion}}
                         
                         <div class="d-grid mb-3">
                             <button type="submit" class="btn btn-primary py-2 fw-bold rounded-pill">Entrar al Panel</button>

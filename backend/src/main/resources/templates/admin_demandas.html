@@ -1,0 +1,134 @@
+{{> head_admin}}
+<body class="bg-theme-dark">
+{{> header}}
+
+<div class="container-fluid">
+    <div class="row min-vh-100">
+        <!-- Admin Sidebar -->
+        {{> sidebar_admin}}
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent">
+
+            <!-- Header -->
+            <section class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                        <div>
+                          <h1 class="h2 fw-bold text-dark mb-0"><i class="fas fa-bullhorn me-2 text-success"></i> Gestión de Demandas</h1>
+                          <p class="text-secondary small">Supervisión de solicitudes de materiales y recursos.</p>
+                        </div>
+                    </div>
+
+                    <!-- Stats row -->
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="border rounded-4 p-3 text-center bg-light">
+                                <h4 class="fw-bold text-success mb-0">{{#totalDemandasActivas}}{{totalDemandasActivas}}{{/totalDemandasActivas}}{{^totalDemandasActivas}}0{{/totalDemandasActivas}}</h4>
+                                <small class="text-muted fw-bold text-uppercase small">Activas</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded-4 p-3 text-center bg-light">
+                                <h4 class="fw-bold text-primary mb-0">{{#totalInteresados}}{{totalInteresados}}{{/totalInteresados}}{{^totalInteresados}}0{{/totalInteresados}}</h4>
+                                <small class="text-muted fw-bold text-uppercase small">Interesados</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Table -->
+            <section class="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden">
+                <div class="card-header bg-white border-0 fw-bold pt-4 pb-0 px-4">
+                    <h5 class="fw-bold text-dark mb-0">Listado de Demandas</h5>
+                    <p class="text-muted small mb-0">Control global de necesidades de las empresas.</p>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-secondary small text-uppercase">
+                                <tr>
+                                    <th class="ps-4">Material Buscado</th>
+                                    <th>Empresa</th>
+                                    <th>Cantidad</th>
+                                    <th class="text-end pe-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#demandas}}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-dark">{{titulo}}</div>
+                                        <small class="text-muted text-uppercase small">{{categoriaMaterial}}</small>
+                                    </td>
+                                    <td class="text-secondary small fw-bold">{{empresa.nombreComercial}}</td>
+                                    <td class="text-secondary fw-bold">{{cantidad}} {{unidad}}</td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a href="/admin/demandas/ver/{{id}}" class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center p-0 fs-5" style="width: 45px; height: 45px; flex-shrink: 0;" title="Ver Detalle">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="/admin/demandas/editar/{{id}}" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0 fs-5" style="width: 45px; height: 45px; flex-shrink: 0;" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form action="/admin/demandas/eliminar/{{id}}" method="POST" style="display: inline-block; margin: 0;">
+                                                {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
+                                                <button type="submit" class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center p-0 fs-5" style="width: 45px; height: 45px; flex-shrink: 0;" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este registro?');">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{/demandas}}
+                                {{^demandas}}
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-muted">
+                                        <div class="mb-3"><i class="fas fa-bullhorn fs-1 opacity-25"></i></div>
+                                        <p class="mb-0">No hay demandas registradas.</p>
+                                    </td>
+                                </tr>
+                                {{/demandas}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Pagination Footer -->
+                {{#totalPages}}
+                <div class="card-footer bg-white border-top-0 p-4">
+                    <nav aria-label="Navegación de demandas">
+                        <ul class="pagination pagination-rounded justify-content-center mb-0 gap-2">
+                            {{#hasPrevious}}
+                            <li class="page-item">
+                                <a class="page-link border-0 shadow-sm rounded-pill px-4" href="/admin/demandas?page={{prevPage}}">
+                                    <i class="fas fa-chevron-left me-2"></i> Anterior
+                                </a>
+                            </li>
+                            {{/hasPrevious}}
+                            
+                            <li class="page-item">
+                                <span class="page-link border-0 bg-success text-white shadow-sm rounded-pill px-4 fw-bold">
+                                    Página {{currentPage}} de {{totalPages}}
+                                </span>
+                            </li>
+                            
+                            {{#hasNext}}
+                            <li class="page-item">
+                                <a class="page-link border-0 shadow-sm rounded-pill px-4" href="/admin/demandas?page={{nextPage}}">
+                                    Siguiente <i class="fas fa-chevron-right ms-2"></i>
+                                </a>
+                            </li>
+                            {{/hasNext}}
+                        </ul>
+                    </nav>
+                </div>
+                {{/totalPages}}
+            </section>
+
+        </main>
+    </div>
+</div>
+
+{{> footer}}

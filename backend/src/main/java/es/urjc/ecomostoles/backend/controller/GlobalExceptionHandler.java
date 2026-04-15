@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
                                          RedirectAttributes redirectAttributes, 
                                          HttpServletRequest request) {
         
-        redirectAttributes.addFlashAttribute("error", "El archivo es demasiado grande. El límite máximo es 2MB.");
+        redirectAttributes.addFlashAttribute("error", "El archivo es demasiado grande. El límite máximo es 5MB.");
         
         // Attempt to redirect back to the form
         String referer = request.getHeader("Referer");

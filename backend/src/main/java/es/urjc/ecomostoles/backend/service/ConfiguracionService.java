@@ -21,13 +21,17 @@ public class ConfiguracionService {
     public static final String DEFAULT_PLATFORM_LOCATION = "Polígono Regordoño";
     public static final String DEFAULT_LISTA_UNIDADES = "kg\nuds\ntoneladas\nm2\nlitros";
     public static final String DEFAULT_LISTA_DISPONIBILIDAD = "Inmediata\nEn 1 semana\nConsultar";
+    public static final String DEFAULT_LISTA_SECTORES = "Construcción\nEnergía\nAlimentación\nMetalurgia\nAutomoción\nTextil\nQuímica";
 
     public ConfiguracionService(ConfiguracionRepository configuracionRepository) {
         this.configuracionRepository = configuracionRepository;
     }
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ConfiguracionService.class);
+
     @Transactional
     public void guardarOActualizarConfiguracion(String clave, String valor) {
+        log.debug("Persisitiendo configuración -> Clave: {}, Valor: {}", clave, valor);
         ConfiguracionGlobal config = configuracionRepository.findByClave(clave)
                 .orElse(new ConfiguracionGlobal(clave, valor));
         config.setValor(valor);
@@ -52,12 +56,31 @@ public class ConfiguracionService {
             case "listaCategorias" -> DEFAULT_CATEGORIAS;
             case "listaUnidades" -> DEFAULT_LISTA_UNIDADES;
             case "listaDisponibilidades" -> DEFAULT_LISTA_DISPONIBILIDAD;
+            case "listaSectores" -> DEFAULT_LISTA_SECTORES;
             case "platformName" -> DEFAULT_PLATFORM_NAME;
             case "platformCity" -> DEFAULT_PLATFORM_CITY;
             case "platformLocation" -> DEFAULT_PLATFORM_LOCATION;
             case "modoMantenimiento" -> "false";
+            case "social_linkedin" -> "https://linkedin.com/company/ecomostoles";
+            case "social_twitter" -> "https://x.com/ecomostoles";
+            case "social_facebook" -> "https://facebook.com/ecomostoles";
+            case "platformStatus" -> "SISTEMA ONLINE";
             default -> "";
         };
         return obtenerValorConfiguracion(clave, fallback);
+    }
+
+    /**
+     * Retrieves a configuration value as a sanitized list of strings.
+     * Splitting by newline, trimming, and filtering empty strings.
+     */
+    public java.util.List<String> obtenerListaSanitizada(String clave) {
+        String data = obtenerValorAuto(clave);
+        if (data == null || data.isEmpty()) return java.util.Collections.emptyList();
+        
+        return java.util.Arrays.stream(data.split("\\r?\\n"))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(java.util.stream.Collectors.toList());
     }
 }

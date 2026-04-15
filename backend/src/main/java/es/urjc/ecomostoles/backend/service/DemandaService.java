@@ -6,6 +6,8 @@ import es.urjc.ecomostoles.backend.repository.DemandaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,9 +21,12 @@ import java.util.Optional;
 public class DemandaService {
 
     private final DemandaRepository demandaRepository;
+    private final es.urjc.ecomostoles.backend.repository.AcuerdoRepository acuerdoRepository;
 
-    public DemandaService(DemandaRepository demandaRepository) {
+    public DemandaService(DemandaRepository demandaRepository,
+                          es.urjc.ecomostoles.backend.repository.AcuerdoRepository acuerdoRepository) {
         this.demandaRepository = demandaRepository;
+        this.acuerdoRepository = acuerdoRepository;
     }
 
     /** Returns all demands in the system. */
@@ -30,22 +35,29 @@ public class DemandaService {
         return demandaRepository.findTop50ByOrderByFechaPublicacionDesc();
     }
 
+    /** Returns all demands in the system with pagination. */
+    @Transactional(readOnly = true)
+    public Page<Demanda> obtenerTodasPaginadas(Pageable pageable) {
+        return demandaRepository.findAllPaginated(pageable);
+    }
+
     /** Returns all demands filtered by state */
     @Transactional(readOnly = true)
     public List<Demanda> obtenerPorEstado(es.urjc.ecomostoles.backend.model.EstadoDemanda estado) {
         return demandaRepository.findByEstadoJoinEmpresa(estado);
     }
 
-    /** Returns top 3 smart recommendations matching company sector directly from DB */
+    /** Returns all demands filtered by state with pagination. */
     @Transactional(readOnly = true)
-    public List<Demanda> obtenerSmartRecommendations(Empresa empresa) {
-        if (empresa.getSectorIndustrial() == null) {
-            return java.util.Collections.emptyList();
-        }
-        return demandaRepository.findSmartRecommendations(
-            es.urjc.ecomostoles.backend.model.EstadoDemanda.ACTIVA,
+    public Page<Demanda> obtenerPorEstadoPaginada(es.urjc.ecomostoles.backend.model.EstadoDemanda estado, Pageable pageable) {
+        return demandaRepository.findByEstado(estado, pageable);
+    }
+
+    /** Returns top 3 smart offer recommendations for this company based on their demands */
+    @Transactional(readOnly = true)
+    public List<es.urjc.ecomostoles.backend.model.Oferta> obtenerSmartRecommendations(Empresa empresa) {
+        return demandaRepository.findOfertasMatchingDemanda(
             empresa.getId(),
-            empresa.getSectorIndustrial(),
             org.springframework.data.domain.PageRequest.of(0, 3)
         );
     }
@@ -54,6 +66,12 @@ public class DemandaService {
     @Transactional(readOnly = true)
     public List<Demanda> obtenerPorEmpresa(Empresa empresa) {
         return demandaRepository.findByEmpresa(empresa);
+    }
+
+    /** Returns all demands belonging to a specific company with pagination. */
+    @Transactional(readOnly = true)
+    public Page<Demanda> obtenerPorEmpresaPaginada(Empresa empresa, Pageable pageable) {
+        return demandaRepository.findByEmpresa(empresa, pageable);
     }
 
     /** Optimized count (does not fetch entire list) */
@@ -80,6 +98,10 @@ public class DemandaService {
 
     /** Deletes a demand by its ID. */
     public void eliminar(Long id) {
+        if (acuerdoRepository.countByDemanda_Id(id) > 0) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST, "No se puede eliminar porque tiene acuerdos asociados");
+        }
         demandaRepository.deleteById(id);
     }
 

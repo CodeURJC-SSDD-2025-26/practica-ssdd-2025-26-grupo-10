@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 /**
@@ -20,6 +22,18 @@ public interface OfertaRepository extends JpaRepository<Oferta, Long> {
     void incrementarVisitas(@Param("id") Long id);
     
     long countByEstado(EstadoOferta estado);
+
+    /** Paginated retrieval of all offers with projection */
+    <T> Page<T> findAllProjectedBy(Pageable pageable, Class<T> type);
+
+    /** Paginated retrieval of offers by state with projection */
+    <T> Page<T> findByEstado(EstadoOferta estado, Pageable pageable, Class<T> type);
+
+    /**
+     * Finds a paginated list of offers associated with a specific company.
+     * Use second parameter to choose between Oferta entity or OfertaResumen projection.
+     */
+    <T> Page<T> findByEmpresa(Empresa empresa, Pageable pageable, Class<T> type);
 
     /**
      * Finds a list of offers associated with a specific company.
@@ -43,5 +57,8 @@ public interface OfertaRepository extends JpaRepository<Oferta, Long> {
            "AND (:kw IS NULL OR :kw = '' OR LOWER(o.titulo) LIKE LOWER(CONCAT('%', :kw, '%')) OR LOWER(CAST(o.descripcion AS string)) LIKE LOWER(CONCAT('%', :kw, '%'))) " +
            "AND (:tipo IS NULL OR :tipo = '' OR o.tipoResiduo = :tipo) " +
            "AND (:poligono IS NULL OR :poligono = '' OR LOWER(o.empresa.direccion) LIKE LOWER(CONCAT('%', :poligono, '%')))")
-    List<OfertaResumen> buscarFiltrado(@Param("estado") EstadoOferta estado, @Param("kw") String kw, @Param("tipo") String tipo, @Param("poligono") String poligono);
+    Page<OfertaResumen> buscarFiltrado(@Param("estado") EstadoOferta estado, @Param("kw") String kw, @Param("tipo") String tipo, @Param("poligono") String poligono, Pageable pageable);
+
+    @Query("SELECT o FROM Oferta o JOIN FETCH o.empresa WHERE o.estado = :estado AND o.empresa.id != :empresaId AND o.tipoResiduo IN :categorias")
+    List<Oferta> findSmartMatches(@Param("estado") EstadoOferta estado, @Param("empresaId") Long empresaId, @Param("categorias") List<String> categorias, Pageable pageable);
 }

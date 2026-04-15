@@ -21,7 +21,7 @@
                                     <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> {{empresa.nombreComercial}}</p>
                                     <p class="card-text small text-truncate">{{descripcion}}</p>
                                     <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <span class="badge bg-primary-soft text-primary">Buscando {{cantidadFormateada}} kg</span>
+                                        <span class="badge bg-primary-soft text-primary">Buscando {{cantidadFormateada}} {{unidad}}</span>
                                         <a href="/demanda/{{id}}" class="btn btn-outline-primary btn-sm rounded-pill">Responder</a>
                                     </div>
                                 </div>
@@ -37,6 +37,9 @@
                         </div>
                         {{/demandas}}
                     </div>
+
+                    <!-- Pagination component -->
+                    {{> pagination_control}}
                 </div>
             </div>
         </div>

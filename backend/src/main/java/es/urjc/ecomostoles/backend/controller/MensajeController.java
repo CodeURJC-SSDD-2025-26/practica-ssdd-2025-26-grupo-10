@@ -79,7 +79,7 @@ public class MensajeController {
         boolean esRemitente = mensaje.getRemitente().getId().equals(empresa.getId());
  
         if (!esDestinatario && !esRemitente) {
-             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para ver este mensaje");
+             return "redirect:/mensajes?error=forbidden";
         }
  
         // Mark as read if the recipient is the logged-in user
@@ -160,7 +160,7 @@ public class MensajeController {
         boolean esRemitente = mensaje.getRemitente().getEmailContacto().equals(principal.getName());
 
         if (!esDestinatario && !esRemitente) {
-             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para eliminar este mensaje");
+             return "redirect:/mensajes?error=forbidden";
         }
 
         mensajeService.eliminar(id);

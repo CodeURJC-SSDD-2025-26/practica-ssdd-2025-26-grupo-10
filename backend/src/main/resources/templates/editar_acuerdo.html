@@ -5,7 +5,8 @@
 <div class="container-fluid">
     <div class="row min-vh-100">
         <!-- Sidebar -->
-        {{> sidebar}}
+        {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
+        {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
         <!-- Main Content -->
         {{#acuerdo}}
@@ -62,6 +63,11 @@
                                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                     {{/opcionesEstado}}
                                 </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="fechaRecogida" class="form-label text-secondary fw-bold small text-uppercase">Fecha de Recogida</label>
+                                <input type="date" class="form-control" id="fechaRecogida" name="fechaRecogida" value="{{#fechaRecogida}}{{fechaRecogida}}{{/fechaRecogida}}">
                             </div>
 
                             <div class="col-12">

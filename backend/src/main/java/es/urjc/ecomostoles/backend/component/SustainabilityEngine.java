@@ -9,46 +9,54 @@ import es.urjc.ecomostoles.backend.repository.FactorImpactoRepository;
 import es.urjc.ecomostoles.backend.model.FactorImpacto;
 
 /**
- * Centralized engine for calculating environmental impact and sustainability metrics.
- * Follows the DRY principle to avoid scattered mathematical factors across services.
+ * Centralized engine for calculating environmental impact and sustainability
+ * metrics.
+ * Follows the DRY principle to avoid scattered mathematical factors across
+ * services.
  */
 @Component
 public class SustainabilityEngine {
 
     private static final Logger log = LoggerFactory.getLogger(SustainabilityEngine.class);
- 
+
     @Value("${app.sustainability.default-co2-factor:0.45}")
     private double defaultCo2Factor;
 
     private final ConfiguracionService configuracionService;
     private final FactorImpactoRepository factorImpactoRepository;
 
-    public SustainabilityEngine(ConfiguracionService configuracionService, 
-                                FactorImpactoRepository factorImpactoRepository) {
+    public SustainabilityEngine(ConfiguracionService configuracionService,
+            FactorImpactoRepository factorImpactoRepository) {
         this.configuracionService = configuracionService;
         this.factorImpactoRepository = factorImpactoRepository;
     }
 
     /**
-     * Calculates the CO2 savings based on the amount of material recycled or re-introduced.
-     * Fetches the factor from the database dynamically and applies a material-specific multiplier.
+     * Calculates the CO2 savings based on the amount of material recycled or
+     * re-introduced.
+     * Fetches the factor from the database dynamically and applies a
+     * material-specific multiplier.
      * 
      * @param kilosMaterial The amount of material in kilograms or units.
-     * @param tipoResiduo   The type of material (Plastic, Metal, Wood, etc.) for granular calculation.
+     * @param tipoResiduo   The type of material (Plastic, Metal, Wood, etc.) for
+     *                      granular calculation.
      * @return The calculated CO2 impact in tons.
      */
     public double calcularImpactoCO2(double kilosMaterial, String tipoResiduo) {
-        String factorStr = configuracionService.obtenerValorConfiguracion("CO2_FACTOR", String.valueOf(defaultCo2Factor));
+        String factorStr = configuracionService.obtenerValorConfiguracion("CO2_FACTOR",
+                String.valueOf(defaultCo2Factor));
         double factor;
         try {
             factor = Double.parseDouble(factorStr);
         } catch (NumberFormatException | NullPointerException e) {
-            log.warn("⚠️ ERROR CRÍTICO DE CONFIGURACIÓN: El factor 'CO2_FACTOR' en BD ('{}') no es un número válido. Usando valor inyectado de seguridad: {}. Fallo: {}", factorStr, defaultCo2Factor, e.getMessage());
+            log.warn(
+                    "⚠️ ERROR CRÍTICO DE CONFIGURACIÓN: El factor 'CO2_FACTOR' en BD ('{}') no es un número válido. Usando valor inyectado de seguridad: {}. Fallo: {}",
+                    factorStr, defaultCo2Factor, e.getMessage());
             factor = defaultCo2Factor;
         }
 
         // Granular Multipliers fetched from the dedicated environmental factors table
-        double multiplicadorMaterial = 1.0; 
+        double multiplicadorMaterial = 1.0;
         if (tipoResiduo != null) {
             multiplicadorMaterial = factorImpactoRepository.findByCategoriaIgnoreCase(tipoResiduo)
                     .map(FactorImpacto::getMultiplicador)

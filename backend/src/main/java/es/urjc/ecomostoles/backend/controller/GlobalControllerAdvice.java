@@ -66,16 +66,28 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute("listaUnidades")
     public java.util.List<String> listaUnidades() {
-        String units = configuracionService.obtenerValorAuto("listaUnidades");
-        if (units == null || units.isEmpty()) return java.util.Collections.emptyList();
-        return java.util.Arrays.asList(units.split("\\r?\\n"));
+        return configuracionService.obtenerListaSanitizada("listaUnidades");
     }
     
     @ModelAttribute("listaDisponibilidades")
     public java.util.List<String> listaDisponibilidades() {
-        String disp = configuracionService.obtenerValorAuto("listaDisponibilidades");
-        if (disp == null || disp.isEmpty()) return java.util.Collections.emptyList();
-        return java.util.Arrays.asList(disp.split("\\r?\\n"));
+        return configuracionService.obtenerListaSanitizada("listaDisponibilidades");
+    }
+
+    @ModelAttribute("listaCategorias")
+    public java.util.List<String> listaCategorias() {
+        return configuracionService.obtenerListaSanitizada("listaCategorias");
+    }
+
+    @ModelAttribute("listaSectores")
+    public java.util.List<String> listaSectores() {
+        return configuracionService.obtenerListaSanitizada("listaSectores");
+    }
+
+    @ModelAttribute("unidadPrincipal")
+    public String unidadPrincipal() {
+        java.util.List<String> unidades = configuracionService.obtenerListaSanitizada("listaUnidades");
+        return unidades.isEmpty() ? "kg" : unidades.get(0);
     }
 
     @ModelAttribute("platformName")
@@ -96,6 +108,26 @@ public class GlobalControllerAdvice {
     @ModelAttribute("isAdmin")
     public boolean isAdmin(Authentication auth) {
         return auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().contains("ADMIN"));
+    }
+
+    @ModelAttribute("socialLinkedin")
+    public String socialLinkedin() {
+        return configuracionService.obtenerValorAuto("social_linkedin");
+    }
+
+    @ModelAttribute("socialTwitter")
+    public String socialTwitter() {
+        return configuracionService.obtenerValorAuto("social_twitter");
+    }
+
+    @ModelAttribute("socialFacebook")
+    public String socialFacebook() {
+        return configuracionService.obtenerValorAuto("social_facebook");
+    }
+
+    @ModelAttribute("platformStatus")
+    public String platformStatus() {
+        return configuracionService.obtenerValorAuto("platformStatus");
     }
 
     @ModelAttribute("isEmpresa")

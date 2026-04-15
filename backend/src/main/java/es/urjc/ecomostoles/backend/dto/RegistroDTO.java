@@ -22,6 +22,12 @@ public class RegistroDTO {
 
     @NotBlank(message = "El sector industrial es obligatorio")
     private String sector;
+    
+    @NotBlank(message = "El teléfono es obligatorio")
+    private String telefono;
+
+    @NotBlank(message = "La descripción de la empresa es obligatoria")
+    private String descripcion;
 
     @NotBlank(message = "El email es obligatorio")
     @Email(message = "Formato de email inválido")
@@ -73,4 +79,10 @@ public class RegistroDTO {
 
     public String getDireccionOtro() { return direccionOtro; }
     public void setDireccionOtro(String direccionOtro) { this.direccionOtro = direccionOtro; }
+
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 }

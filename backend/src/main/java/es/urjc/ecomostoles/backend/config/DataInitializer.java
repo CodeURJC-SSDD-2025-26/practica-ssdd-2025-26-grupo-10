@@ -26,24 +26,27 @@ public class DataInitializer implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
     private final EmpresaRepository empresaRepository;
-    private final OfertaRepository  ofertaRepository;
+    private final OfertaRepository ofertaRepository;
     private final DemandaRepository demandaRepository;
     private final AcuerdoRepository acuerdoRepository;
     private final FactorImpactoRepository factorImpactoRepository;
-    private final PasswordEncoder   passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+    private final es.urjc.ecomostoles.backend.component.SustainabilityEngine sustainabilityEngine;
 
     public DataInitializer(EmpresaRepository empresaRepository,
-                           OfertaRepository  ofertaRepository,
-                           DemandaRepository demandaRepository,
-                           AcuerdoRepository acuerdoRepository,
-                           FactorImpactoRepository factorImpactoRepository,
-                           PasswordEncoder passwordEncoder) {
+            OfertaRepository ofertaRepository,
+            DemandaRepository demandaRepository,
+            AcuerdoRepository acuerdoRepository,
+            FactorImpactoRepository factorImpactoRepository,
+            PasswordEncoder passwordEncoder,
+            es.urjc.ecomostoles.backend.component.SustainabilityEngine sustainabilityEngine) {
         this.empresaRepository = empresaRepository;
-        this.ofertaRepository  = ofertaRepository;
+        this.ofertaRepository = ofertaRepository;
         this.demandaRepository = demandaRepository;
         this.acuerdoRepository = acuerdoRepository;
         this.factorImpactoRepository = factorImpactoRepository;
-        this.passwordEncoder   = passwordEncoder;
+        this.passwordEncoder = passwordEncoder;
+        this.sustainabilityEngine = sustainabilityEngine;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -77,9 +80,9 @@ public class DataInitializer implements CommandLineRunner {
      * the DB already has a record with that CIF from a previous run.
      */
     private Empresa upsertEmpresa(String email, String nombre, String cif,
-                                   String sector, String direccion, String tel,
-                                   String descripcion, String logoFichero,
-                                   List<String> roles) {
+            String sector, String direccion, String tel,
+            String descripcion, String logoFichero,
+            List<String> roles) {
         // ← Search by CIF (real unique key), not by email
         Optional<Empresa> opt = empresaRepository.findByCif(cif);
         Empresa e = opt.orElseGet(Empresa::new);
@@ -126,31 +129,32 @@ public class DataInitializer implements CommandLineRunner {
         // 1. System ADMIN
         // ══════════════════════════════════════════
         Empresa admin = upsertEmpresa(
-            "admin@ecomostoles.es",
-            "Administración EcoMóstoles",
-            "A00000000",
-            "Administración",
-            "Sede Central — Móstoles",
-            "916 000 000",
-            "Cuenta de administración de la plataforma EcoMóstoles.",
-            "logo.webp",
-            List.of("ADMIN")          // ← ADMIN role
+                "admin@ecomostoles.es",
+                "Administración EcoMóstoles",
+                "A00000000",
+                "Administración",
+                "Sede Central — Móstoles",
+                "916 000 000",
+                "Cuenta de administración de la plataforma EcoMóstoles.",
+                "logo.webp",
+                List.of("ADMIN") // ← ADMIN role
         );
-        log.info("✅ ADMIN created/updated → {} | password: 1234 | roles: {}", admin.getEmailContacto(), admin.getRoles());
+        log.info("✅ ADMIN created/updated → {} | password: 1234 | roles: {}", admin.getEmailContacto(),
+                admin.getRoles());
 
         // ══════════════════════════════════════════
         // 2. Company 1 — Metales del Sur (USER)
         // ══════════════════════════════════════════
         Empresa empresa1 = upsertEmpresa(
-            "contacto@metalesdelsur.es",
-            "Metales del Sur S.L.",
-            "B12345678",
-            "Metalurgia",
-            "Polígono Industrial Norte, Nave 7 — Móstoles",
-            "916 123 456",
-            "Gestión y comercialización de residuos metálicos en el área de Móstoles.",
-            "logo.webp",
-            List.of("EMPRESA")        // ← USER/COMPANY role
+                "contacto@metalesdelsur.es",
+                "Metales del Sur S.L.",
+                "B12345678",
+                "Metalurgia",
+                "Polígono Industrial Norte, Nave 7 — Móstoles",
+                "916 123 456",
+                "Gestión y comercialización de residuos metálicos en el área de Móstoles.",
+                "logo.webp",
+                List.of("EMPRESA") // ← USER/COMPANY role
         );
         log.info("✅ Company 1 → {} | roles: {}", empresa1.getEmailContacto(), empresa1.getRoles());
 
@@ -158,16 +162,15 @@ public class DataInitializer implements CommandLineRunner {
         // 3. Company 2 — EcoSur Reciclajes (USER)
         // ══════════════════════════════════════════
         Empresa empresa2 = upsertEmpresa(
-            "reciclajes@ecosur.es",
-            "EcoSur Reciclajes S.A.",
-            "B87654321",
-            "Reciclaje y Medio Ambiente",
-            "Polígono Las Nieves, Nave 12 — Móstoles",
-            "916 654 321",
-            "Centro de reciclaje especializado en plásticos y metales no ferrosos.",
-            "logo.webp",
-            List.of("EMPRESA")
-        );
+                "reciclajes@ecosur.es",
+                "EcoSur Reciclajes S.A.",
+                "B87654321",
+                "Reciclaje y Medio Ambiente",
+                "Polígono Las Nieves, Nave 12 — Móstoles",
+                "916 654 321",
+                "Centro de reciclaje especializado en plásticos y metales no ferrosos.",
+                "logo.webp",
+                List.of("EMPRESA"));
         log.info("✅ Company 2 → {} | roles: {}", empresa2.getEmailContacto(), empresa2.getRoles());
 
         // ══════════════════════════════════════════
@@ -177,45 +180,46 @@ public class DataInitializer implements CommandLineRunner {
 
         if (ofertasEmpresa1.isEmpty()) {
             crearOferta(empresa1,
-                "Virutas de Acero Inoxidable",
-                "Virutas limpias de acero inoxidable 316L libres de aceite. Listas para fundición.",
-                "Metal", 500.0, "kg", 0.45, "Inmediata",
-                LocalDateTime.now().minusDays(5), "virutas.webp");
+                    "Virutas de Acero Inoxidable",
+                    "Virutas limpias de acero inoxidable 316L libres de aceite. Listas para fundición.",
+                    "Metal", 500.0, "kg", 0.45, "Inmediata",
+                    LocalDateTime.now().minusDays(5), "virutas.webp");
 
             crearOferta(empresa1,
-                "Bobinas de Cobre Recuperado",
-                "Bobinas de cobre de alta pureza (99.2%) recuperadas de transformadores.",
-                "Metal", 120.0, "kg", 4.80, "Esta semana",
-                LocalDateTime.now().minusDays(2), "bobinas-cobre.webp");
+                    "Bobinas de Cobre Recuperado",
+                    "Bobinas de cobre de alta pureza (99.2%) recuperadas de transformadores.",
+                    "Metal", 120.0, "kg", 4.80, "Esta semana",
+                    LocalDateTime.now().minusDays(2), "bobinas-cobre.webp");
 
             log.info("✅ 2 offers created for Company 1.");
         } else {
             // Repair empty images if they exist
             ofertasEmpresa1.stream()
-                .filter(o -> o.getImagen() == null || o.getImagen().length == 0)
-                .forEach(o -> {
-                    o.setImagen(cargarImagen("virutas.webp"));
-                    ofertaRepository.save(o);
-                    log.info("   🔄 Image repaired in: {}", o.getTitulo());
-                });
+                    .filter(o -> o.getImagen() == null || o.getImagen().length == 0)
+                    .forEach(o -> {
+                        o.setImagen(cargarImagen("virutas.webp"));
+                        ofertaRepository.save(o);
+                        log.info("   🔄 Image repaired in: {}", o.getTitulo());
+                    });
         }
 
         List<Oferta> ofertasEmpresa2 = ofertaRepository.findByEmpresa(empresa2, Oferta.class);
         if (ofertasEmpresa2.isEmpty()) {
             crearOferta(empresa2,
-                "Retales de PVC Industrial",
-                "Recortes de PVC rígido (2-10mm). Ideales para reciclaje en piezas pequeñas.",
-                "Plástico", 80.0, "kg", 0.20, "Consultar",
-                LocalDateTime.now().minusDays(1), "retales-pvc.webp");
+                    "Retales de PVC Industrial",
+                    "Recortes de PVC rígido (2-10mm). Ideales para reciclaje en piezas pequeñas.",
+                    "Plástico", 80.0, "kg", 0.20, "Consultar",
+                    LocalDateTime.now().minusDays(1), "retales-pvc.webp");
 
             log.info("✅ 1 offer created for Company 2.");
         }
 
         // ══════════════════════════════════════════
-        // 5. Test Demands and Agreements 
+        // 5. Test Demands and Agreements
         // ══════════════════════════════════════════
         if (demandaRepository.count() == 0) {
-            // Demand 1: from empresa1 (Metalurgia) — visible to other Metalurgia companies via Smart Matching
+            // Demand 1: from empresa1 (Metalurgia) — visible to other Metalurgia companies
+            // via Smart Matching
             Demanda d = new Demanda();
             d.setTitulo("Se necesita Aluminio para inyección");
             d.setDescripcion("Requerimos aluminio puro para moldes.");
@@ -226,6 +230,8 @@ public class DataInitializer implements CommandLineRunner {
             d.setUrgencia("Alta");
             d.setEstado(EstadoDemanda.ACTIVA);
             d.setFechaPublicacion(LocalDateTime.now().minusDays(1));
+            d.setVigencia("30 días");
+            d.setZonaRecogida("Polígono Industrial Sur — Móstoles");
             d.setEmpresa(empresa1);
             demandaRepository.save(d);
 
@@ -239,6 +245,8 @@ public class DataInitializer implements CommandLineRunner {
             d2.setPresupuestoMaximo(2.0);
             d2.setEstado(EstadoDemanda.ACTIVA);
             d2.setFechaPublicacion(LocalDateTime.now());
+            d2.setVigencia("Inmediata");
+            d2.setZonaRecogida("Móstoles Central");
             d2.setEmpresa(empresa2);
             demandaRepository.save(d2);
         }
@@ -247,16 +255,15 @@ public class DataInitializer implements CommandLineRunner {
         // 6. Company 3 — Reciclajes Paco (same sector as empresa1 for Smart Matching)
         // ══════════════════════════════════════════
         Empresa empresa3 = upsertEmpresa(
-            "paco@reciclajes.es",
-            "Reciclajes Paco S.L.",
-            "B77777777",
-            "Metalurgia",
-            "Polígono Industrial, Nave 44 — Móstoles",
-            "916 777 777",
-            "Specialists in non-ferrous metal recycling.",
-            "logo.webp",
-            List.of("EMPRESA")
-        );
+                "paco@reciclajes.es",
+                "Reciclajes Paco S.L.",
+                "B77777777",
+                "Metalurgia",
+                "Polígono Industrial, Nave 44 — Móstoles",
+                "916 777 777",
+                "Specialists in non-ferrous metal recycling.",
+                "logo.webp",
+                List.of("EMPRESA"));
         log.info("✅ Company 3 → {} | roles: {}", empresa3.getEmailContacto(), empresa3.getRoles());
 
         if (demandaRepository.findByEmpresa(empresa3).isEmpty()) {
@@ -269,6 +276,8 @@ public class DataInitializer implements CommandLineRunner {
             dPaco.setPresupuestoMaximo(1.20);
             dPaco.setEstado(EstadoDemanda.ACTIVA);
             dPaco.setFechaPublicacion(LocalDateTime.now());
+            dPaco.setVigencia("Fin de mes");
+            dPaco.setZonaRecogida("Sector IV — Móstoles");
             dPaco.setEmpresa(empresa3);
             demandaRepository.save(dPaco);
             log.info("✅ Demand created for Empresa 3 (Paco).");
@@ -282,8 +291,15 @@ public class DataInitializer implements CommandLineRunner {
             a.setPrecioAcordado(1200.0);
             a.setEstado(EstadoAcuerdo.COMPLETADO);
             a.setFechaRegistro(LocalDateTime.now().minusDays(2));
+            a.setFechaRecogida(java.time.LocalDate.now().minusDays(1));
             a.setEmpresaOrigen(empresa1);
             a.setEmpresaDestino(empresa2);
+            // Calculamos beneficio (2.5% por defecto)
+            a.setBeneficioPlataforma(Math.round(1200.0 * 0.025 * 100.0) / 100.0);
+
+            // Calculamos impacto CO2 inicial (Acero/Metal ~ 2.0)
+            a.setImpactoCO2(sustainabilityEngine.calcularImpactoCO2(a.getCantidad(), "Metal"));
+
             acuerdoRepository.save(a);
         }
 
@@ -297,9 +313,9 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void crearOferta(Empresa empresa, String titulo, String descripcion,
-                              String tipoResiduo, Double cantidad, String unidad,
-                              Double precio, String disponibilidad,
-                              LocalDateTime fecha, String imagenFichero) {
+            String tipoResiduo, Double cantidad, String unidad,
+            Double precio, String disponibilidad,
+            LocalDateTime fecha, String imagenFichero) {
         Oferta o = new Oferta();
         o.setTitulo(titulo);
         o.setDescripcion(descripcion);

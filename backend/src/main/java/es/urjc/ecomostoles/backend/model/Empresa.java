@@ -15,6 +15,7 @@ import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -39,17 +40,19 @@ public class Empresa {
 
     @NotBlank(message = "La contraseña es obligatoria")
     @Size(min = 4, message = "La contraseña debe tener al menos 4 caracteres")
-    @com.fasterxml.jackson.annotation.JsonIgnore
+    @JsonIgnore
     private String password;
 
     @NotBlank(message = "La dirección es obligatoria")
     private String direccion;
 
+    @NotBlank(message = "El teléfono es obligatorio")
     private String telefono;
 
     @NotBlank(message = "El sector industrial es obligatorio")
     private String sectorIndustrial;
 
+    @NotBlank(message = "La descripción de la empresa es obligatoria")
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
@@ -63,7 +66,7 @@ public class Empresa {
 
     private boolean verificada = true;
 
-    // Relaciones para borrado en cascada
+    // Relationships
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Oferta> ofertas = new ArrayList<>();
 
@@ -82,11 +85,9 @@ public class Empresa {
     @OneToMany(mappedBy = "empresaDestino", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Acuerdo> acuerdosComoDestino = new ArrayList<>();
 
-    // Default constructor
     public Empresa() {
     }
 
-    // Constructor with parameters
     public Empresa(String nombreComercial, String cif, String emailContacto, String password, String direccion,
                    String telefono, String sectorIndustrial, String descripcion, byte[] logo, List<String> roles) {
         this.nombreComercial = nombreComercial;
@@ -100,8 +101,6 @@ public class Empresa {
         this.logo = logo;
         this.roles = roles;
     }
-
-    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -208,6 +207,9 @@ public class Empresa {
 
     @Transient
     public String getInicial() {
-        return (this.nombreComercial != null && !this.nombreComercial.isEmpty()) ? this.nombreComercial.substring(0, 1).toUpperCase() : "?";
+        if (this.nombreComercial == null || this.nombreComercial.isEmpty()) {
+            return "?";
+        }
+        return this.nombreComercial.substring(0, 1).toUpperCase();
     }
 }

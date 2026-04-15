@@ -74,10 +74,16 @@ public class EmpresaService {
         return empresaRepository.count();
     }
 
-    /** Filters companies by name, email, or CIF. */
+    /** Filters companies by name, email, or CIF with pagination. */
+    @Transactional(readOnly = true)
+    public Page<Empresa> filtrarEmpresasPaginado(String search, org.springframework.data.domain.Pageable pageable) {
+        return empresaRepository.findByNombreComercialContainingIgnoreCaseOrEmailContactoContainingIgnoreCaseOrCifContainingIgnoreCase(search, search, search, pageable);
+    }
+
+    /** Filters companies by name, email, or CIF (Return top 50 as fallback). */
     @Transactional(readOnly = true)
     public List<Empresa> filtrarEmpresas(String search) {
-        return empresaRepository.findByNombreComercialContainingIgnoreCaseOrEmailContactoContainingIgnoreCaseOrCifContainingIgnoreCase(search, search, search);
+        return empresaRepository.findByNombreComercialContainingIgnoreCaseOrEmailContactoContainingIgnoreCaseOrCifContainingIgnoreCase(search, search, search, PageRequest.of(0, 50)).getContent();
     }
 
     /**

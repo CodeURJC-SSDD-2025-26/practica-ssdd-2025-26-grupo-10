@@ -4,7 +4,8 @@
 
 <div class="container-fluid">
     <div class="row min-vh-100">
-        {{> sidebar}}
+        {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
+        {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
             <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
@@ -34,7 +35,7 @@
                                 <span class="badge bg-success rounded-pill">{{estado}}</span>
                             </div>
                             <p class="card-text">{{descripcion}}</p>
-                            <p class="card-text text-muted small"><i class="fas fa-weight-hanging me-1"></i> {{cantidad}} kg</p>
+                            <p class="card-text text-muted small"><i class="fas fa-weight-hanging me-1"></i> {{cantidad}} {{unidad}}</p>
                             <h5 class="text-success fw-bold mt-2 mb-1">Max: € {{presupuestoMaximo}}</h5>
                         </div>
                         <div class="card-footer bg-transparent border-top-0 pt-0 pb-3">
@@ -64,6 +65,11 @@
                     <a href="/demanda/nueva" class="btn btn-success mt-2 rounded-pill shadow-sm">Publicar mi primera demanda</a>
                 </div>
                 {{/demandas}}
+
+                <!-- Pagination Component -->
+                <div class="col-12">
+                    {{> pagination_control}}
+                </div>
             </div>
         </main>
     </div>

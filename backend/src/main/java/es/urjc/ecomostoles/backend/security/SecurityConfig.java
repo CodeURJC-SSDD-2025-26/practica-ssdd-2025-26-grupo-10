@@ -56,6 +56,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .requiresChannel(channel -> channel.anyRequest().requiresSecure())
             .authorizeHttpRequests(auth -> auth
 
                 // ── Public resources and pages ──────────────────────────────
@@ -71,6 +72,7 @@ public class SecurityConfig {
                 ).permitAll()
 
                 // ── Administration panel: ADMIN only ──────────────────────
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/admin/configuracion").hasRole("ADMIN")
                 .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
 
                 // ── Creation and edition: any authenticated user ────────

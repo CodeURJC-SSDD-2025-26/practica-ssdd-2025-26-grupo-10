@@ -4,7 +4,9 @@
 
 <div class="container-fluid">
     <div class="row min-vh-100">
-        {{> sidebar}}
+        <!-- Sidebar -->
+        {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
+        {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
             <div class="card shadow-sm border-top border-success border-4 rounded">
@@ -43,12 +45,15 @@
                                 </div>
                                 <div class="me-4">
                                     <small class="text-uppercase text-muted fw-bold d-block">Cantidad</small>
-                                    <span class="h4 text-dark fw-bold mb-0">{{oferta.cantidad}} kg/uds</span>
+                                    <span class="h4 text-dark fw-bold mb-0">{{oferta.cantidad}} {{oferta.unidad}}</span>
                                 </div>
                             </div>
 
                             <h5 class="fw-bold mb-3 text-dark">Descripción del Material</h5>
-                            <p class="text-secondary mb-4 lh-lg">{{oferta.descripcion}}</p>
+                            <p class="text-secondary mb-4 lh-lg">
+                                {{#oferta.descripcion}}{{oferta.descripcion}}{{/oferta.descripcion}}
+                                {{^oferta.descripcion}}No se han proporcionado detalles adicionales sobre este material.{{/oferta.descripcion}}
+                            </p>
 
                             <div class="mt-4 pt-4 border-top">
                                 <form action="/mensajes/enviar/{{oferta.id}}" method="POST">

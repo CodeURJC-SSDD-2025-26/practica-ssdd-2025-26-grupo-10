@@ -2,11 +2,29 @@
 
 <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
     <div class="container">
+        {{#isEmpresa}}
+        <a class="navbar-brand d-flex align-items-center" href="/dashboard">
+            <i class="fas fa-recycle me-2 text-success" style="font-size: 1.5rem;"></i>
+            <span class="fw-bold">{{platformName}}</span>
+        </a>
+        {{/isEmpresa}}
+
+        {{#isAdmin}}
+        <a class="navbar-brand d-flex align-items-center" href="/admin/panel">
+            <i class="fas fa-recycle me-2 text-success" style="font-size: 1.5rem;"></i>
+            <span class="fw-bold">{{platformName}}</span>
+            <span class="badge bg-danger ms-2" style="font-size: 0.6rem; vertical-align: middle;">ADMIN</span>
+        </a>
+        {{/isAdmin}}
+
+        {{^isEmpresa}}
+        {{^isAdmin}}
         <a class="navbar-brand d-flex align-items-center" href="/">
             <i class="fas fa-recycle me-2 text-success" style="font-size: 1.5rem;"></i>
-            <span class="fw-bold">EcoMóstoles</span>
-            {{#isAdmin}}<span class="badge bg-danger ms-2" style="font-size: 0.6rem; vertical-align: middle;">ADMIN</span>{{/isAdmin}}
+            <span class="fw-bold">{{platformName}}</span>
         </a>
+        {{/isAdmin}}
+        {{/isEmpresa}}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -16,27 +34,36 @@
                 {{#empresa}}
                 <!-- LOGGED-IN NAV -->
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" {{#navMercado}}style="color: #198754 !important;"{{/navMercado}} href="/mercado">
+                    <a class="nav-link fw-bold {{#navMercado}}active{{/navMercado}}" href="/mercado">
                         <i class="fas fa-store me-1"></i> Ofertas
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" {{#navDemandas}}style="color: #198754 !important;"{{/navDemandas}} href="/solicitudes">
+                    <a class="nav-link fw-bold {{#navDemandas}}active{{/navDemandas}}" href="/solicitudes">
                         <i class="fas fa-bullhorn me-1"></i> Demandas
                     </a>
                 </li>
+                {{#isEmpresa}}
                 <li class="nav-item">
-                    {{#isEmpresa}}
-                    <a class="nav-link fw-bold" {{#isDashboard}}style="color: #198754 !important;"{{/isDashboard}} href="/dashboard">
+                    <a class="nav-link fw-bold {{#isDashboard}}active{{/isDashboard}}" href="/dashboard">
                         <i class="fas fa-tachometer-alt me-1"></i> Panel de Control
                     </a>
-                    {{/isEmpresa}}
-                    {{#isAdmin}}
-                    <a class="nav-link fw-bold" {{#isAdminPanel}}style="color: #198754 !important;"{{/isAdminPanel}} href="/admin/panel">
-                        <i class="fas fa-user-shield me-1"></i> Panel de Admin
-                    </a>
-                    {{/isAdmin}}
                 </li>
+                {{/isEmpresa}}
+
+                {{#isAdmin}}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle fw-bold {{#isAdminPanel}}active{{/isAdminPanel}}" href="javascript:void(0)" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-shield me-1"></i> Admin
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow-sm dropdown-rounded mt-2">
+                        <li><a class="dropdown-item" href="/admin/panel"><i class="fas fa-tachometer-alt me-2 text-muted"></i> Panel Gestión</a></li>
+                        <li><a class="dropdown-item" href="/admin/usuarios"><i class="fas fa-users me-2 text-muted"></i> Usuarios</a></li>
+                        <li><a class="dropdown-item" href="/admin/ofertas"><i class="fas fa-box-open me-2 text-muted"></i> Ofertas</a></li>
+                        <li><a class="dropdown-item" href="/admin/configuracion"><i class="fas fa-cogs me-2 text-muted"></i> Configuración</a></li>
+                    </ul>
+                </li>
+                {{/isAdmin}}
                 <li class="nav-item dropdown ms-lg-2">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="/perfil" role="button" data-bs-toggle="dropdown">
                         <img src="/images/empresa/{{id}}" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar" onerror="this.src='/img/logo.webp';">

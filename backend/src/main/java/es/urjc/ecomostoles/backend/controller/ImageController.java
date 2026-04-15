@@ -53,7 +53,7 @@ public class ImageController {
         if (empresaOpt.isPresent() && empresaOpt.get().getLogo() != null && empresaOpt.get().getLogo().length > 0) {
             byte[] bytes = empresaOpt.get().getLogo();
             return ResponseEntity.ok()
-                    .cacheControl(CacheControl.maxAge(7, TimeUnit.DAYS))
+                    .cacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES).mustRevalidate())
                     .contentType(detectarMediaType(bytes))
                     .body(bytes);
         }
@@ -74,7 +74,7 @@ public class ImageController {
         if (ofertaOpt.isPresent() && ofertaOpt.get().getImagen() != null && ofertaOpt.get().getImagen().length > 0) {
             byte[] bytes = ofertaOpt.get().getImagen();
             return ResponseEntity.ok()
-                    .cacheControl(CacheControl.maxAge(7, TimeUnit.DAYS))
+                    .cacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES).mustRevalidate())
                     .contentType(detectarMediaType(bytes))
                     .body(bytes);
         }
@@ -97,7 +97,7 @@ public class ImageController {
                         .body(bytes);
             }
         } catch (Exception e) {
-            // Silence the exception to avoid a 500 Error and let the flow continue to 404
+            log.error("Error sirviendo la imagen", e);
         }
         
         // Final line of defense: return 404 so the browser/HTML handles the error (e.g., with onerror)

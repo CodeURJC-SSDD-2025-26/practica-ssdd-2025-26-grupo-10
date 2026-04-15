@@ -5,8 +5,8 @@
 <div class="container-fluid">
     <div class="row min-vh-100">
         <!-- Sidebar -->
-        {{#esVistaAdmin}}{{> sidebar_admin}}{{/esVistaAdmin}}
-        {{^esVistaAdmin}}{{> sidebar}}{{/esVistaAdmin}}
+        {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
+        {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
         <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
@@ -72,7 +72,7 @@
 
                                 <div class="mb-3">
                                     <label for="nombreEmpresa" class="form-label fw-bold small text-uppercase text-secondary">Nombre Comercial</label>
-                                    <input type="text" class="form-control" id="nombreEmpresa" name="nombreComercial" value="{{#empresaInspeccionada}}{{empresaInspeccionada.nombreComercial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.nombreComercial}}{{/empresaInspeccionada}}">
+                                    <input type="text" class="form-control" id="nombreEmpresa" name="nombreComercial" value="{{#empresaInspeccionada}}{{empresaInspeccionada.nombreComercial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.nombreComercial}}{{/empresaInspeccionada}}" required>
                                 </div>
 
                                 <div class="row g-3 mb-3">
@@ -82,22 +82,31 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label for="telefono" class="form-label fw-bold small text-uppercase text-secondary">Teléfono</label>
-                                        <input type="tel" class="form-control" id="telefono" name="telefono" value="{{#empresaInspeccionada}}{{empresaInspeccionada.telefono}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.telefono}}{{/empresaInspeccionada}}">
+                                        <input type="tel" class="form-control" id="telefono" name="telefono" value="{{#empresaInspeccionada}}{{empresaInspeccionada.telefono}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.telefono}}{{/empresaInspeccionada}}" required>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="sectorIndustrial" class="form-label fw-bold small text-uppercase text-secondary">Sector Industrial</label>
-                                        <input type="text" class="form-control" id="sectorIndustrial" name="sectorIndustrial" value="{{#empresaInspeccionada}}{{empresaInspeccionada.sectorIndustrial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.sectorIndustrial}}{{/empresaInspeccionada}}" required>
+                                        <select class="form-select" id="sectorIndustrial" name="sectorIndustrial" required>
+                                            {{#listaSectores}}
+                                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{display}}</option>
+                                            {{/listaSectores}}
+                                            {{^listaSectores}}
+                                            <option value="{{#empresaInspeccionada}}{{empresaInspeccionada.sectorIndustrial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.sectorIndustrial}}{{/empresaInspeccionada}}" selected>
+                                                {{#empresaInspeccionada}}{{empresaInspeccionada.sectorIndustrial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.sectorIndustrial}}{{/empresaInspeccionada}}
+                                            </option>
+                                            {{/listaSectores}}
+                                        </select>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="direccion" class="form-label fw-bold small text-uppercase text-secondary">Dirección / Polígono</label>
-                                    <input type="text" class="form-control" id="direccion" name="direccion" value="{{#empresaInspeccionada}}{{empresaInspeccionada.direccion}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.direccion}}{{/empresaInspeccionada}}">
+                                    <input type="text" class="form-control" id="direccion" name="direccion" value="{{#empresaInspeccionada}}{{empresaInspeccionada.direccion}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.direccion}}{{/empresaInspeccionada}}" required>
                                 </div>
 
                                 <div class="mb-4">
                                     <label for="descripcion" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
-                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4">{{#empresaInspeccionada}}{{empresaInspeccionada.descripcion}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.descripcion}}{{/empresaInspeccionada}}</textarea>
+                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required>{{#empresaInspeccionada}}{{empresaInspeccionada.descripcion}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.descripcion}}{{/empresaInspeccionada}}</textarea>
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center">

@@ -8,7 +8,9 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.draw.LineSeparator;
 import es.urjc.ecomostoles.backend.model.Acuerdo;
+import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.service.AcuerdoService;
+import es.urjc.ecomostoles.backend.service.EmpresaService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,9 +30,11 @@ import java.util.Locale;
 public class PdfExportController {
 
     private final AcuerdoService acuerdoService;
+    private final EmpresaService empresaService;
 
-    public PdfExportController(AcuerdoService acuerdoService) {
+    public PdfExportController(AcuerdoService acuerdoService, EmpresaService empresaService) {
         this.acuerdoService = acuerdoService;
+        this.empresaService = empresaService;
     }
 
     @GetMapping("/acuerdo/{id}/pdf")
@@ -43,10 +47,14 @@ public class PdfExportController {
                 .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
 
         String userEmail = principal.getName();
-        boolean isOwner = (agreement.getEmpresaOrigen() != null && agreement.getEmpresaOrigen().getEmailContacto().equals(userEmail)) ||
+        Empresa logueada = empresaService.buscarPorEmail(userEmail)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+        boolean esAdmin = logueada.getRoles() != null && logueada.getRoles().contains("ADMIN");
+        boolean esOwner = (agreement.getEmpresaOrigen() != null && agreement.getEmpresaOrigen().getEmailContacto().equals(userEmail)) ||
                           (agreement.getEmpresaDestino() != null && agreement.getEmpresaDestino().getEmailContacto().equals(userEmail));
         
-        if (!isOwner) {
+        if (!esAdmin && !esOwner) {
             throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para acceder a este recurso");
         }
         

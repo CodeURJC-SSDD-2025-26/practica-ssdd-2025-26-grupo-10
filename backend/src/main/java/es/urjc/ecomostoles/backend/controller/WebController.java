@@ -3,14 +3,10 @@ package es.urjc.ecomostoles.backend.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import es.urjc.ecomostoles.backend.dto.OfertaResumen;
 import es.urjc.ecomostoles.backend.service.AcuerdoService;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 import es.urjc.ecomostoles.backend.service.OfertaService;
-import es.urjc.ecomostoles.backend.service.EmailService;
 import java.util.List;
 
 @Controller
@@ -19,16 +15,13 @@ public class WebController {
     private final OfertaService  ofertaService;
     private final EmpresaService empresaService;
     private final AcuerdoService acuerdoService;
-    private final EmailService   emailService;
 
     public WebController(OfertaService ofertaService, 
                          EmpresaService empresaService, 
-                         AcuerdoService acuerdoService,
-                         EmailService emailService) {
+                         AcuerdoService acuerdoService) {
         this.ofertaService  = ofertaService;
         this.empresaService = empresaService;
         this.acuerdoService = acuerdoService;
-        this.emailService   = emailService;
     }
 
     @GetMapping("/")

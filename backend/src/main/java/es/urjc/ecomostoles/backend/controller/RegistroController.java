@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import es.urjc.ecomostoles.backend.service.ConfiguracionService;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class RegistroController {
@@ -37,15 +38,27 @@ public class RegistroController {
     }
 
     private void injectDynamicOptions(Model model) {
-        // Fetch sectors dynamically from the platform settings
-        String categoriasStr = configuracionService.obtenerValorAuto("listaCategorias");
-        List<String> sectores = Arrays.asList(categoriasStr.split("\\r?\\n"));
+        // Fetch values dynamically from the platform settings
+        String catsStr = configuracionService.obtenerValorAuto("listaCategorias");
+        List<String> categorias = Arrays.asList(catsStr.split("\\r?\\n"));
 
         String poligonosStr = configuracionService.obtenerValorConfiguracion("listaPoligonos", "Polígono Regordoño\nPolígono Las Nieves\nMóstoles Tecnológico\nOtro (Especificar)");
         List<String> poligonos = Arrays.asList(poligonosStr.split("\\r?\\n"));
 
+        String sectorsStr = configuracionService.obtenerValorAuto("listaSectores");
+        List<String> sectores = Arrays.asList(sectorsStr.split("\\r?\\n"));
+
+        model.addAttribute("categorias", categorias);
         model.addAttribute("sectores", sectores);
         model.addAttribute("poligonos", poligonos);
+        
+        // Formatted list for select components
+        model.addAttribute("listaSectores", sectores.stream().map(s -> {
+            java.util.Map<String, Object> map = new java.util.HashMap<>();
+            map.put("name", s);
+            map.put("display", s);
+            return map;
+        }).collect(Collectors.toList()));
     }
 
     @PostMapping("/registro")
@@ -81,6 +94,8 @@ public class RegistroController {
             nuevaEmpresa.setDireccion(direccionFinal);
             
             nuevaEmpresa.setSectorIndustrial(dto.getSector());
+            nuevaEmpresa.setTelefono(dto.getTelefono());
+            nuevaEmpresa.setDescripcion(dto.getDescripcion());
             nuevaEmpresa.setEmailContacto(dto.getEmailContacto());
 
             byte[] logoBytes = null;
@@ -89,9 +104,9 @@ public class RegistroController {
                 String contentType = dto.getLogoFile().getContentType();
                 long size = dto.getLogoFile().getSize();
 
-                if (size > 2 * 1024 * 1024) { // 2MB Limit
+                if (size > 5 * 1024 * 1024) { // 5MB Limit
                     model.addAttribute("error", true);
-                    model.addAttribute("errorMsg", "El logo es demasiado pesado. El tamaño máximo es de 2MB.");
+                    model.addAttribute("errorMsg", "El logo es demasiado pesado. El límite máximo es 5MB.");
                     injectDynamicOptions(model);
                     return "registro";
                 }

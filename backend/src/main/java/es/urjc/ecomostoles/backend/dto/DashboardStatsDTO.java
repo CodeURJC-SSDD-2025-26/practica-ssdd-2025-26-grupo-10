@@ -16,14 +16,14 @@ public class DashboardStatsDTO {
     private List<Integer> chartData;
     private double materialReintroducido;
     private double impactoCO2;
-    private List<Demanda> smartRecommendations;
+    private List<?> smartRecommendations;
     private boolean hasRecommendations;
 
     public DashboardStatsDTO() {}
 
     public DashboardStatsDTO(boolean esAdmin, int totalOfertas, int totalDemandas, int acuerdosActivos, 
                              List<Integer> chartData, double materialReintroducido, double impactoCO2, 
-                             List<Demanda> smartRecommendations, boolean hasRecommendations) {
+                             List<?> smartRecommendations, boolean hasRecommendations) {
         this.esAdmin = esAdmin;
         this.totalOfertas = totalOfertas;
         this.totalDemandas = totalDemandas;
@@ -91,11 +91,11 @@ public class DashboardStatsDTO {
         this.impactoCO2 = impactoCO2;
     }
 
-    public List<Demanda> getSmartRecommendations() {
+    public List<?> getSmartRecommendations() {
         return smartRecommendations;
     }
 
-    public void setSmartRecommendations(List<Demanda> smartRecommendations) {
+    public void setSmartRecommendations(List<?> smartRecommendations) {
         this.smartRecommendations = smartRecommendations;
     }
 

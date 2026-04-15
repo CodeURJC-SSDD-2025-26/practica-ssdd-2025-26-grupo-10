@@ -49,7 +49,8 @@
 
     <div class="container-fluid">
         <div class="row min-vh-100">
-            {{> sidebar}}
+            {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
+            {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 <nav aria-label="breadcrumb" class="mb-4">

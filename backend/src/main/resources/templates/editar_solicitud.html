@@ -4,7 +4,9 @@
 
 <div class="container-fluid">
     <div class="row min-vh-100">
-        {{> sidebar}}
+        <!-- Sidebar -->
+        {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
+        {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -27,11 +29,12 @@
                         <div class="row g-3">
                             <div class="col-md-8">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Título de lo que buscas <span class="text-danger">*</span></label>
-                                <input type="text" name="titulo" class="form-control" value="{{demanda.titulo}}" required="">
+                                <input type="text" name="titulo" class="form-control {{#error_titulo}}is-invalid{{/error_titulo}}" value="{{demanda.titulo}}" required="">
+                                <div class="invalid-feedback">Indica un título descriptivo.</div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Categoría <span class="text-danger">*</span></label>
-                                <select name="categoriaMaterial" class="form-select" required="">
+                                <select name="categoriaMaterial" class="form-select {{#error_categoriaMaterial}}is-invalid{{/error_categoriaMaterial}}" required="">
                                     {{#opcionesCategoria}}
                                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                     {{/opcionesCategoria}}
@@ -40,24 +43,52 @@
 
                             <div class="col-12">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Descripción detallada <span class="text-danger">*</span></label>
-                                <textarea name="descripcion" class="form-control" rows="4" required="">{{demanda.descripcion}}</textarea>
+                                <textarea name="descripcion" class="form-control {{#error_descripcion}}is-invalid{{/error_descripcion}}" rows="4" required="">{{demanda.descripcion}}</textarea>
+                                 <div class="invalid-feedback">La descripción es obligatoria.</div>
                             </div>
 
                              <div class="col-md-4">
                                  <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad requerida</label>
                                  <div class="input-group">
                                      <input type="number" name="cantidad" class="form-control" value="{{demanda.cantidad}}" min="0">
-                                     <select name="unidad" class="form-select" style="max-width: 120px;" data-selected="{{demanda.unidad}}" required>
-                                         {{#listaUnidades}}
-                                         <option value="{{.}}">{{.}}</option>
-                                         {{/listaUnidades}}
+                                     <select name="unidad" class="form-select" style="max-width: 120px;" required>
+                                         {{#opcionesUnidad}}
+                                         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                         {{/opcionesUnidad}}
                                      </select>
                                  </div>
                              </div>
                             
                             <div class="col-md-4">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Urgencia</label>
+                                <select name="urgencia" class="form-select" required>
+                                    {{#opcionesUrgencia}}
+                                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                    {{/opcionesUrgencia}}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Presupuesto máximo (€)</label>
                                 <input type="number" name="presupuestoMaximo" class="form-control" value="{{demanda.presupuestoMaximo}}" step="0.01" min="0">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Zona de Recogida</label>
+                                <input type="text" name="zonaRecogida" class="form-control" value="{{#demanda.zonaRecogida}}{{demanda.zonaRecogida}}{{/demanda.zonaRecogida}}">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Vigencia</label>
+                                <input type="text" name="vigencia" class="form-control" value="{{#demanda.vigencia}}{{demanda.vigencia}}{{/demanda.vigencia}}">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Estado</label>
+                                <select name="estado" class="form-select" required>
+                                    {{#opcionesEstado}}
+                                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                    {{/opcionesEstado}}
+                                </select>
                             </div>
 
                             <div class="col-12 mt-4 d-flex justify-content-end gap-2">
@@ -73,13 +104,5 @@
     </div>
 </div>
 
-    <script>
-        // Pre-select values for dynamic lists
-        document.querySelectorAll('select[data-selected]').forEach(select => {
-            const selectedValue = select.getAttribute('data-selected');
-            if (selectedValue) {
-                select.value = selectedValue;
-            }
-        });
-    </script>
+
     {{> footer}}
