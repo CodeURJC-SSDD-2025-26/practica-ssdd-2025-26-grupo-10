@@ -4,9 +4,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import es.urjc.ecomostoles.backend.service.ConfiguracionService;
-import es.urjc.ecomostoles.backend.repository.FactorImpactoRepository;
-import es.urjc.ecomostoles.backend.model.FactorImpacto;
+import es.urjc.ecomostoles.backend.service.ConfigurationService;
+import es.urjc.ecomostoles.backend.repository.ImpactFactorRepository;
+import es.urjc.ecomostoles.backend.model.ImpactFactor;
 
 /**
  * Centralized engine for calculating environmental impact and sustainability
@@ -22,13 +22,13 @@ public class SustainabilityEngine {
     @Value("${app.sustainability.default-co2-factor:0.45}")
     private double defaultCo2Factor;
 
-    private final ConfiguracionService configuracionService;
-    private final FactorImpactoRepository factorImpactoRepository;
+    private final ConfigurationService configurationService;
+    private final ImpactFactorRepository impactFactorRepository;
 
-    public SustainabilityEngine(ConfiguracionService configuracionService,
-            FactorImpactoRepository factorImpactoRepository) {
-        this.configuracionService = configuracionService;
-        this.factorImpactoRepository = factorImpactoRepository;
+    public SustainabilityEngine(ConfigurationService configurationService,
+            ImpactFactorRepository impactFactorRepository) {
+        this.configurationService = configurationService;
+        this.impactFactorRepository = impactFactorRepository;
     }
 
     /**
@@ -37,13 +37,13 @@ public class SustainabilityEngine {
      * Fetches the factor from the database dynamically and applies a
      * material-specific multiplier.
      * 
-     * @param kilosMaterial The amount of material in kilograms or units.
-     * @param tipoResiduo   The type of material (Plastic, Metal, Wood, etc.) for
-     *                      granular calculation.
+     * @param materialAmount The amount of material in kilograms or units.
+     * @param wasteType      The type of material (Plastic, Metal, Wood, etc.) for
+     *                       granular calculation.
      * @return The calculated CO2 impact in tons.
      */
-    public double calcularImpactoCO2(double kilosMaterial, String tipoResiduo) {
-        String factorStr = configuracionService.obtenerValorConfiguracion("CO2_FACTOR",
+    public double calculateCo2Impact(double materialAmount, String wasteType) {
+        String factorStr = configurationService.getConfigurationValue("CO2_FACTOR",
                 String.valueOf(defaultCo2Factor));
         double factor;
         try {
@@ -56,13 +56,13 @@ public class SustainabilityEngine {
         }
 
         // Granular Multipliers fetched from the dedicated environmental factors table
-        double multiplicadorMaterial = 1.0;
-        if (tipoResiduo != null) {
-            multiplicadorMaterial = factorImpactoRepository.findByCategoriaIgnoreCase(tipoResiduo)
-                    .map(FactorImpacto::getMultiplicador)
+        double materialMultiplier = 1.0;
+        if (wasteType != null) {
+            materialMultiplier = impactFactorRepository.findByCategoryIgnoreCase(wasteType)
+                    .map(ImpactFactor::getMultiplier)
                     .orElse(1.0);
         }
 
-        return kilosMaterial * factor * multiplicadorMaterial;
+        return materialAmount * factor * materialMultiplier;
     }
 }

@@ -1,9 +1,9 @@
 package es.urjc.ecomostoles.backend.controller;
 
-import es.urjc.ecomostoles.backend.model.Empresa;
-import es.urjc.ecomostoles.backend.service.EmpresaService;
-import es.urjc.ecomostoles.backend.service.MensajeService;
-import es.urjc.ecomostoles.backend.service.ConfiguracionService;
+import es.urjc.ecomostoles.backend.model.Company;
+import es.urjc.ecomostoles.backend.service.CompanyService;
+import es.urjc.ecomostoles.backend.service.MessageService;
+import es.urjc.ecomostoles.backend.service.ConfigurationService;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,35 +15,36 @@ import java.util.Optional;
 @ControllerAdvice
 public class GlobalControllerAdvice {
 
-    private final EmpresaService empresaService;
-    private final MensajeService mensajeService;
-    private final ConfiguracionService configuracionService;
+    private final CompanyService companyService;
+    private final MessageService messageService;
+    private final ConfigurationService configurationService;
 
-    public GlobalControllerAdvice(EmpresaService empresaService, MensajeService mensajeService, ConfiguracionService configuracionService) {
-        this.empresaService = empresaService;
-        this.mensajeService = mensajeService;
-        this.configuracionService = configuracionService;
+    public GlobalControllerAdvice(CompanyService companyService, MessageService messageService,
+            ConfigurationService configurationService) {
+        this.companyService = companyService;
+        this.messageService = messageService;
+        this.configurationService = configurationService;
     }
 
     @ModelAttribute("empresa")
-    public es.urjc.ecomostoles.backend.dto.EmpresaDTO user(Principal principal) {
+    public es.urjc.ecomostoles.backend.dto.CompanyDTO user(Principal principal) {
         if (principal == null) {
             return null;
         }
-        return empresaService.buscarPorEmail(principal.getName())
-                             .map(es.urjc.ecomostoles.backend.dto.EmpresaDTO::new)
-                             .orElse(null);
+        return companyService.findByEmail(principal.getName())
+                .map(es.urjc.ecomostoles.backend.dto.CompanyDTO::new)
+                .orElse(null);
     }
 
     @ModelAttribute("totalMensajes")
-    public int totalMensajes(Principal principal) {
+    public int totalMessages(Principal principal) {
         if (principal == null) {
             return 0;
         }
-        Optional<Empresa> userOpt = empresaService.buscarPorEmail(principal.getName());
+        Optional<Company> userOpt = companyService.findByEmail(principal.getName());
         if (userOpt.isPresent()) {
             // Optimized: Atomic count from DB instead of loading all messages to memory
-            return (int) mensajeService.contarPorDestinatario(userOpt.get());
+            return (int) messageService.countByRecipient(userOpt.get());
         }
         return 0;
     }
@@ -54,8 +55,8 @@ public class GlobalControllerAdvice {
     }
 
     @ModelAttribute("emailSoporte")
-    public String emailSoporte() {
-        return configuracionService.obtenerValorConfiguracion("emailContacto", "soporte@ecomostoles.com");
+    public String supportEmail() {
+        return configurationService.getConfigurationValue("emailContacto", "soporte@ecomostoles.com");
     }
 
     @ModelAttribute("currentDate")
@@ -65,29 +66,29 @@ public class GlobalControllerAdvice {
     }
 
     @ModelAttribute("listaUnidades")
-    public java.util.List<String> listaUnidades() {
-        return configuracionService.obtenerListaSanitizada("listaUnidades");
+    public java.util.List<String> unitsList() {
+        return configurationService.getSanitizedList("listaUnidades");
     }
-    
+
     @ModelAttribute("listaDisponibilidades")
-    public java.util.List<String> listaDisponibilidades() {
-        return configuracionService.obtenerListaSanitizada("listaDisponibilidades");
+    public java.util.List<String> availabilityList() {
+        return configurationService.getSanitizedList("listaDisponibilidades");
     }
 
     @ModelAttribute("listaCategorias")
-    public java.util.List<String> listaCategorias() {
-        return configuracionService.obtenerListaSanitizada("listaCategorias");
+    public java.util.List<String> categoriesList() {
+        return configurationService.getSanitizedList("listaCategorias");
     }
 
     @ModelAttribute("listaSectores")
-    public java.util.List<String> listaSectores() {
-        return configuracionService.obtenerListaSanitizada("listaSectores");
+    public java.util.List<String> sectorsList() {
+        return configurationService.getSanitizedList("listaSectores");
     }
 
     @ModelAttribute("unidadPrincipal")
-    public String unidadPrincipal() {
-        java.util.List<String> unidades = configuracionService.obtenerListaSanitizada("listaUnidades");
-        return unidades.isEmpty() ? "kg" : unidades.get(0);
+    public String mainUnit() {
+        java.util.List<String> units = configurationService.getSanitizedList("listaUnidades");
+        return units.isEmpty() ? "kg" : units.get(0);
     }
 
     @ModelAttribute("platformName")
@@ -97,12 +98,12 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute("platformCity")
     public String platformCity() {
-        return configuracionService.obtenerValorAuto("platformCity");
+        return configurationService.getAutoValue("platformCity");
     }
 
     @ModelAttribute("platformLocation")
     public String platformLocation() {
-        return configuracionService.obtenerValorAuto("platformLocation");
+        return configurationService.getAutoValue("platformLocation");
     }
 
     @ModelAttribute("isAdmin")
@@ -112,26 +113,26 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute("socialLinkedin")
     public String socialLinkedin() {
-        return configuracionService.obtenerValorAuto("social_linkedin");
+        return configurationService.getAutoValue("social_linkedin");
     }
 
     @ModelAttribute("socialTwitter")
     public String socialTwitter() {
-        return configuracionService.obtenerValorAuto("social_twitter");
+        return configurationService.getAutoValue("social_twitter");
     }
 
     @ModelAttribute("socialFacebook")
     public String socialFacebook() {
-        return configuracionService.obtenerValorAuto("social_facebook");
+        return configurationService.getAutoValue("social_facebook");
     }
 
     @ModelAttribute("platformStatus")
     public String platformStatus() {
-        return configuracionService.obtenerValorAuto("platformStatus");
+        return configurationService.getAutoValue("platformStatus");
     }
 
     @ModelAttribute("isEmpresa")
-    public boolean isEmpresa(Authentication auth) {
+    public boolean isCompany(Authentication auth) {
         return auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().contains("EMPRESA"));
     }
 

@@ -7,10 +7,10 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.draw.LineSeparator;
-import es.urjc.ecomostoles.backend.model.Acuerdo;
-import es.urjc.ecomostoles.backend.model.Empresa;
-import es.urjc.ecomostoles.backend.service.AcuerdoService;
-import es.urjc.ecomostoles.backend.service.EmpresaService;
+import es.urjc.ecomostoles.backend.model.Agreement;
+import es.urjc.ecomostoles.backend.model.Company;
+import es.urjc.ecomostoles.backend.service.AgreementService;
+import es.urjc.ecomostoles.backend.service.CompanyService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,12 +29,12 @@ import java.util.Locale;
 @Controller
 public class PdfExportController {
 
-    private final AcuerdoService acuerdoService;
-    private final EmpresaService empresaService;
+    private final AgreementService agreementService;
+    private final CompanyService companyService;
 
-    public PdfExportController(AcuerdoService acuerdoService, EmpresaService empresaService) {
-        this.acuerdoService = acuerdoService;
-        this.empresaService = empresaService;
+    public PdfExportController(AgreementService agreementService, CompanyService companyService) {
+        this.agreementService = agreementService;
+        this.companyService = companyService;
     }
 
     @GetMapping("/acuerdo/{id}/pdf")
@@ -43,21 +43,25 @@ public class PdfExportController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Acuerdo agreement = acuerdoService.buscarPorId(id)
-                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
+        Agreement agreement = agreementService.findById(id)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Recurso no encontrado"));
 
         String userEmail = principal.getName();
-        Empresa logueada = empresaService.buscarPorEmail(userEmail)
+        Company loggedCompany = companyService.findByEmail(userEmail)
                 .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
-        boolean esAdmin = logueada.getRoles() != null && logueada.getRoles().contains("ADMIN");
-        boolean esOwner = (agreement.getEmpresaOrigen() != null && agreement.getEmpresaOrigen().getEmailContacto().equals(userEmail)) ||
-                          (agreement.getEmpresaDestino() != null && agreement.getEmpresaDestino().getEmailContacto().equals(userEmail));
-        
-        if (!esAdmin && !esOwner) {
-            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para acceder a este recurso");
+        boolean isAdmin = loggedCompany.getRoles() != null && loggedCompany.getRoles().contains("ADMIN");
+        boolean isOwner = (agreement.getOriginCompany() != null
+                && agreement.getOriginCompany().getContactEmail().equals(userEmail)) ||
+                (agreement.getDestinationCompany() != null
+                        && agreement.getDestinationCompany().getContactEmail().equals(userEmail));
+
+        if (!isAdmin && !isOwner) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "No tienes permiso para acceder a este recurso");
         }
-        
+
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             Document document = new Document(PageSize.A4, 36, 36, 54, 36);
             PdfWriter.getInstance(document, baos);
@@ -69,9 +73,9 @@ public class PdfExportController {
             Font labelFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Color.DARK_GRAY);
 
             // --- Company Logo (if exists) ---
-            if (agreement.getEmpresaOrigen() != null && agreement.getEmpresaOrigen().getLogo() != null) {
+            if (agreement.getOriginCompany() != null && agreement.getOriginCompany().getLogo() != null) {
                 try {
-                    Image logo = Image.getInstance(agreement.getEmpresaOrigen().getLogo());
+                    Image logo = Image.getInstance(agreement.getOriginCompany().getLogo());
                     logo.scaleToFit(80, 80);
                     logo.setAlignment(Image.RIGHT);
                     document.add(logo);
@@ -97,32 +101,41 @@ public class PdfExportController {
             table.setWidthPercentage(100);
             table.setSpacingBefore(10f);
             table.setSpacingAfter(10f);
-            table.setWidths(new float[]{1.5f, 3.5f});
+            table.setWidths(new float[] { 1.5f, 3.5f });
 
-            NumberFormat formatoMoneda = NumberFormat.getCurrencyInstance(new Locale("es", "ES"));
-            String precioFormateado = formatoMoneda.format(agreement.getPrecioAcordado());
+            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "ES"));
+            String formattedPrice = currencyFormat.format(agreement.getAgreedPrice());
 
             addTableCell(table, "ID de Acuerdo:", agreement.getId().toString(), labelFont, normalFont);
-            addTableCell(table, "Material:", agreement.getMaterialIntercambiado(), labelFont, normalFont);
-            addTableCell(table, "Cantidad:", agreement.getCantidad() + " " + (agreement.getUnidad() != null ? agreement.getUnidad() : "uds"), labelFont, normalFont);
-            addTableCell(table, "Precio Acordado:", precioFormateado, labelFont, normalFont);
-            
-            String originName = agreement.getEmpresaOrigen() != null ? agreement.getEmpresaOrigen().getNombreComercial() : "Empresa no disponible";
-            String destName = agreement.getEmpresaDestino() != null ? agreement.getEmpresaDestino().getNombreComercial() : "Empresa no disponible";
-            
+            addTableCell(table, "Material:", agreement.getExchangedMaterial(), labelFont, normalFont);
+            addTableCell(table, "Cantidad:",
+                    agreement.getQuantity() + " " + (agreement.getUnit() != null ? agreement.getUnit() : "uds"),
+                    labelFont, normalFont);
+            addTableCell(table, "Precio Acordado:", formattedPrice, labelFont, normalFont);
+
+            String originName = agreement.getOriginCompany() != null ? agreement.getOriginCompany().getCommercialName()
+                    : "Empresa no disponible";
+            String destName = agreement.getDestinationCompany() != null
+                    ? agreement.getDestinationCompany().getCommercialName()
+                    : "Empresa no disponible";
+
             addTableCell(table, "Empresa Proveedora:", originName, labelFont, normalFont);
             addTableCell(table, "Empresa Receptora:", destName, labelFont, normalFont);
-            addTableCell(table, "Estado del Acuerdo:", agreement.getEstado().name(), labelFont, normalFont);
-            
+            addTableCell(table, "Estado del Acuerdo:", agreement.getStatus().name(), labelFont, normalFont);
+
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            String fechaFormateada = agreement.getFechaRegistro() != null ? agreement.getFechaRegistro().format(formatter) : "Fecha no disponible";
-            addTableCell(table, "Fecha de Registro:", fechaFormateada, labelFont, normalFont);
+            String formattedDate = agreement.getRegistrationDate() != null
+                    ? agreement.getRegistrationDate().format(formatter)
+                    : "Fecha no disponible";
+            addTableCell(table, "Fecha de Registro:", formattedDate, labelFont, normalFont);
 
             document.add(table);
 
             // --- Footer ---
             document.add(new Paragraph("\n"));
-            Paragraph footer = new Paragraph("Este documento es un comprobante automático generado por la plataforma Eco-Móstoles para el fomento de la simbiosis industrial.", FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, Color.GRAY));
+            Paragraph footer = new Paragraph(
+                    "Este documento es un comprobante automático generado por la plataforma Eco-Móstoles para el fomento de la simbiosis industrial.",
+                    FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, Color.GRAY));
             footer.setAlignment(Element.ALIGN_CENTER);
             document.add(footer);
 
@@ -132,7 +145,7 @@ public class PdfExportController {
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDispositionFormData("filename", "albaran_acuerdo_" + id + ".pdf");
             return new ResponseEntity<>(baos.toByteArray(), headers, HttpStatus.OK);
-            
+
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }

@@ -1,9 +1,9 @@
 package es.urjc.ecomostoles.backend.controller;
 
-import es.urjc.ecomostoles.backend.model.Empresa;
-import es.urjc.ecomostoles.backend.model.Oferta;
-import es.urjc.ecomostoles.backend.service.EmpresaService;
-import es.urjc.ecomostoles.backend.service.OfertaService;
+import es.urjc.ecomostoles.backend.model.Company;
+import es.urjc.ecomostoles.backend.model.Offer;
+import es.urjc.ecomostoles.backend.service.CompanyService;
+import es.urjc.ecomostoles.backend.service.OfferService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,82 +32,84 @@ public class ImageController {
 
     private static final Logger log = LoggerFactory.getLogger(ImageController.class);
 
-    private final EmpresaService empresaService;
-    private final OfertaService  ofertaService;
+    private final CompanyService companyService;
+    private final OfferService offerService;
 
-    public ImageController(EmpresaService empresaService,
-                           OfertaService  ofertaService) {
-        this.empresaService = empresaService;
-        this.ofertaService = ofertaService;
+    public ImageController(CompanyService companyService,
+            OfferService offerService) {
+        this.companyService = companyService;
+        this.offerService = offerService;
     }
 
-    // ── Logo de Empresa ──────────────────────────────────────────────────────
+    // ── Company Logo ──────────────────────────────────────────────────────
 
     /**
      * Returns a company logo as binary response.
      */
     @GetMapping("/images/empresa/{id}")
-    public ResponseEntity<byte[]> servirLogoEmpresa(@PathVariable Long id) {
-        Optional<Empresa> empresaOpt = empresaService.buscarPorId(id);
+    public ResponseEntity<byte[]> serveCompanyLogo(@PathVariable Long id) {
+        Optional<Company> companyOpt = companyService.findById(id);
 
-        if (empresaOpt.isPresent() && empresaOpt.get().getLogo() != null && empresaOpt.get().getLogo().length > 0) {
-            byte[] bytes = empresaOpt.get().getLogo();
+        if (companyOpt.isPresent() && companyOpt.get().getLogo() != null && companyOpt.get().getLogo().length > 0) {
+            byte[] bytes = companyOpt.get().getLogo();
             return ResponseEntity.ok()
                     .cacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES).mustRevalidate())
-                    .contentType(detectarMediaType(bytes))
+                    .contentType(detectMediaType(bytes))
                     .body(bytes);
         }
 
         // If the logo or company does not exist, return a default image (Robustness)
-        return servirImagenPorDefecto();
+        return serveDefaultImage();
     }
 
-    // ── Imagen de Oferta ─────────────────────────────────────────────────────
+    // ── Offer Image ─────────────────────────────────────────────────────
 
     /**
      * Returns an offer image as binary response.
      */
     @GetMapping("/images/oferta/{id}")
-    public ResponseEntity<byte[]> servirImagenOferta(@PathVariable Long id) {
-        Optional<Oferta> ofertaOpt = ofertaService.buscarPorId(id);
+    public ResponseEntity<byte[]> serveOfferImage(@PathVariable Long id) {
+        Optional<Offer> offerOpt = offerService.findById(id);
 
-        if (ofertaOpt.isPresent() && ofertaOpt.get().getImagen() != null && ofertaOpt.get().getImagen().length > 0) {
-            byte[] bytes = ofertaOpt.get().getImagen();
+        if (offerOpt.isPresent() && offerOpt.get().getImage() != null && offerOpt.get().getImage().length > 0) {
+            byte[] bytes = offerOpt.get().getImage();
             return ResponseEntity.ok()
                     .cacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES).mustRevalidate())
-                    .contentType(detectarMediaType(bytes))
+                    .contentType(detectMediaType(bytes))
                     .body(bytes);
         }
 
         // If the image or offer does not exist, return a default image (Robustness)
-        return servirImagenPorDefecto();
+        return serveDefaultImage();
     }
 
     /**
      * Loads and serves the default corporate image from the classpath.
-     * 'Bulletproof' Architecture: prevents uncontrolled exceptions even if the file system fails.
+     * 'Bulletproof' Architecture: prevents uncontrolled exceptions even if the file
+     * system fails.
      */
-    private ResponseEntity<byte[]> servirImagenPorDefecto() {
+    private ResponseEntity<byte[]> serveDefaultImage() {
         try {
             ClassPathResource imgFile = new ClassPathResource("static/img/logo.webp");
             if (imgFile.exists()) {
                 byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
                 return ResponseEntity.ok()
-                        .contentType(detectarMediaType(bytes))
+                        .contentType(detectMediaType(bytes))
                         .body(bytes);
             }
         } catch (Exception e) {
             log.error("Error sirviendo la imagen", e);
         }
-        
-        // Final line of defense: return 404 so the browser/HTML handles the error (e.g., with onerror)
+
+        // Final line of defense: return 404 so the browser/HTML handles the error
+        // (e.g., with onerror)
         return ResponseEntity.notFound().build();
     }
 
-    private MediaType detectarMediaType(byte[] imagenBytes) {
+    private MediaType detectMediaType(byte[] imageBytes) {
         String mimeType = null;
         try {
-            InputStream is = new BufferedInputStream(new ByteArrayInputStream(imagenBytes));
+            InputStream is = new BufferedInputStream(new ByteArrayInputStream(imageBytes));
             mimeType = URLConnection.guessContentTypeFromStream(is);
         } catch (Exception e) {
             log.warn("MIME type could not be detected dynamically");

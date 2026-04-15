@@ -1,70 +1,72 @@
 package es.urjc.ecomostoles.backend.dto;
 
-import es.urjc.ecomostoles.backend.model.Demanda;
+import es.urjc.ecomostoles.backend.model.Demand;
 import java.util.List;
 
 /**
  * Data Transfer Object for Dashboard statistics.
- * Replaces the generic Map<String, Object> to provide strong typing and better maintainability.
+ * Replaces the generic Map<String, Object> to provide strong typing and better
+ * maintainability.
  */
 public class DashboardStatsDTO {
 
-    private boolean esAdmin;
-    private int totalOfertas;
-    private int totalDemandas;
-    private int acuerdosActivos;
+    private boolean isAdmin;
+    private int totalOffers;
+    private int totalDemands;
+    private int activeAgreements;
     private List<Integer> chartData;
-    private double materialReintroducido;
-    private double impactoCO2;
+    private double reintroducedMaterial;
+    private double co2Impact;
     private List<?> smartRecommendations;
     private boolean hasRecommendations;
 
-    public DashboardStatsDTO() {}
+    public DashboardStatsDTO() {
+    }
 
-    public DashboardStatsDTO(boolean esAdmin, int totalOfertas, int totalDemandas, int acuerdosActivos, 
-                             List<Integer> chartData, double materialReintroducido, double impactoCO2, 
-                             List<?> smartRecommendations, boolean hasRecommendations) {
-        this.esAdmin = esAdmin;
-        this.totalOfertas = totalOfertas;
-        this.totalDemandas = totalDemandas;
-        this.acuerdosActivos = acuerdosActivos;
+    public DashboardStatsDTO(boolean isAdmin, int totalOffers, int totalDemands, int activeAgreements,
+            List<Integer> chartData, double reintroducedMaterial, double co2Impact,
+            List<?> smartRecommendations, boolean hasRecommendations) {
+        this.isAdmin = isAdmin;
+        this.totalOffers = totalOffers;
+        this.totalDemands = totalDemands;
+        this.activeAgreements = activeAgreements;
         this.chartData = chartData;
-        this.materialReintroducido = materialReintroducido;
-        this.impactoCO2 = impactoCO2;
+        this.reintroducedMaterial = reintroducedMaterial;
+        this.co2Impact = co2Impact;
         this.smartRecommendations = smartRecommendations;
         this.hasRecommendations = hasRecommendations;
     }
 
-    public boolean isEsAdmin() {
-        return esAdmin;
+    public boolean isAdmin() {
+        return isAdmin;
     }
 
-    public void setEsAdmin(boolean esAdmin) {
-        this.esAdmin = esAdmin;
+    public void setAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
-    public int getTotalOfertas() {
-        return totalOfertas;
+    public int getTotalOffers() {
+        return totalOffers;
     }
 
-    public void setTotalOfertas(int totalOfertas) {
-        this.totalOfertas = totalOfertas;
+    public void setTotalOffers(int totalOffers) {
+        this.totalOffers = totalOffers;
     }
 
-    public int getTotalDemandas() {
-        return totalDemandas;
+    public int getTotalDemands() {
+        return totalDemands;
     }
 
-    public void setTotalDemandas(int totalDemandas) {
-        this.totalDemandas = totalDemandas;
+    public void setTotalDemands(int totalDemands) {
+        this.totalDemands = totalDemands;
     }
 
-    public int getAcuerdosActivos() {
-        return acuerdosActivos;
+    public int getActiveAgreements() {
+        return activeAgreements;
     }
 
-    public void setAcuerdosActivos(int acuerdosActivos) {
-        this.acuerdosActivos = acuerdosActivos;
+    public void setActiveAgreements(int activeAgreements) {
+        this.activeAgreements = activeAgreements;
     }
 
     public List<Integer> getChartData() {
@@ -75,20 +77,20 @@ public class DashboardStatsDTO {
         this.chartData = chartData;
     }
 
-    public double getMaterialReintroducido() {
-        return materialReintroducido;
+    public double getReintroducedMaterial() {
+        return reintroducedMaterial;
     }
 
-    public void setMaterialReintroducido(double materialReintroducido) {
-        this.materialReintroducido = materialReintroducido;
+    public void setReintroducedMaterial(double reintroducedMaterial) {
+        this.reintroducedMaterial = reintroducedMaterial;
     }
 
-    public double getImpactoCO2() {
-        return impactoCO2;
+    public double getCo2Impact() {
+        return co2Impact;
     }
 
-    public void setImpactoCO2(double impactoCO2) {
-        this.impactoCO2 = impactoCO2;
+    public void setCo2Impact(double co2Impact) {
+        this.co2Impact = co2Impact;
     }
 
     public List<?> getSmartRecommendations() {

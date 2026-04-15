@@ -1,17 +1,17 @@
 package es.urjc.ecomostoles.backend.controller;
 
-import es.urjc.ecomostoles.backend.model.Empresa;
-import es.urjc.ecomostoles.backend.service.EmpresaService;
-import es.urjc.ecomostoles.backend.service.OfertaService;
-import es.urjc.ecomostoles.backend.service.DemandaService;
-import es.urjc.ecomostoles.backend.service.AcuerdoService;
-import es.urjc.ecomostoles.backend.model.EstadoAcuerdo;
-import es.urjc.ecomostoles.backend.model.EstadoOferta;
-import es.urjc.ecomostoles.backend.model.Oferta;
-import es.urjc.ecomostoles.backend.model.Demanda;
-import es.urjc.ecomostoles.backend.model.Acuerdo;
+import es.urjc.ecomostoles.backend.model.Company;
+import es.urjc.ecomostoles.backend.service.CompanyService;
+import es.urjc.ecomostoles.backend.service.OfferService;
+import es.urjc.ecomostoles.backend.service.DemandService;
+import es.urjc.ecomostoles.backend.service.AgreementService;
+import es.urjc.ecomostoles.backend.model.AgreementStatus;
+import es.urjc.ecomostoles.backend.model.OfferStatus;
+import es.urjc.ecomostoles.backend.model.Offer;
+import es.urjc.ecomostoles.backend.model.Demand;
+import es.urjc.ecomostoles.backend.model.Agreement;
 import es.urjc.ecomostoles.backend.dto.SelectOption;
-import es.urjc.ecomostoles.backend.dto.OfertaResumen;
+import es.urjc.ecomostoles.backend.dto.OfferSummary;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,13 +29,13 @@ import java.util.Optional;
 import java.util.Arrays;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import es.urjc.ecomostoles.backend.dto.EmpresaDTO;
+import es.urjc.ecomostoles.backend.dto.CompanyDTO;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import es.urjc.ecomostoles.backend.service.ReportService;
-import es.urjc.ecomostoles.backend.service.ConfiguracionService;
-import es.urjc.ecomostoles.backend.service.MensajeService;
+import es.urjc.ecomostoles.backend.service.ConfigurationService;
+import es.urjc.ecomostoles.backend.service.MessageService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
@@ -48,39 +48,41 @@ import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
 /**
  * Administration panel controller.
  *
- * All paths are under /admin/** and protected by @PreAuthorize("hasRole('ADMIN')")
+ * All paths are under /admin/** and protected
+ * by @PreAuthorize("hasRole('ADMIN')")
  * (additional reinforcement over the SecurityConfig rule).
  *
  * Used views (existing):
- *   admin_panel, admin_usuarios, admin_ofertas, admin_reportes, admin_configuracion
+ * admin_panel, admin_usuarios, admin_ofertas, admin_reportes,
+ * admin_configuracion
  */
 @Controller
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    private final EmpresaService       empresaService;
-    private final OfertaService        ofertaService;
-    private final DemandaService       demandaService;
-    private final AcuerdoService       acuerdoService;
-    private final ConfiguracionService configuracionService;
-    private final ReportService       reportService;
-    private final MensajeService     mensajeService;
+    private final CompanyService companyService;
+    private final OfferService offerService;
+    private final DemandService demandService;
+    private final AgreementService agreementService;
+    private final ConfigurationService configurationService;
+    private final ReportService reportService;
+    private final MessageService messageService;
 
-    public AdminController(EmpresaService empresaService,
-                           OfertaService ofertaService,
-                           DemandaService demandaService,
-                           AcuerdoService acuerdoService,
-                           ConfiguracionService configuracionService,
-                           ReportService reportService,
-                           MensajeService mensajeService) {
-        this.empresaService = empresaService;
-        this.ofertaService  = ofertaService;
-        this.demandaService = demandaService;
-        this.acuerdoService = acuerdoService;
-        this.configuracionService = configuracionService;
+    public AdminController(CompanyService companyService,
+            OfferService offerService,
+            DemandService demandService,
+            AgreementService agreementService,
+            ConfigurationService configurationService,
+            ReportService reportService,
+            MessageService messageService) {
+        this.companyService = companyService;
+        this.offerService = offerService;
+        this.demandService = demandService;
+        this.agreementService = agreementService;
+        this.configurationService = configurationService;
         this.reportService = reportService;
-        this.mensajeService = mensajeService;
+        this.messageService = messageService;
     }
 
     // ... (keep private methods)
@@ -90,24 +92,24 @@ public class AdminController {
         addCommonAttributes(model, principal, null);
     }
 
-    private void addCommonAttributes(Model model, Principal principal, String filtro) {
+    private void addCommonAttributes(Model model, Principal principal, String filter) {
         // Global platform KPIs
-        model.addAttribute("totalUsuarios",  empresaService.contarTodas());
-        model.addAttribute("totalOfertas",   ofertaService.contarTodas());
-        model.addAttribute("totalDemandas",  demandaService.contarTodas());
-        model.addAttribute("totalAcuerdos",  acuerdoService.contarTodos(filtro));
- 
+        model.addAttribute("totalUsers", companyService.countAll());
+        model.addAttribute("totalOffers", offerService.countAll());
+        model.addAttribute("totalDemands", demandService.countAll());
+        model.addAttribute("totalAgreements", agreementService.countAll(filter));
+
         // Admin-Specific Stats (Real DB counts)
-        model.addAttribute("totalPendientes",  acuerdoService.contarPorEstado(EstadoAcuerdo.PENDIENTE, filtro));
-        model.addAttribute("totalDenunciadas", ofertaService.contarPorEstado(EstadoOferta.DENUNCIADA));
-        model.addAttribute("totalCompletadas", acuerdoService.contarPorEstado(EstadoAcuerdo.COMPLETADO, filtro));
-        model.addAttribute("toneladasCO2", acuerdoService.calcularCO2Ahorrado());
+        model.addAttribute("totalPending", agreementService.countByStatus(AgreementStatus.PENDING, filter));
+        model.addAttribute("totalReported", offerService.countByStatus(OfferStatus.REPORTED));
+        model.addAttribute("totalCompleted", agreementService.countByStatus(AgreementStatus.COMPLETED, filter));
+        model.addAttribute("co2Tons", agreementService.calculateCO2Saved());
         model.addAttribute("isDashboard", true);
-        model.addAttribute("esVistaAdmin", true);
-        model.addAttribute("emailSoporte", "soporte@ecomostoles.es");
+        model.addAttribute("isAdminView", true);
+        model.addAttribute("supportEmail", "soporte@ecomostoles.es");
     }
 
-    // ── GET /admin  →  redirects to /admin/panel ───────────────────────────
+    // ── GET /admin → redirects to /admin/panel ───────────────────────────
     @GetMapping
     public String adminRoot() {
         return "redirect:/admin/panel";
@@ -115,121 +117,123 @@ public class AdminController {
 
     // ── GET /admin/panel ───────────────────────────────────────────────────────
     @GetMapping("/panel")
-    public String panel(Model model, Principal principal, @RequestParam(required = false) String filtro) {
-        addCommonAttributes(model, principal, filtro);
+    public String panel(Model model, Principal principal, @RequestParam(required = false) String filter) {
+        addCommonAttributes(model, principal, filter);
         model.addAttribute("activePanel", true);
-        model.addAttribute("filtroActual", filtro);
-        
+        model.addAttribute("currentFilter", filter);
+
         // Dynamic dates and labels for the view
-        model.addAttribute("fechaActual", LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM yyyy")));
-        model.addAttribute("labelPendientes", "Pendientes");
-        model.addAttribute("labelCompletadas", "Completadas");
+        model.addAttribute("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM yyyy")));
+        model.addAttribute("labelPending", "Pendientes");
+        model.addAttribute("labelCompleted", "Completadas");
 
         return "admin_panel";
     }
 
     // ── GET /admin/usuarios ────────────────────────────────────────────────────
     @GetMapping("/usuarios")
-    public String usuarios(Model model, Principal principal, 
-                           @RequestParam(required = false) String search,
-                           @PageableDefault(size = 10, sort = "id", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+    public String users(Model model, Principal principal,
+            @RequestParam(required = false) String search,
+            @PageableDefault(size = 10, sort = "id", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
         addCommonAttributes(model, principal);
-        model.addAttribute("activeUsuarios", true);
-        
-        Page<Empresa> paginaEmpresas;
+        model.addAttribute("activeUsers", true);
+
+        Page<Company> companiesPage;
         if (search != null && !search.isEmpty()) {
-            paginaEmpresas = empresaService.filtrarEmpresasPaginado(search, pageable);
+            companiesPage = companyService.filterCompaniesPaginated(search, pageable);
             model.addAttribute("searchQuery", search);
             model.addAttribute("isSearch", true);
         } else {
-            paginaEmpresas = empresaService.obtenerEmpresasPaginadas(pageable.getPageNumber(), pageable.getPageSize());
+            companiesPage = companyService.getCompaniesPaginated(pageable.getPageNumber(), pageable.getPageSize());
             model.addAttribute("isSearch", false);
         }
-        
-        model.addAttribute("empresas", paginaEmpresas.getContent());
-        model.addAttribute("currentPage", paginaEmpresas.getNumber() + 1);
-        model.addAttribute("totalPages", paginaEmpresas.getTotalPages());
-        model.addAttribute("hasPrevious", paginaEmpresas.hasPrevious());
-        model.addAttribute("hasNext", paginaEmpresas.hasNext());
-        model.addAttribute("prevPage", paginaEmpresas.getNumber() - 1);
-        model.addAttribute("nextPage", paginaEmpresas.getNumber() + 1);
-        
+
+        model.addAttribute("companies", companiesPage.getContent());
+        model.addAttribute("currentPage", companiesPage.getNumber() + 1);
+        model.addAttribute("totalPages", companiesPage.getTotalPages());
+        model.addAttribute("hasPrevious", companiesPage.hasPrevious());
+        model.addAttribute("hasNext", companiesPage.hasNext());
+        model.addAttribute("prevPage", companiesPage.getNumber() - 1);
+        model.addAttribute("nextPage", companiesPage.getNumber() + 1);
+
         // Fix: Persist search parameters in pagination
         model.addAttribute("pagBaseUrl", "/admin/usuarios");
         String qs = (search != null && !search.isEmpty()) ? "&search=" + search : "";
         model.addAttribute("pagQueryString", qs);
-        
+
         return "admin_usuarios";
     }
 
     @PostMapping("/usuarios/eliminar/{id}")
-    public String eliminarUsuario(@PathVariable Long id) {
-        // CascadeType.ALL in Empresa.java will delete the user and all their dependencies.
-        empresaService.eliminar(id);
+    public String deleteUser(@PathVariable Long id) {
+        // CascadeType.ALL in Company.java will delete the user and all their
+        // dependencies.
+        companyService.delete(id);
         return "redirect:/admin/usuarios";
     }
 
     @GetMapping("/usuarios/{id}/editar")
-    public String editarUsuario(@PathVariable Long id) {
-        // We reuse the existing profile view with ID path, which we recently refactored to support admin inspections/edits
+    public String editUser(@PathVariable Long id) {
+        // We reuse the existing profile view with ID path, which we recently refactored
+        // to support admin inspections/edits
         return "redirect:/perfil/" + id;
     }
 
     // ── GET /admin/ofertas ─────────────────────────────────────────────────────
     @GetMapping("/ofertas")
-    public String ofertas(Model model, Principal principal, 
-                          @RequestParam(required = false) String estado,
-                          @PageableDefault(size = 10, sort = "fechaPublicacion", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+    public String offers(Model model, Principal principal,
+            @RequestParam(required = false) String status,
+            @PageableDefault(size = 10, sort = "publicationDate", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
         addCommonAttributes(model, principal);
-        model.addAttribute("activeOfertas", true);
-        
-        Page<OfertaResumen> paginaOfertas;
-        if (estado != null && !estado.isEmpty()) {
+        model.addAttribute("activeOffers", true);
+
+        Page<OfferSummary> offersPage;
+        if (status != null && !status.isEmpty()) {
             try {
-                EstadoOferta enumEstado = EstadoOferta.valueOf(estado.toUpperCase());
-                paginaOfertas = ofertaService.obtenerPorEstadoPaginado(enumEstado, pageable);
-                model.addAttribute("filtroSeleccionado", estado);
+                OfferStatus enumStatus = OfferStatus.valueOf(status.toUpperCase());
+                offersPage = offerService.getByStatusPaginated(enumStatus, pageable);
+                model.addAttribute("selectedFilter", status);
             } catch (IllegalArgumentException e) {
-                paginaOfertas = ofertaService.obtenerTodasPaginadas(pageable);
+                offersPage = offerService.getAllPaginated(pageable);
             }
         } else {
-            paginaOfertas = ofertaService.obtenerTodasPaginadas(pageable);
+            offersPage = offerService.getAllPaginated(pageable);
         }
-        
-        model.addAttribute("todasOfertas", paginaOfertas.getContent());
-        model.addAttribute("currentPage", paginaOfertas.getNumber() + 1);
-        model.addAttribute("totalPages", paginaOfertas.getTotalPages());
-        model.addAttribute("hasPrevious", paginaOfertas.hasPrevious());
-        model.addAttribute("hasNext", paginaOfertas.hasNext());
-        model.addAttribute("prevPage", paginaOfertas.getNumber() - 1);
-        model.addAttribute("nextPage", paginaOfertas.getNumber() + 1);
-        
+
+        model.addAttribute("allOffers", offersPage.getContent());
+        model.addAttribute("currentPage", offersPage.getNumber() + 1);
+        model.addAttribute("totalPages", offersPage.getTotalPages());
+        model.addAttribute("hasPrevious", offersPage.hasPrevious());
+        model.addAttribute("hasNext", offersPage.hasNext());
+        model.addAttribute("prevPage", offersPage.getNumber() - 1);
+        model.addAttribute("nextPage", offersPage.getNumber() + 1);
+
         // Fix: Persist state filter in pagination
         model.addAttribute("pagBaseUrl", "/admin/ofertas");
-        String qs = (estado != null && !estado.isEmpty()) ? "&estado=" + estado : "";
+        String qs = (status != null && !status.isEmpty()) ? "&estado=" + status : "";
         model.addAttribute("pagQueryString", qs);
-        
+
         return "admin_ofertas";
     }
 
     // ── GET /admin/reportes ────────────────────────────────────────────────────
     @GetMapping("/reportes")
-    public String reportes(Model model, Principal principal) {
+    public String reports(Model model, Principal principal) {
         addCommonAttributes(model, principal);
         model.addAttribute("activeReportes", true);
 
         // Enterprise Plus: Batch-fetch all CO2 stats to avoid N+1 query pattern
-        Map<Long, Double> co2Map = acuerdoService.obtenerRankingCO2();
+        Map<Long, Double> co2Map = agreementService.getCO2Ranking();
 
         // Fetch companies and enrich with pre-calculated CO2 stats
-        List<EmpresaDTO> topCompanies = empresaService.obtenerTodas().stream().map(e -> {
-            EmpresaDTO dto = new EmpresaDTO(e);
-            dto.setCo2Ahorrado(co2Map.getOrDefault(e.getId(), 0.0));
+        List<CompanyDTO> topCompanies = companyService.getAll().stream().map(e -> {
+            CompanyDTO dto = new CompanyDTO(e);
+            dto.setCo2Saved(co2Map.getOrDefault(e.getId(), 0.0));
             // Ensure sector is meaningful
-            dto.setSector(e.getSectorIndustrial() != null ? e.getSectorIndustrial() : "Industria");
+            dto.setSector(e.getIndustrialSector() != null ? e.getIndustrialSector() : "Industria");
             return dto;
-        }).sorted((a, b) -> b.getCo2Ahorrado().compareTo(a.getCo2Ahorrado())) // Order by CO2 descending
-          .collect(Collectors.toList());
+        }).sorted((a, b) -> b.getCo2Saved().compareTo(a.getCo2Saved())) // Order by CO2 descending
+                .collect(Collectors.toList());
 
         // Pre-calculating indices for Mustache rendering
         for (int i = 0; i < topCompanies.size(); i++) {
@@ -239,9 +243,13 @@ public class AdminController {
         model.addAttribute("topCompanies", topCompanies);
 
         // EXTRA: Data for the Admin Chart (Top 5 companies by impact)
-        List<String> labels = topCompanies.stream().limit(5).map(es.urjc.ecomostoles.backend.dto.EmpresaDTO::getNombreComercial).collect(java.util.stream.Collectors.toList());
-        List<Double> data = topCompanies.stream().limit(5).map(es.urjc.ecomostoles.backend.dto.EmpresaDTO::getCo2Ahorrado).collect(java.util.stream.Collectors.toList());
-        
+        List<String> labels = topCompanies.stream().limit(5)
+                .map(es.urjc.ecomostoles.backend.dto.CompanyDTO::getCommercialName)
+                .collect(java.util.stream.Collectors.toList());
+        List<Double> data = topCompanies.stream().limit(5)
+                .map(es.urjc.ecomostoles.backend.dto.CompanyDTO::getCo2Saved)
+                .collect(java.util.stream.Collectors.toList());
+
         try {
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
             model.addAttribute("chartLabels", mapper.writeValueAsString(labels));
@@ -253,197 +261,204 @@ public class AdminController {
 
         // Consolidate metrics into a single object as requested
         Map<String, Object> reportMetrics = new HashMap<>();
-        reportMetrics.put("co2Saved", model.getAttribute("toneladasCO2"));
-        reportMetrics.put("transactions", model.getAttribute("totalAcuerdos"));
-        reportMetrics.put("activeCompanies", model.getAttribute("totalUsuarios"));
-        
+        reportMetrics.put("co2Saved", model.getAttribute("co2Tons"));
+        reportMetrics.put("transactions", model.getAttribute("totalAgreements"));
+        reportMetrics.put("activeCompanies", model.getAttribute("totalCompanies"));
+
         model.addAttribute("reportMetrics", reportMetrics);
 
         return "admin_reportes";
     }
 
     @GetMapping("/demandas")
-    public String adminDemandas(Model model, Principal principal,
-                                @PageableDefault(size = 10, sort = "fechaPublicacion", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+    public String adminDemands(Model model, Principal principal,
+            @PageableDefault(size = 10, sort = "publicationDate", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
         addCommonAttributes(model, principal);
         model.addAttribute("activeDemandas", true);
-        
-        Page<Demanda> paginaDemandas = demandaService.obtenerTodasPaginadas(pageable);
-        
-        model.addAttribute("demandas", paginaDemandas.getContent());
-        model.addAttribute("currentPage", paginaDemandas.getNumber() + 1);
-        model.addAttribute("totalPages", paginaDemandas.getTotalPages());
-        model.addAttribute("hasPrevious", paginaDemandas.hasPrevious());
-        model.addAttribute("hasNext", paginaDemandas.hasNext());
-        model.addAttribute("prevPage", paginaDemandas.getNumber() - 1);
-        model.addAttribute("nextPage", paginaDemandas.getNumber() + 1);
-        
+
+        Page<Demand> demandsPage = demandService.getAllPaginated(pageable);
+
+        model.addAttribute("demandas", demandsPage.getContent());
+        model.addAttribute("currentPage", demandsPage.getNumber() + 1);
+        model.addAttribute("totalPages", demandsPage.getTotalPages());
+        model.addAttribute("hasPrevious", demandsPage.hasPrevious());
+        model.addAttribute("hasNext", demandsPage.hasNext());
+        model.addAttribute("prevPage", demandsPage.getNumber() - 1);
+        model.addAttribute("nextPage", demandsPage.getNumber() + 1);
+
         // Dynamic stats for admin_demandas cards
-        model.addAttribute("totalDemandasActivas", demandaService.contarTodas());
-        model.addAttribute("totalInteresados", mensajeService.contarTodos());
-        
+        model.addAttribute("totalDemandasActivas", demandService.countAll());
+        model.addAttribute("totalInteresados", messageService.countAll());
+
         // Fix: Add base pagination meta for demands
         model.addAttribute("pagBaseUrl", "/admin/demandas");
         model.addAttribute("pagQueryString", "");
-        
+
         return "admin_demandas";
     }
 
     @GetMapping("/acuerdos")
-    public String adminAcuerdos(Model model, Principal principal,
-                                @PageableDefault(size = 10, sort = "fechaRegistro", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+    public String adminAgreements(Model model, Principal principal,
+            @PageableDefault(size = 10, sort = "registrationDate", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
         addCommonAttributes(model, principal);
         model.addAttribute("activeAcuerdos", true);
-        
-        Page<Acuerdo> paginaAcuerdos = acuerdoService.obtenerTodosPaginados(pageable);
-        
-        model.addAttribute("acuerdos", paginaAcuerdos.getContent());
-        model.addAttribute("currentPage", paginaAcuerdos.getNumber() + 1);
-        model.addAttribute("totalPages", paginaAcuerdos.getTotalPages());
-        model.addAttribute("hasPrevious", paginaAcuerdos.hasPrevious());
-        model.addAttribute("hasNext", paginaAcuerdos.hasNext());
-        model.addAttribute("prevPage", paginaAcuerdos.getNumber() - 1);
-        model.addAttribute("nextPage", paginaAcuerdos.getNumber() + 1);
-        
+
+        Page<Agreement> agreementsPage = agreementService.getAllPaginated(pageable);
+
+        model.addAttribute("acuerdos", agreementsPage.getContent());
+        model.addAttribute("currentPage", agreementsPage.getNumber() + 1);
+        model.addAttribute("totalPages", agreementsPage.getTotalPages());
+        model.addAttribute("hasPrevious", agreementsPage.hasPrevious());
+        model.addAttribute("hasNext", agreementsPage.hasNext());
+        model.addAttribute("prevPage", agreementsPage.getNumber() - 1);
+        model.addAttribute("nextPage", agreementsPage.getNumber() + 1);
+
         // Fix: Add base pagination meta for agreements
         model.addAttribute("pagBaseUrl", "/admin/acuerdos");
         model.addAttribute("pagQueryString", "");
-        
+
         return "admin_acuerdos";
     }
 
     @GetMapping("/plataforma")
-    public String adminPlataforma() {
+    public String adminPlatform() {
         return "redirect:/admin/configuracion";
     }
 
     // ── GET /admin/configuracion ───────────────────────────────────────────────
     @GetMapping("/configuracion")
-    public String configuracion(Model model, Principal principal) {
+    public String configuration(Model model, Principal principal) {
         addCommonAttributes(model, principal);
         model.addAttribute("activeConfig", true);
 
         Map<String, Object> configMap = new HashMap<>();
-        configMap.put("emailContacto", configuracionService.obtenerValorAuto("emailContacto"));
-        configMap.put("comisionPlataforma", configuracionService.obtenerValorAuto("comisionPlataforma"));
-        configMap.put("listaCategorias", configuracionService.obtenerValorAuto("listaCategorias"));
-        configMap.put("listaUnidades", configuracionService.obtenerValorAuto("listaUnidades"));
-        configMap.put("listaDisponibilidades", configuracionService.obtenerValorAuto("listaDisponibilidades"));
-        configMap.put("listaSectores", configuracionService.obtenerValorAuto("listaSectores"));
+        configMap.put("contactEmail", configurationService.getAutoValue("contactEmail"));
+        configMap.put("platformFee", configurationService.getAutoValue("platformFee"));
+        configMap.put("categoryList", configurationService.getAutoValue("categoryList"));
+        configMap.put("unitList", configurationService.getAutoValue("unitList"));
+        configMap.put("availabilityList", configurationService.getAutoValue("availabilityList"));
+        configMap.put("sectorList", configurationService.getAutoValue("sectorList"));
 
         model.addAttribute("config", configMap);
         return "admin_configuracion";
     }
- 
+
     /**
      * Deletes an offer from the administrative panel.
      */
     @PostMapping("/ofertas/{id}/eliminar")
-    public String eliminarOferta(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        ofertaService.eliminar(id);
-        redirectAttributes.addFlashAttribute("mensaje", "La oferta ha sido eliminada correctamente por el administrador.");
+    public String deleteOffer(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        offerService.delete(id);
+        redirectAttributes.addFlashAttribute("message",
+                "La oferta ha sido eliminada correctamente por el administrador.");
         return "redirect:/admin/ofertas";
     }
 
     @GetMapping("/ofertas/editar/{id}")
-    public String editarOfertaAdmin(@PathVariable Long id, Model model, Principal principal) {
+    public String editOfferAdmin(@PathVariable Long id, Model model, Principal principal) {
         addCommonAttributes(model, principal);
-        Oferta oferta = ofertaService.buscarPorId(id).orElse(null);
-        if (oferta == null) return "redirect:/admin/ofertas";
-        
+        Offer offer = offerService.findById(id).orElse(null);
+        if (offer == null)
+            return "redirect:/admin/ofertas";
+
         // Inject select options for the form using helper
-        inyectarOpcionesFormulario(model, oferta.getUnidad(), oferta.getDisponibilidad(), oferta.getTipoResiduo(), oferta.getEstado());
+        injectFormOptions(model, offer.getUnit(), offer.getAvailability(), offer.getWasteType(),
+                offer.getStatus());
 
         return "editar_activo";
     }
 
     @PostMapping("/demandas/eliminar/{id}")
-    public String eliminarDemandaAdmin(@PathVariable Long id) {
-        demandaService.eliminar(id);
+    public String deleteDemandAdmin(@PathVariable Long id) {
+        demandService.delete(id);
         return "redirect:/admin/demandas";
     }
 
     @GetMapping("/demandas/editar/{id}")
-    public String editarDemandaAdmin(@PathVariable Long id, Model model, Principal principal) {
+    public String editDemandAdmin(@PathVariable Long id, Model model, Principal principal) {
         addCommonAttributes(model, principal);
-        Demanda demanda = demandaService.buscarPorId(id).orElse(null);
-        if (demanda == null) return "redirect:/admin/demandas";
+        Demand demand = demandService.findById(id).orElse(null);
+        if (demand == null)
+            return "redirect:/admin/demandas";
 
-        model.addAttribute("demanda", demanda);
-        
+        model.addAttribute("demand", demand);
+
         // Inject select options for the form using helper
-        inyectarOpcionesFormulario(model, demanda.getUnidad(), demanda.getUrgencia(), demanda.getCategoriaMaterial(), demanda.getEstado());
+        injectFormOptions(model, demand.getUnit(), demand.getUrgency(), demand.getMaterialCategory(),
+                demand.getStatus());
 
         return "editar_solicitud";
     }
 
     @PostMapping("/acuerdos/eliminar/{id}")
-    public String eliminarAcuerdoAdmin(@PathVariable Long id) {
-        acuerdoService.eliminar(id);
+    public String deleteAgreementAdmin(@PathVariable Long id) {
+        agreementService.delete(id);
         return "redirect:/admin/acuerdos";
     }
 
     @GetMapping("/acuerdos/editar/{id}")
-    public String editarAcuerdoAdmin(@PathVariable Long id, Model model, Principal principal) {
+    public String editAgreementAdmin(@PathVariable Long id, Model model, Principal principal) {
         addCommonAttributes(model, principal);
-        Acuerdo acuerdo = acuerdoService.buscarPorId(id).orElse(null);
-        if (acuerdo == null) return "redirect:/admin/acuerdos";
+        Agreement agreement = agreementService.findById(id).orElse(null);
+        if (agreement == null)
+            return "redirect:/admin/acuerdos";
 
-        model.addAttribute("acuerdo", acuerdo);
-        
+        model.addAttribute("agreement", agreement);
+
         // Centralized utility for form options (DRY)
-        model.addAttribute("opcionesUnidad", FormOptionsHelper.getOpcionesUnidad(configuracionService, acuerdo.getUnidad()));
-        model.addAttribute("opcionesEstado", FormOptionsHelper.getOpcionesEstadoAcuerdo(acuerdo.getEstado()));
+        model.addAttribute("unitOptions",
+                FormOptionsHelper.getUnitOptions(configurationService, agreement.getUnit()));
+        model.addAttribute("statusOptions", FormOptionsHelper.getAgreementStatusOptions(agreement.getStatus()));
 
         return "editar_acuerdo";
     }
 
     @GetMapping("/usuarios/ver/{id}")
-    public String verUsuarioAdmin(@PathVariable Long id) {
+    public String viewUserAdmin(@PathVariable Long id) {
         return "redirect:/perfil/" + id;
     }
 
     @GetMapping("/usuarios/editar/{id}")
-    public String editarUsuarioAdmin(@PathVariable Long id, Model model, Principal principal) {
+    public String editUserAdmin(@PathVariable Long id, Model model, Principal principal) {
         addCommonAttributes(model, principal);
-        Optional<Empresa> empresaOpt = empresaService.buscarPorId(id);
-        
-        if (empresaOpt.isPresent()) {
-            model.addAttribute("empresa", empresaOpt.get());
+        Optional<Company> companyOpt = companyService.findById(id);
+
+        if (companyOpt.isPresent()) {
+            model.addAttribute("company", companyOpt.get());
         }
 
-        // Variable required by profil_empresa.html to avoid context error
-        model.addAttribute("emailSoporte", "soporte@ecomostoles.es");
-        
-        // Prepare sectors list with 'selected' status for UI
-        String currentSector = empresaOpt.isPresent() ? empresaOpt.get().getSectorIndustrial() : "";
-        List<String> sectores = configuracionService.obtenerListaSanitizada("listaSectores");
+        // Variable required by perfil_empresa.html to avoid context error
+        model.addAttribute("supportEmail", "soporte@ecomostoles.es");
 
-        List<Map<String, Object>> listaSectores = sectores.stream().map(s -> {
+        // Prepare sectors list with 'selected' status for UI
+        String currentSector = companyOpt.isPresent() ? companyOpt.get().getIndustrialSector() : "";
+        List<String> sectors = configurationService.getSanitizedList("sectorList");
+
+        List<Map<String, Object>> sectorsList = sectors.stream().map(s -> {
             Map<String, Object> map = new HashMap<>();
             map.put("value", s);
             map.put("display", s);
             map.put("selected", s.equals(currentSector));
             return map;
         }).collect(Collectors.toList());
-        
-        model.addAttribute("listaSectores", listaSectores);
+
+        model.addAttribute("sectorList", sectorsList);
 
         return "perfil_empresa";
     }
 
     @GetMapping("/ofertas/ver/{id}")
-    public String verOfertaAdmin(@PathVariable Long id) {
+    public String viewOfferAdmin(@PathVariable Long id) {
         return "redirect:/oferta/" + id;
     }
 
     @GetMapping("/demandas/ver/{id}")
-    public String verDemandaAdmin(@PathVariable Long id) {
+    public String viewDemandAdmin(@PathVariable Long id) {
         return "redirect:/demanda/" + id;
     }
 
     @GetMapping("/acuerdos/ver/{id}")
-    public String verAcuerdoAdmin(@PathVariable Long id) {
+    public String viewAgreementAdmin(@PathVariable Long id) {
         return "redirect:/acuerdo/" + id;
     }
 
@@ -453,30 +468,31 @@ public class AdminController {
      * Saves global platform configuration.
      */
     @PostMapping("/configuracion")
-    public String guardarConfiguracion(@RequestParam(required = false) String emailContacto,
-                                       @RequestParam(required = false) Double comisionPlataforma,
-                                       @RequestParam(required = false) String listaCategorias,
-                                       @RequestParam(required = false) String listaUnidades,
-                                       @RequestParam(required = false) String listaDisponibilidades,
-                                       @RequestParam(required = false) String listaSectores,
-                                       RedirectAttributes redirectAttributes) {
-        
-        log.info("Intento de guardado de configuración -> Email: {}, Comisión: {}%", emailContacto, comisionPlataforma);
-        
+    public String saveConfiguration(@RequestParam(required = false) String contactEmail,
+            @RequestParam(required = false) Double platformComission,
+            @RequestParam(required = false) String categoriesList,
+            @RequestParam(required = false) String unitsList,
+            @RequestParam(required = false) String availabilityList,
+            @RequestParam(required = false) String sectorsList,
+            RedirectAttributes redirectAttributes) {
+
+        log.info("Intento de guardado de configuración -> Email: {}, Comisión: {}%", contactEmail, platformComission);
+
         // Validation: range 0-100% for business commissions (UX/Integrity)
-        if (comisionPlataforma != null && (comisionPlataforma < 0 || comisionPlataforma > 100)) {
+        if (platformComission != null && (platformComission < 0 || platformComission > 100)) {
             redirectAttributes.addFlashAttribute("error", "La comisión debe estar entre 0 y 100%.");
             return "redirect:/admin/configuracion";
         }
-        
-        configuracionService.guardarOActualizarConfiguracion("emailContacto", emailContacto);
-        configuracionService.guardarOActualizarConfiguracion("comisionPlataforma", String.valueOf(comisionPlataforma));
-        configuracionService.guardarOActualizarConfiguracion("listaCategorias", listaCategorias);
-        configuracionService.guardarOActualizarConfiguracion("listaUnidades", listaUnidades);
-        configuracionService.guardarOActualizarConfiguracion("listaDisponibilidades", listaDisponibilidades);
-        configuracionService.guardarOActualizarConfiguracion("listaSectores", listaSectores);
 
-        redirectAttributes.addFlashAttribute("mensaje", "La configuración de la plataforma se ha actualizado correctamente en la base de datos.");
+        configurationService.saveOrUpdateConfiguration("contactEmail", contactEmail);
+        configurationService.saveOrUpdateConfiguration("platformFee", String.valueOf(platformComission));
+        configurationService.saveOrUpdateConfiguration("categoryList", categoriesList);
+        configurationService.saveOrUpdateConfiguration("unitList", unitsList);
+        configurationService.saveOrUpdateConfiguration("availabilityList", availabilityList);
+        configurationService.saveOrUpdateConfiguration("sectorList", sectorsList);
+
+        redirectAttributes.addFlashAttribute("message",
+                "La configuración de la plataforma se ha actualizado correctamente en la base de datos.");
         return "redirect:/admin/configuracion";
     }
 
@@ -484,9 +500,9 @@ public class AdminController {
      * Exports a PDF report of registered companies.
      */
     @GetMapping("/exportar/pdf")
-    public ResponseEntity<byte[]> exportarPdf() {
-        byte[] pdf = reportService.generarPdfUsuarios(empresaService.obtenerTodas());
-        
+    public ResponseEntity<byte[]> exportPdf() {
+        byte[] pdf = reportService.generateUsersPdf(companyService.getAll());
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte_usuarios.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
@@ -497,9 +513,9 @@ public class AdminController {
      * Exports all offers as a CSV file.
      */
     @GetMapping("/exportar/csv")
-    public ResponseEntity<byte[]> exportarCsv() {
-        byte[] csv = reportService.generarCsvOfertas(ofertaService.obtenerTodas());
-        
+    public ResponseEntity<byte[]> exportCsv() {
+        byte[] csv = reportService.generateOffersCsv(offerService.getAll());
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte_ofertas.csv")
                 .contentType(MediaType.parseMediaType("text/csv"))
@@ -507,22 +523,23 @@ public class AdminController {
     }
 
     /**
-     * Helper to inject common select options into the model for administrative forms.
+     * Helper to inject common select options into the model for administrative
+     * forms.
      */
-    private void inyectarOpcionesFormulario(Model model, String unit, String disp, String cat, Enum<?> state) {
-        model.addAttribute("opcionesUnidad", buildOptions("listaUnidades", unit));
-        model.addAttribute("opcionesDisponibilidad", buildOptions("listaDisponibilidades", disp));
-        model.addAttribute("opcionesUrgencia", buildOptions("listaDisponibilidades", disp));
-        model.addAttribute("opcionesTipo", buildOptions("listaCategorias", cat));
-        model.addAttribute("opcionesCategoria", buildOptions("listaCategorias", cat));
-        
+    private void injectFormOptions(Model model, String unit, String availability, String cat, Enum<?> state) {
+        model.addAttribute("unitOptions", buildOptions("unitList", unit));
+        model.addAttribute("availabilityOptions", buildOptions("availabilityList", availability));
+        model.addAttribute("urgencyOptions", buildOptions("availabilityList", availability));
+        model.addAttribute("typeOptions", buildOptions("categoryList", cat));
+        model.addAttribute("categoryOptions", buildOptions("categoryList", cat));
+
         if (state != null) {
             List<SelectOption> options = new ArrayList<>();
             for (Object obj : state.getClass().getEnumConstants()) {
                 Enum<?> constant = (Enum<?>) obj;
                 options.add(new SelectOption(constant.name(), constant.name(), constant.equals(state)));
             }
-            model.addAttribute("opcionesEstado", options);
+            model.addAttribute("statusOptions", options);
         }
     }
 
@@ -530,7 +547,7 @@ public class AdminController {
      * Helper to build a list of SelectOption objects from a configuration key.
      */
     private List<SelectOption> buildOptions(String configKey, String selected) {
-        List<String> items = configuracionService.obtenerListaSanitizada(configKey);
+        List<String> items = configurationService.getSanitizedList(configKey);
         List<SelectOption> options = new ArrayList<>();
         for (String item : items) {
             options.add(new SelectOption(item, item, item.equals(selected)));

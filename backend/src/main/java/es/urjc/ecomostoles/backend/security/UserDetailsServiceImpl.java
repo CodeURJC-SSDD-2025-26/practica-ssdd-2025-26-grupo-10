@@ -1,7 +1,7 @@
 package es.urjc.ecomostoles.backend.security;
 
-import es.urjc.ecomostoles.backend.model.Empresa;
-import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
+import es.urjc.ecomostoles.backend.model.Company;
+import es.urjc.ecomostoles.backend.repository.CompanyRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,44 +14,44 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * UserDetailsService implementation that loads a user from the Empresa entity.
+ * UserDetailsService implementation that loads a user from the Company entity.
  *
- * Roles are read directly from Empresa.roles (@ElementCollection field).
- * If the list is empty or null, EMPRESA is assigned by default.
+ * Roles are read directly from Company.roles (@ElementCollection field).
+ * If the list is empty or null, COMPANY is assigned by default.
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    private final EmpresaRepository empresaRepository;
+    private final CompanyRepository companyRepository;
 
-    public UserDetailsServiceImpl(EmpresaRepository empresaRepository) {
-        this.empresaRepository = empresaRepository;
+    public UserDetailsServiceImpl(CompanyRepository companyRepository) {
+        this.companyRepository = companyRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         log.info("🔍 Attempting to log in user: {}", email);
 
-        Empresa empresa = empresaRepository.findByEmailContacto(email)
+        Company company = companyRepository.findByContactEmail(email)
                 .orElseThrow(() -> {
                     log.error("❌ User not found in DB: {}", email);
                     return new UsernameNotFoundException("Empresa no encontrada: " + email);
                 });
 
-        // Read roles from the entity; if none, assign EMPRESA by default
-        List<String> roles = empresa.getRoles();
+        // Read roles from the entity; if none, assign COMPANY by default
+        List<String> roles = company.getRoles();
         String[] rolesArray = (roles != null && !roles.isEmpty())
                 ? roles.toArray(new String[0])
-                : new String[]{"EMPRESA"};
+                : new String[] { "COMPANY" };
 
-        log.info("✅ Session started: {} | Roles: {}", empresa.getNombreComercial(), List.of(rolesArray));
+        log.info("✅ Session started: {} | Roles: {}", company.getCommercialName(), List.of(rolesArray));
 
         return User.builder()
-                .username(empresa.getEmailContacto())
-                .password(empresa.getPassword())
-                .roles(rolesArray)   // Spring automatically adds the ROLE_ prefix
+                .username(company.getContactEmail())
+                .password(company.getPassword())
+                .roles(rolesArray) // Spring automatically adds the ROLE_ prefix
                 .build();
     }
 }

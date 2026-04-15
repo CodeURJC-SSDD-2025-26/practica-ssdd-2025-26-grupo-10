@@ -8,8 +8,8 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import es.urjc.ecomostoles.backend.dto.OfertaResumen;
-import es.urjc.ecomostoles.backend.model.Empresa;
+import es.urjc.ecomostoles.backend.dto.OfferSummary;
+import es.urjc.ecomostoles.backend.model.Company;
 import org.springframework.stereotype.Service;
 
 import java.awt.Color;
@@ -27,10 +27,10 @@ public class ReportService {
     /**
      * Generates a PDF report containing a table of registered companies.
      * 
-     * @param empresas List of companies to include.
+     * @param companies List of companies to include.
      * @return Byte array of the generated PDF.
      */
-    public byte[] generarPdfUsuarios(List<Empresa> empresas) {
+    public byte[] generateUsersPdf(List<Company> companies) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4);
         PdfWriter.getInstance(document, out);
@@ -52,17 +52,18 @@ public class ReportService {
         PdfPTable table = new PdfPTable(4);
         table.setWidthPercentage(100f);
         try {
-            table.setWidths(new float[] {1.5f, 3.5f, 3.5f, 2.0f});
-        } catch (Exception ignored) {}
+            table.setWidths(new float[] { 1.5f, 3.5f, 3.5f, 2.0f });
+        } catch (Exception ignored) {
+        }
         table.setSpacingBefore(10);
 
         writeTableHeader(table);
 
-        for (Empresa emp : empresas) {
-            table.addCell(String.valueOf(emp.getId()));
-            table.addCell(emp.getNombreComercial());
-            table.addCell(emp.getEmailContacto());
-            table.addCell(emp.getRol());
+        for (Company comp : companies) {
+            table.addCell(String.valueOf(comp.getId()));
+            table.addCell(comp.getCommercialName());
+            table.addCell(comp.getContactEmail());
+            table.addCell(comp.getRole());
         }
 
         document.add(table);
@@ -92,21 +93,20 @@ public class ReportService {
     /**
      * Generates a CSV report of offers.
      * 
-     * @param ofertas List of offer summaries.
+     * @param offers List of offer summaries.
      * @return Byte array of the generated CSV (UTF-8).
      */
-    public byte[] generarCsvOfertas(List<OfertaResumen> ofertas) {
+    public byte[] generateOffersCsv(List<OfferSummary> offers) {
         StringBuilder sb = new StringBuilder();
         sb.append("ID;Titulo;Empresa;Cantidad;Estado\n");
 
-        for (OfertaResumen o : ofertas) {
+        for (OfferSummary o : offers) {
             sb.append(String.format("%d;\"%s\";\"%s\";%s;\"%s\"\n",
                     o.getId(),
-                    o.getTitulo(),
-                    o.getEmpresa() != null ? o.getEmpresa().getNombreComercial() : "N/A",
-                    o.getCantidad() != null ? o.getCantidad().toString() : "0",
-                    o.getEstado() != null ? o.getEstado().toString() : "N/A"
-            ));
+                    o.getTitle(),
+                    o.getCompany() != null ? o.getCompany().getCommercialName() : "N/A",
+                    o.getQuantity() != null ? o.getQuantity().toString() : "0",
+                    o.getStatus() != null ? o.getStatus().toString() : "N/A"));
         }
 
         return sb.toString().getBytes(StandardCharsets.UTF_8);

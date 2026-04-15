@@ -25,26 +25,26 @@ public class DataInitializer implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
-    private final EmpresaRepository empresaRepository;
-    private final OfertaRepository ofertaRepository;
-    private final DemandaRepository demandaRepository;
-    private final AcuerdoRepository acuerdoRepository;
-    private final FactorImpactoRepository factorImpactoRepository;
+    private final CompanyRepository companyRepository;
+    private final OfferRepository offerRepository;
+    private final DemandRepository demandRepository;
+    private final AgreementRepository agreementRepository;
+    private final ImpactFactorRepository impactFactorRepository;
     private final PasswordEncoder passwordEncoder;
     private final es.urjc.ecomostoles.backend.component.SustainabilityEngine sustainabilityEngine;
 
-    public DataInitializer(EmpresaRepository empresaRepository,
-            OfertaRepository ofertaRepository,
-            DemandaRepository demandaRepository,
-            AcuerdoRepository acuerdoRepository,
-            FactorImpactoRepository factorImpactoRepository,
+    public DataInitializer(CompanyRepository companyRepository,
+            OfferRepository offerRepository,
+            DemandRepository demandRepository,
+            AgreementRepository agreementRepository,
+            ImpactFactorRepository impactFactorRepository,
             PasswordEncoder passwordEncoder,
             es.urjc.ecomostoles.backend.component.SustainabilityEngine sustainabilityEngine) {
-        this.empresaRepository = empresaRepository;
-        this.ofertaRepository = ofertaRepository;
-        this.demandaRepository = demandaRepository;
-        this.acuerdoRepository = acuerdoRepository;
-        this.factorImpactoRepository = factorImpactoRepository;
+        this.companyRepository = companyRepository;
+        this.offerRepository = offerRepository;
+        this.demandRepository = demandRepository;
+        this.agreementRepository = agreementRepository;
+        this.impactFactorRepository = impactFactorRepository;
         this.passwordEncoder = passwordEncoder;
         this.sustainabilityEngine = sustainabilityEngine;
     }
@@ -52,21 +52,21 @@ public class DataInitializer implements CommandLineRunner {
     // ─────────────────────────────────────────────────────────────────────────
     // Reads a file from static/img/ and returns its bytes (StreamUtils = Spring)
     // ─────────────────────────────────────────────────────────────────────────
-    private byte[] cargarImagen(String nombreFichero) {
-        String ruta = "static/img/" + nombreFichero;
+    private byte[] loadImage(String fileName) {
+        String path = "static/img/" + fileName;
         try {
-            ClassPathResource res = new ClassPathResource(ruta);
+            ClassPathResource res = new ClassPathResource(path);
             if (!res.exists()) {
-                log.warn("⚠️  Image not found: {}", ruta);
+                log.warn("⚠️  Image not found: {}", path);
                 return null;
             }
             try (InputStream is = res.getInputStream()) {
                 byte[] bytes = StreamUtils.copyToByteArray(is);
-                log.info("   📷 '{}' → {} bytes", nombreFichero, bytes.length);
+                log.info("   📷 '{}' → {} bytes", fileName, bytes.length);
                 return bytes;
             }
         } catch (IOException e) {
-            log.error("❌ Error reading '{}': {}", ruta, e.getMessage());
+            log.error("❌ Error reading '{}': {}", path, e.getMessage());
             return null;
         }
     }
@@ -75,33 +75,33 @@ public class DataInitializer implements CommandLineRunner {
     // Creates or updates a company with the given information
     // ─────────────────────────────────────────────────────────────────────────
     /**
-     * Creates or updates a company searching BY CIF (unique field),
+     * Creates or updates a company searching BY tax ID (unique field),
      * not by email, to avoid DataIntegrityViolationException when
-     * the DB already has a record with that CIF from a previous run.
+     * the DB already has a record with that tax ID from a previous run.
      */
-    private Empresa upsertEmpresa(String email, String nombre, String cif,
-            String sector, String direccion, String tel,
-            String descripcion, String logoFichero,
+    private Company upsertCompany(String email, String name, String taxId,
+            String sector, String address, String phone,
+            String description, String logoFile,
             List<String> roles) {
-        // ← Search by CIF (real unique key), not by email
-        Optional<Empresa> opt = empresaRepository.findByCif(cif);
-        Empresa e = opt.orElseGet(Empresa::new);
+        // ← Search by tax ID (real unique key), not by email
+        Optional<Company> optCompany = companyRepository.findByTaxId(taxId);
+        Company company = optCompany.orElseGet(Company::new);
 
-        e.setEmailContacto(email);
-        e.setNombreComercial(nombre);
-        e.setCif(cif);
-        e.setSectorIndustrial(sector);
-        e.setDireccion(direccion);
-        e.setTelefono(tel);
-        e.setDescripcion(descripcion);
-        e.setPassword(passwordEncoder.encode("1234"));
-        e.setRoles(roles);
+        company.setContactEmail(email);
+        company.setCommercialName(name);
+        company.setTaxId(taxId);
+        company.setIndustrialSector(sector);
+        company.setAddress(address);
+        company.setPhone(phone);
+        company.setDescription(description);
+        company.setPassword(passwordEncoder.encode("1234"));
+        company.setRoles(roles);
 
-        if (e.getLogo() == null || e.getLogo().length == 0) {
-            e.setLogo(cargarImagen(logoFichero));
+        if (company.getLogo() == null || company.getLogo().length == 0) {
+            company.setLogo(loadImage(logoFile));
         }
 
-        return empresaRepository.save(e);
+        return companyRepository.save(company);
     }
 
     @Override
@@ -113,22 +113,22 @@ public class DataInitializer implements CommandLineRunner {
         // ══════════════════════════════════════════
         // 0. Environmental Impact Factors (Sustainability)
         // ══════════════════════════════════════════
-        if (factorImpactoRepository.count() == 0) {
+        if (impactFactorRepository.count() == 0) {
             log.info("🌱 Seeding environmental impact factors...");
-            factorImpactoRepository.save(new FactorImpacto("plástico", 1.5));
-            factorImpactoRepository.save(new FactorImpacto("metal", 2.0));
-            factorImpactoRepository.save(new FactorImpacto("aluminio", 2.0));
-            factorImpactoRepository.save(new FactorImpacto("acero", 2.0));
-            factorImpactoRepository.save(new FactorImpacto("madera", 0.8));
-            factorImpactoRepository.save(new FactorImpacto("vidrio", 1.2));
-            factorImpactoRepository.save(new FactorImpacto("papel/cartón", 1.1));
-            log.info("✅ {} factors created.", factorImpactoRepository.count());
+            impactFactorRepository.save(new ImpactFactor("plástico", 1.5));
+            impactFactorRepository.save(new ImpactFactor("metal", 2.0));
+            impactFactorRepository.save(new ImpactFactor("aluminio", 2.0));
+            impactFactorRepository.save(new ImpactFactor("acero", 2.0));
+            impactFactorRepository.save(new ImpactFactor("madera", 0.8));
+            impactFactorRepository.save(new ImpactFactor("vidrio", 1.2));
+            impactFactorRepository.save(new ImpactFactor("papel/cartón", 1.1));
+            log.info("✅ {} factors created.", impactFactorRepository.count());
         }
 
         // ══════════════════════════════════════════
         // 1. System ADMIN
         // ══════════════════════════════════════════
-        Empresa admin = upsertEmpresa(
+        Company admin = upsertCompany(
                 "admin@ecomostoles.es",
                 "Administración EcoMóstoles",
                 "A00000000",
@@ -139,13 +139,13 @@ public class DataInitializer implements CommandLineRunner {
                 "logo.webp",
                 List.of("ADMIN") // ← ADMIN role
         );
-        log.info("✅ ADMIN created/updated → {} | password: 1234 | roles: {}", admin.getEmailContacto(),
+        log.info("✅ ADMIN created/updated → {} | password: 1234 | roles: {}", admin.getContactEmail(),
                 admin.getRoles());
 
         // ══════════════════════════════════════════
         // 2. Company 1 — Metales del Sur (USER)
         // ══════════════════════════════════════════
-        Empresa empresa1 = upsertEmpresa(
+        Company company1 = upsertCompany(
                 "contacto@metalesdelsur.es",
                 "Metales del Sur S.L.",
                 "B12345678",
@@ -154,14 +154,14 @@ public class DataInitializer implements CommandLineRunner {
                 "916 123 456",
                 "Gestión y comercialización de residuos metálicos en el área de Móstoles.",
                 "logo.webp",
-                List.of("EMPRESA") // ← USER/COMPANY role
+                List.of("COMPANY") // ← USER/COMPANY role
         );
-        log.info("✅ Company 1 → {} | roles: {}", empresa1.getEmailContacto(), empresa1.getRoles());
+        log.info("✅ Company 1 → {} | roles: {}", company1.getContactEmail(), company1.getRoles());
 
         // ══════════════════════════════════════════
         // 3. Company 2 — EcoSur Reciclajes (USER)
         // ══════════════════════════════════════════
-        Empresa empresa2 = upsertEmpresa(
+        Company company2 = upsertCompany(
                 "reciclajes@ecosur.es",
                 "EcoSur Reciclajes S.A.",
                 "B87654321",
@@ -170,22 +170,22 @@ public class DataInitializer implements CommandLineRunner {
                 "916 654 321",
                 "Centro de reciclaje especializado en plásticos y metales no ferrosos.",
                 "logo.webp",
-                List.of("EMPRESA"));
-        log.info("✅ Company 2 → {} | roles: {}", empresa2.getEmailContacto(), empresa2.getRoles());
+                List.of("COMPANY"));
+        log.info("✅ Company 2 → {} | roles: {}", company2.getContactEmail(), company2.getRoles());
 
         // ══════════════════════════════════════════
         // 4. Test offers with BLOB images
         // ══════════════════════════════════════════
-        List<Oferta> ofertasEmpresa1 = ofertaRepository.findByEmpresa(empresa1, Oferta.class);
+        List<Offer> offersCompany1 = offerRepository.findByCompany(company1, Offer.class);
 
-        if (ofertasEmpresa1.isEmpty()) {
-            crearOferta(empresa1,
+        if (offersCompany1.isEmpty()) {
+            createOffer(company1,
                     "Virutas de Acero Inoxidable",
                     "Virutas limpias de acero inoxidable 316L libres de aceite. Listas para fundición.",
                     "Metal", 500.0, "kg", 0.45, "Inmediata",
                     LocalDateTime.now().minusDays(5), "virutas.webp");
 
-            crearOferta(empresa1,
+            createOffer(company1,
                     "Bobinas de Cobre Recuperado",
                     "Bobinas de cobre de alta pureza (99.2%) recuperadas de transformadores.",
                     "Metal", 120.0, "kg", 4.80, "Esta semana",
@@ -194,18 +194,18 @@ public class DataInitializer implements CommandLineRunner {
             log.info("✅ 2 offers created for Company 1.");
         } else {
             // Repair empty images if they exist
-            ofertasEmpresa1.stream()
-                    .filter(o -> o.getImagen() == null || o.getImagen().length == 0)
+            offersCompany1.stream()
+                    .filter(o -> o.getImage() == null || o.getImage().length == 0)
                     .forEach(o -> {
-                        o.setImagen(cargarImagen("virutas.webp"));
-                        ofertaRepository.save(o);
-                        log.info("   🔄 Image repaired in: {}", o.getTitulo());
+                        o.setImage(loadImage("virutas.webp"));
+                        offerRepository.save(o);
+                        log.info("   🔄 Image repaired in: {}", o.getTitle());
                     });
         }
 
-        List<Oferta> ofertasEmpresa2 = ofertaRepository.findByEmpresa(empresa2, Oferta.class);
-        if (ofertasEmpresa2.isEmpty()) {
-            crearOferta(empresa2,
+        List<Offer> offersCompany2 = offerRepository.findByCompany(company2, Offer.class);
+        if (offersCompany2.isEmpty()) {
+            createOffer(company2,
                     "Retales de PVC Industrial",
                     "Recortes de PVC rígido (2-10mm). Ideales para reciclaje en piezas pequeñas.",
                     "Plástico", 80.0, "kg", 0.20, "Consultar",
@@ -217,44 +217,44 @@ public class DataInitializer implements CommandLineRunner {
         // ══════════════════════════════════════════
         // 5. Test Demands and Agreements
         // ══════════════════════════════════════════
-        if (demandaRepository.count() == 0) {
-            // Demand 1: from empresa1 (Metalurgia) — visible to other Metalurgia companies
+        if (demandRepository.count() == 0) {
+            // Demand 1: from company1 (Metalurgia) — visible to other Metalurgia companies
             // via Smart Matching
-            Demanda d = new Demanda();
-            d.setTitulo("Se necesita Aluminio para inyección");
-            d.setDescripcion("Requerimos aluminio puro para moldes.");
-            d.setCategoriaMaterial("Metal");
-            d.setCantidad(200.0);
-            d.setUnidad("kg");
-            d.setPresupuestoMaximo(1.50);
-            d.setUrgencia("Alta");
-            d.setEstado(EstadoDemanda.ACTIVA);
-            d.setFechaPublicacion(LocalDateTime.now().minusDays(1));
-            d.setVigencia("30 días");
-            d.setZonaRecogida("Polígono Industrial Sur — Móstoles");
-            d.setEmpresa(empresa1);
-            demandaRepository.save(d);
+            Demand demand1 = new Demand();
+            demand1.setTitle("Se necesita Aluminio para inyección");
+            demand1.setDescription("Requerimos aluminio puro para moldes.");
+            demand1.setMaterialCategory("Metal");
+            demand1.setQuantity(200.0);
+            demand1.setUnit("kg");
+            demand1.setMaxBudget(1.50);
+            demand1.setUrgency("Alta");
+            demand1.setStatus(DemandStatus.ACTIVE);
+            demand1.setPublicationDate(LocalDateTime.now().minusDays(1));
+            demand1.setValidity("30 días");
+            demand1.setPickupZone("Polígono Industrial Sur — Móstoles");
+            demand1.setCompany(company1);
+            demandRepository.save(demand1);
 
-            // Demand 2: from empresa2 (Reciclaje y Medio Ambiente)
-            Demanda d2 = new Demanda();
-            d2.setTitulo("Plásticos Mixtos para procesar");
-            d2.setDescripcion("Recortes de plásticos mixtos listos para reprocesado industrial.");
-            d2.setCategoriaMaterial("Plástico");
-            d2.setCantidad(150.0);
-            d2.setUnidad("kg");
-            d2.setPresupuestoMaximo(2.0);
-            d2.setEstado(EstadoDemanda.ACTIVA);
-            d2.setFechaPublicacion(LocalDateTime.now());
-            d2.setVigencia("Inmediata");
-            d2.setZonaRecogida("Móstoles Central");
-            d2.setEmpresa(empresa2);
-            demandaRepository.save(d2);
+            // Demand 2: from company (Reciclaje y Medio Ambiente)
+            Demand demand2 = new Demand();
+            demand2.setTitle("Plásticos Mixtos para procesar");
+            demand2.setDescription("Recortes de plásticos mixtos listos para reprocesado industrial.");
+            demand2.setMaterialCategory("Plástico");
+            demand2.setQuantity(150.0);
+            demand2.setUnit("kg");
+            demand2.setMaxBudget(2.0);
+            demand2.setStatus(DemandStatus.ACTIVE);
+            demand2.setPublicationDate(LocalDateTime.now());
+            demand2.setValidity("Inmediata");
+            demand2.setPickupZone("Móstoles Central");
+            demand2.setCompany(company2);
+            demandRepository.save(demand2);
         }
 
         // ══════════════════════════════════════════
-        // 6. Company 3 — Reciclajes Paco (same sector as empresa1 for Smart Matching)
+        // 6. Company 3 — Reciclajes Paco (same sector as company1 for Smart Matching)
         // ══════════════════════════════════════════
-        Empresa empresa3 = upsertEmpresa(
+        Company company3 = upsertCompany(
                 "paco@reciclajes.es",
                 "Reciclajes Paco S.L.",
                 "B77777777",
@@ -263,44 +263,44 @@ public class DataInitializer implements CommandLineRunner {
                 "916 777 777",
                 "Specialists in non-ferrous metal recycling.",
                 "logo.webp",
-                List.of("EMPRESA"));
-        log.info("✅ Company 3 → {} | roles: {}", empresa3.getEmailContacto(), empresa3.getRoles());
+                List.of("COMPANY"));
+        log.info("✅ Company 3 → {} | roles: {}", company3.getContactEmail(), company3.getRoles());
 
-        if (demandaRepository.findByEmpresa(empresa3).isEmpty()) {
-            Demanda dPaco = new Demanda();
-            dPaco.setTitulo("Virutas de Acero");
-            dPaco.setDescripcion("Buscamos virutas de acero limpias para reciclado industrial.");
-            dPaco.setCategoriaMaterial("Metal");
-            dPaco.setCantidad(1500.0);
-            dPaco.setUnidad("kg");
-            dPaco.setPresupuestoMaximo(1.20);
-            dPaco.setEstado(EstadoDemanda.ACTIVA);
-            dPaco.setFechaPublicacion(LocalDateTime.now());
-            dPaco.setVigencia("Fin de mes");
-            dPaco.setZonaRecogida("Sector IV — Móstoles");
-            dPaco.setEmpresa(empresa3);
-            demandaRepository.save(dPaco);
-            log.info("✅ Demand created for Empresa 3 (Paco).");
+        if (demandRepository.findByCompany(company3).isEmpty()) {
+            Demand pacoDemand = new Demand();
+            pacoDemand.setTitle("Virutas de Acero");
+            pacoDemand.setDescription("Buscamos virutas de acero limpias para reciclado industrial.");
+            pacoDemand.setMaterialCategory("Metal");
+            pacoDemand.setQuantity(1500.0);
+            pacoDemand.setUnit("kg");
+            pacoDemand.setMaxBudget(1.20);
+            pacoDemand.setStatus(DemandStatus.ACTIVE);
+            pacoDemand.setPublicationDate(LocalDateTime.now());
+            pacoDemand.setValidity("Fin de mes");
+            pacoDemand.setPickupZone("Sector IV — Móstoles");
+            pacoDemand.setCompany(company3);
+            demandRepository.save(pacoDemand);
+            log.info("✅ Demand created for Company 3 (Paco).");
         }
 
-        if (acuerdoRepository.count() == 0) {
-            Acuerdo a = new Acuerdo();
-            a.setMaterialIntercambiado("Viruta de Acero Inoxidable");
-            a.setCantidad(500.0);
-            a.setUnidad("kg");
-            a.setPrecioAcordado(1200.0);
-            a.setEstado(EstadoAcuerdo.COMPLETADO);
-            a.setFechaRegistro(LocalDateTime.now().minusDays(2));
-            a.setFechaRecogida(java.time.LocalDate.now().minusDays(1));
-            a.setEmpresaOrigen(empresa1);
-            a.setEmpresaDestino(empresa2);
-            // Calculamos beneficio (2.5% por defecto)
-            a.setBeneficioPlataforma(Math.round(1200.0 * 0.025 * 100.0) / 100.0);
+        if (agreementRepository.count() == 0) {
+            Agreement agreement1 = new Agreement();
+            agreement1.setExchangedMaterial("Viruta de Acero Inoxidable");
+            agreement1.setQuantity(500.0);
+            agreement1.setUnit("kg");
+            agreement1.setAgreedPrice(1200.0);
+            agreement1.setStatus(AgreementStatus.COMPLETED);
+            agreement1.setRegistrationDate(LocalDateTime.now().minusDays(2));
+            agreement1.setPickupDate(java.time.LocalDate.now().minusDays(1));
+            agreement1.setOriginCompany(company1);
+            agreement1.setDestinationCompany(company2);
+            // Calculate platform benefit (2.5% default)
+            agreement1.setPlatformBenefit(Math.round(1200.0 * 0.025 * 100.0) / 100.0);
 
-            // Calculamos impacto CO2 inicial (Acero/Metal ~ 2.0)
-            a.setImpactoCO2(sustainabilityEngine.calcularImpactoCO2(a.getCantidad(), "Metal"));
+            // Calculate initial CO2 impact (Steel/Metal ~ 2.0)
+            agreement1.setCo2Impact(sustainabilityEngine.calculateCo2Impact(agreement1.getQuantity(), "Metal"));
 
-            acuerdoRepository.save(a);
+            agreementRepository.save(agreement1);
         }
 
         log.info("════════════════════════════════════════════");
@@ -312,22 +312,22 @@ public class DataInitializer implements CommandLineRunner {
         log.info("════════════════════════════════════════════");
     }
 
-    private void crearOferta(Empresa empresa, String titulo, String descripcion,
-            String tipoResiduo, Double cantidad, String unidad,
-            Double precio, String disponibilidad,
-            LocalDateTime fecha, String imagenFichero) {
-        Oferta o = new Oferta();
-        o.setTitulo(titulo);
-        o.setDescripcion(descripcion);
-        o.setTipoResiduo(tipoResiduo);
-        o.setCantidad(cantidad);
-        o.setUnidad(unidad);
-        o.setPrecio(precio);
-        o.setDisponibilidad(disponibilidad);
-        o.setEstado(EstadoOferta.ACTIVA);
-        o.setFechaPublicacion(fecha);
-        o.setEmpresa(empresa);
-        o.setImagen(cargarImagen(imagenFichero));
-        ofertaRepository.save(o);
+    private void createOffer(Company company, String title, String description,
+            String wasteType, Double quantity, String unit,
+            Double price, String availability,
+            LocalDateTime date, String imageFile) {
+        Offer offer = new Offer();
+        offer.setTitle(title);
+        offer.setDescription(description);
+        offer.setWasteType(wasteType);
+        offer.setQuantity(quantity);
+        offer.setUnit(unit);
+        offer.setPrice(price);
+        offer.setAvailability(availability);
+        offer.setStatus(OfferStatus.ACTIVE);
+        offer.setPublicationDate(date);
+        offer.setCompany(company);
+        offer.setImage(loadImage(imageFile));
+        offerRepository.save(offer);
     }
 }
