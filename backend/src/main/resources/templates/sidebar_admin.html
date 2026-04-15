@@ -27,9 +27,12 @@
                 </a>
             </li>
             <li class="nav-item mt-4">
-                <a class="nav-link text-danger" href="/logout">
-                    <i class="fas fa-sign-out-alt me-2"></i> Salir
-                </a>
+                <form action="/logout" method="POST" class="d-inline w-100">
+                    {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
+                    <button type="submit" class="nav-link text-danger border-0 bg-transparent text-start w-100">
+                        <i class="fas fa-sign-out-alt me-2"></i> Salir
+                    </button>
+                </form>
             </li>
         </ul>
     </div>

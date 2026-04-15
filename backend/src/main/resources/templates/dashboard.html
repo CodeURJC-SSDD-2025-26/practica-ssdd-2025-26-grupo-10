@@ -1,4 +1,5 @@
 {{> head}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <body class="bg-theme-dark">
 {{> header}}
 
@@ -59,6 +60,23 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Dynamic Visualization: simbiosis chart -->
+            <div class="row g-4 mb-4">
+                <div class="col-12">
+                    <div class="card shadow-sm border-0 border-top border-4 border-success rounded-4 overflow-hidden">
+                        <div class="card-header bg-white border-bottom-0 pt-4 px-4 pb-0">
+                            <h5 class="fw-bold mb-0 text-dark">Actividad de Simbiosis</h5>
+                            <p class="text-muted small">Representación visual de tus activos y transacciones.</p>
+                        </div>
+                        <div class="card-body px-4 pb-4">
+                            <div style="height: 300px; position: relative;">
+                                <canvas id="userChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="row g-4">
                 <div class="col-lg-8">
@@ -111,5 +129,53 @@
         </main>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('userChart').getContext('2d');
+        // chartData is injected as [X, Y, Z]
+        const dataValues = {{{chartData}}}; 
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Ofertas Publicadas', 'Demandas Activas', 'Acuerdos'],
+                datasets: [{
+                    label: 'Cantidad de Registros',
+                    data: dataValues,
+                    backgroundColor: [
+                        'rgba(25, 135, 84, 0.2)', // Green (Sucess)
+                        'rgba(13, 110, 253, 0.2)', // Blue (Primary)
+                        'rgba(255, 193, 7, 0.2)'    // Yellow (Warning)
+                    ],
+                    borderColor: [
+                        'rgba(25, 135, 84, 1)',
+                        'rgba(13, 110, 253, 1)',
+                        'rgba(255, 193, 7, 1)'
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 
 {{> footer}}

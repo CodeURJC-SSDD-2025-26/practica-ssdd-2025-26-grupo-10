@@ -44,20 +44,24 @@ public class DashboardService {
 
         if (esAdmin) {
             // ── Admin: Global KPIs ──────────────────────────────────────────
-            stats.setTotalOfertas((int) ofertaService.contarTodas());
-            stats.setTotalDemandas((int) demandaService.contarTodas());
-            stats.setAcuerdosActivos((int) acuerdoService.contarTodos());
+            int totalOfertas = (int) ofertaService.contarTodas();
+            int totalDemandas = (int) demandaService.contarTodas();
+            int acuerdosActivos = (int) acuerdoService.contarTodos();
+
+            stats.setTotalOfertas(totalOfertas);
+            stats.setTotalDemandas(totalDemandas);
+            stats.setAcuerdosActivos(acuerdosActivos);
             
-            stats.setChartData(List.of(
-                (int) ofertaService.contarTodas(),
-                (int) demandaService.contarTodas(),
-                (int) acuerdoService.contarTodos()
-            ));
+            stats.setChartData(List.of(totalOfertas, totalDemandas, acuerdosActivos));
         } else {
             // ── Empresa: Personal KPIs ──────────────────────────────────────
-            stats.setTotalOfertas((int) ofertaService.contarPorEmpresa(empresa));
-            stats.setTotalDemandas((int) demandaService.contarPorEmpresa(empresa));
-            stats.setAcuerdosActivos((int) acuerdoService.contarPorEmpresa(empresa));
+            int misOfertas = (int) ofertaService.contarPorEmpresa(empresa);
+            int misDemandas = (int) demandaService.contarPorEmpresa(empresa);
+            int misAcuerdos = (int) acuerdoService.contarPorEmpresa(empresa);
+
+            stats.setTotalOfertas(misOfertas);
+            stats.setTotalDemandas(misDemandas);
+            stats.setAcuerdosActivos(misAcuerdos);
             
             double reintroducido = acuerdoService.sumarMaterialReintroducido(empresa);
             stats.setMaterialReintroducido(reintroducido);
@@ -68,11 +72,7 @@ public class DashboardService {
             stats.setSmartRecommendations(recommendedDemandas);
             stats.setHasRecommendations(!recommendedDemandas.isEmpty());
             
-            stats.setChartData(List.of(
-                (int) ofertaService.contarPorEmpresa(empresa),
-                (int) demandaService.contarPorEmpresa(empresa),
-                (int) acuerdoService.contarPorEmpresa(empresa)
-            ));
+            stats.setChartData(List.of(misOfertas, misDemandas, misAcuerdos));
         }
         
         return stats;

@@ -26,18 +26,18 @@
 
             <form action="/perfil/guardar" method="POST" enctype="multipart/form-data">
                 {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
-                <input type="hidden" name="id" value="{{#empresa}}{{id}}{{/empresa}}">
+                <input type="hidden" name="id" value="{{#empresaInspeccionada}}{{empresaInspeccionada.id}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.id}}{{/empresaInspeccionada}}">
                 
                 <div class="row g-4 justify-content-center">
                     <div class="col-lg-4">
                         <div class="card border-0 shadow-sm card-hover border-top border-success border-4 rounded-4 h-100">
                             <div class="card-body text-center p-4">
                                 <div class="position-relative d-inline-block mb-4">
-                                    <img src="/images/empresa/{{#empresa}}{{id}}{{/empresa}}" alt="Logo Empresa" class="rounded-circle object-fit-cover shadow-sm mb-3 avatar-profile" onerror="this.src='/img/logo.webp';">
+                                    <img src="/images/empresa/{{#empresaInspeccionada}}{{empresaInspeccionada.id}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.id}}{{/empresaInspeccionada}}" alt="Logo Empresa" class="rounded-circle object-fit-cover shadow-sm mb-3 avatar-profile" onerror="this.src='/img/logo.webp';">
                                 </div>
 
-                                <h5 class="fw-bold mb-1">{{#empresa}}{{nombreComercial}}{{/empresa}}</h5>
-                                <p class="text-muted small mb-4">{{#empresa}}{{sectorIndustrial}}{{/empresa}} • {{#empresa}}{{direccion}}{{/empresa}}</p>
+                                <h5 class="fw-bold mb-1">{{#empresaInspeccionada}}{{empresaInspeccionada.nombreComercial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.nombreComercial}}{{/empresaInspeccionada}}</h5>
+                                <p class="text-muted small mb-4">{{#empresaInspeccionada}}{{empresaInspeccionada.sectorIndustrial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.sectorIndustrial}}{{/empresaInspeccionada}} • {{#empresaInspeccionada}}{{empresaInspeccionada.direccion}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.direccion}}{{/empresaInspeccionada}}</p>
 
                                 {{^esVistaAdmin}}
                                 <label for="logoUpload" class="btn btn-outline-success rounded-pill w-100 mb-3">
@@ -56,7 +56,7 @@
                                         </div>
                                         <div>
                                             <small class="text-muted d-block">CIF / NIF</small>
-                                            <span class="fw-bold small">{{#empresa}}{{cif}}{{/empresa}}</span>
+                                            <span class="fw-bold small">{{#empresaInspeccionada}}{{empresaInspeccionada.cif}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.cif}}{{/empresaInspeccionada}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -72,46 +72,50 @@
 
                                 <div class="mb-3">
                                     <label for="nombreEmpresa" class="form-label fw-bold small text-uppercase text-secondary">Nombre Comercial</label>
-                                    <input type="text" class="form-control" id="nombreEmpresa" name="nombreComercial" value="{{#empresa}}{{nombreComercial}}{{/empresa}}" {{#esVistaAdmin}}disabled{{/esVistaAdmin}}>
+                                    <input type="text" class="form-control" id="nombreEmpresa" name="nombreComercial" value="{{#empresaInspeccionada}}{{empresaInspeccionada.nombreComercial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.nombreComercial}}{{/empresaInspeccionada}}">
                                 </div>
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-4">
                                         <label for="emailContacto" class="form-label fw-bold small text-uppercase text-secondary">Email de Contacto</label>
-                                        <input type="email" class="form-control" id="emailContacto" value="{{#empresa}}{{emailContacto}}{{/empresa}}" disabled>
+                                        <input type="email" class="form-control" id="emailContacto" value="{{#empresaInspeccionada}}{{empresaInspeccionada.emailContacto}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.emailContacto}}{{/empresaInspeccionada}}" disabled>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="telefono" class="form-label fw-bold small text-uppercase text-secondary">Teléfono</label>
-                                        <input type="tel" class="form-control" id="telefono" name="telefono" value="{{#empresa}}{{telefono}}{{/empresa}}" {{#esVistaAdmin}}disabled{{/esVistaAdmin}}>
+                                        <input type="tel" class="form-control" id="telefono" name="telefono" value="{{#empresaInspeccionada}}{{empresaInspeccionada.telefono}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.telefono}}{{/empresaInspeccionada}}">
                                     </div>
                                     <div class="col-md-4">
                                         <label for="sectorIndustrial" class="form-label fw-bold small text-uppercase text-secondary">Sector Industrial</label>
-                                        <input type="text" class="form-control" id="sectorIndustrial" name="sectorIndustrial" value="{{#empresa}}{{sectorIndustrial}}{{/empresa}}" {{#esVistaAdmin}}disabled{{/esVistaAdmin}} required>
+                                        <input type="text" class="form-control" id="sectorIndustrial" name="sectorIndustrial" value="{{#empresaInspeccionada}}{{empresaInspeccionada.sectorIndustrial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.sectorIndustrial}}{{/empresaInspeccionada}}" required>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="direccion" class="form-label fw-bold small text-uppercase text-secondary">Dirección / Polígono</label>
-                                    <input type="text" class="form-control" id="direccion" name="direccion" value="{{#empresa}}{{direccion}}{{/empresa}}" {{#esVistaAdmin}}disabled{{/esVistaAdmin}}>
+                                    <input type="text" class="form-control" id="direccion" name="direccion" value="{{#empresaInspeccionada}}{{empresaInspeccionada.direccion}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.direccion}}{{/empresaInspeccionada}}">
                                 </div>
 
                                 <div class="mb-4">
                                     <label for="descripcion" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
-                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" {{#esVistaAdmin}}disabled{{/esVistaAdmin}}>{{#empresa}}{{descripcion}}{{/empresa}}</textarea>
+                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4">{{#empresaInspeccionada}}{{empresaInspeccionada.descripcion}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.descripcion}}{{/empresaInspeccionada}}</textarea>
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center">
-                                    {{#esVistaAdmin}}
-                                    <a href="/admin/usuarios" class="btn btn-primary px-5 py-2 fw-bold rounded-pill shadow-sm">
-                                         <i class="fas fa-arrow-left me-2"></i>Volver al Panel Admin
-                                    </a>
-                                    {{/esVistaAdmin}}
-                                    {{^esVistaAdmin}}
-                                    <a href="/dashboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i> Volver al Dashboard</a>
-                                    <button type="submit" class="btn btn-success px-5 py-2 fw-bold rounded-pill shadow-sm">
-                                        <i class="fas fa-save me-2"></i>Guardar Cambios
-                                    </button>
-                                    {{/esVistaAdmin}}
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-success px-5 py-2 fw-bold rounded-pill shadow-sm">
+                                            <i class="fas fa-save me-2"></i>Guardar Cambios
+                                        </button>
+                                        {{#esVistaAdmin}}
+                                        <a href="/admin/usuarios" class="btn btn-outline-secondary px-4 py-2 fw-bold rounded-pill">
+                                             <i class="fas fa-arrow-left me-2"></i>Volver
+                                        </a>
+                                        {{/esVistaAdmin}}
+                                        {{^esVistaAdmin}}
+                                        <a href="/dashboard" class="btn btn-outline-secondary px-4 py-2 fw-bold rounded-pill">
+                                            <i class="fas fa-arrow-left me-2"></i>Volver
+                                        </a>
+                                        {{/esVistaAdmin}}
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -100,7 +100,7 @@ public class ReportService {
         sb.append("ID;Titulo;Empresa;Cantidad;Estado\n");
 
         for (OfertaResumen o : ofertas) {
-            sb.append(String.format("%d;%s;%s;%s;%s\n",
+            sb.append(String.format("%d;\"%s\";\"%s\";%s;\"%s\"\n",
                     o.getId(),
                     o.getTitulo(),
                     o.getEmpresa() != null ? o.getEmpresa().getNombreComercial() : "N/A",

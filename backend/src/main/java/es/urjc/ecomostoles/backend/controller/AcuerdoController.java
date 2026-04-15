@@ -184,11 +184,13 @@ public class AcuerdoController {
 
         // Dynamic Select Options for status
         List<SelectOption> opcionesEstado = new ArrayList<>();
-        opcionesEstado.add(new SelectOption("PENDIENTE", "Pendiente de firma", "PENDIENTE".equals(acuerdo.getEstado())));
-        opcionesEstado.add(new SelectOption("EN_CURSO", "En curso / Procesando", "EN_CURSO".equals(acuerdo.getEstado())));
-        opcionesEstado.add(new SelectOption("COMPLETADO", "Completado / Finalizado", "COMPLETADO".equals(acuerdo.getEstado())));
-        opcionesEstado.add(new SelectOption("ACEPTADO", "Aceptado", "ACEPTADO".equals(acuerdo.getEstado())));
-        opcionesEstado.add(new SelectOption("RECHAZADO", "Rechazado", "RECHAZADO".equals(acuerdo.getEstado())));
+        String estadoActual = (acuerdo.getEstado() != null) ? acuerdo.getEstado().name() : "";
+        
+        opcionesEstado.add(new SelectOption("PENDIENTE", "Pendiente de firma", "PENDIENTE".equals(estadoActual)));
+        opcionesEstado.add(new SelectOption("EN_CURSO", "En curso / Procesando", "EN_CURSO".equals(estadoActual)));
+        opcionesEstado.add(new SelectOption("COMPLETADO", "Completado / Finalizado", "COMPLETADO".equals(estadoActual)));
+        opcionesEstado.add(new SelectOption("ACEPTADO", "Aceptado", "ACEPTADO".equals(estadoActual)));
+        opcionesEstado.add(new SelectOption("RECHAZADO", "Rechazado", "RECHAZADO".equals(estadoActual)));
         model.addAttribute("opcionesEstado", opcionesEstado);
 
         return "editar_acuerdo";

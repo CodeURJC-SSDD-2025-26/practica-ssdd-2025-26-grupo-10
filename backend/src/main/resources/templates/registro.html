@@ -120,7 +120,8 @@
 </div>
 
 <script>
-  document.querySelector('select[name="direccion"]').addEventListener('change', function() {
+  const selectDireccion = document.querySelector('select[name="direccion"]');
+  selectDireccion.addEventListener('change', function() {
     const inputOtro = document.getElementById('direccionOtro');
     if (this.value === 'Otro' || this.value === 'Otro (Especificar)') {
       inputOtro.classList.remove('d-none');
@@ -131,5 +132,7 @@
       inputOtro.value = '';
     }
   });
+  // Trigger on load to sync pre-selected Value (from Mustache)
+  selectDireccion.dispatchEvent(new Event('change'));
 </script>
 {{> footer}}

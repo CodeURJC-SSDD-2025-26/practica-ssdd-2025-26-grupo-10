@@ -58,7 +58,7 @@ public class PerfilController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa no encontrada"));
 
         EmpresaDTO empresaDTO = new EmpresaDTO(empresa);
-        model.addAttribute("empresa", empresaDTO);
+        model.addAttribute("empresaInspeccionada", empresaDTO);
         model.addAttribute("esVistaAdmin", true);
 
         return "perfil_empresa";

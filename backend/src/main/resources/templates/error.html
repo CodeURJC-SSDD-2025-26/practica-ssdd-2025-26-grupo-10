@@ -9,8 +9,8 @@
                 <div class="mb-4">
                     <i class="fas fa-exclamation-circle text-danger display-1 opacity-25"></i>
                 </div>
-                <h1 class="display-5 fw-bold text-dark mb-3">¡Vaya!</h1>
-                <p class="lead text-muted mb-4">Algo no ha salido como esperábamos o no tienes permisos para acceder aquí.</p>
+                <h1 class="display-5 fw-bold text-dark mb-3">{{#errorTitle}}{{errorTitle}}{{/errorTitle}}{{^errorTitle}}¡Error Inesperado!{{/errorTitle}}</h1>
+                <p class="lead text-muted mb-4">{{#errorMessage}}{{errorMessage}}{{/errorMessage}}{{^errorMessage}}Ha ocurrido un problema al procesar tu solicitud.{{/errorMessage}}</p>
                 
                 {{#status}}
                 <div class="badge bg-danger-soft text-danger fs-6 px-4 py-2 mb-4">Error {{status}}</div>

@@ -66,7 +66,7 @@ public class CustomErrorController implements ErrorController {
                          + "Por favor, inténtalo de nuevo más tarde.";
         }
 
-        model.addAttribute("error", errorTitle);
+        model.addAttribute("errorTitle", errorTitle);
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("is403", status == 403);
 
