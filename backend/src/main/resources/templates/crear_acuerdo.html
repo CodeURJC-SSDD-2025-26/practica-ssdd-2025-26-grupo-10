@@ -47,7 +47,12 @@
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="number" name="cantidad" class="form-control" placeholder="Ej. 500" min="0" value="{{#acuerdo.cantidad}}{{acuerdo.cantidad}}{{/acuerdo.cantidad}}" required="">
-                                    <span class="input-group-text">kg/uds</span>
+                                    <select name="unidad" class="form-select" style="max-width: 120px;" required>
+                                        <option value="kg">kg</option>
+                                        <option value="uds">uds</option>
+                                        <option value="litros">litros</option>
+                                        <option value="m2">m²</option>
+                                    </select>
                                 </div>
                             </div>
 

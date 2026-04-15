@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import es.urjc.ecomostoles.backend.dto.SelectOption;
+import java.util.ArrayList;
 
 /**
  * Manages offers for the authenticated user (CRUD + ownership logic).
@@ -173,6 +175,37 @@ public class MisOfertasController {
         empresaService.buscarPorEmail(principal.getName())
                       .ifPresent(e -> model.addAttribute("empresa", e));
         model.addAttribute("oferta", oferta);
+
+        // Dynamic Select Options for residues
+        List<SelectOption> opcionesTipo = new ArrayList<>();
+        opcionesTipo.add(new SelectOption("residuo_metalico", "Residuo: Metal", "residuo_metalico".equals(oferta.getTipoResiduo())));
+        opcionesTipo.add(new SelectOption("residuo_madera", "Residuo: Madera", "residuo_madera".equals(oferta.getTipoResiduo())));
+        opcionesTipo.add(new SelectOption("residuo_plastico", "Residuo: Plástico", "residuo_plastico".equals(oferta.getTipoResiduo())));
+        opcionesTipo.add(new SelectOption("residuo_quimico", "Residuo: Químico", "residuo_quimico".equals(oferta.getTipoResiduo())));
+        opcionesTipo.add(new SelectOption("maquinaria", "Maquinaria", "maquinaria".equals(oferta.getTipoResiduo())));
+        opcionesTipo.add(new SelectOption("espacio", "Espacio", "espacio".equals(oferta.getTipoResiduo())));
+        model.addAttribute("opcionesTipo", opcionesTipo);
+
+        // Dynamic Select Options for units
+        List<SelectOption> opcionesUnidad = new ArrayList<>();
+        for (String u : List.of("kg", "uds", "L", "t", "m2")) {
+            opcionesUnidad.add(new SelectOption(u, u, u.equals(oferta.getUnidad())));
+        }
+        model.addAttribute("opcionesUnidad", opcionesUnidad);
+
+        // Dynamic Select Options for availability
+        List<SelectOption> opcionesDisp = new ArrayList<>();
+        opcionesDisp.add(new SelectOption("inmediata", "Inmediata", "inmediata".equals(oferta.getDisponibilidad())));
+        opcionesDisp.add(new SelectOption("1semana", "En 1 semana", "1semana".equals(oferta.getDisponibilidad())));
+        opcionesDisp.add(new SelectOption("consultar", "Consultar", "consultar".equals(oferta.getDisponibilidad())));
+        model.addAttribute("opcionesDisp", opcionesDisp);
+
+        // Dynamic Select Options for status
+        List<SelectOption> opcionesEstado = new ArrayList<>();
+        opcionesEstado.add(new SelectOption("ACTIVA", "ACTIVA", "ACTIVA".equals(oferta.getEstado().toString())));
+        opcionesEstado.add(new SelectOption("PAUSADA", "PAUSADA", "PAUSADA".equals(oferta.getEstado().toString())));
+        model.addAttribute("opcionesEstado", opcionesEstado);
+
         return "editar_activo";
     }
 

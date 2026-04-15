@@ -9,18 +9,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class SustainabilityEngine {
 
-    /**
-     * Emission factor: 0.45 tons of CO2 avoided for each unit (kg/ton) of material successfully re-introduced.
-     */
     private static final double FACTOR_EMISION_CO2 = 0.45;
+
+    private final es.urjc.ecomostoles.backend.service.ConfiguracionService configuracionService;
+
+    public SustainabilityEngine(es.urjc.ecomostoles.backend.service.ConfiguracionService configuracionService) {
+        this.configuracionService = configuracionService;
+    }
 
     /**
      * Calculates the CO2 savings based on the amount of material recycled or re-introduced.
+     * Fetches the factor from the database dynamically.
      * 
      * @param kilosMaterial The amount of material in kilograms or units.
      * @return The calculated CO2 impact in tons.
      */
     public double calcularImpactoCO2(double kilosMaterial) {
-        return kilosMaterial * FACTOR_EMISION_CO2;
+        String factorStr = configuracionService.obtenerValorConfiguracion("CO2_FACTOR", String.valueOf(FACTOR_EMISION_CO2));
+        double factor;
+        try {
+            factor = Double.parseDouble(factorStr);
+        } catch (Exception e) {
+            factor = FACTOR_EMISION_CO2;
+        }
+        return kilosMaterial * factor;
     }
 }

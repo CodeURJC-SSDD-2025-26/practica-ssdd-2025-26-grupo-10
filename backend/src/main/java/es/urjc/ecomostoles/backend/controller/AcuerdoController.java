@@ -22,6 +22,8 @@ import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
+import es.urjc.ecomostoles.backend.dto.SelectOption;
 
 /**
  * Controller responsible for displaying and registering new commercial agreements.
@@ -99,17 +101,29 @@ public class AcuerdoController {
                                    Model model,
                                    Principal principal) {
 
-        if (result.hasErrors()) {
-            Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
-            if (empresaOpt.isPresent()) {
-                Empresa empresa = empresaOpt.get();
-                model.addAttribute("empresa", empresa);
-                model.addAttribute("ofertas", ofertaService.obtenerPorEmpresa(empresa));
+        Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
+        Empresa empresaLogueada = empresaOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
-                List<Empresa> todasEmpresas = empresaService.obtenerTodas();
-                todasEmpresas.removeIf(e -> e.getId().equals(empresa.getId()));
-                model.addAttribute("todasEmpresas", todasEmpresas);
-            }
+        // Business Validation: Prevent self-agreement
+        if (empresaDestinoId != null && empresaLogueada.getId().equals(empresaDestinoId)) {
+            model.addAttribute("error", "No puedes crear un acuerdo comercial contigo mismo.");
+            model.addAttribute("empresa", empresaLogueada);
+            model.addAttribute("ofertas", ofertaService.obtenerPorEmpresa(empresaLogueada));
+            List<Empresa> todasEmpresas = empresaService.obtenerTodas();
+            todasEmpresas.removeIf(e -> e.getId().equals(empresaLogueada.getId()));
+            model.addAttribute("todasEmpresas", todasEmpresas);
+            model.addAttribute("acuerdo", acuerdo);
+            return "crear_acuerdo";
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("empresa", empresaLogueada);
+            model.addAttribute("ofertas", ofertaService.obtenerPorEmpresa(empresaLogueada));
+
+            List<Empresa> todasEmpresas = empresaService.obtenerTodas();
+            todasEmpresas.removeIf(e -> e.getId().equals(empresaLogueada.getId()));
+            model.addAttribute("todasEmpresas", todasEmpresas);
+
             model.addAttribute("acuerdo", acuerdo);
             model.addAttribute("errores", result.getAllErrors());
             return "crear_acuerdo";
@@ -165,6 +179,25 @@ public class AcuerdoController {
         }
  
         model.addAttribute("acuerdo", acuerdo);
+
+        // Dynamic Select Options for unit
+        List<SelectOption> opcionesUnidad = new ArrayList<>();
+        opcionesUnidad.add(new SelectOption("kg", "kg", "kg".equals(acuerdo.getUnidad())));
+        opcionesUnidad.add(new SelectOption("ton", "toneladas", "ton".equals(acuerdo.getUnidad())));
+        opcionesUnidad.add(new SelectOption("uds", "unidades", "uds".equals(acuerdo.getUnidad())));
+        opcionesUnidad.add(new SelectOption("m2", "m²", "m2".equals(acuerdo.getUnidad())));
+        opcionesUnidad.add(new SelectOption("L", "litros", "L".equals(acuerdo.getUnidad())));
+        model.addAttribute("opcionesUnidad", opcionesUnidad);
+
+        // Dynamic Select Options for status
+        List<SelectOption> opcionesEstado = new ArrayList<>();
+        opcionesEstado.add(new SelectOption("PENDIENTE", "Pendiente de firma", "PENDIENTE".equals(acuerdo.getEstado())));
+        opcionesEstado.add(new SelectOption("EN_CURSO", "En curso / Procesando", "EN_CURSO".equals(acuerdo.getEstado())));
+        opcionesEstado.add(new SelectOption("COMPLETADO", "Completado / Finalizado", "COMPLETADO".equals(acuerdo.getEstado())));
+        opcionesEstado.add(new SelectOption("ACEPTADO", "Aceptado", "ACEPTADO".equals(acuerdo.getEstado())));
+        opcionesEstado.add(new SelectOption("RECHAZADO", "Rechazado", "RECHAZADO".equals(acuerdo.getEstado())));
+        model.addAttribute("opcionesEstado", opcionesEstado);
+
         return "editar_acuerdo";
     }
  

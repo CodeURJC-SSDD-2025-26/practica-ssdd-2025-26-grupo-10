@@ -14,8 +14,14 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLConnection;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Controlador que sirve imágenes almacenadas como BLOB en la base de datos.
@@ -23,6 +29,8 @@ import java.util.Optional;
  */
 @RestController
 public class ImageController {
+
+    private static final Logger log = LoggerFactory.getLogger(ImageController.class);
 
     private final EmpresaService empresaService;
     private final OfertaService  ofertaService;
@@ -43,10 +51,11 @@ public class ImageController {
         Optional<Empresa> empresaOpt = empresaService.buscarPorId(id);
 
         if (empresaOpt.isPresent() && empresaOpt.get().getLogo() != null && empresaOpt.get().getLogo().length > 0) {
+            byte[] bytes = empresaOpt.get().getLogo();
             return ResponseEntity.ok()
                     .cacheControl(CacheControl.maxAge(7, TimeUnit.DAYS))
-                    .contentType(MediaType.IMAGE_JPEG)
-                    .body(empresaOpt.get().getLogo());
+                    .contentType(detectarMediaType(bytes))
+                    .body(bytes);
         }
 
         // Si no existe el logo o la empresa, devolvemos imagen por defecto (Robustez)
@@ -63,10 +72,11 @@ public class ImageController {
         Optional<Oferta> ofertaOpt = ofertaService.buscarPorId(id);
 
         if (ofertaOpt.isPresent() && ofertaOpt.get().getImagen() != null && ofertaOpt.get().getImagen().length > 0) {
+            byte[] bytes = ofertaOpt.get().getImagen();
             return ResponseEntity.ok()
                     .cacheControl(CacheControl.maxAge(7, TimeUnit.DAYS))
-                    .contentType(MediaType.IMAGE_JPEG)
-                    .body(ofertaOpt.get().getImagen());
+                    .contentType(detectarMediaType(bytes))
+                    .body(bytes);
         }
 
         // Si no existe la imagen o la oferta, devolvemos imagen por defecto (Robustez)
@@ -83,7 +93,7 @@ public class ImageController {
             if (imgFile.exists()) {
                 byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
                 return ResponseEntity.ok()
-                        .contentType(MediaType.IMAGE_JPEG)
+                        .contentType(detectarMediaType(bytes))
                         .body(bytes);
             }
         } catch (Exception e) {
@@ -92,5 +102,16 @@ public class ImageController {
         
         // Última línea de defensa: devolvemos 404 para que el navegador/HTML gestione el error (p.ej. con onerror)
         return ResponseEntity.notFound().build();
+    }
+
+    private MediaType detectarMediaType(byte[] imagenBytes) {
+        String mimeType = null;
+        try {
+            InputStream is = new BufferedInputStream(new ByteArrayInputStream(imagenBytes));
+            mimeType = URLConnection.guessContentTypeFromStream(is);
+        } catch (Exception e) {
+            log.warn("No se pudo detectar MIME type dinámicamente");
+        }
+        return (mimeType != null) ? MediaType.parseMediaType(mimeType) : MediaType.IMAGE_JPEG;
     }
 }

@@ -32,12 +32,10 @@
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Categoría <span class="text-danger">*</span></label>
                                 <select name="categoriaMaterial" class="form-select" required="">
-                                    <option value="Metal">Metal</option>
-                                    <option value="Madera">Madera</option>
-                                    <option value="Plástico">Plástico</option>
-                                    <option value="Químico">Químico</option>
-                                    <option value="Maquinaria">Maquinaria</option>
-                                </select>
+                                    {{#opcionesCategoria}}
+                                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                    {{/opcionesCategoria}}
+                                 </select>
                             </div>
 
                             <div class="col-12">

@@ -21,6 +21,8 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
+import es.urjc.ecomostoles.backend.dto.SelectOption;
 
 /**
  * Controller to handle CRUD operations for demands specific to the logged-in company.
@@ -143,6 +145,16 @@ public class MisDemandasController {
         empresaService.buscarPorEmail(principal.getName())
                       .ifPresent(e -> model.addAttribute("empresa", e));
         model.addAttribute("demanda", demanda);
+
+        // Dynamic Select Options for category
+        List<SelectOption> opcionesCategoria = new ArrayList<>();
+        opcionesCategoria.add(new SelectOption("Metal", "Metal", "Metal".equals(demanda.getCategoriaMaterial())));
+        opcionesCategoria.add(new SelectOption("Madera", "Madera", "Madera".equals(demanda.getCategoriaMaterial())));
+        opcionesCategoria.add(new SelectOption("Plástico", "Plástico", "Plástico".equals(demanda.getCategoriaMaterial())));
+        opcionesCategoria.add(new SelectOption("Químico", "Químico", "Químico".equals(demanda.getCategoriaMaterial())));
+        opcionesCategoria.add(new SelectOption("Maquinaria", "Maquinaria", "Maquinaria".equals(demanda.getCategoriaMaterial())));
+        model.addAttribute("opcionesCategoria", opcionesCategoria);
+
         return "editar_solicitud";
     }
 
