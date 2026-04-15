@@ -9,11 +9,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class Empresa {
@@ -59,6 +62,25 @@ public class Empresa {
     private List<String> roles;
 
     private boolean verificada = true;
+
+    // Relaciones para borrado en cascada
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Oferta> ofertas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Demanda> demandas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "remitente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Mensaje> mensajesEnviados = new ArrayList<>();
+
+    @OneToMany(mappedBy = "destinatario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Mensaje> mensajesRecibidos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "empresaOrigen", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Acuerdo> acuerdosComoOrigen = new ArrayList<>();
+
+    @OneToMany(mappedBy = "empresaDestino", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Acuerdo> acuerdosComoDestino = new ArrayList<>();
 
     // Default constructor
     public Empresa() {

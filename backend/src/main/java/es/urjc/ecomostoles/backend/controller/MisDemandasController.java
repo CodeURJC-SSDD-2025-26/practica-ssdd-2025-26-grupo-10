@@ -76,6 +76,7 @@ public class MisDemandasController {
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("activeDemandas", true);
+            model.addAttribute("isDashboard", true);
             List<Demanda> misDemandas = demandaService.obtenerPorEmpresa(empresa);
             model.addAttribute("demandas", misDemandas);
             model.addAttribute("totalDemandasActivas", demandaService.contarActivasPorEmpresa(empresa));
@@ -92,6 +93,7 @@ public class MisDemandasController {
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
         if (empresaOpt.isPresent()) {
             model.addAttribute("activeNuevaDemanda", true);
+            model.addAttribute("isDashboard", true);
             model.addAttribute("demanda", new Demanda());
             injectDynamicCategories(model);
             return "crear_solicitud";
@@ -163,6 +165,7 @@ public class MisDemandasController {
     public String mostrarFormularioEditarDemanda(@PathVariable Long id, Model model, Principal principal) {
         Demanda demanda = verificarPropietarioDemanda(id, principal);
         model.addAttribute("demanda", demanda);
+        model.addAttribute("isDashboard", true);
 
         cargarOpcionesSelect(model, demanda);
 

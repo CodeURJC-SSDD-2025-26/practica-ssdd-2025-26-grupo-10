@@ -88,6 +88,7 @@ public class MisOfertasController {
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("activeOfertas", true);
+            model.addAttribute("isDashboard", true);
             List<OfertaResumen> misOfertas = ofertaService.obtenerPorEmpresa(empresa);
             model.addAttribute("ofertas", misOfertas);
  
@@ -110,6 +111,7 @@ public class MisOfertasController {
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
         if (empresaOpt.isPresent()) {
             model.addAttribute("activeNuevaOferta", true);
+            model.addAttribute("isDashboard", true);
             model.addAttribute("oferta", new Oferta());
             injectDynamicResidueTypes(model);
             return "crear_activo";
@@ -200,6 +202,7 @@ public class MisOfertasController {
                                                 Principal principal) {
         Oferta oferta = verificarPropietario(id, principal);
         model.addAttribute("oferta", oferta);
+        model.addAttribute("isDashboard", true);
 
         cargarOpcionesSelect(model, oferta);
 

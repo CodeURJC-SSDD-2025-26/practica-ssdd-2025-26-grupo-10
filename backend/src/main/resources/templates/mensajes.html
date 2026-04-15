@@ -24,21 +24,55 @@
             <div class="row g-0">
                 <div class="col-lg-4 col-md-5">
                     <div class="p-3">
-                        <div class="list-group list-group-flush shadow-sm rounded-3 border">
-                            {{#mensajes}}
-                            <a href="/mensajes/{{id}}" class="list-group-item list-group-item-action py-3 border-bottom contact-item">
-                                <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                    <h6 class="mb-0 fw-bold text-dark">{{asunto}} {{^leido}}<span class="badge bg-primary ms-2" style="font-size: 0.6rem;">Nuevo</span>{{/leido}}</h6>
+                        <ul class="nav nav-tabs nav-fill mb-3" id="mensajesTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active fw-bold text-success border-0 border-bottom border-3" id="recibidos-tab" data-bs-toggle="tab" data-bs-target="#recibidos" type="button" role="tab">Recibidos</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link fw-bold text-success border-0 border-bottom border-3" id="enviados-tab" data-bs-toggle="tab" data-bs-target="#enviados" type="button" role="tab">Enviados</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="mensajesTabContent">
+                            <!-- TAB RECIBIDOS -->
+                            <div class="tab-pane fade show active" id="recibidos" role="tabpanel">
+                                <div class="list-group list-group-flush shadow-sm rounded-3 border overflow-hidden">
+                                    {{#mensajesRecibidos}}
+                                    <a href="/mensajes/{{id}}" class="list-group-item list-group-item-action py-3 border-bottom contact-item">
+                                        <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                            <h6 class="mb-0 fw-bold text-dark">{{remitente.nombreComercial}}</h6>
+                                            <small class="text-muted" style="font-size: 0.7rem;">{{getFechaEnvioFormateada}}</small>
+                                        </div>
+                                        <div class="text-secondary small fw-bold mb-1">{{asunto}} {{^leido}}<span class="badge bg-primary ms-1" style="font-size: 0.55rem;">Nuevo</span>{{/leido}}</div>
+                                        <p class="mb-0 small text-muted text-truncate">{{contenido}}</p>
+                                    </a>
+                                    {{/mensajesRecibidos}}
+                                    
+                                    {{^mensajesRecibidos}}
+                                    <div class="p-4 text-center text-muted small"><i class="fas fa-inbox fs-3 mb-2"></i><br>Bandeja de entrada vacía.</div>
+                                    {{/mensajesRecibidos}}
                                 </div>
-                                <p class="mb-0 small text-muted text-truncate">{{contenido}}</p>
-                            </a>
-                            {{/mensajes}}
-                            
-                            {{^mensajes}}
-                            <div class="p-4 text-center text-muted small">
-                                <i class="fas fa-inbox fs-3 mb-2"></i><br>No hay mensajes.
                             </div>
-                            {{/mensajes}}
+
+                            <!-- TAB ENVIADOS -->
+                            <div class="tab-pane fade" id="enviados" role="tabpanel">
+                                <div class="list-group list-group-flush shadow-sm rounded-3 border overflow-hidden">
+                                    {{#mensajesEnviados}}
+                                    <a href="/mensajes/{{id}}" class="list-group-item list-group-item-action py-3 border-bottom contact-item">
+                                        <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                            <h6 class="mb-0 fw-bold text-dark">Para: {{destinatario.nombreComercial}}</h6>
+                                            <small class="text-muted" style="font-size: 0.7rem;">{{getFechaEnvioFormateada}}</small>
+                                        </div>
+                                        <div class="text-secondary small fw-bold mb-1">{{asunto}}</div>
+                                        <p class="mb-0 small text-muted text-truncate">{{contenido}}</p>
+                                    </a>
+                                    {{/mensajesEnviados}}
+                                    
+                                    {{^mensajesEnviados}}
+                                    <div class="p-4 text-center text-muted small"><i class="fas fa-paper-plane fs-3 mb-2"></i><br>No has enviado mensajes aún.</div>
+                                    {{/mensajesEnviados}}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

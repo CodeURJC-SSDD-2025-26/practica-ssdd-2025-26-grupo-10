@@ -57,6 +57,7 @@ public class AcuerdoController {
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("activeNuevoAcuerdo", true);
+            model.addAttribute("isDashboard", true);
             List<OfertaResumen> misOfertas = ofertaService.obtenerPorEmpresa(empresa);
             model.addAttribute("ofertas", misOfertas);
 
@@ -78,6 +79,7 @@ public class AcuerdoController {
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("activeAcuerdos", true);
+            model.addAttribute("isDashboard", true);
             List<Acuerdo> misAcuerdos = acuerdoService.obtenerPorEmpresa(empresa);
             model.addAttribute("acuerdos", misAcuerdos);
 
@@ -152,6 +154,7 @@ public class AcuerdoController {
         }
 
         model.addAttribute("acuerdo", acuerdo);
+        model.addAttribute("isDashboard", true);
         return "detalle_acuerdo";
     }
 
@@ -174,6 +177,7 @@ public class AcuerdoController {
         }
 
         model.addAttribute("acuerdo", acuerdo);
+        model.addAttribute("isDashboard", true);
 
         // Dynamic Select Options for unit
         List<SelectOption> opcionesUnidad = new ArrayList<>();
@@ -187,13 +191,13 @@ public class AcuerdoController {
         // Dynamic Select Options for status
         List<SelectOption> opcionesEstado = new ArrayList<>();
         opcionesEstado
-                .add(new SelectOption("PENDIENTE", "Pendiente de firma", "PENDIENTE".equals(acuerdo.getEstado())));
+                .add(new SelectOption("PENDIENTE", "Pendiente de firma", EstadoAcuerdo.PENDIENTE.equals(acuerdo.getEstado())));
         opcionesEstado
-                .add(new SelectOption("EN_CURSO", "En curso / Procesando", "EN_CURSO".equals(acuerdo.getEstado())));
+                .add(new SelectOption("EN_CURSO", "En curso / Procesando", EstadoAcuerdo.EN_CURSO.equals(acuerdo.getEstado())));
         opcionesEstado.add(
-                new SelectOption("COMPLETADO", "Completado / Finalizado", "COMPLETADO".equals(acuerdo.getEstado())));
-        opcionesEstado.add(new SelectOption("ACEPTADO", "Aceptado", "ACEPTADO".equals(acuerdo.getEstado())));
-        opcionesEstado.add(new SelectOption("RECHAZADO", "Rechazado", "RECHAZADO".equals(acuerdo.getEstado())));
+                new SelectOption("COMPLETADO", "Completado / Finalizado", EstadoAcuerdo.COMPLETADO.equals(acuerdo.getEstado())));
+        opcionesEstado.add(new SelectOption("ACEPTADO", "Aceptado", EstadoAcuerdo.ACEPTADO.equals(acuerdo.getEstado())));
+        opcionesEstado.add(new SelectOption("RECHAZADO", "Rechazado", EstadoAcuerdo.RECHAZADO.equals(acuerdo.getEstado())));
         model.addAttribute("opcionesEstado", opcionesEstado);
 
         return "editar_acuerdo";

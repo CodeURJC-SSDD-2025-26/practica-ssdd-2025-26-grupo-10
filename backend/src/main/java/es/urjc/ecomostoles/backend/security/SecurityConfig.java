@@ -61,7 +61,8 @@ public class SecurityConfig {
                 // ── Public resources and pages ──────────────────────────────
                 .requestMatchers(
                     "/", "/index.html",
-                    "/login", "/registro",
+                    "/login", "/registro", "/recuperar_password",
+                    "/privacidad", "/terminos",
                     "/error",                               // custom error page
                     "/mercado", "/mercado/**",              // public offer listing
                     "/oferta/{id:\\d+}",                    // public offer detail

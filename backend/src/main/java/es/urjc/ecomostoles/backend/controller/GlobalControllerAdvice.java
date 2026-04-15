@@ -6,7 +6,9 @@ import es.urjc.ecomostoles.backend.service.MensajeService;
 import es.urjc.ecomostoles.backend.service.ConfiguracionService;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import jakarta.servlet.http.HttpServletRequest;
 
+import org.springframework.security.core.Authentication;
 import java.security.Principal;
 import java.util.Optional;
 
@@ -65,12 +67,14 @@ public class GlobalControllerAdvice {
     @ModelAttribute("listaUnidades")
     public java.util.List<String> listaUnidades() {
         String units = configuracionService.obtenerValorAuto("listaUnidades");
+        if (units == null || units.isEmpty()) return java.util.Collections.emptyList();
         return java.util.Arrays.asList(units.split("\\r?\\n"));
     }
     
     @ModelAttribute("listaDisponibilidades")
     public java.util.List<String> listaDisponibilidades() {
         String disp = configuracionService.obtenerValorAuto("listaDisponibilidades");
+        if (disp == null || disp.isEmpty()) return java.util.Collections.emptyList();
         return java.util.Arrays.asList(disp.split("\\r?\\n"));
     }
 
@@ -87,5 +91,21 @@ public class GlobalControllerAdvice {
     @ModelAttribute("platformLocation")
     public String platformLocation() {
         return configuracionService.obtenerValorAuto("platformLocation");
+    }
+
+    @ModelAttribute("isAdmin")
+    public boolean isAdmin(Authentication auth) {
+        return auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().contains("ADMIN"));
+    }
+
+    @ModelAttribute("isEmpresa")
+    public boolean isEmpresa(Authentication auth) {
+        return auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().contains("EMPRESA"));
+    }
+
+    @ModelAttribute("isAdminPanel")
+    public boolean isAdminPanel(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        return uri != null && uri.startsWith("/admin");
     }
 }

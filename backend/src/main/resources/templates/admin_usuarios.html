@@ -1,6 +1,6 @@
 {{> head_admin}}
 <body class="bg-theme-dark">
-{{> header_admin}}
+{{> header}}
 
 <div class="container-fluid">
     <div class="row min-vh-100">
@@ -71,13 +71,9 @@
                                     <td class="text-secondary fw-bold">{{cif}}</td>
                                     <td class="text-end pe-4">
                                           <div class="d-flex gap-2 justify-content-end">
-                                              <a href="/perfil/{{id}}" class="btn btn-sm btn-outline-success rounded-pill px-3" title="Ver Perfil"><i class="fas fa-eye"></i></a>
                                               <a href="/admin/usuarios/{{id}}/editar" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="Editar"><i class="fas fa-edit"></i></a>
-                                             <form action="/admin/usuarios/{{id}}/eliminar" method="POST" class="d-inline mb-0">
-                                                 {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
-                                                 <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="return confirm('¿Estás seguro de eliminar esta empresa? Todas sus ofertas y acuerdos se perderán.');" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
-                                             </form>
-                                         </div>
+                                              <a href="/admin/usuarios/eliminar/{{id}}" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="return confirm('¿Estás seguro de eliminar esta empresa? Todas sus ofertas y acuerdos se perderán.');" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
+                                          </div>
                                      </td>
                                 </tr>
                                 {{/empresas}}

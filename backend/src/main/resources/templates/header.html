@@ -2,8 +2,10 @@
 
 <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
     <div class="container">
-        <a class="navbar-brand" href="/">
-            <i class="fas fa-recycle me-2"></i>{{platformName}}
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <i class="fas fa-recycle me-2 text-success" style="font-size: 1.5rem;"></i>
+            <span class="fw-bold">EcoMóstoles</span>
+            {{#isAdmin}}<span class="badge bg-danger ms-2" style="font-size: 0.6rem; vertical-align: middle;">ADMIN</span>{{/isAdmin}}
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -14,19 +16,26 @@
                 {{#empresa}}
                 <!-- LOGGED-IN NAV -->
                 <li class="nav-item">
-                    <a class="nav-link {{#navMercado}}active text-success fw-bold{{/navMercado}}" href="/mercado">
+                    <a class="nav-link fw-bold" {{#navMercado}}style="color: #198754 !important;"{{/navMercado}} href="/mercado">
                         <i class="fas fa-store me-1"></i> Ofertas
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{#navDemandas}}active text-success fw-bold{{/navDemandas}}" href="/solicitudes">
+                    <a class="nav-link fw-bold" {{#navDemandas}}style="color: #198754 !important;"{{/navDemandas}} href="/solicitudes">
                         <i class="fas fa-bullhorn me-1"></i> Demandas
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{#navDashboard}}active text-success fw-bold{{/navDashboard}}" href="/dashboard">
+                    {{#isEmpresa}}
+                    <a class="nav-link fw-bold" {{#isDashboard}}style="color: #198754 !important;"{{/isDashboard}} href="/dashboard">
                         <i class="fas fa-tachometer-alt me-1"></i> Panel de Control
                     </a>
+                    {{/isEmpresa}}
+                    {{#isAdmin}}
+                    <a class="nav-link fw-bold" {{#isAdminPanel}}style="color: #198754 !important;"{{/isAdminPanel}} href="/admin/panel">
+                        <i class="fas fa-user-shield me-1"></i> Panel de Admin
+                    </a>
+                    {{/isAdmin}}
                 </li>
                 <li class="nav-item dropdown ms-lg-2">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="/perfil" role="button" data-bs-toggle="dropdown">
@@ -52,13 +61,13 @@
                 {{^empresa}}
                 <!-- VISITOR NAV -->
                 <li class="nav-item">
-                    <a class="nav-link active" href="/">Inicio</a>
+                    <a class="nav-link fw-bold" {{#isInicio}}style="color: #198754 !important;"{{/isInicio}} href="/">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/mercado">Ofertas</a>
+                    <a class="nav-link fw-bold" {{#isMercado}}style="color: #198754 !important;"{{/isMercado}} href="/mercado">Ofertas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
+                    <a class="nav-link fw-bold" {{#isLogin}}style="color: #198754 !important;"{{/isLogin}} href="/login">Login</a>
                 </li>
                 <li class="nav-item ms-lg-2">
                     <a class="btn btn-eco btn-sm" href="/registro">Registro Empresa</a>

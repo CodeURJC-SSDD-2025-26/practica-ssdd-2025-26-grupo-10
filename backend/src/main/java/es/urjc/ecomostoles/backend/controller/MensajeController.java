@@ -50,10 +50,15 @@ public class MensajeController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
  
         model.addAttribute("activeMensajes", true);
+        model.addAttribute("isDashboard", true);
  
-        // Retrieves a list of messages where the current company is the recipient
-        List<Mensaje> misMensajes = mensajeService.obtenerPorDestinatario(empresa);
-        model.addAttribute("mensajes", misMensajes);
+        // Retrieves messages where the current company is the recipient or the sender
+        List<Mensaje> recibidos = mensajeService.obtenerPorDestinatario(empresa);
+        List<Mensaje> enviados  = mensajeService.obtenerPorRemitente(empresa);
+
+        model.addAttribute("mensajesRecibidos", recibidos);
+        model.addAttribute("mensajesEnviados",  enviados);
+        model.addAttribute("mensajes",          recibidos); // for backward compatibility in templates if needed
  
         return "mensajes";
     }
@@ -84,6 +89,8 @@ public class MensajeController {
         }
  
         model.addAttribute("mensaje", mensaje);
+        model.addAttribute("esRecibido", esDestinatario);
+        model.addAttribute("isDashboard", true);
  
         return "detalle_mensaje";
     }
@@ -118,6 +125,7 @@ public class MensajeController {
         
         model.addAttribute("receptor", receptor);
         model.addAttribute("asunto", asunto != null ? asunto : "");
+        model.addAttribute("isDashboard", true);
         return "redactar_mensaje";
     }
 

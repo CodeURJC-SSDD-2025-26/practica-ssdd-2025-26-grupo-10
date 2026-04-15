@@ -37,6 +37,12 @@ public class MensajeService {
         return mensajeRepository.findByDestinatario(destinatario);
     }
 
+    /** Returns all messages sent by a specific company. */
+    @Transactional(readOnly = true)
+    public List<Mensaje> obtenerPorRemitente(Empresa remitente) {
+        return mensajeRepository.findByRemitente(remitente);
+    }
+
     @Transactional(readOnly = true)
     public long contarPorDestinatario(Empresa destinatario) {
         return mensajeRepository.countByDestinatario(destinatario);

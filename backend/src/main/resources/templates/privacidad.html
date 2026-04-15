@@ -1,25 +1,34 @@
 {{> head}}
 <body class="bg-theme-dark">
-{{> header}}
+    {{> header}}
 
-<main class="container my-5 py-5 min-vh-100">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <h1 class="display-4 fw-bold text-dark mb-4">Aviso Legal y Privacidad</h1>
-            <p class="lead text-muted">Protección de datos y marco legal de {{platformName}}.</p>
-            <div class="card shadow-sm border-0 rounded-4 p-4 mt-4 bg-light">
-                <h2>1. Responsable del Tratamiento</h2>
-                <p>{{platformName}} B2B es responsable del tratamiento de los datos de las empresas registradas...</p>
-                <h2>2. Finalidad de los Datos</h2>
-                <p>Los datos recogidos se utilizarán exclusivamente para facilitar la simbiosis industrial y la generación de acuerdos comerciales entre los usuarios de la plataforma...</p>
-                <h2>3. Derechos del Usuario</h2>
-                <p>Puede ejercer sus derechos de acceso, rectificación, cancelación y oposición enviando un correo a {{emailSoporte}}.</p>
-                <hr class="my-4">
-                <p class="small text-muted italic">Última actualización: {{currentDate}}</p>
-                <a href="/" class="btn btn-primary rounded-pill px-4 mt-3">Volver al inicio</a>
+    <main class="container my-5 py-5 min-vh-100">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold text-dark mb-4">Aviso Legal y Privacidad</h1>
+                <p class="lead text-muted">Protección de datos y marco legal de EcoMóstoles.</p>
+                <div class="card shadow-sm border-0 rounded-4 mt-4 bg-light">
+                    <div class="card-body p-4 text-start" style="color: #000000 !important; visibility: visible !important; display: block !important; z-index: 10 !important; position: relative !important;">
+                        <h3 class="mb-4">Política de Privacidad</h3>
+                        <p>En EcoMóstoles, la privacidad de nuestros usuarios es una prioridad. Esta política explica
+                            cómo recopilamos, usamos y protegemos sus datos personales al utilizar nuestra plataforma de
+                            simbiosis industrial.</p>
+                        <h5 class="mt-4">1. Recopilación de Datos</h5>
+                        <p>Recopilamos la información necesaria para el registro de empresas y la gestión de ofertas y
+                            demandas (nombre comercial, email, dirección y tipo de residuos).</p>
+                        <h5 class="mt-4">2. Uso de la Información</h5>
+                        <p>Los datos se utilizan exclusivamente para facilitar las conexiones entre empresas locales y
+                            calcular el impacto medioambiental (huella de CO2 evitada).</p>
+                        <h5 class="mt-4">3. Protección y Derechos</h5>
+                        <p>Aplicamos medidas de seguridad estándar de la industria. Puede ejercer sus derechos de
+                            acceso, rectificación y eliminación contactando con el soporte técnico.</p>
+                    </div>
+                    <hr class="my-4">
+                    <p class="small text-muted italic">Última actualización: {{currentDate}}</p>
+                    <a href="/" class="btn btn-primary rounded-pill px-4 mt-3">Volver al inicio</a>
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
-{{> footer}}
+    {{> footer}}

@@ -55,6 +55,7 @@ public class MercadoController {
         }
         
         model.addAttribute("navMercado", true);
+        model.addAttribute("isMercado", true);
 
         return "mercado";
     }

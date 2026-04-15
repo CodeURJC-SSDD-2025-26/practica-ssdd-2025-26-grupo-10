@@ -137,13 +137,13 @@ public class AcuerdoService {
 
     @Transactional(readOnly = true)
     public double sumarMaterialReintroducido(Empresa empresa) {
-        Double total = acuerdoRepository.sumCantidadByEmpresaAndEstadoCompletado(empresa);
+        Double total = acuerdoRepository.sumCantidadByEmpresaAndEstado(empresa, EstadoAcuerdo.COMPLETADO);
         return total != null ? total : 0.0;
     }
 
     @Transactional(readOnly = true)
     public double sumarTotalMaterialReintroducido() {
-        Double total = acuerdoRepository.sumTotalCantidadByEstadoCompletado();
+        Double total = acuerdoRepository.sumTotalCantidadByEstado(EstadoAcuerdo.COMPLETADO);
         return total != null ? total : 0.0;
     }
 
@@ -153,7 +153,7 @@ public class AcuerdoService {
         if (empresa.isEmpty()) return 0.0;
         
         // Optimized: direct sum from DB if possible, or at least filtered list
-        Double totalCantidad = acuerdoRepository.sumCantidadByEmpresaAndEstadoCompletado(empresa.get());
+        Double totalCantidad = acuerdoRepository.sumCantidadByEmpresaAndEstado(empresa.get(), EstadoAcuerdo.COMPLETADO);
         if (totalCantidad == null) return 0.0;
 
         // Note: For ranking/exact CO2 per material we still need the list or a more complex sum query

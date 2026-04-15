@@ -89,6 +89,7 @@ public class AdminController {
         model.addAttribute("totalDenunciadas", ofertaService.contarPorEstado(EstadoOferta.DENUNCIADA));
         model.addAttribute("totalCompletadas", acuerdoService.contarPorEstado(EstadoAcuerdo.COMPLETADO, filtro));
         model.addAttribute("toneladasCO2", acuerdoService.calcularCO2Ahorrado());
+        model.addAttribute("isDashboard", true);
     }
 
     // ── GET /admin  →  redirects to /admin/panel ───────────────────────────
@@ -138,10 +139,10 @@ public class AdminController {
         return "admin_usuarios";
     }
 
-    @PostMapping("/usuarios/{id}/eliminar")
-    public String eliminarUsuario(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    @GetMapping("/usuarios/eliminar/{id}")
+    public String eliminarUsuario(@PathVariable Long id) {
+        // Gracias al CascadeType.ALL en Empresa.java, esto borrará al usuario y todas sus dependencias.
         empresaService.eliminar(id);
-        redirectAttributes.addFlashAttribute("mensaje", "La empresa y todos sus datos han sido eliminados permanentemente por el administrador.");
         return "redirect:/admin/usuarios";
     }
 

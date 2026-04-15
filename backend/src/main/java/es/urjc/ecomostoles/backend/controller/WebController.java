@@ -40,6 +40,7 @@ public class WebController {
         model.addAttribute("totalEmpresas", empresaService.contarTodas());
         model.addAttribute("totalOfertas",   ofertaService.contarTodas());
         model.addAttribute("totalCo2",       acuerdoService.calcularCO2Ahorrado());
+        model.addAttribute("isInicio", true);
         
         return "index";
     }
@@ -53,23 +54,5 @@ public class WebController {
     @GetMapping("/privacidad")
     public String privacidad() {
         return "privacidad";
-    }
-
-    @GetMapping("/recuperar-password")
-    public String mostrarRecuperarPassword() {
-        return "recuperar_password";
-    }
-
-    @PostMapping("/recuperar-password")
-    public String procesarRecuperarPassword(@RequestParam String email, RedirectAttributes redirectAttributes) {
-        // Verifies if the email exists in the DB before "sending"
-        if (empresaService.buscarPorEmail(email).isPresent()) {
-            emailService.enviarEmailRecuperacion(email);
-        }
-        
-        // Keep the generic message for security (prevent user enumeration)
-        redirectAttributes.addFlashAttribute("mensajeRecuperacion", 
-            "Si el correo existe en nuestro sistema, hemos enviado las instrucciones de recuperación.");
-        return "redirect:/login";
     }
 }
