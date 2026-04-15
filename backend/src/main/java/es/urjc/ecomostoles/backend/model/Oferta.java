@@ -275,4 +275,9 @@ public class Oferta {
     public void setVisitas(int visitas) {
         this.visitas = visitas;
     }
+
+    public String getFechaPublicacionFormateada() {
+        if (this.fechaPublicacion == null) return "Fecha no disponible";
+        return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(this.fechaPublicacion);
+    }
 }

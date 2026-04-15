@@ -278,4 +278,9 @@ public class Demanda {
         if (this.zonaRecogida == null || this.zonaRecogida.isEmpty()) return "";
         return this.zonaRecogida.substring(0, 1).toUpperCase() + this.zonaRecogida.substring(1).toLowerCase();
     }
+
+    public String getFechaPublicacionFormateada() {
+        if (this.fechaPublicacion == null) return "Fecha no disponible";
+        return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(this.fechaPublicacion);
+    }
 }

@@ -1,6 +1,7 @@
 package es.urjc.ecomostoles.backend.component;
 
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import es.urjc.ecomostoles.backend.service.ConfiguracionService;
@@ -15,8 +16,9 @@ import es.urjc.ecomostoles.backend.model.FactorImpacto;
 public class SustainabilityEngine {
 
     private static final Logger log = LoggerFactory.getLogger(SustainabilityEngine.class);
-
-    private static final double FACTOR_EMISION_CO2 = 0.45;
+ 
+    @Value("${app.sustainability.default-co2-factor:0.45}")
+    private double defaultCo2Factor;
 
     private final ConfiguracionService configuracionService;
     private final FactorImpactoRepository factorImpactoRepository;
@@ -36,13 +38,13 @@ public class SustainabilityEngine {
      * @return The calculated CO2 impact in tons.
      */
     public double calcularImpactoCO2(double kilosMaterial, String tipoResiduo) {
-        String factorStr = configuracionService.obtenerValorConfiguracion("CO2_FACTOR", String.valueOf(FACTOR_EMISION_CO2));
+        String factorStr = configuracionService.obtenerValorConfiguracion("CO2_FACTOR", String.valueOf(defaultCo2Factor));
         double factor;
         try {
             factor = Double.parseDouble(factorStr);
         } catch (NumberFormatException | NullPointerException e) {
-            log.warn("⚠️ ERROR CRÍTICO DE CONFIGURACIÓN: El factor 'CO2_FACTOR' en BD ('{}') no es un número válido. Usando valor hardcoded de seguridad: {}. Fallo: {}", factorStr, FACTOR_EMISION_CO2, e.getMessage());
-            factor = FACTOR_EMISION_CO2;
+            log.warn("⚠️ ERROR CRÍTICO DE CONFIGURACIÓN: El factor 'CO2_FACTOR' en BD ('{}') no es un número válido. Usando valor inyectado de seguridad: {}. Fallo: {}", factorStr, defaultCo2Factor, e.getMessage());
+            factor = defaultCo2Factor;
         }
 
         // Granular Multipliers fetched from the dedicated environmental factors table

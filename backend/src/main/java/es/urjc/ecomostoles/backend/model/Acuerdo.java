@@ -255,4 +255,9 @@ public class Acuerdo {
         NumberFormat formatoMoneda = NumberFormat.getCurrencyInstance(Locale.of("es", "ES"));
         return formatoMoneda.format(this.precioAcordado);
     }
+
+    public String getFechaRegistroFormateada() {
+        if (this.fechaRegistro == null) return "Fecha no disponible";
+        return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(this.fechaRegistro);
+    }
 }

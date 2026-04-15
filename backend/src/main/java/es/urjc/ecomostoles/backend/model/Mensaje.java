@@ -92,4 +92,9 @@ public class Mensaje {
     public void setDestinatario(Empresa destinatario) {
         this.destinatario = destinatario;
     }
+
+    public String getFechaEnvioFormateada() {
+        if (this.fechaEnvio == null) return "Fecha no disponible";
+        return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(this.fechaEnvio);
+    }
 }

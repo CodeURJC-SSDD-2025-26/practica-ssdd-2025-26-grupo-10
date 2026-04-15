@@ -293,9 +293,7 @@ public class AdminController {
             request.getSession().invalidate();
             SecurityContextHolder.clearContext();
             
-            // Añadir mensaje para la pantalla de login
-            redirectAttributes.addFlashAttribute("emailActualizado", true);
-            return "redirect:/login";
+            return "redirect:/login?emailActualizado=true";
         }
         return "redirect:/admin/panel";
     }

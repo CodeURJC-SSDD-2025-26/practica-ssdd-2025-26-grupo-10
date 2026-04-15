@@ -40,7 +40,8 @@ public class MercadoController {
     public String mostrarMercado(Model model, Principal principal,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String tipoResiduo,
-            @RequestParam(required = false) String poligono) {
+            @RequestParam(required = false) String poligono,
+            @RequestParam(required = false) String error) {
 
         List<OfertaResumen> ofertasFiltradas = ofertaService.buscarOfertasFiltradas(keyword, tipoResiduo, poligono);
 
@@ -53,6 +54,11 @@ public class MercadoController {
             empresaService.buscarPorEmail(principal.getName())
                           .ifPresent(empresa -> model.addAttribute("empresa", empresa));
         }
+        
+        if ("AutoAcuerdo".equals(error)) {
+            model.addAttribute("errorAutoAcuerdo", "No puedes realizar un acuerdo comercial con tu propia empresa.");
+        }
+        
         model.addAttribute("navMercado", true);
 
         return "mercado";

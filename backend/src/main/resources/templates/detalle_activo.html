@@ -55,7 +55,7 @@
                                     {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                                     <div class="mb-3">
                                         <label for="contenido" class="form-label text-secondary fw-bold small text-uppercase">Enviar mensaje a la empresa</label>
-                                        <textarea class="form-control" name="asunto" id="asunto" rows="1" class="mb-2" placeholder="Asunto" required>Interés en {{oferta.titulo}}</textarea>
+                                        <textarea class="form-control mb-2" name="asunto" id="asunto" rows="1" placeholder="Asunto" required>Interés en {{oferta.titulo}}</textarea>
                                         <textarea class="form-control" name="contenido" id="contenido" rows="3" placeholder="Hola, estoy interesado en este material..." required></textarea>
                                     </div>
                                     <div class="d-flex justify-content-center gap-3">

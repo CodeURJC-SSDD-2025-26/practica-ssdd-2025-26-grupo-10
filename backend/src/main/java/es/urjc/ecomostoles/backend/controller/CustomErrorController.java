@@ -1,5 +1,6 @@
 package es.urjc.ecomostoles.backend.controller;
 
+import es.urjc.ecomostoles.backend.dto.EmpresaDTO;
 import es.urjc.ecomostoles.backend.service.EmpresaService;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -74,7 +75,7 @@ public class CustomErrorController implements ErrorController {
         // avatar and dropdown. It should only be added if the user is authenticated.
         if (principal != null) {
             empresaService.buscarPorEmail(principal.getName())
-                          .ifPresent(e -> model.addAttribute("empresa", e));
+                          .ifPresent(e -> model.addAttribute("empresa", new EmpresaDTO(e)));
         }
 
         return "error";

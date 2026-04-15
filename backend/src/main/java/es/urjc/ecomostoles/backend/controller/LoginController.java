@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LoginController {
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model, @RequestParam(required = false) String emailActualizado) {
+        if (emailActualizado != null) {
+            model.addAttribute("emailActualizado", true);
+        }
         return "login";
     }
 }

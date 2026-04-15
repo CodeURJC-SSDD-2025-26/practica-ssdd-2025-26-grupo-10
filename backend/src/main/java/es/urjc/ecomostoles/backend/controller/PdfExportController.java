@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import java.time.format.DateTimeFormatter;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
@@ -104,7 +105,10 @@ public class PdfExportController {
             addTableCell(table, "Empresa Proveedora:", originName, labelFont, normalFont);
             addTableCell(table, "Empresa Receptora:", destName, labelFont, normalFont);
             addTableCell(table, "Estado del Acuerdo:", agreement.getEstado().name(), labelFont, normalFont);
-            addTableCell(table, "Fecha de Registro:", agreement.getFechaRegistro().toString(), labelFont, normalFont);
+            
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            String fechaFormateada = agreement.getFechaRegistro() != null ? agreement.getFechaRegistro().format(formatter) : "Fecha no disponible";
+            addTableCell(table, "Fecha de Registro:", fechaFormateada, labelFont, normalFont);
 
             document.add(table);
 
