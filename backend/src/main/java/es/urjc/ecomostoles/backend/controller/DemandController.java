@@ -18,7 +18,7 @@ import java.security.Principal;
 import java.util.Optional;
 
 /**
- * Controller to handle demand-related (Demandas/Solicitudes) web requests.
+ * Controller to handle demand-related web requests.
  *
  * Follows Controller > Service > Repository architecture:
  * delegates all data access to DemandService.
@@ -43,8 +43,8 @@ public class DemandController {
         Page<Demand> demandPage = demandService
                 .getByStatusPaginated(es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE, pageable);
 
-        model.addAttribute("demandas", demandPage.getContent());
-        model.addAttribute("hasDemandas", !demandPage.isEmpty());
+        model.addAttribute("demands", demandPage.getContent());
+        model.addAttribute("hasDemands", !demandPage.isEmpty());
 
         // Pagination metadata
         model.addAttribute("currentPage", demandPage.getNumber() + 1);
@@ -59,7 +59,7 @@ public class DemandController {
         model.addAttribute("pagBaseUrl", "/solicitudes");
         model.addAttribute("pagQueryString", "");
 
-        model.addAttribute("navDemandas", true);
+        model.addAttribute("navDemands", true);
 
         return "solicitudes";
     }
@@ -73,7 +73,7 @@ public class DemandController {
         Optional<Demand> demandOpt = demandService.findById(id);
 
         if (demandOpt.isPresent()) {
-            model.addAttribute("demanda", demandOpt.get());
+            model.addAttribute("demand", demandOpt.get());
 
             return "detalle_solicitud";
         }
@@ -87,7 +87,7 @@ public class DemandController {
     @PostMapping("/demandas/{id}/favorito")
     public String toggleFavorite(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         // Simple logic for the demo: provide visual feedback
-        redirectAttributes.addFlashAttribute("mensajeFavorito",
+        redirectAttributes.addFlashAttribute("favoriteMessage",
                 "La demanda #" + id + " ha sido guardada en tus favoritos correctamente.");
         return "redirect:/demanda/" + id;
     }

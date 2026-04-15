@@ -77,10 +77,10 @@ public class SecurityConfig {
 
                 // ── Creation and edition: any authenticated user ────────
                 .requestMatchers(
-                    "/oferta/nueva", "/ofertas/*/editar",
-                    "/demanda/nueva", "/demandas/*/editar",
+                    "/oferta/nueva", "/offers/*/editar",
+                    "/demand/nueva", "/demands/*/editar",
                     "/dashboard/**", "/perfil/**",
-                    "/mensajes/**", "/acuerdos/**", "/acuerdo/**"
+                    "/mensajes/**", "/agreements/**", "/agreement/**"
                 ).authenticated()
 
                 // ── The rest requires authentication ─────────────────────────

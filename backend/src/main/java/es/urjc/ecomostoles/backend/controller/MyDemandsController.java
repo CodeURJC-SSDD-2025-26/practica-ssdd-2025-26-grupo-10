@@ -54,11 +54,11 @@ public class MyDemandsController {
     private Demand verifyDemandOwnership(Long demandId, Principal principal) {
         Demand demand = demandService.findById(demandId)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Demanda no encontrada: " + demandId));
+                        HttpStatus.NOT_FOUND, "Demand not found: " + demandId));
 
         Company loggedCompany = companyService.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
+                        HttpStatus.UNAUTHORIZED, "User not found"));
 
         boolean isAdmin = loggedCompany.getRoles() != null
                 && loggedCompany.getRoles().contains("ADMIN");
@@ -67,7 +67,7 @@ public class MyDemandsController {
 
         if (!isAdmin && !isOwner) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "No tienes permiso para modificar esta demanda.");
+                    "You do not have permission to modify this demand.");
         }
         return demand;
     }
@@ -81,12 +81,12 @@ public class MyDemandsController {
         Optional<Company> companyOpt = companyService.findByEmail(principal.getName());
         if (companyOpt.isPresent()) {
             Company company = companyOpt.get();
-            model.addAttribute("activeDemandas", true);
+            model.addAttribute("activeDemands", true);
             model.addAttribute("isDashboard", true);
 
             Page<Demand> demandsPage = demandService.getByCompanyPaginated(company, pageable);
-            model.addAttribute("demandas", demandsPage.getContent());
-            model.addAttribute("hasDemandas", !demandsPage.isEmpty());
+            model.addAttribute("demands", demandsPage.getContent());
+            model.addAttribute("hasDemands", !demandsPage.isEmpty());
 
             // Pagination metadata
             model.addAttribute("currentPage", demandsPage.getNumber() + 1);
@@ -98,10 +98,10 @@ public class MyDemandsController {
             model.addAttribute("totalItems", demandsPage.getTotalElements());
 
             // Dynamic base URL for pagination partial
-            model.addAttribute("pagBaseUrl", "/dashboard/mis-demandas");
-            model.addAttribute("pagQueryString", "");
+            model.addAttribute("paginationBaseUrl", "/dashboard/mis-demands");
+            model.addAttribute("paginationQueryString", "");
 
-            model.addAttribute("totalDemandasActivas", demandService.countActiveByCompany(company));
+            model.addAttribute("totalActiveDemands", demandService.countActiveByCompany(company));
             return "mis_demandas";
         }
         return "redirect:/";
@@ -114,9 +114,9 @@ public class MyDemandsController {
     public String showNewDemandForm(Model model, Principal principal) {
         Optional<Company> companyOpt = companyService.findByEmail(principal.getName());
         if (companyOpt.isPresent()) {
-            model.addAttribute("activeNuevaDemanda", true);
+            model.addAttribute("activeNewDemand", true);
             model.addAttribute("isDashboard", true);
-            model.addAttribute("demanda", new Demand());
+            model.addAttribute("demand", new Demand());
             injectDynamicOptions(model);
             return "crear_solicitud";
         }
@@ -124,25 +124,25 @@ public class MyDemandsController {
     }
 
     private void injectDynamicOptions(Model model) {
-        model.addAttribute("listaCategorias", configurationService.getSanitizedList("listaCategorias"));
-        model.addAttribute("listaUnidades", configurationService.getSanitizedList("listaUnidades"));
-        model.addAttribute("listaDisponibilidades",
-                configurationService.getSanitizedList("listaDisponibilidades"));
+        model.addAttribute("categoryList", configurationService.getSanitizedList("categoryList"));
+        model.addAttribute("unitList", configurationService.getSanitizedList("unitList"));
+        model.addAttribute("availabilityList",
+                configurationService.getSanitizedList("availabilityList"));
     }
 
     // -------------------------------------------------------------------------
     // POST /demanda/nueva — Create new demand with Bean Validation
     // -------------------------------------------------------------------------
     @PostMapping("/demanda/nueva")
-    public String saveNewDemand(@Valid @ModelAttribute("demanda") Demand demand,
+    public String saveNewDemand(@Valid @ModelAttribute("demand") Demand demand,
             BindingResult result,
             Model model,
             Principal principal) {
 
         if (result.hasErrors()) {
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
-            model.addAttribute("errores", result.getAllErrors());
-            model.addAttribute("demanda", demand);
+            model.addAttribute("errors", result.getAllErrors());
+            model.addAttribute("demand", demand);
             injectDynamicOptions(model);
             return "crear_solicitud";
         }
@@ -153,7 +153,7 @@ public class MyDemandsController {
             demand.setPublicationDate(LocalDateTime.now());
             demand.setStatus(DemandStatus.ACTIVE);
             demandService.save(demand);
-            return "redirect:/dashboard/mis-demandas";
+            return "redirect:/dashboard/mis-demands";
         }
         return "redirect:/";
     }
@@ -165,7 +165,7 @@ public class MyDemandsController {
     public String deleteDemand(@PathVariable Long id, Principal principal) {
         verifyDemandOwnership(id, principal);
         demandService.delete(id);
-        return "redirect:/dashboard/mis-demandas";
+        return "redirect:/dashboard/mis-demands";
     }
 
     // -------------------------------------------------------------------------
@@ -173,34 +173,34 @@ public class MyDemandsController {
     // -------------------------------------------------------------------------
     private void loadSelectOptions(Model model, Demand demand) {
         // Dynamic Categories
-        List<String> categories = configurationService.getSanitizedList("listaCategorias");
+        List<String> categories = configurationService.getSanitizedList("categoryList");
         List<SelectOption> categoryOptions = new ArrayList<>();
         for (String cat : categories) {
             categoryOptions.add(new SelectOption(cat, cat, cat.equals(demand.getMaterialCategory())));
         }
-        model.addAttribute("opcionesCategoria", categoryOptions);
+        model.addAttribute("categoryOptions", categoryOptions);
 
         // Dynamic Units
-        List<String> unitsList = configurationService.getSanitizedList("listaUnidades");
+        List<String> unitsList = configurationService.getSanitizedList("unitList");
         List<SelectOption> unitOptions = new ArrayList<>();
         for (String u : unitsList) {
             unitOptions.add(new SelectOption(u, u, u.equals(demand.getUnit())));
         }
-        model.addAttribute("opcionesUnidad", unitOptions);
+        model.addAttribute("unitOptions", unitOptions);
 
         // Dynamic Urgency (reusing availability list)
-        List<String> availabiltyList = configurationService.getSanitizedList("listaDisponibilidades");
-        List<SelectOption> urgencyOptions = new ArrayList<>();
+        List<String> availabiltyList = configurationService.getSanitizedList("availabilityList");
+        List<SelectOption> availabilityOptions = new ArrayList<>();
         for (String d : availabiltyList) {
-            urgencyOptions.add(new SelectOption(d, d, d.equals(demand.getUrgency())));
+            availabilityOptions.add(new SelectOption(d, d, d.equals(demand.getUrgency())));
         }
-        model.addAttribute("opcionesUrgencia", urgencyOptions);
+        model.addAttribute("availabilityOptions", availabilityOptions);
 
         // Dynamic Select Options for status
         List<SelectOption> statusOptions = new ArrayList<>();
-        statusOptions.add(new SelectOption("ACTIVA", "ACTIVA", DemandStatus.ACTIVE.equals(demand.getStatus())));
-        statusOptions.add(new SelectOption("CERRADA", "CERRADA", DemandStatus.CLOSED.equals(demand.getStatus())));
-        model.addAttribute("opcionesEstado", statusOptions);
+        statusOptions.add(new SelectOption("ACTIVE", "ACTIVA", DemandStatus.ACTIVE.equals(demand.getStatus())));
+        statusOptions.add(new SelectOption("CLOSED", "CERRADA", DemandStatus.CLOSED.equals(demand.getStatus())));
+        model.addAttribute("statusOptions", statusOptions);
     }
 
     // -------------------------------------------------------------------------
@@ -209,7 +209,7 @@ public class MyDemandsController {
     @GetMapping("/demandas/{id}/editar")
     public String showEditDemandForm(@PathVariable Long id, Model model, Principal principal) {
         Demand demand = verifyDemandOwnership(id, principal);
-        model.addAttribute("demanda", demand);
+        model.addAttribute("demand", demand);
         model.addAttribute("isDashboard", true);
 
         loadSelectOptions(model, demand);
@@ -222,7 +222,7 @@ public class MyDemandsController {
     // -------------------------------------------------------------------------
     @PostMapping("/demandas/{id}/editar")
     public String saveEditedDemand(@PathVariable Long id,
-            @Valid @ModelAttribute("demanda") Demand demandForm,
+            @Valid @ModelAttribute("demand") Demand demandForm,
             BindingResult result,
             Model model,
             Principal principal) {
@@ -234,7 +234,7 @@ public class MyDemandsController {
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             loadSelectOptions(model, demandForm);
 
-            model.addAttribute("errores", result.getAllErrors());
+            model.addAttribute("errors", result.getAllErrors());
             demandForm.setId(id);
             return "editar_solicitud";
         }
@@ -252,6 +252,6 @@ public class MyDemandsController {
 
         demandService.save(existingDemand);
 
-        return "redirect:/dashboard/mis-demandas";
+        return "redirect:/dashboard/mis-demands";
     }
 }

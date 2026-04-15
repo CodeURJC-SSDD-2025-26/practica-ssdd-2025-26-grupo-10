@@ -32,29 +32,28 @@ public class RegistrationController {
 
     @GetMapping("/registro")
     public String showRegistrationForm(Model model) {
-        model.addAttribute("registroDTO", new RegistrationDTO());
+        model.addAttribute("registrationDTO", new RegistrationDTO());
         injectDynamicOptions(model);
         return "registro";
     }
 
     private void injectDynamicOptions(Model model) {
         // Fetch values dynamically from the platform settings
-        String catsStr = configurationService.getAutoValue("listaCategorias");
-        List<String> categories = Arrays.asList(catsStr.split("\\r?\\n"));
+        String categoryListStr = configurationService.getAutoValue("categoryList");
+        List<String> categories = Arrays.asList(categoryListStr.split("\\r?\\n"));
 
-        String industrialAreasStr = configurationService.getConfigurationValue("listaPoligonos",
-                "Polígono Regordoño\nPolígono Las Nieves\nMóstoles Tecnológico\nOtro (Especificar)");
-        List<String> industrialAreas = Arrays.asList(industrialAreasStr.split("\\r?\\n"));
+        String industrialAreaListStr = configurationService.getAutoValue("industrialAreaList");
+        List<String> industrialAreas = Arrays.asList(industrialAreaListStr.split("\\r?\\n"));
 
-        String sectorsStr = configurationService.getAutoValue("listaSectores");
-        List<String> sectors = Arrays.asList(sectorsStr.split("\\r?\\n"));
+        String sectorListStr = configurationService.getAutoValue("sectorList");
+        List<String> sectors = Arrays.asList(sectorListStr.split("\\r?\\n"));
 
-        model.addAttribute("categorias", categories);
-        model.addAttribute("sectores", sectors);
-        model.addAttribute("poligonos", industrialAreas);
+        model.addAttribute("categoryList", categories);
+        model.addAttribute("sectorList", sectors);
+        model.addAttribute("industrialAreaList", industrialAreas);
 
         // Formatted list for select components
-        model.addAttribute("listaSectores", sectors.stream().map(s -> {
+        model.addAttribute("sectorList", sectors.stream().map(s -> {
             java.util.Map<String, Object> map = new java.util.HashMap<>();
             map.put("name", s);
             map.put("display", s);
@@ -63,17 +62,17 @@ public class RegistrationController {
     }
 
     @PostMapping("/registro")
-    public String registerCompany(@Valid @ModelAttribute("registroDTO") RegistrationDTO dto,
+    public String registerCompany(@Valid @ModelAttribute("registrationDTO") RegistrationDTO dto,
             BindingResult bindingResult,
             Model model) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("hasErrors", true);
             bindingResult.getFieldErrors()
-                    .forEach(error -> model.addAttribute("err_" + error.getField(), error.getDefaultMessage()));
+                    .forEach(error -> model.addAttribute("error_" + error.getField(), error.getDefaultMessage()));
             // Also global errors (like the password mismatch)
             bindingResult.getGlobalErrors()
-                    .forEach(error -> model.addAttribute("err_global", error.getDefaultMessage()));
+                    .forEach(error -> model.addAttribute("error_global", error.getDefaultMessage()));
             injectDynamicOptions(model);
             return "registro";
         }
@@ -129,7 +128,7 @@ public class RegistrationController {
             model.addAttribute("errorMsg", e.getMessage());
             return "registro";
         } catch (Exception e) {
-            log.error("⚠️ Error general en el registro de empresa", e);
+            log.error("⚠️ General error in company registration", e);
             model.addAttribute("error", true);
             return "registro";
         }

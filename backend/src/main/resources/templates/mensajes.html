@@ -35,43 +35,43 @@
                         </ul>
 
                         <div class="tab-content" id="mensajesTabContent">
-                            <!-- TAB RECIBIDOS -->
+                            <!-- RECEIVED MESSAGES TAB -->
                             <div class="tab-pane fade show active" id="recibidos" role="tabpanel">
                                 <div class="list-group list-group-flush shadow-sm rounded-3 border overflow-auto" style="max-height: 500px;">
-                                    {{#mensajesRecibidos}}
+                                    {{#receivedMessages}}
                                     <a href="/mensajes/{{id}}" class="list-group-item list-group-item-action py-3 border-bottom contact-item">
                                         <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                            <h6 class="mb-0 fw-bold text-dark">{{remitente.nombreComercial}}</h6>
-                                            <small class="text-muted" style="font-size: 0.7rem;">{{getFechaEnvioFormateada}}</small>
+                                            <h6 class="mb-0 fw-bold text-dark">{{sender.commercialName}}</h6>
+                                            <small class="text-muted" style="font-size: 0.7rem;">{{formattedSendDate}}</small>
                                         </div>
-                                        <div class="text-secondary small fw-bold mb-1">{{asunto}} {{^leido}}<span class="badge bg-primary ms-1" style="font-size: 0.55rem;">Nuevo</span>{{/leido}}</div>
-                                        <p class="mb-0 small text-muted text-truncate">{{contenido}}</p>
+                                        <div class="text-secondary small fw-bold mb-1">{{subject}} {{^read}}<span class="badge bg-primary ms-1" style="font-size: 0.55rem;">Nuevo</span>{{/read}}</div>
+                                        <p class="mb-0 small text-muted text-truncate">{{content}}</p>
                                     </a>
-                                    {{/mensajesRecibidos}}
+                                    {{/receivedMessages}}
                                     
-                                    {{^mensajesRecibidos}}
+                                    {{^receivedMessages}}
                                     <div class="p-4 text-center text-muted small"><i class="fas fa-inbox fs-3 mb-2"></i><br>Bandeja de entrada vacía.</div>
-                                    {{/mensajesRecibidos}}
+                                    {{/receivedMessages}}
                                 </div>
                             </div>
 
-                            <!-- TAB ENVIADOS -->
+                            <!-- SENT MESSAGES TAB -->
                             <div class="tab-pane fade" id="enviados" role="tabpanel">
                                 <div class="list-group list-group-flush shadow-sm rounded-3 border overflow-auto" style="max-height: 500px;">
-                                    {{#mensajesEnviados}}
+                                    {{#sentMessages}}
                                     <a href="/mensajes/{{id}}" class="list-group-item list-group-item-action py-3 border-bottom contact-item">
                                         <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                            <h6 class="mb-0 fw-bold text-dark">Para: {{destinatario.nombreComercial}}</h6>
-                                            <small class="text-muted" style="font-size: 0.7rem;">{{getFechaEnvioFormateada}}</small>
+                                            <h6 class="mb-0 fw-bold text-dark">Para: {{recipient.commercialName}}</h6>
+                                            <small class="text-muted" style="font-size: 0.7rem;">{{formattedSendDate}}</small>
                                         </div>
-                                        <div class="text-secondary small fw-bold mb-1">{{asunto}}</div>
-                                        <p class="mb-0 small text-muted text-truncate">{{contenido}}</p>
+                                        <div class="text-secondary small fw-bold mb-1">{{subject}}</div>
+                                        <p class="mb-0 small text-muted text-truncate">{{content}}</p>
                                     </a>
-                                    {{/mensajesEnviados}}
+                                    {{/sentMessages}}
                                     
-                                    {{^mensajesEnviados}}
+                                    {{^sentMessages}}
                                     <div class="p-4 text-center text-muted small"><i class="fas fa-paper-plane fs-3 mb-2"></i><br>No has enviado mensajes aún.</div>
-                                    {{/mensajesEnviados}}
+                                    {{/sentMessages}}
                                 </div>
                             </div>
                         </div>

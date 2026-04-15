@@ -22,18 +22,18 @@
                 </div>
             </header>
 
-            {{#mensaje}}
+            {{#message}}
             <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 mb-4 py-3" role="alert">
                 <div class="d-flex align-items-center">
                     <i class="fas fa-check-circle me-3 fs-4"></i>
                     <div>
                         <strong class="d-block">Configuración Actualizada</strong>
-                        <span class="small">{{mensaje}}</span>
+                        <span class="small">{{message}}</span>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            {{/mensaje}}
+            {{/message}}
 
             <form action="/admin/configuracion" method="POST" id="configForm">
                 {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
@@ -47,10 +47,10 @@
                             </div>
                             <div class="card-body p-4">
                                 <div class="mb-3">
-                                    <label for="emailContacto" class="form-label fw-bold text-dark small text-uppercase">Email de Soporte Global</label>
+                                    <label for="contactEmail" class="form-label fw-bold text-dark small text-uppercase">Email de Soporte Global</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-white border-end-0"><i class="fas fa-envelope text-muted"></i></span>
-                                        <input type="email" class="form-control border-start-0" name="emailContacto" id="emailContacto" value="{{config.emailContacto}}">
+                                        <input type="email" class="form-control border-start-0" name="contactEmail" id="contactEmail" value="{{config.contactEmail}}">
                                     </div>
                                     <small class="text-muted d-block mt-1">Dirección pública para consultas de usuarios no registrados.</small>
                                 </div>
@@ -65,9 +65,9 @@
                             <div class="card-body p-4">
                                 <div class="row align-items-center">
                                     <div class="col-md-6">
-                                        <label for="comisionPlataforma" class="form-label fw-bold text-dark small text-uppercase">Comisión por Acuerdo (%)</label>
+                                        <label for="platformCommission" class="form-label fw-bold text-dark small text-uppercase">Comisión por Acuerdo (%)</label>
                                         <div class="input-group">
-                                            <input type="number" class="form-control" name="comisionPlataforma" id="comisionPlataforma" value="{{config.comisionPlataforma}}" step="0.1">
+                                            <input type="number" class="form-control" name="platformCommission" id="platformCommission" value="{{config.platformCommission}}" step="0.1">
                                             <span class="input-group-text bg-light text-muted fw-bold">%</span>
                                         </div>
                                         <small class="text-muted d-block mt-2">Margen operativo aplicado a cada transacción formalizada.</small>
@@ -90,8 +90,8 @@
                                 <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-tags text-success me-2"></i> Diccionario de Materiales</h5>
                             </div>
                             <div class="card-body p-4">
-                                <label for="listaCategorias" class="form-label fw-bold text-dark small text-uppercase">Tipos de residuos habilitados</label>
-                                <textarea class="form-control bg-light font-monospace" name="listaCategorias" id="listaCategorias" rows="6" style="font-size: 0.9rem;">{{config.listaCategorias}}</textarea>
+                                <label for="categoryList" class="form-label fw-bold text-dark small text-uppercase">Tipos de residuos habilitados</label>
+                                <textarea class="form-control bg-light font-monospace" name="categoryList" id="categoryList" rows="6" style="font-size: 0.9rem;">{{config.categoryList}}</textarea>
                                 <p class="text-muted small mt-2"><i class="fas fa-info-circle me-1"></i> Uno por línea.</p>
                             </div>
                         </div>
@@ -102,7 +102,7 @@
                                 <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-weight-hanging text-info me-2"></i> Unidades de Medida</h6>
                             </div>
                             <div class="card-body p-4 pt-2">
-                                <textarea class="form-control bg-light font-monospace" name="listaUnidades" id="listaUnidades" rows="4" style="font-size: 0.85rem;">{{config.listaUnidades}}</textarea>
+                                <textarea class="form-control bg-light font-monospace" name="unitList" id="unitList" rows="4" style="font-size: 0.85rem;">{{config.unitList}}</textarea>
                             </div>
                         </div>
 
@@ -112,7 +112,7 @@
                                 <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-clock text-secondary me-2"></i> Plazos de Disponibilidad</h6>
                             </div>
                             <div class="card-body p-4 pt-2">
-                                <textarea class="form-control bg-light font-monospace" name="listaDisponibilidades" id="listaDisponibilidades" rows="4" style="font-size: 0.85rem;">{{config.listaDisponibilidades}}</textarea>
+                                <textarea class="form-control bg-light font-monospace" name="availabilityList" id="availabilityList" rows="4" style="font-size: 0.85rem;">{{config.availabilityList}}</textarea>
                             </div>
                         </div>
 
@@ -122,7 +122,7 @@
                                 <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-industry text-dark me-2"></i> Sectores Industriales</h6>
                             </div>
                             <div class="card-body p-4 pt-2">
-                                <textarea class="form-control bg-light font-monospace" name="listaSectores" id="listaSectores" rows="6" style="font-size: 0.85rem;" placeholder="Ej: Construcción\nEnergía...">{{config.listaSectores}}</textarea>
+                                <textarea class="form-control bg-light font-monospace" name="sectorList" id="sectorList" rows="6" style="font-size: 0.85rem;" placeholder="Ej: Construcción\nEnergía...">{{config.sectorList}}</textarea>
                                 <p class="text-muted small mt-2 mb-0"><i class="fas fa-info-circle me-1"></i> Lista de sectores habilitados para empresas.</p>
                             </div>
                         </div>
@@ -136,12 +136,12 @@
                 // Management of Global State (JS Controller)
                 // This script handles the 'React-like' behavioral requirement using Vanilla JS
                 const configState = {
-                    emailContacto: "{{config.emailContacto}}",
-                    comisionPlataforma: parseFloat("{{config.comisionPlataforma}}") || 0,
-                    listaCategorias: `{{config.listaCategorias}}`,
-                    listaUnidades: `{{config.listaUnidades}}`,
-                    listaDisponibilidades: `{{config.listaDisponibilidades}}`,
-                    listaSectores: `{{config.listaSectores}}`
+                    contactEmail: "{{config.contactEmail}}",
+                    platformCommission: parseFloat("{{config.platformCommission}}") || 0,
+                    categoryList: `{{config.categoryList}}`,
+                    unitList: `{{config.unitList}}`,
+                    availabilityList: `{{config.availabilityList}}`,
+                    sectorList: `{{config.sectorList}}`
                 };
 
                 function handleSaveConfig(event) {

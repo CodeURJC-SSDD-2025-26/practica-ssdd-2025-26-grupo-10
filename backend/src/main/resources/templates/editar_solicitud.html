@@ -10,7 +10,7 @@
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2 text-dark fw-bold">Editar Demanda <span class="text-muted fs-6">#REQ-{{demanda.id}}</span></h1>
+                <h1 class="h2 text-dark fw-bold">Editar Demanda <span class="text-muted fs-6">#REQ-{{demand.id}}</span></h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <a href="/dashboard/mis-demandas" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-1"></i> Cancelar</a>
                 </div>
@@ -18,76 +18,76 @@
 
             <div class="card card-modern border-top-primary">
                 <div class="card-body p-4">
-                    {{#errores}}
+                    {{#errors}}
                     <div class="alert alert-danger d-flex align-items-center" role="alert">
                         <i class="fas fa-exclamation-triangle me-2"></i>
                         <span>{{defaultMessage}}</span>
                     </div>
-                    {{/errores}}
-                    <form action="/demandas/{{demanda.id}}/editar" method="POST" class="needs-validation" novalidate="">
+                    {{/errors}}
+                    <form action="/demandas/{{demand.id}}/editar" method="POST" class="needs-validation" novalidate="">
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                         <div class="row g-3">
                             <div class="col-md-8">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Título de lo que buscas <span class="text-danger">*</span></label>
-                                <input type="text" name="titulo" class="form-control {{#error_titulo}}is-invalid{{/error_titulo}}" value="{{demanda.titulo}}" required="">
+                                <input type="text" name="title" class="form-control {{#error_title}}is-invalid{{/error_title}}" value="{{demand.title}}" required="">
                                 <div class="invalid-feedback">Indica un título descriptivo.</div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Categoría <span class="text-danger">*</span></label>
-                                <select name="categoriaMaterial" class="form-select {{#error_categoriaMaterial}}is-invalid{{/error_categoriaMaterial}}" required="">
-                                    {{#opcionesCategoria}}
+                                <select name="materialCategory" class="form-select {{#error_materialCategory}}is-invalid{{/error_materialCategory}}" required="">
+                                    {{#categoryOptions}}
                                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                                    {{/opcionesCategoria}}
+                                    {{/categoryOptions}}
                                  </select>
                             </div>
 
                             <div class="col-12">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Descripción detallada <span class="text-danger">*</span></label>
-                                <textarea name="descripcion" class="form-control {{#error_descripcion}}is-invalid{{/error_descripcion}}" rows="4" required="">{{demanda.descripcion}}</textarea>
+                                <textarea name="description" class="form-control {{#error_description}}is-invalid{{/error_description}}" rows="4" required="">{{demand.description}}</textarea>
                                  <div class="invalid-feedback">La descripción es obligatoria.</div>
                             </div>
 
                              <div class="col-md-4">
                                  <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad requerida</label>
                                  <div class="input-group">
-                                     <input type="number" name="cantidad" class="form-control" value="{{demanda.cantidad}}" min="0">
-                                     <select name="unidad" class="form-select" style="max-width: 120px;" required>
-                                         {{#opcionesUnidad}}
+                                     <input type="number" name="quantity" class="form-control" value="{{demand.quantity}}" min="0">
+                                     <select name="unit" class="form-select" style="max-width: 120px;" required>
+                                         {{#unitOptions}}
                                          <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                                         {{/opcionesUnidad}}
+                                         {{/unitOptions}}
                                      </select>
                                  </div>
                              </div>
                             
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Urgencia</label>
-                                <select name="urgencia" class="form-select" required>
-                                    {{#opcionesUrgencia}}
+                                <select name="urgency" class="form-select" required>
+                                    {{#availabilityOptions}}
                                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                                    {{/opcionesUrgencia}}
+                                    {{/availabilityOptions}}
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Presupuesto máximo (€)</label>
-                                <input type="number" name="presupuestoMaximo" class="form-control" value="{{demanda.presupuestoMaximo}}" step="0.01" min="0">
+                                <input type="number" name="maxBudget" class="form-control" value="{{demand.maxBudget}}" step="0.01" min="0">
                             </div>
 
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Zona de Recogida</label>
-                                <input type="text" name="zonaRecogida" class="form-control" value="{{#demanda.zonaRecogida}}{{demanda.zonaRecogida}}{{/demanda.zonaRecogida}}">
+                                <input type="text" name="pickupZone" class="form-control" value="{{#demand.pickupZone}}{{demand.pickupZone}}{{/demand.pickupZone}}">
                             </div>
 
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Vigencia</label>
-                                <input type="text" name="vigencia" class="form-control" value="{{#demanda.vigencia}}{{demanda.vigencia}}{{/demanda.vigencia}}">
+                                <input type="text" name="validity" class="form-control" value="{{#demand.validity}}{{demand.validity}}{{/demand.validity}}">
                             </div>
 
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Estado</label>
-                                <select name="estado" class="form-select" required>
-                                    {{#opcionesEstado}}
+                                <select name="status" class="form-select" required>
+                                    {{#statusOptions}}
                                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                                    {{/opcionesEstado}}
+                                    {{/statusOptions}}
                                 </select>
                             </div>
 

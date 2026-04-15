@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a message exchanged between companies.
+ */
 @Entity
 public class Message {
 
@@ -19,7 +22,8 @@ public class Message {
     private String content;
 
     private LocalDateTime sendDate;
-
+    
+    @Column(name = "is_read")
     private boolean read;
 
     @ManyToOne

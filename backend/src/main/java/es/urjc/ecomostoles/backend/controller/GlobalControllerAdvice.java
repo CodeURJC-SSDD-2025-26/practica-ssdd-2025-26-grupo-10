@@ -26,8 +26,8 @@ public class GlobalControllerAdvice {
         this.configurationService = configurationService;
     }
 
-    @ModelAttribute("empresa")
-    public es.urjc.ecomostoles.backend.dto.CompanyDTO user(Principal principal) {
+    @ModelAttribute("company")
+    public es.urjc.ecomostoles.backend.dto.CompanyDTO getCompany(Principal principal) {
         if (principal == null) {
             return null;
         }
@@ -36,7 +36,7 @@ public class GlobalControllerAdvice {
                 .orElse(null);
     }
 
-    @ModelAttribute("totalMensajes")
+    @ModelAttribute("totalMessages")
     public int totalMessages(Principal principal) {
         if (principal == null) {
             return 0;
@@ -54,9 +54,9 @@ public class GlobalControllerAdvice {
         return java.time.LocalDate.now().getYear();
     }
 
-    @ModelAttribute("emailSoporte")
+    @ModelAttribute("supportEmail")
     public String supportEmail() {
-        return configurationService.getConfigurationValue("emailContacto", "soporte@ecomostoles.com");
+        return configurationService.getConfigurationValue("contactEmail", "soporte@ecomostoles.com");
     }
 
     @ModelAttribute("currentDate")
@@ -65,29 +65,29 @@ public class GlobalControllerAdvice {
                 .format(java.time.LocalDate.now());
     }
 
-    @ModelAttribute("listaUnidades")
-    public java.util.List<String> unitsList() {
-        return configurationService.getSanitizedList("listaUnidades");
+    @ModelAttribute("unitList")
+    public java.util.List<String> unitList() {
+        return configurationService.getSanitizedList("unitList");
     }
 
-    @ModelAttribute("listaDisponibilidades")
+    @ModelAttribute("availabilityList")
     public java.util.List<String> availabilityList() {
-        return configurationService.getSanitizedList("listaDisponibilidades");
+        return configurationService.getSanitizedList("availabilityList");
     }
 
-    @ModelAttribute("listaCategorias")
-    public java.util.List<String> categoriesList() {
-        return configurationService.getSanitizedList("listaCategorias");
+    @ModelAttribute("categoryList")
+    public java.util.List<String> categoryList() {
+        return configurationService.getSanitizedList("categoryList");
     }
 
-    @ModelAttribute("listaSectores")
-    public java.util.List<String> sectorsList() {
-        return configurationService.getSanitizedList("listaSectores");
+    @ModelAttribute("sectorList")
+    public java.util.List<String> sectorList() {
+        return configurationService.getSanitizedList("sectorList");
     }
 
-    @ModelAttribute("unidadPrincipal")
+    @ModelAttribute("mainUnit")
     public String mainUnit() {
-        java.util.List<String> units = configurationService.getSanitizedList("listaUnidades");
+        java.util.List<String> units = configurationService.getSanitizedList("unitList");
         return units.isEmpty() ? "kg" : units.get(0);
     }
 
@@ -101,9 +101,14 @@ public class GlobalControllerAdvice {
         return configurationService.getAutoValue("platformCity");
     }
 
+    @ModelAttribute("industrialAreaList")
+    public java.util.List<String> industrialAreaList() {
+        return configurationService.getSanitizedList("industrialAreaList");
+    }
+
     @ModelAttribute("platformLocation")
     public String platformLocation() {
-        return configurationService.getAutoValue("platformLocation");
+        return configurationService.getAutoValue("industrialAreaList").split("\\r?\\n")[0];
     }
 
     @ModelAttribute("isAdmin")
@@ -131,7 +136,7 @@ public class GlobalControllerAdvice {
         return configurationService.getAutoValue("platformStatus");
     }
 
-    @ModelAttribute("isEmpresa")
+    @ModelAttribute("isCompany")
     public boolean isCompany(Authentication auth) {
         return auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().contains("EMPRESA"));
     }

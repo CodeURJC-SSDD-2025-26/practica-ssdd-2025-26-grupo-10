@@ -18,7 +18,7 @@ public class FormOptionsHelper {
      */
     public static List<SelectOption> getUnitOptions(ConfigurationService configurationService,
             String selectedValue) {
-        List<String> units = configurationService.getSanitizedList("listaUnidades");
+        List<String> units = configurationService.getSanitizedList("unitList");
         List<SelectOption> options = new ArrayList<>();
         for (String unit : units) {
             options.add(new SelectOption(unit, unit, unit.equals(selectedValue)));

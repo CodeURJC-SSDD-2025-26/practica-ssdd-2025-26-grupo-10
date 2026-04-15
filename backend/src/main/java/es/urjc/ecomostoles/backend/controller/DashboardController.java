@@ -44,13 +44,13 @@ public class DashboardController {
             DashboardStatsDTO stats = dashboardService.getStats(company);
 
             // Injecting properties manually to keep the Mustache template flat as expected
-            model.addAttribute("esAdmin", stats.isAdmin());
-            model.addAttribute("totalOfertas", stats.getTotalOffers());
-            model.addAttribute("totalDemandas", stats.getTotalDemands());
-            model.addAttribute("acuerdosActivos", stats.getActiveAgreements());
+            model.addAttribute("isAdminView", stats.isAdmin());
+            model.addAttribute("totalOffers", stats.getTotalOffers());
+            model.addAttribute("totalDemands", stats.getTotalDemands());
+            model.addAttribute("activeAgreements", stats.getActiveAgreements());
             model.addAttribute("chartData", stats.getChartData());
-            model.addAttribute("materialReintroducido", stats.getReintroducedMaterial());
-            model.addAttribute("impactoCO2", stats.getCo2Impact());
+            model.addAttribute("reintroducedMaterial", stats.getReintroducedMaterial());
+            model.addAttribute("co2Impact", stats.getCo2Impact());
             model.addAttribute("smartRecommendations", stats.getSmartRecommendations());
             model.addAttribute("hasRecommendations", stats.isHasRecommendations());
 

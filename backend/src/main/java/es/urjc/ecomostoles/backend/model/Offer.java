@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 
 /**
- * Represents an Offer (Offer) in the domain model.
+ * Represents an Offer in the domain model.
  * Each offer is associated with a specific company (Company).
  */
 @Entity

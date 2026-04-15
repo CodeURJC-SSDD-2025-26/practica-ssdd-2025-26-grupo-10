@@ -144,7 +144,7 @@ public class AgreementController {
     @GetMapping("/acuerdo/{id}")
     public String showAgreementDetail(@PathVariable Long id, Model model, Principal principal) {
         Agreement agreement = agreementService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agreement not found"));
 
         String userEmail = principal.getName();
         Company loggedCompany = companyService.findByEmail(userEmail)
@@ -169,7 +169,7 @@ public class AgreementController {
     @GetMapping("/acuerdos/{id}/editar")
     public String showEditForm(@PathVariable Long id, Model model, Principal principal) {
         Agreement agreement = agreementService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agreement not found"));
 
         Company loggedCompany = companyService.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
@@ -201,7 +201,7 @@ public class AgreementController {
         }
 
         Agreement existingAgreement = agreementService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agreement not found"));
 
         Company loggedCompany = companyService.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
@@ -223,18 +223,18 @@ public class AgreementController {
     @PostMapping("/mis_acuerdos/eliminar/{id}")
     public String deleteAgreementAsUser(@PathVariable Long id, Principal principal) {
         Agreement agreement = agreementService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agreement not found"));
 
         Company loggedCompany = companyService.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
         if (!hasPermissionOverAgreement(agreement, loggedCompany, isAdminCompany(loggedCompany))) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para eliminar este acuerdo.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete this agreement.");
         }
 
         if (AgreementStatus.COMPLETED.equals(agreement.getStatus())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "No se pueden eliminar acuerdos ya completados para preservar el historial de impacto.");
+                    "Completed agreements cannot be deleted to preserve the historical impact data.");
         }
 
         agreementService.delete(id);

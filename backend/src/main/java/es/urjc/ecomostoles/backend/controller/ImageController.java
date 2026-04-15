@@ -98,7 +98,7 @@ public class ImageController {
                         .body(bytes);
             }
         } catch (Exception e) {
-            log.error("Error sirviendo la imagen", e);
+            log.error("Error serving the image", e);
         }
 
         // Final line of defense: return 404 so the browser/HTML handles the error

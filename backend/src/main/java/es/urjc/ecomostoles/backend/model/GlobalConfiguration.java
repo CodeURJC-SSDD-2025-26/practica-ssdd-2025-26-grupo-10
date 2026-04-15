@@ -13,7 +13,7 @@ public class GlobalConfiguration {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "config_key", unique = true, nullable = false)
     private String key;
 
     private String value;

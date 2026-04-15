@@ -26,7 +26,7 @@
                             <form action="/admin/usuarios" method="GET" class="d-flex">
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
-                                    <input type="text" name="search" class="form-control border-start-0 ps-0" id="buscarUsuario" placeholder="Buscar empresa, email o CIF..." aria-label="Buscar usuario" value="{{#searchQuery}}{{searchQuery}}{{/searchQuery}}">
+                                    <input type="text" name="search" class="form-control border-start-0 ps-0" id="buscarUsuario" placeholder="Buscar empresa, email o CIF..." aria-label="Buscar usuario" value="{{#search}}{{search}}{{/search}}">
                                     <button type="submit" class="btn btn-success ms-2 rounded-pill px-4 shadow-sm">Buscar</button>
                                 </div>
                             </form>
@@ -53,22 +53,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{#empresas}}
+                                {{#companies}}
                                 <tr>
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">
                                             <div class="avatar rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center me-3 border border-success border-opacity-25" style="width: 45px; height: 45px; font-weight: bold;">
                                                 <img src="/images/empresa/{{id}}" alt="" class="rounded-circle object-fit-cover w-100 h-100" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                                <span style="display:none;">{{inicial}}</span>
+                                                <span style="display:none;">{{initial}}</span>
                                             </div>
                                              <div>
-                                                 <a href="/perfil/{{id}}" class="fw-bold text-dark text-decoration-none text-hover-success">{{nombreComercial}}</a>
+                                                 <a href="/perfil/{{id}}" class="fw-bold text-dark text-decoration-none text-hover-success">{{commercialName}}</a>
                                                  <small class="text-muted d-block">ID: #USR-{{id}}</small>
                                              </div>
                                         </div>
                                     </td>
-                                    <td class="text-secondary">{{emailContacto}}</td>
-                                    <td class="text-secondary fw-bold">{{cif}}</td>
+                                    <td class="text-secondary">{{contactEmail}}</td>
+                                    <td class="text-secondary fw-bold">{{taxId}}</td>
                                     <td class="text-end pe-4">
                                               <div class="d-flex justify-content-center gap-2">
                                                   <a href="/admin/usuarios/editar/{{id}}" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0 fs-5" style="width: 45px; height: 45px; flex-shrink: 0;" title="Editar">
@@ -83,50 +83,22 @@
                                               </div>
                                      </td>
                                 </tr>
-                                {{/empresas}}
-                                {{^empresas}}
+                                {{/companies}}
+                                {{^companies}}
                                 <tr>
                                     <td colspan="4" class="text-center py-5 text-muted">
                                         <div class="mb-3"><i class="fas fa-user-slash fs-1 opacity-25"></i></div>
                                         <p class="mb-0">No se encontraron empresas registradas con ese criterio.</p>
                                     </td>
                                 </tr>
-                                {{/empresas}}
+                                {{/companies}}
                             </tbody>
                         </table>
                     </div>
                 </div>
 
                 <!-- Pagination Footer -->
-                {{#totalPages}}
-                <div class="card-footer bg-white border-top-0 p-4">
-                    <nav aria-label="Navegación de usuarios">
-                        <ul class="pagination pagination-rounded justify-content-center mb-0 gap-2">
-                            {{#hasPrevious}}
-                            <li class="page-item">
-                                <a class="page-link border-0 shadow-sm rounded-pill px-4" href="/admin/usuarios?page={{prevPage}}{{#searchQuery}}&search={{searchQuery}}{{/searchQuery}}">
-                                    <i class="fas fa-chevron-left me-2"></i> Anterior
-                                </a>
-                            </li>
-                            {{/hasPrevious}}
-                            
-                            <li class="page-item">
-                                <span class="page-link border-0 bg-success text-white shadow-sm rounded-pill px-4 fw-bold">
-                                    Página {{currentPage}} de {{totalPages}}
-                                </span>
-                            </li>
-                            
-                            {{#hasNext}}
-                            <li class="page-item">
-                                <a class="page-link border-0 shadow-sm rounded-pill px-4" href="/admin/usuarios?page={{nextPage}}{{#searchQuery}}&search={{searchQuery}}{{/searchQuery}}">
-                                    Siguiente <i class="fas fa-chevron-right ms-2"></i>
-                                </a>
-                            </li>
-                            {{/hasNext}}
-                        </ul>
-                    </nav>
-                </div>
-                {{/totalPages}}
+                {{> pagination_control}}
             </div>
 
         </main>

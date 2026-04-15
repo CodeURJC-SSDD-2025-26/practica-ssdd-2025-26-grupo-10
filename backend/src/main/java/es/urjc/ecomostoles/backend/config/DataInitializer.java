@@ -107,7 +107,7 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("════════════════════════════════════════════");
-        log.info("  DataInitializer — Práctica 2 SSDD");
+        log.info("  DataInitializer — Practice 2 SSDD");
         log.info("════════════════════════════════════════════");
 
         // ══════════════════════════════════════════
@@ -115,13 +115,13 @@ public class DataInitializer implements CommandLineRunner {
         // ══════════════════════════════════════════
         if (impactFactorRepository.count() == 0) {
             log.info("🌱 Seeding environmental impact factors...");
-            impactFactorRepository.save(new ImpactFactor("plástico", 1.5));
+            impactFactorRepository.save(new ImpactFactor("plastic", 1.5));
             impactFactorRepository.save(new ImpactFactor("metal", 2.0));
-            impactFactorRepository.save(new ImpactFactor("aluminio", 2.0));
-            impactFactorRepository.save(new ImpactFactor("acero", 2.0));
-            impactFactorRepository.save(new ImpactFactor("madera", 0.8));
-            impactFactorRepository.save(new ImpactFactor("vidrio", 1.2));
-            impactFactorRepository.save(new ImpactFactor("papel/cartón", 1.1));
+            impactFactorRepository.save(new ImpactFactor("aluminum", 2.0));
+            impactFactorRepository.save(new ImpactFactor("steel", 2.0));
+            impactFactorRepository.save(new ImpactFactor("wood", 0.8));
+            impactFactorRepository.save(new ImpactFactor("glass", 1.2));
+            impactFactorRepository.save(new ImpactFactor("paper/cardboard", 1.1));
             log.info("✅ {} factors created.", impactFactorRepository.count());
         }
 
@@ -294,8 +294,8 @@ public class DataInitializer implements CommandLineRunner {
             agreement1.setPickupDate(java.time.LocalDate.now().minusDays(1));
             agreement1.setOriginCompany(company1);
             agreement1.setDestinationCompany(company2);
-            // Calculate platform benefit (2.5% default)
-            agreement1.setPlatformBenefit(Math.round(1200.0 * 0.025 * 100.0) / 100.0);
+            // Calculate platform commission (2.5% default)
+            agreement1.setPlatformCommission(Math.round(1200.0 * 0.025 * 100.0) / 100.0);
 
             // Calculate initial CO2 impact (Steel/Metal ~ 2.0)
             agreement1.setCo2Impact(sustainabilityEngine.calculateCo2Impact(agreement1.getQuantity(), "Metal"));

@@ -65,11 +65,11 @@ public class MyOffersController {
     private Offer verifyOwnership(Long offerId, Principal principal) {
         Offer offer = offerService.findById(offerId)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Oferta no encontrada: " + offerId));
+                        HttpStatus.NOT_FOUND, "Offer not found: " + offerId));
 
         Company loggedCompany = companyService.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
+                        HttpStatus.UNAUTHORIZED, "User not found"));
 
         boolean isAdmin = loggedCompany.getRoles() != null
                 && loggedCompany.getRoles().contains("ADMIN");
@@ -78,7 +78,7 @@ public class MyOffersController {
 
         if (!isAdmin && !isOwner) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "No tienes permiso para modificar esta oferta.");
+                    "You do not have permission to modify this offer.");
         }
 
         return offer;
@@ -93,12 +93,12 @@ public class MyOffersController {
         Optional<Company> companyOpt = companyService.findByEmail(principal.getName());
         if (companyOpt.isPresent()) {
             Company company = companyOpt.get();
-            model.addAttribute("activeOfertas", true);
+            model.addAttribute("activeOffers", true);
             model.addAttribute("isDashboard", true);
 
             Page<OfferSummary> offerPage = offerService.getByCompanyPaginated(company, pageable);
-            model.addAttribute("ofertas", offerPage.getContent());
-            model.addAttribute("hasOfertas", !offerPage.isEmpty());
+            model.addAttribute("offers", offerPage.getContent());
+            model.addAttribute("hasOffers", !offerPage.isEmpty());
 
             // Pagination metadata
             model.addAttribute("currentPage", offerPage.getNumber() + 1);
@@ -110,18 +110,18 @@ public class MyOffersController {
             model.addAttribute("totalItems", offerPage.getTotalElements());
 
             // Dynamic base URL for pagination partial
-            model.addAttribute("pagBaseUrl", "/dashboard/mis-ofertas");
-            model.addAttribute("pagQueryString", "");
+            model.addAttribute("paginationBaseUrl", "/dashboard/mis-offers");
+            model.addAttribute("paginationQueryString", "");
 
             // KPI stats based on ALL user offers (for consistency)
             List<OfferSummary> allMyOffers = offerService.getByCompany(company);
-            model.addAttribute("totalActivas",
-                    allMyOffers.stream().filter(o -> "ACTIVA".equals(o.getStatus().toString())).count());
-            model.addAttribute("totalPausadas",
-                    allMyOffers.stream().filter(o -> "PAUSADA".equals(o.getStatus().toString())).count());
-            model.addAttribute("totalNegociacion",
-                    allMyOffers.stream().filter(o -> "EN_NEGOCIACION".equals(o.getStatus().toString())).count());
-            model.addAttribute("totalVisitas", allMyOffers.stream().mapToInt(OfferSummary::getVisits).sum());
+            model.addAttribute("activeTotal",
+                    allMyOffers.stream().filter(o -> "ACTIVE".equals(o.getStatus().name())).count());
+            model.addAttribute("pausedTotal",
+                    allMyOffers.stream().filter(o -> "PAUSED".equals(o.getStatus().name())).count());
+            model.addAttribute("negotiationTotal",
+                    allMyOffers.stream().filter(o -> "IN_NEGOTIATION".equals(o.getStatus().name())).count());
+            model.addAttribute("totalVisits", allMyOffers.stream().mapToInt(OfferSummary::getVisits).sum());
 
             return "mis_activos";
         }
@@ -135,9 +135,9 @@ public class MyOffersController {
     public String showNewOfferForm(Model model, Principal principal) {
         Optional<Company> companyOpt = companyService.findByEmail(principal.getName());
         if (companyOpt.isPresent()) {
-            model.addAttribute("activeNuevaOferta", true);
+            model.addAttribute("activeNewOffer", true);
             model.addAttribute("isDashboard", true);
-            model.addAttribute("oferta", new Offer());
+            model.addAttribute("offer", new Offer());
             injectDynamicOptions(model);
             return "crear_activo";
         }
@@ -145,17 +145,17 @@ public class MyOffersController {
     }
 
     private void injectDynamicOptions(Model model) {
-        model.addAttribute("listaCategorias", configurationService.getSanitizedList("listaCategorias"));
-        model.addAttribute("listaUnidades", configurationService.getSanitizedList("listaUnidades"));
-        model.addAttribute("listaDisponibilidades",
-                configurationService.getSanitizedList("listaDisponibilidades"));
+        model.addAttribute("categoryList", configurationService.getSanitizedList("categoryList"));
+        model.addAttribute("unitList", configurationService.getSanitizedList("unitList"));
+        model.addAttribute("availabilityList",
+                configurationService.getSanitizedList("availabilityList"));
     }
 
     // -------------------------------------------------------------------------
     // POST /oferta/nueva — Create new offer with Bean Validation
     // -------------------------------------------------------------------------
     @PostMapping("/oferta/nueva")
-    public String saveNewOffer(@Valid @ModelAttribute("oferta") Offer offer,
+    public String saveNewOffer(@Valid @ModelAttribute("offer") Offer offer,
             BindingResult result,
             @RequestParam(required = false) MultipartFile imageFile,
             Model model,
@@ -163,8 +163,8 @@ public class MyOffersController {
 
         if (result.hasErrors()) {
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
-            model.addAttribute("errores", result.getAllErrors());
-            model.addAttribute("oferta", offer);
+            model.addAttribute("errors", result.getAllErrors());
+            model.addAttribute("offer", offer);
             injectDynamicOptions(model);
             return "crear_activo";
         }
@@ -205,35 +205,35 @@ public class MyOffersController {
     private void loadSelectOptions(Model model, Offer offer) {
         // Dynamic Select Options for status
         List<SelectOption> statusOptions = new ArrayList<>();
-        statusOptions.add(new SelectOption("ACTIVA", "ACTIVA",
-                "ACTIVA".equals(offer.getStatus() != null ? offer.getStatus().toString() : "")));
-        statusOptions.add(new SelectOption("PAUSADA", "PAUSADA",
-                "PAUSADA".equals(offer.getStatus() != null ? offer.getStatus().toString() : "")));
-        model.addAttribute("opcionesEstado", statusOptions);
+        statusOptions.add(new SelectOption("ACTIVE", "ACTIVA",
+                "ACTIVE".equals(offer.getStatus() != null ? offer.getStatus().name() : "")));
+        statusOptions.add(new SelectOption("PAUSED", "PAUSADA",
+                "PAUSED".equals(offer.getStatus() != null ? offer.getStatus().name() : "")));
+        model.addAttribute("statusOptions", statusOptions);
 
         // Dynamic Categories
-        List<String> categories = configurationService.getSanitizedList("listaCategorias");
-        List<SelectOption> typeOptions = new ArrayList<>();
+        List<String> categories = configurationService.getSanitizedList("categoryList");
+        List<SelectOption> categoryOptions = new ArrayList<>();
         for (String cat : categories) {
-            typeOptions.add(new SelectOption(cat, cat, cat.equals(offer.getWasteType())));
+            categoryOptions.add(new SelectOption(cat, cat, cat.equals(offer.getWasteType())));
         }
-        model.addAttribute("opcionesTipo", typeOptions);
+        model.addAttribute("categoryOptions", categoryOptions);
 
         // Dynamic Units
-        List<String> unitsList = configurationService.getSanitizedList("listaUnidades");
+        List<String> unitsList = configurationService.getSanitizedList("unitList");
         List<SelectOption> unitOptions = new ArrayList<>();
         for (String u : unitsList) {
             unitOptions.add(new SelectOption(u, u, u.equals(offer.getUnit())));
         }
-        model.addAttribute("opcionesUnidad", unitOptions);
+        model.addAttribute("unitOptions", unitOptions);
 
         // Dynamic Availability
-        List<String> availabilityList = configurationService.getSanitizedList("listaDisponibilidades");
+        List<String> availabilityList = configurationService.getSanitizedList("availabilityList");
         List<SelectOption> availabilityOptions = new ArrayList<>();
         for (String d : availabilityList) {
             availabilityOptions.add(new SelectOption(d, d, d.equals(offer.getAvailability())));
         }
-        model.addAttribute("opcionesDisponibilidad", availabilityOptions);
+        model.addAttribute("availabilityOptions", availabilityOptions);
     }
 
     // -------------------------------------------------------------------------
@@ -244,7 +244,7 @@ public class MyOffersController {
             Model model,
             Principal principal) {
         Offer offer = verifyOwnership(id, principal);
-        model.addAttribute("oferta", offer);
+        model.addAttribute("offer", offer);
         model.addAttribute("isDashboard", true);
 
         loadSelectOptions(model, offer);
@@ -257,7 +257,7 @@ public class MyOffersController {
     // -------------------------------------------------------------------------
     @PostMapping("/ofertas/{id}/editar")
     public String saveOfferChanges(@PathVariable Long id,
-            @Valid @ModelAttribute("oferta") Offer offerForm,
+            @Valid @ModelAttribute("offer") Offer offerForm,
             BindingResult result,
             @RequestParam(required = false) MultipartFile imageFile,
             Model model,
@@ -270,8 +270,8 @@ public class MyOffersController {
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             loadSelectOptions(model, offerForm);
 
-            model.addAttribute("errores", result.getAllErrors());
-            model.addAttribute("oferta", offerForm);
+            model.addAttribute("errors", result.getAllErrors());
+            model.addAttribute("offer", offerForm);
             offerForm.setId(id);
             return "editar_activo";
         }

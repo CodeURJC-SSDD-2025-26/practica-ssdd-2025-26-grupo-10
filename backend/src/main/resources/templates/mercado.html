@@ -5,12 +5,12 @@
 <div class="container-fluid px-4 px-lg-5 py-5 mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-12">
-            {{#errorAutoAcuerdo}}
+            {{#autoAgreementError}}
             <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
-                <i class="fas fa-exclamation-triangle me-2"></i> {{errorAutoAcuerdo}}
+                <i class="fas fa-exclamation-triangle me-2"></i> {{autoAgreementError}}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            {{/errorAutoAcuerdo}}
+            {{/autoAgreementError}}
 
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
                 <div class="card-header bg-success text-white py-4 text-center">
@@ -20,30 +20,30 @@
                 
                 <div class="card-body p-4 p-lg-5">
                     <div class="row g-4">
-                        {{#ofertas}}
+                        {{#offers}}
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="card h-100 border-0 shadow-sm card-hover">
-                                <img src="/images/oferta/{{id}}" class="card-img-top" style="height:180px;object-fit:cover;" alt="{{titulo}}" onerror="this.src='/img/logo.webp';">
+                                <img src="/images/oferta/{{id}}" class="card-img-top" style="height:180px;object-fit:cover;" alt="{{title}}" onerror="this.src='/img/logo.webp';">
                                 <div class="card-body">
-                                    <h5 class="card-title fw-bold text-dark">{{titulo}}</h5>
-                                    <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> {{empresa.nombreComercial}}</p>
+                                    <h5 class="card-title fw-bold text-dark">{{title}}</h5>
+                                    <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> {{company.commercialName}}</p>
                                     <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <span class="badge bg-success-soft text-success">{{cantidadFormateada}} {{unidad}}</span>
+                                        <span class="badge bg-success-soft text-success">{{formattedQuantity}} {{unit}}</span>
                                         <a href="/oferta/{{id}}" class="btn btn-outline-success btn-sm rounded-pill">Ver detalles</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        {{/ofertas}}
+                        {{/offers}}
                         
-                        {{^ofertas}}
+                        {{^offers}}
                         <div class="col-12 text-center py-5">
                             <i class="fas fa-search fs-1 text-muted mb-3 d-block opacity-25"></i>
                             <h4 class="text-muted">No hay ofertas activas en este momento</h4>
                             <p class="text-muted">¡Sé el primero en publicar un activo!</p>
                             <a href="/oferta/nueva" class="btn btn-success rounded-pill px-4">Publicar Oferta</a>
                         </div>
-                        {{/ofertas}}
+                        {{/offers}}
                     </div>
 
                     <!-- Pagination component -->

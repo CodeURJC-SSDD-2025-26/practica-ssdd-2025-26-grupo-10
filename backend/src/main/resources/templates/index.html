@@ -18,7 +18,7 @@
     </header>
 
     <!-- Featured Offers Grid -->
-    <section id="ofertas" class="py-5 bg-white">
+    <section id="offers" class="py-5 bg-white">
         <div class="container">
             <div class="d-flex justify-content-between align-items-end mb-5">
                 <div>
@@ -29,30 +29,30 @@
             </div>
 
             <div class="row g-4">
-                {{#ofertasRecientes}}
+                {{#recentOffers}}
                 <div class="col-md-4">
                     <div class="card h-100 border-0 shadow-sm card-hover rounded-4 overflow-hidden">
                         <div class="position-relative">
-                            <img src="/images/oferta/{{id}}" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{titulo}}" onerror="this.src='/img/logo.webp';">
-                            <span class="badge bg-success position-absolute top-0 end-0 m-3 shadow-sm px-3 py-2 rounded-pill">{{categoria}}</span>
+                            <img src="/images/oferta/{{id}}" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{title}}" onerror="this.src='/img/logo.webp';">
+                            <span class="badge bg-success position-absolute top-0 end-0 m-3 shadow-sm px-3 py-2 rounded-pill">{{category}}</span>
                         </div>
                         <div class="card-body p-4">
-                            <h5 class="card-title fw-bold text-dark mb-2">{{titulo}}</h5>
+                            <h5 class="card-title fw-bold text-dark mb-2">{{title}}</h5>
                             <div class="d-flex align-items-center mb-3 text-muted small">
-                                <i class="fas fa-industry me-2 text-success"></i> {{empresa.nombreComercial}}
+                                <i class="fas fa-industry me-2 text-success"></i> {{company.commercialName}}
                             </div>
-                            <p class="card-text text-secondary line-clamp-2 small mb-4">{{descripcion}}</p>
+                            <p class="card-text text-secondary line-clamp-2 small mb-4">{{description}}</p>
                             
                             <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-                                <span class="h5 fw-bold text-success mb-0">{{cantidad}} {{unidad}}</span>
+                                <span class="h5 fw-bold text-success mb-0">{{quantity}} {{unit}}</span>
                                 <a href="/oferta/{{id}}" class="btn btn-primary btn-sm rounded-pill px-3">Ver Detalles</a>
                             </div>
                         </div>
                     </div>
                 </div>
-                {{/ofertasRecientes}}
+                {{/recentOffers}}
 
-                {{^ofertasRecientes}}
+                {{^recentOffers}}
                 <div class="col-12 text-center py-5">
                     <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 100px; height: 100px;">
                         <i class="fas fa-box-open fs-1 text-muted"></i>
@@ -61,7 +61,7 @@
                     <p class="text-muted mx-auto" style="max-width: 500px;">Las ofertas aparecerán aquí en cuanto las empresas del área comiencen a publicar sus excedentes.</p>
                     <a href="/registro" class="btn btn-success mt-3 rounded-pill px-4">¡Sé el primero en publicar!</a>
                 </div>
-                {{/ofertasRecientes}}
+                {{/recentOffers}}
             </div>
         </div>
     </section>
@@ -71,11 +71,11 @@
         <div class="container py-4">
             <div class="row g-4 text-center">
                 <div class="col-md-4">
-                    <div class="h1 fw-bold text-success mb-0">+{{totalEmpresas}}</div>
+                    <div class="h1 fw-bold text-success mb-0">+{{totalCompanies}}</div>
                     <p class="text-muted fw-bold text-uppercase small">Empresas Unidas</p>
                 </div>
                 <div class="col-md-4 border-start border-end">
-                    <div class="h1 fw-bold text-success mb-0">+{{totalOfertas}}</div>
+                    <div class="h1 fw-bold text-success mb-0">+{{totalOffers}}</div>
                     <p class="text-muted fw-bold text-uppercase small">Recursos Reciclados</p>
                 </div>
                 <div class="col-md-4">

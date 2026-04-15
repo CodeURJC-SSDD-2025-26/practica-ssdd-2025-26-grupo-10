@@ -50,7 +50,7 @@ public class SustainabilityEngine {
             factor = Double.parseDouble(factorStr);
         } catch (NumberFormatException | NullPointerException e) {
             log.warn(
-                    "⚠️ ERROR CRÍTICO DE CONFIGURACIÓN: El factor 'CO2_FACTOR' en BD ('{}') no es un número válido. Usando valor inyectado de seguridad: {}. Fallo: {}",
+                    "⚠️ CRITICAL CONFIGURATION ERROR: The 'CO2_FACTOR' factor in DB ('{}') is not a valid number. Using safety injected value: {}. Failure: {}",
                     factorStr, defaultCo2Factor, e.getMessage());
             factor = defaultCo2Factor;
         }

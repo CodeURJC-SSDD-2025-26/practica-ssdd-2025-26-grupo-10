@@ -16,8 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller to handle reading and listing messages.
@@ -48,7 +48,7 @@ public class MessageController {
         public String showMessages(Model model, Principal principal) {
                 Company company = companyService.findByEmail(principal.getName())
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "Recurso no encontrado"));
+                                                "Resource not found"));
 
                 model.addAttribute("activeMensajes", true);
                 model.addAttribute("isDashboard", true);
@@ -57,9 +57,9 @@ public class MessageController {
                 List<Message> received = messageService.getByRecipient(company);
                 List<Message> sent = messageService.getBySender(company);
 
-                model.addAttribute("mensajesRecibidos", received);
-                model.addAttribute("mensajesEnviados", sent);
-                model.addAttribute("mensajes", received); // for backward compatibility in templates if needed
+                model.addAttribute("receivedMessages", received);
+                model.addAttribute("sentMessages", sent);
+                model.addAttribute("messages", received); // for backward compatibility in templates if needed
 
                 return "mensajes";
         }
@@ -71,11 +71,11 @@ public class MessageController {
         public String showMessageDetail(@PathVariable Long id, Model model, Principal principal) {
                 Message message = messageService.findById(id)
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "Mensaje no encontrado"));
+                                                "Message not found"));
 
                 Company company = companyService.findByEmail(principal.getName())
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "Empresa no encontrada"));
+                                                "Company not found"));
 
                 // Security: Only the sender or the recipient can view the message
                 boolean isRecipient = message.getRecipient().getId().equals(company.getId());
@@ -91,8 +91,8 @@ public class MessageController {
                         messageService.save(message);
                 }
 
-                model.addAttribute("mensaje", message);
-                model.addAttribute("esRecibido", isRecipient);
+                model.addAttribute("message", message);
+                model.addAttribute("isReceived", isRecipient);
                 model.addAttribute("isDashboard", true);
 
                 return "detalle_mensaje";
@@ -101,15 +101,15 @@ public class MessageController {
         /**
          * Sends a message to the owner of an offer.
          */
-        @PostMapping("/mensajes/enviar/{ofertaId}")
+        @PostMapping("/mensajes/enviar/{offerId}")
         public String sendOfferMessage(@PathVariable Long offerId, @RequestParam String content,
-                        Principal principal) {
+                Principal principal) {
                 Offer offer = offerService.findById(offerId)
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "Oferta no encontrada"));
+                                                "Offer not found"));
                 Company sender = companyService.findByEmail(principal.getName())
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "Remitente no encontrado"));
+                                                "Sender not found"));
 
                 Company recipient = offer.getCompany();
                 String subject = "Re: " + offer.getTitle();
@@ -126,12 +126,13 @@ public class MessageController {
         public String newMessage(@RequestParam Long recipientId,
                         @RequestParam(required = false) String subject,
                         Model model, Principal principal) {
-                Company recipient = companyService.findById(recipientId)
-                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "Empresa receptora no encontrada"));
+                Optional<Company> recipientOpt = companyService.findById(recipientId);
+                if (recipientOpt.isEmpty()) {
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipient company not found");
+                }
 
-                model.addAttribute("receptor", recipient);
-                model.addAttribute("asunto", subject != null ? subject : "");
+                model.addAttribute("recipient", recipientOpt.get());
+                model.addAttribute("subject", subject != null ? subject : "");
                 model.addAttribute("isDashboard", true);
                 return "redactar_mensaje";
         }
@@ -146,13 +147,13 @@ public class MessageController {
                         Principal principal) {
                 Company sender = companyService.findByEmail(principal.getName())
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "Remitente no encontrado"));
+                                                "Sender not found"));
                 Company recipient = companyService.findById(recipientId)
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "Destinatario no encontrado"));
+                                                "Recipient not found"));
 
                 messageService.sendMessage(subject, content, sender, recipient);
-                return "redirect:/mensajes?exito=true";
+                return "redirect:/mensajes?success=true";
         }
 
         /**
@@ -162,7 +163,7 @@ public class MessageController {
         public String deleteMessage(@PathVariable Long id, Principal principal) {
                 Message message = messageService.findById(id)
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "Mensaje no encontrado"));
+                                                "Message not found"));
 
                 // IDOR protection: only sender or recipient can delete
                 // principal.getName() is the email (standard in this project)
@@ -174,6 +175,6 @@ public class MessageController {
                 }
 
                 messageService.delete(id);
-                return "redirect:/mensajes?exito=true";
+                return "redirect:/mensajes?success=true";
         }
 }

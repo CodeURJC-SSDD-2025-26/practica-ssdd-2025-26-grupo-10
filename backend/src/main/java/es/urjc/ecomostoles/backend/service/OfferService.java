@@ -99,7 +99,7 @@ public class OfferService {
         if (agreementRepository.countByOfferId(id) > 0) {
             throw new org.springframework.web.server.ResponseStatusException(
                     org.springframework.http.HttpStatus.BAD_REQUEST,
-                    "No se puede eliminar porque tiene acuerdos asociados");
+                    "Cannot be deleted because it has associated agreements");
         }
         offerRepository.deleteById(id);
     }

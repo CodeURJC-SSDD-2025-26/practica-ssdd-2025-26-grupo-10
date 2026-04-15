@@ -24,13 +24,13 @@
                     <div class="row g-3">
                         <div class="col-md-3">
                             <div class="border rounded-4 p-3 text-center bg-light">
-                                <h4 class="fw-bold text-success mb-0">{{#totalDemandasActivas}}{{totalDemandasActivas}}{{/totalDemandasActivas}}{{^totalDemandasActivas}}0{{/totalDemandasActivas}}</h4>
+                                <h4 class="fw-bold text-success mb-0">{{#totalActiveDemands}}{{totalActiveDemands}}{{/totalActiveDemands}}{{^totalActiveDemands}}0{{/totalActiveDemands}}</h4>
                                 <small class="text-muted fw-bold text-uppercase small">Activas</small>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="border rounded-4 p-3 text-center bg-light">
-                                <h4 class="fw-bold text-primary mb-0">{{#totalInteresados}}{{totalInteresados}}{{/totalInteresados}}{{^totalInteresados}}0{{/totalInteresados}}</h4>
+                                <h4 class="fw-bold text-primary mb-0">{{#totalInterested}}{{totalInterested}}{{/totalInterested}}{{^totalInterested}}0{{/totalInterested}}</h4>
                                 <small class="text-muted fw-bold text-uppercase small">Interesados</small>
                             </div>
                         </div>
@@ -56,14 +56,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{#demandas}}
+                                {{#demands}}
                                 <tr>
                                     <td class="ps-4">
-                                        <div class="fw-bold text-dark">{{titulo}}</div>
-                                        <small class="text-muted text-uppercase small">{{categoriaMaterial}}</small>
+                                        <div class="fw-bold text-dark">{{title}}</div>
+                                        <small class="text-muted text-uppercase small">{{materialCategory}}</small>
                                     </td>
-                                    <td class="text-secondary small fw-bold">{{empresa.nombreComercial}}</td>
-                                    <td class="text-secondary fw-bold">{{cantidad}} {{unidad}}</td>
+                                    <td class="text-secondary small fw-bold">{{company.commercialName}}</td>
+                                    <td class="text-secondary fw-bold">{{quantity}} {{unit}}</td>
                                     <td class="text-end pe-4">
                                         <div class="d-flex justify-content-center gap-2">
                                             <a href="/admin/demandas/ver/{{id}}" class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center p-0 fs-5" style="width: 45px; height: 45px; flex-shrink: 0;" title="Ver Detalle">
@@ -81,50 +81,22 @@
                                         </div>
                                     </td>
                                 </tr>
-                                {{/demandas}}
-                                {{^demandas}}
+                                {{/demands}}
+                                {{^demands}}
                                 <tr>
                                     <td colspan="4" class="text-center py-5 text-muted">
                                         <div class="mb-3"><i class="fas fa-bullhorn fs-1 opacity-25"></i></div>
                                         <p class="mb-0">No hay demandas registradas.</p>
                                     </td>
                                 </tr>
-                                {{/demandas}}
+                                {{/demands}}
                             </tbody>
                         </table>
                     </div>
                 </div>
                 
                 <!-- Pagination Footer -->
-                {{#totalPages}}
-                <div class="card-footer bg-white border-top-0 p-4">
-                    <nav aria-label="Navegación de demandas">
-                        <ul class="pagination pagination-rounded justify-content-center mb-0 gap-2">
-                            {{#hasPrevious}}
-                            <li class="page-item">
-                                <a class="page-link border-0 shadow-sm rounded-pill px-4" href="/admin/demandas?page={{prevPage}}">
-                                    <i class="fas fa-chevron-left me-2"></i> Anterior
-                                </a>
-                            </li>
-                            {{/hasPrevious}}
-                            
-                            <li class="page-item">
-                                <span class="page-link border-0 bg-success text-white shadow-sm rounded-pill px-4 fw-bold">
-                                    Página {{currentPage}} de {{totalPages}}
-                                </span>
-                            </li>
-                            
-                            {{#hasNext}}
-                            <li class="page-item">
-                                <a class="page-link border-0 shadow-sm rounded-pill px-4" href="/admin/demandas?page={{nextPage}}">
-                                    Siguiente <i class="fas fa-chevron-right ms-2"></i>
-                                </a>
-                            </li>
-                            {{/hasNext}}
-                        </ul>
-                    </nav>
-                </div>
-                {{/totalPages}}
+                {{> pagination_control}}
             </section>
 
         </main>

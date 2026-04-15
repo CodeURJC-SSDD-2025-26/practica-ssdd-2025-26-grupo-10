@@ -6,7 +6,7 @@
         <!-- Previous Button -->
         {{#hasPrev}}
         <li class="page-item">
-            <a class="page-link border-0 shadow-sm rounded-pill px-4" href="{{pagBaseUrl}}?page={{prevPage}}{{pagQueryString}}">
+            <a class="page-link border-0 shadow-sm rounded-pill px-4" href="{{paginationBaseUrl}}?page={{prevPage}}{{paginationQueryString}}">
                 <i class="fas fa-chevron-left me-2"></i> Anterior
             </a>
         </li>
@@ -29,7 +29,7 @@
         <!-- Next Button -->
         {{#hasNext}}
         <li class="page-item">
-            <a class="page-link border-0 shadow-sm rounded-pill px-4" href="{{pagBaseUrl}}?page={{nextPage}}{{pagQueryString}}">
+            <a class="page-link border-0 shadow-sm rounded-pill px-4" href="{{paginationBaseUrl}}?page={{nextPage}}{{paginationQueryString}}">
                 Siguiente <i class="fas fa-chevron-right ms-2"></i>
             </a>
         </li>

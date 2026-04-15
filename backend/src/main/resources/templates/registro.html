@@ -31,11 +31,11 @@
                     </div>
                     {{/hasErrors}}
 
-                    {{#err_global}}
+                    {{#error_global}}
                     <div class="alert alert-danger py-2 small fw-bold text-center" role="alert">
-                        <i class="fas fa-exclamation-triangle me-1"></i> {{err_global}}
+                        <i class="fas fa-exclamation-triangle me-1"></i> {{error_global}}
                     </div>
-                    {{/err_global}}
+                    {{/error_global}}
 
                     <form action="/registro" method="POST" enctype="multipart/form-data" class="needs-validation">
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
@@ -44,39 +44,39 @@
                                 <label for="nombreEmpresa"
                                     class="form-label fw-bold small text-uppercase text-secondary">Nombre
                                     Comercial</label>
-                                <input type="text" name="nombreComercial"
-                                    class="form-control {{#err_nombreComercial}}is-invalid{{/err_nombreComercial}}"
+                                <input type="text" name="commercialName"
+                                    class="form-control {{#error_commercialName}}is-invalid{{/error_commercialName}}"
                                     id="nombreEmpresa" placeholder="Ej. Metales del Sur S.L."
-                                    value="{{#registroDTO.nombreComercial}}{{registroDTO.nombreComercial}}{{/registroDTO.nombreComercial}}"
+                                    value="{{#registrationDTO.commercialName}}{{registrationDTO.commercialName}}{{/registrationDTO.commercialName}}"
                                     required="">
-                                {{#err_nombreComercial}}<div class="invalid-feedback">{{err_nombreComercial}}</div>
-                                {{/err_nombreComercial}}
+                                {{#error_commercialName}}<div class="invalid-feedback">{{error_commercialName}}</div>
+                                {{/error_commercialName}}
                             </div>
 
                             <div class="col-md-6">
-                                <label for="cif" class="form-label fw-bold small text-uppercase text-secondary">CIF /
+                                <label for="taxId" class="form-label fw-bold small text-uppercase text-secondary">CIF /
                                     NIF</label>
-                                <input type="text" name="cif" class="form-control {{#err_cif}}is-invalid{{/err_cif}}"
-                                    id="cif" placeholder="B-12345678"
-                                    value="{{#registroDTO.cif}}{{registroDTO.cif}}{{/registroDTO.cif}}" required="">
-                                {{#err_cif}}<div class="invalid-feedback">{{err_cif}}</div>{{/err_cif}}
+                                <input type="text" name="taxId" class="form-control {{#error_taxId}}is-invalid{{/error_taxId}}"
+                                    id="taxId" placeholder="B-12345678"
+                                    value="{{#registrationDTO.taxId}}{{registrationDTO.taxId}}{{/registrationDTO.taxId}}" required="">
+                                {{#error_taxId}}<div class="invalid-feedback">{{error_taxId}}</div>{{/error_taxId}}
                             </div>
 
                             <div class="col-12">
                                 <label for="direccion"
                                     class="form-label fw-bold small text-uppercase text-secondary">Dirección /
                                     Polígono</label>
-                                <select name="direccion"
-                                    class="form-select {{#err_direccion}}is-invalid{{/err_direccion}}" id="direccion"
+                                <select name="address"
+                                    class="form-select {{#error_address}}is-invalid{{/error_address}}" id="direccion"
                                     required="">
-                                    {{#poligonos}}
+                                    {{#industrialAreaList}}
                                     <option value="{{.}}">{{.}}</option>
-                                    {{/poligonos}}
+                                    {{/industrialAreaList}}
                                 </select>
-                                <input type="text" id="direccionOtro" name="direccionOtro"
+                                <input type="text" id="otherAddress" name="otherAddress"
                                     class="form-control d-none mt-2" placeholder="Especifica tu ubicación...">
-                                {{#err_direccion}}<div class="invalid-feedback">{{err_direccion}}</div>
-                                {{/err_direccion}}
+                                {{#error_address}}<div class="invalid-feedback">{{error_address}}</div>
+                                {{/error_address}}
                             </div>
 
                             <div class="col-md-6">
@@ -86,52 +86,52 @@
                                 <select name="sector" class="form-select {{#err_sector}}is-invalid{{/err_sector}}"
                                     id="sector" required="">
                                     <option value="" selected="" disabled="">Seleccionar sector industrial...</option>
-                                    {{#listaSectores}}
+                                    {{#sectorList}}
                                     <option value="{{name}}">{{display}}</option>
-                                    {{/listaSectores}}
-                                    {{^listaSectores}}
-                                    {{#sectores}}
+                                    {{/sectorList}}
+                                    {{^sectorList}}
+                                    {{#sectorList}}
                                     <option value="{{.}}">{{.}}</option>
-                                    {{/sectores}}
-                                    {{/listaSectores}}
+                                    {{/sectorList}}
+                                    {{/sectorList}}
                                 </select>
-                                {{#err_sector}}<div class="invalid-feedback">{{err_sector}}</div>{{/err_sector}}
+                                {{#error_sector}}<div class="invalid-feedback">{{error_sector}}</div>{{/error_sector}}
                             </div>
 
                             <div class="col-md-6">
                                 <label for="email" class="form-label fw-bold small text-uppercase text-secondary">Email de Contacto</label>
-                                <input type="email" name="emailContacto" class="form-control {{#err_emailContacto}}is-invalid{{/err_emailContacto}}" id="email" placeholder="contacto@empresa.com" value="{{#registroDTO.emailContacto}}{{registroDTO.emailContacto}}{{/registroDTO.emailContacto}}" required>
-                                {{#err_emailContacto}}<div class="invalid-feedback">{{err_emailContacto}}</div>{{/err_emailContacto}}
+                                <input type="email" name="contactEmail" class="form-control {{#error_contactEmail}}is-invalid{{/error_contactEmail}}" id="email" placeholder="contacto@empresa.com" value="{{#registrationDTO.contactEmail}}{{registrationDTO.contactEmail}}{{/registrationDTO.contactEmail}}" required>
+                                {{#error_contactEmail}}<div class="invalid-feedback">{{error_contactEmail}}</div>{{/error_contactEmail}}
                             </div>
 
                             <div class="col-md-6">
                                 <label for="telefonoRegister" class="form-label fw-bold small text-uppercase text-secondary">Teléfono de Contacto</label>
-                                <input type="tel" name="telefono" class="form-control {{#err_telefono}}is-invalid{{/err_telefono}}" id="telefonoRegister" placeholder="Ej. 916 123 456" value="{{#registroDTO.telefono}}{{registroDTO.telefono}}{{/registroDTO.telefono}}" required>
-                                {{#err_telefono}}<div class="invalid-feedback">{{err_telefono}}</div>{{/err_telefono}}
+                                <input type="tel" name="phone" class="form-control {{#error_phone}}is-invalid{{/error_phone}}" id="telefonoRegister" placeholder="Ej. 916 123 456" value="{{#registrationDTO.phone}}{{registrationDTO.phone}}{{/registrationDTO.phone}}" required>
+                                {{#error_phone}}<div class="invalid-feedback">{{error_phone}}</div>{{/error_phone}}
                             </div>
 
                             <div class="col-12">
                                 <label for="descripcionRegister" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
-                                <textarea name="descripcion" class="form-control {{#err_descripcion}}is-invalid{{/err_descripcion}}" id="descripcionRegister" rows="3" placeholder="Describe brevemente la actividad de tu empresa y qué tipo de simbiosis buscas..." required>{{#registroDTO.descripcion}}{{registroDTO.descripcion}}{{/registroDTO.descripcion}}</textarea>
-                                {{#err_descripcion}}<div class="invalid-feedback">{{err_descripcion}}</div>{{/err_descripcion}}
+                                <textarea name="description" class="form-control {{#error_description}}is-invalid{{/error_description}}" id="descripcionRegister" rows="3" placeholder="Describe brevemente la actividad de tu empresa y qué tipo de simbiosis buscas..." required>{{#registrationDTO.description}}{{registrationDTO.description}}{{/registrationDTO.description}}</textarea>
+                                {{#error_description}}<div class="invalid-feedback">{{error_description}}</div>{{/error_description}}
                             </div>
 
                             <div class="col-md-6">
                                 <label for="password" class="form-label fw-bold small text-uppercase text-secondary">Contraseña</label>
-                                <input type="password" name="password" class="form-control {{#err_password}}is-invalid{{/err_password}}" id="password" required>
-                                {{#err_password}}<div class="invalid-feedback">{{err_password}}</div>{{/err_password}}
+                                <input type="password" name="password" class="form-control {{#error_password}}is-invalid{{/error_password}}" id="password" required>
+                                {{#error_password}}<div class="invalid-feedback">{{error_password}}</div>{{/error_password}}
                             </div>
 
                             <div class="col-md-6">
                                 <label for="confirmPassword" class="form-label fw-bold small text-uppercase text-secondary">Confirmar Contraseña</label>
-                                <input type="password" name="confirmPassword" class="form-control {{#err_confirmPassword}}is-invalid{{/err_confirmPassword}} {{#err_passwordsMatch}}is-invalid{{/err_passwordsMatch}}" id="confirmPassword" required>
-                                {{#err_confirmPassword}}<div class="invalid-feedback">{{err_confirmPassword}}</div>{{/err_confirmPassword}}
-                                {{#err_passwordsMatch}}<div class="invalid-feedback">{{err_passwordsMatch}}</div>{{/err_passwordsMatch}}
+                                <input type="password" name="confirmPassword" class="form-control {{#error_confirmPassword}}is-invalid{{/error_confirmPassword}} {{#error_passwordsMatch}}is-invalid{{/error_passwordsMatch}}" id="confirmPassword" required>
+                                {{#error_confirmPassword}}<div class="invalid-feedback">{{error_confirmPassword}}</div>{{/error_confirmPassword}}
+                                {{#error_passwordsMatch}}<div class="invalid-feedback">{{error_passwordsMatch}}</div>{{/error_passwordsMatch}}
                             </div>
 
                             <div class="col-12 mt-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="terminos" value="aceptados" id="terminos" required>
+                                    <input class="form-check-input" type="checkbox" name="terms" value="aceptados" id="terminos" required>
                                     <label class="form-check-label small text-secondary" for="terminos">
                                         Acepto los <a href="/terminos" class="text-success text-decoration-none">Términos y Condiciones</a> y la Política de Privacidad de EcoMóstoles.
                                     </label>
@@ -166,8 +166,8 @@
     </div>
 
     <script>
-        document.querySelector('select[name="direccion"]').addEventListener('change', function () {
-            const inputOtro = document.getElementById('direccionOtro');
+        document.querySelector('select[name="address"]').addEventListener('change', function () {
+            const inputOtro = document.getElementById('otherAddress');
             if (this.value === 'Otro' || this.value === 'Otro (Especificar)') {
                 inputOtro.classList.remove('d-none');
                 inputOtro.setAttribute('required', 'true');

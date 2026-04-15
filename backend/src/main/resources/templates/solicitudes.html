@@ -13,29 +13,29 @@
                 
                 <div class="card-body p-4 p-lg-5">
                     <div class="row g-4">
-                        {{#demandas}}
+                        {{#demands}}
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="card h-100 border-0 shadow-sm card-hover border-top border-4 border-primary">
                                 <div class="card-body">
-                                    <h5 class="card-title fw-bold text-dark">{{titulo}}</h5>
-                                    <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> {{empresa.nombreComercial}}</p>
-                                    <p class="card-text small text-truncate">{{descripcion}}</p>
+                                    <h5 class="card-title fw-bold text-dark">{{title}}</h5>
+                                    <p class="card-text text-muted small"><i class="fas fa-industry me-1"></i> {{company.commercialName}}</p>
+                                    <p class="card-text small text-truncate">{{description}}</p>
                                     <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <span class="badge bg-primary-soft text-primary">Buscando {{cantidadFormateada}} {{unidad}}</span>
+                                        <span class="badge bg-primary-soft text-primary">Buscando {{formattedQuantity}} {{unit}}</span>
                                         <a href="/demanda/{{id}}" class="btn btn-outline-primary btn-sm rounded-pill">Responder</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        {{/demandas}}
+                        {{/demands}}
 
-                        {{^demandas}}
+                        {{^demands}}
                         <div class="col-12 text-center py-5">
                             <i class="fas fa-clipboard-list fs-1 text-muted mb-3 d-block opacity-25"></i>
                             <h4 class="text-muted">No hay demandas activas</h4>
                             <a href="/demanda/nueva" class="btn btn-primary rounded-pill px-4">Publicar Demanda</a>
                         </div>
-                        {{/demandas}}
+                        {{/demands}}
                     </div>
 
                     <!-- Pagination component -->

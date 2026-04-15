@@ -12,40 +12,40 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
             <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                 <div>
-                    <h1 class="h2 fw-bold text-dark"><i class="fas fa-building text-success me-2"></i>{{#esVistaAdmin}}Inspeccionar Perfil de Empresa{{/esVistaAdmin}}{{^esVistaAdmin}}Mi Perfil de Empresa{{/esVistaAdmin}}</h1>
-                    <p class="text-secondary small mb-0">{{#esVistaAdmin}}Vista detallada de la empresa seleccionada para control administrativo.{{/esVistaAdmin}}{{^esVistaAdmin}}Gestiona la información pública de tu empresa en EcoMóstoles.{{/esVistaAdmin}}</p>
+                    <h1 class="h2 fw-bold text-dark"><i class="fas fa-building text-success me-2"></i>{{#isAdminView}}Inspeccionar Perfil de Empresa{{/isAdminView}}{{^isAdminView}}Mi Perfil de Empresa{{/isAdminView}}</h1>
+                    <p class="text-secondary small mb-0">{{#isAdminView}}Vista detallada de la empresa seleccionada para control administrativo.{{/isAdminView}}{{^isAdminView}}Gestiona la información pública de tu empresa en EcoMóstoles.{{/isAdminView}}</p>
                 </div>
             </header>
 
-            {{#exito}}
+            {{#success}}
             <div class="alert alert-success alert-dismissible fade show small py-2 shadow-sm" role="alert">
                 <i class="fas fa-check-circle me-1"></i> Perfil actualizado correctamente.
                 <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            {{/exito}}
+            {{/success}}
 
             <form action="/perfil/guardar" method="POST" enctype="multipart/form-data">
                 {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
-                <input type="hidden" name="id" value="{{#empresaInspeccionada}}{{empresaInspeccionada.id}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.id}}{{/empresaInspeccionada}}">
+                <input type="hidden" name="id" value="{{#inspectedCompany}}{{inspectedCompany.id}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.id}}{{/inspectedCompany}}">
                 
                 <div class="row g-4 justify-content-center">
                     <div class="col-lg-4">
                         <div class="card border-0 shadow-sm card-hover border-top border-success border-4 rounded-4 h-100">
                             <div class="card-body text-center p-4">
                                 <div class="position-relative d-inline-block mb-4">
-                                    <img src="/images/empresa/{{#empresaInspeccionada}}{{empresaInspeccionada.id}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.id}}{{/empresaInspeccionada}}" alt="Logo Empresa" class="rounded-circle object-fit-cover shadow-sm mb-3 avatar-profile" onerror="this.src='/img/logo.webp';">
+                                    <img src="/images/empresa/{{#inspectedCompany}}{{inspectedCompany.id}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.id}}{{/inspectedCompany}}" alt="Logo Empresa" class="rounded-circle object-fit-cover shadow-sm mb-3 avatar-profile" onerror="this.src='/img/logo.webp';">
                                 </div>
+ 
+                                <h5 class="fw-bold mb-1">{{#inspectedCompany}}{{inspectedCompany.commercialName}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.commercialName}}{{/inspectedCompany}}</h5>
+                                <p class="text-muted small mb-4">{{#inspectedCompany}}{{inspectedCompany.industrialSector}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.industrialSector}}{{/inspectedCompany}} • {{#inspectedCompany}}{{inspectedCompany.address}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.address}}{{/inspectedCompany}}</p>
 
-                                <h5 class="fw-bold mb-1">{{#empresaInspeccionada}}{{empresaInspeccionada.nombreComercial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.nombreComercial}}{{/empresaInspeccionada}}</h5>
-                                <p class="text-muted small mb-4">{{#empresaInspeccionada}}{{empresaInspeccionada.sectorIndustrial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.sectorIndustrial}}{{/empresaInspeccionada}} • {{#empresaInspeccionada}}{{empresaInspeccionada.direccion}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.direccion}}{{/empresaInspeccionada}}</p>
-
-                                {{^esVistaAdmin}}
+                                {{^isAdminView}}
                                 <label for="logoUpload" class="btn btn-outline-success rounded-pill w-100 mb-3">
                                     <i class="fas fa-camera me-2"></i> Cambiar Logo / Foto
                                 </label>
                                 <input type="file" id="logoUpload" name="logoFile" accept="image/*" class="d-none">
                                 <p class="text-muted small mb-0">JPG, PNG o SVG. Máx 2MB.</p>
-                                {{/esVistaAdmin}}
+                                {{/isAdminView}}
 
                                 <hr class="my-4">
 
@@ -56,7 +56,7 @@
                                         </div>
                                         <div>
                                             <small class="text-muted d-block">CIF / NIF</small>
-                                            <span class="fw-bold small">{{#empresaInspeccionada}}{{empresaInspeccionada.cif}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.cif}}{{/empresaInspeccionada}}</span>
+                                            <span class="fw-bold small">{{#inspectedCompany}}{{inspectedCompany.taxId}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.taxId}}{{/inspectedCompany}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -72,41 +72,41 @@
 
                                 <div class="mb-3">
                                     <label for="nombreEmpresa" class="form-label fw-bold small text-uppercase text-secondary">Nombre Comercial</label>
-                                    <input type="text" class="form-control" id="nombreEmpresa" name="nombreComercial" value="{{#empresaInspeccionada}}{{empresaInspeccionada.nombreComercial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.nombreComercial}}{{/empresaInspeccionada}}" required>
+                                    <input type="text" class="form-control" id="nombreEmpresa" name="commercialName" value="{{#inspectedCompany}}{{inspectedCompany.commercialName}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.commercialName}}{{/inspectedCompany}}" required>
                                 </div>
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-4">
-                                        <label for="emailContacto" class="form-label fw-bold small text-uppercase text-secondary">Email de Contacto</label>
-                                        <input type="email" class="form-control" id="emailContacto" value="{{#empresaInspeccionada}}{{empresaInspeccionada.emailContacto}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.emailContacto}}{{/empresaInspeccionada}}" disabled>
+                                        <label for="contactEmail" class="form-label fw-bold small text-uppercase text-secondary">Email de Contacto</label>
+                                        <input type="email" class="form-control" id="contactEmail" value="{{#inspectedCompany}}{{inspectedCompany.contactEmail}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.contactEmail}}{{/inspectedCompany}}" disabled>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="telefono" class="form-label fw-bold small text-uppercase text-secondary">Teléfono</label>
-                                        <input type="tel" class="form-control" id="telefono" name="telefono" value="{{#empresaInspeccionada}}{{empresaInspeccionada.telefono}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.telefono}}{{/empresaInspeccionada}}" required>
+                                        <label for="phone" class="form-label fw-bold small text-uppercase text-secondary">Teléfono</label>
+                                        <input type="tel" class="form-control" id="phone" name="phone" value="{{#inspectedCompany}}{{inspectedCompany.phone}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.phone}}{{/inspectedCompany}}" required>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="sectorIndustrial" class="form-label fw-bold small text-uppercase text-secondary">Sector Industrial</label>
-                                        <select class="form-select" id="sectorIndustrial" name="sectorIndustrial" required>
-                                            {{#listaSectores}}
+                                        <select class="form-select" id="sectorIndustrial" name="industrialSector" required>
+                                            {{#sectorList}}
                                             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{display}}</option>
-                                            {{/listaSectores}}
-                                            {{^listaSectores}}
-                                            <option value="{{#empresaInspeccionada}}{{empresaInspeccionada.sectorIndustrial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.sectorIndustrial}}{{/empresaInspeccionada}}" selected>
-                                                {{#empresaInspeccionada}}{{empresaInspeccionada.sectorIndustrial}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.sectorIndustrial}}{{/empresaInspeccionada}}
+                                            {{/sectorList}}
+                                            {{^sectorList}}
+                                            <option value="{{#inspectedCompany}}{{inspectedCompany.industrialSector}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.industrialSector}}{{/inspectedCompany}}" selected>
+                                                {{#inspectedCompany}}{{inspectedCompany.industrialSector}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.industrialSector}}{{/inspectedCompany}}
                                             </option>
-                                            {{/listaSectores}}
+                                            {{/sectorList}}
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="direccion" class="form-label fw-bold small text-uppercase text-secondary">Dirección / Polígono</label>
-                                    <input type="text" class="form-control" id="direccion" name="direccion" value="{{#empresaInspeccionada}}{{empresaInspeccionada.direccion}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.direccion}}{{/empresaInspeccionada}}" required>
+                                    <input type="text" class="form-control" id="address" name="address" value="{{#inspectedCompany}}{{inspectedCompany.address}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.address}}{{/inspectedCompany}}" required>
                                 </div>
 
                                 <div class="mb-4">
-                                    <label for="descripcion" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
-                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required>{{#empresaInspeccionada}}{{empresaInspeccionada.descripcion}}{{/empresaInspeccionada}}{{^empresaInspeccionada}}{{empresa.descripcion}}{{/empresaInspeccionada}}</textarea>
+                                    <label for="description" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
+                                    <textarea class="form-control" id="description" name="description" rows="4" required>{{#inspectedCompany}}{{inspectedCompany.description}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.description}}{{/inspectedCompany}}</textarea>
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center">
@@ -114,16 +114,16 @@
                                         <button type="submit" class="btn btn-success px-5 py-2 fw-bold rounded-pill shadow-sm">
                                             <i class="fas fa-save me-2"></i>Guardar Cambios
                                         </button>
-                                        {{#esVistaAdmin}}
+                                        {{#isAdminView}}
                                         <a href="/admin/usuarios" class="btn btn-outline-secondary px-4 py-2 fw-bold rounded-pill">
                                              <i class="fas fa-arrow-left me-2"></i>Volver
                                         </a>
-                                        {{/esVistaAdmin}}
-                                        {{^esVistaAdmin}}
+                                        {{/isAdminView}}
+                                        {{^isAdminView}}
                                         <a href="/dashboard" class="btn btn-outline-secondary px-4 py-2 fw-bold rounded-pill">
                                             <i class="fas fa-arrow-left me-2"></i>Volver
                                         </a>
-                                        {{/esVistaAdmin}}
+                                        {{/isAdminView}}
                                     </div>
                                 </div>
                             </div>

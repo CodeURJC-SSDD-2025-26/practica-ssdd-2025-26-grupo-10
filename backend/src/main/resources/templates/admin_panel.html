@@ -1,184 +1,210 @@
 {{> head_admin}}
+
 <body class="bg-theme-dark">
-{{> header}}
+    {{> header}}
 
-<div class="container-fluid">
-    <div class="row min-vh-100">
-        <!-- Admin Sidebar -->
-        {{> sidebar_admin}}
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            <!-- Admin Sidebar -->
+            {{> sidebar_admin}}
 
-        <!-- Main Content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent">
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent">
 
-            <!-- Header & KPIs -->
-            <section class="card shadow-sm border-0 rounded-4 mb-4">
-                <div class="card-body p-4">
-                    <!-- Section Header -->
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-4 border-bottom">
-                        <div>
-                          <h1 class="h2 fw-bold text-dark mb-0">Vista General del Sistema</h1>
-                          <p class="text-secondary small">Panel de control administrativo de EcoMóstoles.</p>
+                <!-- Header & KPIs -->
+                <section class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <!-- Section Header -->
+                        <div
+                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-4 border-bottom">
+                            <div>
+                                <h1 class="h2 fw-bold text-dark mb-0">Vista General del Sistema</h1>
+                                <p class="text-secondary small">Panel de control administrativo de EcoMóstoles.</p>
+                            </div>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-4"
+                                    onclick="window.print();">
+                                    <i class="fas fa-print me-2"></i>Imprimir Reporte
+                                </button>
+                            </div>
                         </div>
-                        <div class="btn-toolbar mb-2 mb-md-0">
-                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-4" onclick="window.print();">
-                                <i class="fas fa-print me-2"></i>Imprimir Reporte
-                            </button>
+
+                        <!-- Quick Metrics (Cards) -->
+                        <div class="row g-4">
+                            <!-- Users -->
+                            <div class="col-md-3">
+                                <div
+                                    class="card card-modern h-100 border-0 border-start border-4 border-primary shadow-sm rounded-4">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="text-muted text-uppercase mb-0 small fw-bold">Total Usuarios</h6>
+                                            <div class="icon-shape bg-primary bg-opacity-10 text-primary rounded p-2">
+                                                <i class="fas fa-users fa-lg"></i>
+                                            </div>
+                                        </div>
+                                        <h2 class="display-6 fw-bold text-dark mb-0">
+                                            {{#totalUsers}}{{totalUsers}}{{/totalUsers}}{{^totalUsers}}0{{/totalUsers}}
+                                        </h2>
+                                        <div class="mt-2 text-success small fw-bold"><i
+                                                class="fas fa-check-circle me-1"></i> Al corriente</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Offers -->
+                            <div class="col-md-3">
+                                <div
+                                    class="card card-modern h-100 border-0 border-start border-4 border-success shadow-sm rounded-4">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="text-muted text-uppercase mb-0 small fw-bold">Ofertas Activas
+                                            </h6>
+                                            <div class="icon-shape bg-success bg-opacity-10 text-success rounded p-2">
+                                                <i class="fas fa-boxes fa-lg"></i>
+                                            </div>
+                                        </div>
+                                        <h2 class="display-6 fw-bold text-dark mb-0">
+                                            {{#totalOffers}}{{totalOffers}}{{/totalOffers}}{{^totalOffers}}0{{/totalOffers}}
+                                        </h2>
+                                        <div class="mt-2 text-success small fw-bold"><i
+                                                class="fas fa-check-circle me-1"></i> Disponibles</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Demands -->
+                            <div class="col-md-3">
+                                <div
+                                    class="card card-modern h-100 border-0 border-start border-4 border-warning shadow-sm rounded-4">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="text-muted text-uppercase mb-0 small fw-bold">Total Demandas</h6>
+                                            <div class="icon-shape bg-warning bg-opacity-10 text-warning rounded p-2">
+                                                <i class="fas fa-bullhorn fa-lg"></i>
+                                            </div>
+                                        </div>
+                                        <h2 class="display-6 fw-bold text-dark mb-0">
+                                            {{#totalDemands}}{{totalDemands}}{{/totalDemands}}{{^totalDemands}}0{{/totalDemands}}
+                                        </h2>
+                                        <div class="mt-2 text-warning small fw-bold"><i class="fas fa-clock me-1"></i>
+                                            Pendientes de cubrir</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Agreements -->
+                            <div class="col-md-3">
+                                <div
+                                    class="card card-modern h-100 border-0 border-start border-4 border-info shadow-sm rounded-4">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="text-muted text-uppercase mb-0 small fw-bold">Acuerdos Hoy</h6>
+                                            <div class="icon-shape bg-info bg-opacity-10 text-info rounded p-2">
+                                                <i class="fas fa-handshake fa-lg"></i>
+                                            </div>
+                                        </div>
+                                        <h2 class="display-6 fw-bold text-dark mb-0">
+                                            {{#totalAgreements}}{{totalAgreements}}{{/totalAgreements}}{{^totalAgreements}}0{{/totalAgreements}}
+                                        </h2>
+                                        <div class="mt-2 text-info small fw-bold"><i class="fas fa-sync me-1"></i> En
+                                            proceso</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </section>
 
-                    <!-- Métricas Rápidas (Cards) -->
-                    <div class="row g-4">
-                        <!-- Usuarios -->
-                        <div class="col-md-3">
-                            <div class="card card-modern h-100 border-0 border-start border-4 border-primary shadow-sm rounded-4">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="text-muted text-uppercase mb-0 small fw-bold">Total Usuarios</h6>
-                                        <div class="icon-shape bg-primary bg-opacity-10 text-primary rounded p-2">
-                                            <i class="fas fa-users fa-lg"></i>
-                                        </div>
-                                    </div>
-                                    <h2 class="display-6 fw-bold text-dark mb-0">{{#totalUsuarios}}{{totalUsuarios}}{{/totalUsuarios}}{{^totalUsuarios}}0{{/totalUsuarios}}</h2>
-                                    <div class="mt-2 text-success small fw-bold"><i class="fas fa-check-circle me-1"></i> Al corriente</div>
+                <!-- Dashboard Charts / Info -->
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm border-0 h-100 rounded-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold text-dark mb-4"><i
+                                        class="fas fa-chart-pie text-success me-2"></i>Estado de Transacciones</h5>
+                                <div style="height: 300px; position: relative;">
+                                    <canvas id="rendimientoChart"
+                                         data-pending="{{#totalPending}}{{totalPending}}{{/totalPending}}{{^totalPending}}0{{/totalPending}}"
+                                         data-completed="{{#totalCompleted}}{{totalCompleted}}{{/totalCompleted}}{{^totalCompleted}}0{{/totalCompleted}}"></canvas>
                                 </div>
                             </div>
                         </div>
-                        <!-- Ofertas -->
-                        <div class="col-md-3">
-                            <div class="card card-modern h-100 border-0 border-start border-4 border-success shadow-sm rounded-4">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="text-muted text-uppercase mb-0 small fw-bold">Ofertas Activas</h6>
-                                        <div class="icon-shape bg-success bg-opacity-10 text-success rounded p-2">
-                                            <i class="fas fa-boxes fa-lg"></i>
-                                        </div>
-                                    </div>
-                                    <h2 class="display-6 fw-bold text-dark mb-0">{{#totalOfertas}}{{totalOfertas}}{{/totalOfertas}}{{^totalOfertas}}0{{/totalOfertas}}</h2>
-                                    <div class="mt-2 text-success small fw-bold"><i class="fas fa-check-circle me-1"></i> Disponibles</div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm border-0 h-100 rounded-4">
+                            <div class="card-body p-4 text-center d-flex flex-column justify-content-center">
+                                <div class="bg-success bg-opacity-10 p-4 rounded-circle d-inline-block mb-3 mx-auto">
+                                    <i class="fas fa-shield-alt text-success fa-3x"></i>
                                 </div>
-                            </div>
-                        </div>
-                        <!-- Demandas -->
-                        <div class="col-md-3">
-                            <div class="card card-modern h-100 border-0 border-start border-4 border-warning shadow-sm rounded-4">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="text-muted text-uppercase mb-0 small fw-bold">Total Demandas</h6>
-                                        <div class="icon-shape bg-warning bg-opacity-10 text-warning rounded p-2">
-                                            <i class="fas fa-bullhorn fa-lg"></i>
-                                        </div>
-                                    </div>
-                                    <h2 class="display-6 fw-bold text-dark mb-0">{{#totalDemandas}}{{totalDemandas}}{{/totalDemandas}}{{^totalDemandas}}0{{/totalDemandas}}</h2>
-                                    <div class="mt-2 text-warning small fw-bold"><i class="fas fa-clock me-1"></i> Pendientes de cubrir</div>
+                                <h5 class="fw-bold text-dark mb-2">Estado del Servidor</h5>
+                                <p class="text-muted small px-3 mb-3">La infraestructura está operando a pleno
+                                    rendimiento y sin incidencias reportadas.</p>
+                                <div>
+                                    <span
+                                        class="badge bg-success-soft text-success rounded-pill px-4 py-2 border border-success border-opacity-25">{{platformStatus}}</span>
                                 </div>
-                            </div>
-                        </div>
-                        <!-- Acuerdos -->
-                        <div class="col-md-3">
-                            <div class="card card-modern h-100 border-0 border-start border-4 border-info shadow-sm rounded-4">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="text-muted text-uppercase mb-0 small fw-bold">Acuerdos Hoy</h6>
-                                        <div class="icon-shape bg-info bg-opacity-10 text-info rounded p-2">
-                                            <i class="fas fa-handshake fa-lg"></i>
-                                        </div>
-                                    </div>
-                                    <h2 class="display-6 fw-bold text-dark mb-0">{{#totalAcuerdos}}{{totalAcuerdos}}{{/totalAcuerdos}}{{^totalAcuerdos}}0{{/totalAcuerdos}}</h2>
-                                    <div class="mt-2 text-info small fw-bold"><i class="fas fa-sync me-1"></i> En proceso</div>
+                                <hr class="my-4">
+                                <div class="text-start">
+                                    <small class="text-muted d-block mb-1 text-uppercase fw-bold small">Última
+                                        Auditoría</small>
+                                    <div class="fw-bold small text-dark"><i
+                                             class="fas fa-calendar-check text-primary me-2"></i>Hoy, {{currentDate}}
+                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
 
-            <!-- Dashboard Charts / Info -->
-            <div class="row g-4">
-                <div class="col-lg-8">
-                    <div class="card shadow-sm border-0 h-100 rounded-4">
-                        <div class="card-body p-4">
-                            <h5 class="fw-bold text-dark mb-4"><i class="fas fa-chart-pie text-success me-2"></i>Estado de Transacciones</h5>
-                            <div style="height: 300px; position: relative;">
-                                <canvas id="rendimientoChart" 
-                                        data-pendientes="{{#totalPendientes}}{{totalPendientes}}{{/totalPendientes}}{{^totalPendientes}}0{{/totalPendientes}}"
-                                        data-completadas="{{#totalCompletadas}}{{totalCompletadas}}{{/totalCompletadas}}{{^totalCompletadas}}0{{/totalCompletadas}}"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card shadow-sm border-0 h-100 rounded-4">
-                        <div class="card-body p-4 text-center d-flex flex-column justify-content-center">
-                             <div class="bg-success bg-opacity-10 p-4 rounded-circle d-inline-block mb-3 mx-auto">
-                                <i class="fas fa-shield-alt text-success fa-3x"></i>
-                             </div>
-                             <h5 class="fw-bold text-dark mb-2">Estado del Servidor</h5>
-                             <p class="text-muted small px-3 mb-3">La infraestructura está operando a pleno rendimiento y sin incidencias reportadas.</p>
-                             <div>
-                                <span class="badge bg-success-soft text-success rounded-pill px-4 py-2 border border-success border-opacity-25">{{platformStatus}}</span>
-                             </div>
-                             <hr class="my-4">
-                             <div class="text-start">
-                                 <small class="text-muted d-block mb-1 text-uppercase fw-bold small">Última Auditoría</small>
-                                 <div class="fw-bold small text-dark"><i class="fas fa-calendar-check text-primary me-2"></i>Hoy, {{fechaActual}}</div>
-                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </main>
+            </main>
+        </div>
     </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const canvas = document.getElementById('rendimientoChart');
-    if (canvas) {
-        const ctx = canvas.getContext('2d');
-        const totalPendientes = parseInt(canvas.getAttribute('data-pendientes')) || 0;
-        const totalCompletadas = parseInt(canvas.getAttribute('data-completadas')) || 0;
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const canvas = document.getElementById('rendimientoChart');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                const totalPending = parseInt(canvas.getAttribute('data-pending')) || 0;
+                const totalCompleted = parseInt(canvas.getAttribute('data-completed')) || 0;
 
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['{{labelPendientes}}', '{{labelCompletadas}}'],
-                datasets: [{
-                    label: 'Acuerdos',
-                    data: [totalPendientes, totalCompletadas],
-                    backgroundColor: [
-                        'rgba(255, 193, 7, 0.7)',
-                        'rgba(25, 135, 84, 0.7)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 193, 7, 1)',
-                        'rgba(25, 135, 84, 1)'
-                    ],
-                    borderWidth: 2,
-                    hoverOffset: 15
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
-                plugins: {
-                    legend: {
-                        position: 'right',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                            font: {
-                                size: 13,
-                                weight: 'bold'
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['{{pendingLabel}}', '{{completedLabel}}'],
+                        datasets: [{
+                            label: 'Acuerdos',
+                            data: [totalPending, totalCompleted],
+                            backgroundColor: [
+                                'rgba(255, 193, 7, 0.7)',
+                                'rgba(25, 135, 84, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 193, 7, 1)',
+                                'rgba(25, 135, 84, 1)'
+                            ],
+                            borderWidth: 2,
+                            hoverOffset: 15
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '70%',
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20,
+                                    font: {
+                                        size: 13,
+                                        weight: 'bold'
+                                    }
+                                }
                             }
                         }
                     }
-                }
+                });
             }
         });
-    }
-});
-</script>
+    </script>
 
-{{> footer}}
+    {{> footer}}

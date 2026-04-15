@@ -32,7 +32,7 @@ public class DemandService {
     /** Returns all demands in the system. */
     @Transactional(readOnly = true)
     public List<Demand> getAll() {
-        return demandRepository.findTop50ByOrderByRegistrationDateDesc();
+        return demandRepository.findTop50ByOrderByPublicationDateDesc();
     }
 
     /** Returns all demands in the system with pagination. */
@@ -105,7 +105,7 @@ public class DemandService {
         if (agreementRepository.countByDemandId(id) > 0) {
             throw new org.springframework.web.server.ResponseStatusException(
                     org.springframework.http.HttpStatus.BAD_REQUEST,
-                    "No se puede eliminar porque tiene acuerdos asociados");
+                    "Cannot be deleted because it has associated agreements");
         }
         demandRepository.deleteById(id);
     }

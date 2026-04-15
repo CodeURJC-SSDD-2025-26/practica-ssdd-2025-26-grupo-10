@@ -2,12 +2,12 @@
 
 <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
     <div class="container">
-        {{#isEmpresa}}
+        {{#isCompany}}
         <a class="navbar-brand d-flex align-items-center" href="/dashboard">
             <i class="fas fa-recycle me-2 text-success" style="font-size: 1.5rem;"></i>
             <span class="fw-bold">{{platformName}}</span>
         </a>
-        {{/isEmpresa}}
+        {{/isCompany}}
 
         {{#isAdmin}}
         <a class="navbar-brand d-flex align-items-center" href="/admin/panel">
@@ -17,89 +17,106 @@
         </a>
         {{/isAdmin}}
 
-        {{^isEmpresa}}
+        {{^isCompany}}
         {{^isAdmin}}
         <a class="navbar-brand d-flex align-items-center" href="/">
             <i class="fas fa-recycle me-2 text-success" style="font-size: 1.5rem;"></i>
             <span class="fw-bold">{{platformName}}</span>
         </a>
         {{/isAdmin}}
-        {{/isEmpresa}}
+        {{/isCompany}}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
-                
-                {{#empresa}}
+
+                {{#company}}
                 <!-- LOGGED-IN NAV -->
                 <li class="nav-item">
-                    <a class="nav-link fw-bold {{#navMercado}}active{{/navMercado}}" href="/mercado">
+                    <a class="nav-link fw-bold {{#navMarket}}active{{/navMarket}}" href="/mercado">
                         <i class="fas fa-store me-1"></i> Ofertas
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold {{#navDemandas}}active{{/navDemandas}}" href="/solicitudes">
+                    <a class="nav-link fw-bold {{#navDemands}}active{{/navDemands}}" href="/solicitudes">
                         <i class="fas fa-bullhorn me-1"></i> Demandas
                     </a>
                 </li>
-                {{#isEmpresa}}
+                {{#isCompany}}
                 <li class="nav-item">
                     <a class="nav-link fw-bold {{#isDashboard}}active{{/isDashboard}}" href="/dashboard">
                         <i class="fas fa-tachometer-alt me-1"></i> Panel de Control
                     </a>
                 </li>
-                {{/isEmpresa}}
+                {{/isCompany}}
 
                 {{#isAdmin}}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle fw-bold {{#isAdminPanel}}active{{/isAdminPanel}}" href="javascript:void(0)" role="button" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle fw-bold {{#isAdminPanel}}active{{/isAdminPanel}}"
+                        href="javascript:void(0)" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-user-shield me-1"></i> Admin
                     </a>
                     <ul class="dropdown-menu border-0 shadow-sm dropdown-rounded mt-2">
-                        <li><a class="dropdown-item" href="/admin/panel"><i class="fas fa-tachometer-alt me-2 text-muted"></i> Panel Gestión</a></li>
-                        <li><a class="dropdown-item" href="/admin/usuarios"><i class="fas fa-users me-2 text-muted"></i> Usuarios</a></li>
-                        <li><a class="dropdown-item" href="/admin/ofertas"><i class="fas fa-box-open me-2 text-muted"></i> Ofertas</a></li>
-                        <li><a class="dropdown-item" href="/admin/configuracion"><i class="fas fa-cogs me-2 text-muted"></i> Configuración</a></li>
+                        <li><a class="dropdown-item" href="/admin/panel"><i
+                                    class="fas fa-tachometer-alt me-2 text-muted"></i> Panel Gestión</a></li>
+                        <li><a class="dropdown-item" href="/admin/usuarios"><i class="fas fa-users me-2 text-muted"></i>
+                                Usuarios</a></li>
+                        <li><a class="dropdown-item" href="/admin/ofertas"><i
+                                    class="fas fa-box-open me-2 text-muted"></i> Ofertas</a></li>
+                        <li><a class="dropdown-item" href="/admin/configuracion"><i
+                                    class="fas fa-cogs me-2 text-muted"></i> Configuración</a></li>
                     </ul>
                 </li>
                 {{/isAdmin}}
                 <li class="nav-item dropdown ms-lg-2">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="/perfil" role="button" data-bs-toggle="dropdown">
-                        <img src="/images/empresa/{{id}}" alt="Logo Empresa" class="rounded-circle object-fit-cover me-2 avatar-navbar" onerror="this.src='/img/logo.webp';">
-                        <span>{{nombreComercial}}</span>
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="/perfil" role="button"
+                        data-bs-toggle="dropdown">
+                        <img src="/images/empresa/{{id}}" alt="Logo Empresa"
+                            class="rounded-circle object-fit-cover me-2 avatar-navbar"
+                            onerror="this.src='/img/logo.webp';">
+                        <span>{{commercialName}}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 dropdown-rounded">
-                        <li><h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6></li>
-                        <li><a class="dropdown-item rounded" href="/perfil"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <h6 class="dropdown-header text-uppercase small fw-bold">Mi Cuenta</h6>
+                        </li>
+                        <li><a class="dropdown-item rounded" href="/perfil"><i class="fas fa-user-circle me-2"></i> Mi
+                                Perfil</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li>
                             <form action="/logout" method="POST" class="d-inline">
                                 {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
-                                <button type="submit" class="dropdown-item rounded text-danger" style="background:none; border:none; width:100%; text-align:left;">
+                                <button type="submit" class="dropdown-item rounded text-danger"
+                                    style="background:none; border:none; width:100%; text-align:left;">
                                     <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
                                 </button>
                             </form>
                         </li>
                     </ul>
                 </li>
-                {{/empresa}}
+                {{/company}}
 
-                {{^empresa}}
+                {{^company}}
                 <!-- VISITOR NAV -->
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" {{#isInicio}}style="color: #198754 !important;"{{/isInicio}} href="/">Inicio</a>
+                    <a class="nav-link fw-bold" {{#isHome}}style="color: #198754 !important;" {{/isHome}}
+                        href="/">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" {{#isMercado}}style="color: #198754 !important;"{{/isMercado}} href="/mercado">Ofertas</a>
+                    <a class="nav-link fw-bold" {{#isMercado}}style="color: #198754 !important;" {{/isMercado}}
+                        href="/mercado">Ofertas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" {{#isLogin}}style="color: #198754 !important;"{{/isLogin}} href="/login">Login</a>
+                    <a class="nav-link fw-bold" {{#isLogin}}style="color: #198754 !important;" {{/isLogin}}
+                        href="/login">Login</a>
                 </li>
                 <li class="nav-item ms-lg-2">
                     <a class="btn btn-eco btn-sm" href="/registro">Registro Empresa</a>
                 </li>
-                {{/empresa}}
+                {{/company}}
 
             </ul>
         </div>

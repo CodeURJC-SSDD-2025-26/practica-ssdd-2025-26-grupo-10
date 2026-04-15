@@ -32,16 +32,16 @@ public interface DemandRepository extends JpaRepository<Demand, Long> {
 
     long countByCompanyAndStatus(Company company, DemandStatus status);
 
-    @Query("SELECT o FROM es.urjc.ecomostoles.backend.model.Offer o JOIN FETCH o.company WHERE o.status = es.urjc.ecomostoles.backend.model.OfferStatus.ACTIVE AND o.company.id != :companyId AND o.wasteType IN (SELECT d.wasteType FROM Demand d WHERE d.company.id = :companyId AND d.status = es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE)")
+    @Query("SELECT o FROM es.urjc.ecomostoles.backend.model.Offer o JOIN FETCH o.company WHERE o.status = es.urjc.ecomostoles.backend.model.OfferStatus.ACTIVE AND o.company.id != :companyId AND o.wasteType IN (SELECT d.materialCategory FROM Demand d WHERE d.company.id = :companyId AND d.status = es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE)")
     List<es.urjc.ecomostoles.backend.model.Offer> findOffersMatchingDemand(@Param("companyId") Long companyId,
             org.springframework.data.domain.Pageable pageable);
 
     @Query("SELECT d FROM Demand d JOIN FETCH d.company WHERE d.status = :status")
     List<Demand> findByStatusJoinCompany(@Param("status") DemandStatus status);
 
-    @Query("SELECT d FROM Demand d JOIN FETCH d.company ORDER BY d.registrationDate DESC")
+    @Query("SELECT d FROM Demand d JOIN FETCH d.company ORDER BY d.publicationDate DESC")
     Page<Demand> findAllPaginated(Pageable pageable);
 
-    @Query("SELECT d FROM Demand d JOIN FETCH d.company ORDER BY d.registrationDate DESC LIMIT 50")
-    List<Demand> findTop50ByOrderByRegistrationDateDesc();
+    @Query("SELECT d FROM Demand d JOIN FETCH d.company ORDER BY d.publicationDate DESC LIMIT 50")
+    List<Demand> findTop50ByOrderByPublicationDateDesc();
 }

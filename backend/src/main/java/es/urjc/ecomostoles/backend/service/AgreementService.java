@@ -118,13 +118,13 @@ public class AgreementService {
 
     public void registerNewAgreement(Agreement agreement, String userEmail, Long offerId, Long destinationCompanyId) {
         Offer offer = offerService.findById(offerId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Oferta no encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Offer not found"));
 
         Company originCompany = companyService.findByEmail(userEmail)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         if (originCompany.getId().equals(destinationCompanyId)) {
-            throw new SelfAgreementException("El origen y el destino no pueden ser la misma entidad.");
+            throw new SelfAgreementException("The origin and destination cannot be the same entity.");
         }
 
         offer.setStatus(OfferStatus.RESERVED);
@@ -142,18 +142,18 @@ public class AgreementService {
         // ------------------------------
 
         // --- CALCULATE COMISSION ---
-        String comissionStr = configurationService.getAutoValue("comisionPlataforma");
+        String platformCommission = configurationService.getAutoValue("platformCommission");
         double percentage = 0.0;
         try {
-            percentage = Double.parseDouble(comissionStr);
+            percentage = Double.parseDouble(platformCommission);
         } catch (NumberFormatException e) {
             // Log fallback or handle error
         }
 
         if (agreement.getAgreedPrice() != null) {
-            double benefit = agreement.getAgreedPrice() * (percentage / 100.0);
-            benefit = Math.round(benefit * 100.0) / 100.0;
-            agreement.setPlatformBenefit(benefit);
+            double commission = agreement.getAgreedPrice() * (percentage / 100.0);
+            commission = Math.round(commission * 100.0) / 100.0;
+            agreement.setPlatformCommission(commission);
         }
         // ---------------------------
 
@@ -237,7 +237,7 @@ public class AgreementService {
      */
     public Agreement updateAgreement(Long id, Agreement updatedData) {
         Agreement existingAgreement = agreementRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agreement not found"));
 
         // If transitioning to COMPLETED, freeze the CO2 impact
         if (AgreementStatus.COMPLETED.equals(updatedData.getStatus()) &&
@@ -261,17 +261,17 @@ public class AgreementService {
 
             existingAgreement.setAgreedPrice(updatedData.getAgreedPrice());
 
-            String comissionStr = configurationService.getAutoValue("comisionPlataforma");
+            String platformCommission = configurationService.getAutoValue("platformCommission");
             double percentage = 0.0;
             try {
-                percentage = Double.parseDouble(comissionStr);
+                percentage = Double.parseDouble(platformCommission);
             } catch (NumberFormatException e) {
                 // Ignore or log
             }
 
-            double benefit = existingAgreement.getAgreedPrice() * (percentage / 100.0);
-            benefit = Math.round(benefit * 100.0) / 100.0;
-            existingAgreement.setPlatformBenefit(benefit);
+            double commission = existingAgreement.getAgreedPrice() * (percentage / 100.0);
+            commission = Math.round(commission * 100.0) / 100.0;
+            existingAgreement.setPlatformCommission(commission);
         } else {
             existingAgreement.setAgreedPrice(updatedData.getAgreedPrice());
         }

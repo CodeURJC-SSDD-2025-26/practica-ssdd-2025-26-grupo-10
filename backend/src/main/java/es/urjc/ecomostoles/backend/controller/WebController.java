@@ -27,13 +27,13 @@ public class WebController {
     @GetMapping("/")
     public String index(Model model) {
         List<OfferSummary> recentOffers = offerService.getActiveRecent();
-        model.addAttribute("ofertasRecientes", recentOffers);
+        model.addAttribute("recentOffers", recentOffers);
 
         // Injects real metrics from the database
-        model.addAttribute("totalEmpresas", companyService.countAll());
-        model.addAttribute("totalOfertas", offerService.countAll());
+        model.addAttribute("totalCompanies", companyService.countAll());
+        model.addAttribute("totalOffers", offerService.countAll());
         model.addAttribute("totalCo2", agreementService.calculateCO2Saved());
-        model.addAttribute("isInicio", true);
+        model.addAttribute("isHome", true);
 
         return "index";
     }

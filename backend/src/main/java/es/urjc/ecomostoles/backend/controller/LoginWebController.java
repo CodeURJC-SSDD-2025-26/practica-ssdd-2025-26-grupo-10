@@ -20,7 +20,7 @@ public class LoginWebController {
             @RequestParam(required = false) String emailUpdated,
             @RequestParam(name = "error", required = false) String error) {
         if (emailUpdated != null) {
-            model.addAttribute("emailActualizado", true);
+            model.addAttribute("updatedEmail", true);
         }
         if (error != null) {
             model.addAttribute("error", true);

@@ -53,8 +53,8 @@ public class Demand {
     /**
      * Quantity needed.
      */
-    @NotNull(message = "La cantidad es obligatoria")
-    @DecimalMin(value = "0.0", inclusive = false, message = "La cantidad debe ser mayor que cero")
+    @NotNull(message = "La quantity es obligatoria")
+    @DecimalMin(value = "0.0", inclusive = false, message = "La quantity debe ser mayor que cero")
     private Double quantity;
 
     /**
@@ -108,7 +108,7 @@ public class Demand {
     }
 
     /**
-     * Full constructor for Demanda.
+     * Full constructor for Demand.
      * 
      * @param title            title
      * @param materialCategory material category

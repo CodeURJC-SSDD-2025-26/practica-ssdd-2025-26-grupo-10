@@ -18,65 +18,65 @@
 
             <div class="card card-modern border-top-success">
                 <div class="card-body p-4">
-                    {{#errores}}
+                    {{#errors}}
                       <div class="alert alert-danger" role="alert">
                         <i class="fas fa-exclamation-triangle"></i> {{defaultMessage}}
                       </div>
-                    {{/errores}}
+                    {{/errors}}
                     <form action="/acuerdo/nuevo" method="POST" class="needs-validation" novalidate="">
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Oferta Relacionada <span class="text-danger">*</span></label>
-                                <select name="ofertaId" class="form-select" required="">
+                                <select name="offerId" class="form-select" required="">
                                     <option value="" selected="" disabled="">Seleccionar tu oferta...</option>
-                                    {{#ofertas}}
-                                    <option value="{{id}}">REF-{{id}}: {{titulo}}</option>
-                                    {{/ofertas}}
+                                    {{#offers}}
+                                    <option value="{{id}}">REF-{{id}}: {{title}}</option>
+                                    {{/offers}}
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Empresa Destino <span class="text-danger">*</span></label>
-                                <select name="empresaDestinoId" class="form-select" required="">
+                                <select name="destinationCompanyId" class="form-select" required="">
                                     <option value="" selected="" disabled="">Seleccionar empresa...</option>
-                                    {{#todasEmpresas}}
-                                    <option value="{{id}}">{{nombreComercial}}</option>
-                                    {{/todasEmpresas}}
+                                    {{#companies}}
+                                    <option value="{{id}}">{{commercialName}}</option>
+                                    {{/companies}}
                                 </select>
                             </div>
 
                             <div class="col-md-5">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <input type="number" name="cantidad" class="form-control" placeholder="Ej. 500" min="0" value="{{#acuerdo.cantidad}}{{acuerdo.cantidad}}{{/acuerdo.cantidad}}" required="">
-                                    <select name="unidad" class="form-select" style="max-width: 120px;" required>
-                                        {{#listaUnidades}}
+                                    <input type="number" name="quantity" class="form-control" placeholder="Ej. 500" min="0" value="{{#agreement.quantity}}{{agreement.quantity}}{{/agreement.quantity}}" required="">
+                                    <select name="unit" class="form-select" style="max-width: 120px;" required>
+                                        {{#unitList}}
                                         <option value="{{.}}">{{.}}</option>
-                                        {{/listaUnidades}}
+                                        {{/unitList}}
                                     </select>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Precio Acordado (€) <span class="text-danger">*</span></label>
-                                 <input type="number" name="precioAcordado" class="form-control" placeholder="Ej. 1200" step="0.01" min="0" value="{{#acuerdo.precioAcordado}}{{acuerdo.precioAcordado}}{{/acuerdo.precioAcordado}}" required="">
+                                 <input type="number" name="agreedPrice" class="form-control" placeholder="Ej. 1200" step="0.01" min="0" value="{{#agreement.agreedPrice}}{{agreement.agreedPrice}}{{/agreement.agreedPrice}}" required="">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Fecha de Recogida <span class="text-danger">*</span></label>
-                                 <input type="date" name="fechaRecogida" class="form-control" value="{{#acuerdo.fechaRecogida}}{{acuerdo.fechaRecogida}}{{/acuerdo.fechaRecogida}}" required="">
+                                 <input type="date" name="pickupDate" class="form-control" value="{{#agreement.pickupDate}}{{agreement.pickupDate}}{{/agreement.pickupDate}}" required="">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Estado <span class="text-danger">*</span></label>
-                                <select name="estado" class="form-select" required="">
-                                    <option value="PENDIENTE" selected="">Pendiente</option>
-                                    <option value="ACEPTADO">Aceptado</option>
-                                    <option value="RECHAZADO">Rechazado</option>
+                                <select name="status" class="form-select" required="">
+                                    <option value="PENDING" selected="">Pendiente</option>
+                                    <option value="ACCEPTED">Aceptado</option>
+                                    <option value="REJECTED">Rechazado</option>
                                 </select>
                             </div>
 
                             <div class="col-12">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Notas adicionales</label>
-                                 <textarea name="notas" class="form-control" rows="3" placeholder="Condiciones especiales, requisitos...">{{#acuerdo.notas}}{{acuerdo.notas}}{{/acuerdo.notas}}</textarea>
+                                 <textarea name="notes" class="form-control" rows="3" placeholder="Condiciones especiales, requisitos...">{{#agreement.notes}}{{agreement.notes}}{{/agreement.notes}}</textarea>
                             </div>
 
                             <div class="col-12 mt-4 d-flex justify-content-end">

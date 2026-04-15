@@ -18,7 +18,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 /**
- * Represents a transaction agreement (Agreement) between two companies.
+ * Represents a transaction agreement between two companies.
  * This entity tracks the exchange of materials, quantities, and prices.
  */
 @Entity
@@ -108,7 +108,7 @@ public class Agreement {
     /**
      * Profit earned by the platform for this transaction (commission).
      */
-    private Double platformBenefit;
+    private Double platformCommission;
 
     /**
      * Calculated CO2 impact (tons) saved by this agreement.
@@ -126,7 +126,7 @@ public class Agreement {
      */
     public Agreement(String exchangedMaterial, Double quantity, String unit, Double agreedPrice,
             LocalDate pickupDate, AgreementStatus status, String notes, LocalDateTime registrationDate,
-            Company originCompany, Company destinationCompany, Offer offer, Demand demand, Double platformBenefit) {
+            Company originCompany, Company destinationCompany, Offer offer, Demand demand, Double platformCommission) {
         this.exchangedMaterial = exchangedMaterial;
         this.quantity = quantity;
         this.unit = unit;
@@ -139,7 +139,7 @@ public class Agreement {
         this.destinationCompany = destinationCompany;
         this.offer = offer;
         this.demand = demand;
-        this.platformBenefit = platformBenefit;
+        this.platformCommission = platformCommission;
     }
 
     // Getters and Setters
@@ -184,12 +184,11 @@ public class Agreement {
         this.agreedPrice = agreedPrice;
     }
 
-    public Double getPlatformBenefit() {
-        return platformBenefit;
+    public Double getPlatformCommission() {
+        return platformCommission;
     }
-
-    public void setPlatformBenefit(Double platformBenefit) {
-        this.platformBenefit = platformBenefit;
+    public void setPlatformCommission(Double platformCommission) {
+        this.platformCommission = platformCommission;
     }
 
     public Double getCo2Impact() {
@@ -200,11 +199,11 @@ public class Agreement {
         this.co2Impact = co2Impact;
     }
 
-    public String getFormattedPlatformBenefit() {
-        if (this.platformBenefit == null)
+    public String getFormattedPlatformCommission() {
+        if (this.platformCommission == null)
             return "0,00 €";
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.of("es", "ES"));
-        return currencyFormat.format(this.platformBenefit);
+        return currencyFormat.format(this.platformCommission);
     }
 
     public LocalDate getPickupDate() {

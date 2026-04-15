@@ -19,12 +19,12 @@ import java.security.Principal;
  * error.html is rendered with all variables required by the layout
  * (header/footer).
  * Without it, Mustache throws an exception when attempting to resolve
- * {{empresa.nombreComercial}} → blank page.
+ * {{company.commercialName}} → blank page.
  *
  * Provides user-friendly messages distinguished by HTTP code:
- * 403 → "No tienes permiso para realizar esta acción."
- * 404 → "La página que buscas no existe."
- * 500 → "Error interno del servidor."
+ * 403 → "You do not have permission to perform this action."
+ * 404 → "The page you are looking for does not exist."
+ * 500 → "Internal server error."
  */
 @Controller
 public class CustomErrorController implements ErrorController {
@@ -65,7 +65,7 @@ public class CustomErrorController implements ErrorController {
             } else if (status == HttpStatus.UNAUTHORIZED.value()) { // 401
                 errorTitle = "No Autenticado";
                 errorMessage = "Debes iniciar sesión para acceder a esta sección.";
-            } else { // 500 y otros
+            } else { // 500 and others
                 errorTitle = "Error Interno";
                 errorMessage = "Ha ocurrido un error inesperado en el servidor. "
                         + "Por favor, inténtalo de nuevo más tarde.";
@@ -76,20 +76,20 @@ public class CustomErrorController implements ErrorController {
             model.addAttribute("is403", status == 403);
 
             // ── 3. Company for the header (navbar) ───────────────────────────────
-            // The partial {{> header}} requires {{empresa.nombreComercial}} for the
+            // The partial {{> header}} requires {{company.commercialName}} for the
             // avatar and dropdown. It should only be added if the user is authenticated.
             if (principal != null) {
                 try {
                     companyService.findByEmail(principal.getName())
                             .ifPresentOrElse(
-                                    e -> model.addAttribute("empresa", new CompanyDTO(e)),
-                                    () -> model.addAttribute("empresa", null));
+                                    e -> model.addAttribute("company", new CompanyDTO(e)),
+                                    () -> model.addAttribute("company", null));
                 } catch (Exception e) {
                     // Fallback to prevent template crash if DB/Service fails during error handling
-                    model.addAttribute("empresa", null);
+                    model.addAttribute("company", null);
                 }
             } else {
-                model.addAttribute("empresa", null);
+                model.addAttribute("company", null);
             }
 
         } catch (Exception e) {
@@ -97,7 +97,7 @@ public class CustomErrorController implements ErrorController {
             model.addAttribute("status", 500);
             model.addAttribute("errorTitle", "Error Crítico");
             model.addAttribute("errorMessage", "Se ha producido un error inesperado al procesar la solicitud.");
-            model.addAttribute("empresa", null);
+            model.addAttribute("company", null);
         }
 
         return "error";

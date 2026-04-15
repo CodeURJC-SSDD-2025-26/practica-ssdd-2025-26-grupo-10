@@ -20,11 +20,11 @@
                     </div>
                     {{/error}}
 
-                    {{#emailActualizado}}
+                    {{#updatedEmail}}
                     <div class="alert alert-info py-2 small fw-bold text-center" role="alert">
                         <i class="fas fa-info-circle me-1"></i> Email actualizado. Por favor, identifícate con tus nuevas credenciales.
                     </div>
-                    {{/emailActualizado}}
+                    {{/updatedEmail}}
                     
                     <form action="/login" method="POST" class="needs-validation" novalidate="">
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}

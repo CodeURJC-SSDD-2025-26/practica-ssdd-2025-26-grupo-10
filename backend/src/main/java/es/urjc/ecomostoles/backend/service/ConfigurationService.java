@@ -31,7 +31,7 @@ public class ConfigurationService {
 
     @Transactional
     public void saveOrUpdateConfiguration(String key, String value) {
-        log.debug("Persisitiendo configuración -> Clave: {}, Valor: {}", key, value);
+        log.debug("Persisting configuration -> Key: {}, Value: {}", key, value);
         GlobalConfiguration config = configurationRepository.findByKey(key)
                 .orElse(new GlobalConfiguration(key, value));
         config.setValue(value);
@@ -51,16 +51,17 @@ public class ConfigurationService {
      */
     public String getAutoValue(String key) {
         String fallback = switch (key) {
-            case "emailContacto" -> DEFAULT_EMAIL;
-            case "comisionPlataforma" -> DEFAULT_COMMISSION;
-            case "listaCategorias" -> DEFAULT_CATEGORIES;
-            case "listaUnidades" -> DEFAULT_UNITS_LIST;
-            case "listaDisponibilidades" -> DEFAULT_AVAILABILITY_LIST;
-            case "listaSectores" -> DEFAULT_SECTORS_LIST;
+            case "contactEmail" -> DEFAULT_EMAIL;
+            case "platformCommission" -> DEFAULT_COMMISSION;
+            case "categoryList" -> DEFAULT_CATEGORIES;
+            case "unitList" -> DEFAULT_UNITS_LIST;
+            case "availabilityList" -> DEFAULT_AVAILABILITY_LIST;
+            case "sectorList" -> DEFAULT_SECTORS_LIST;
             case "platformName" -> DEFAULT_PLATFORM_NAME;
             case "platformCity" -> DEFAULT_PLATFORM_CITY;
             case "platformLocation" -> DEFAULT_PLATFORM_LOCATION;
-            case "modoMantenimiento" -> "false";
+            case "industrialAreaList" -> "Polígono Regordoño\nPolígono Las Nieves\nMóstoles Tecnológico\nOtro (Especificar)";
+            case "maintenanceMode" -> "false";
             case "social_linkedin" -> "https://linkedin.com/company/ecomostoles";
             case "social_twitter" -> "https://x.com/ecomostoles";
             case "social_facebook" -> "https://facebook.com/ecomostoles";

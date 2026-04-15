@@ -36,15 +36,15 @@ public class MarketController {
     public String showMarket(Model model, Principal principal,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String wasteType,
-            @RequestParam(required = false) String industrialArea,
+            @RequestParam(required = false) String industrialPark,
             @RequestParam(required = false) String error,
             @org.springframework.data.web.PageableDefault(size = 9) org.springframework.data.domain.Pageable pageable) {
 
-        Page<OfferSummary> offerPage = offerService.searchFilteredOffers(keyword, wasteType, industrialArea,
+        Page<OfferSummary> offerPage = offerService.searchFilteredOffers(keyword, wasteType, industrialPark,
                 pageable);
 
-        model.addAttribute("ofertas", offerPage.getContent());
-        model.addAttribute("hasOfertas", !offerPage.isEmpty());
+        model.addAttribute("offers", offerPage.getContent());
+        model.addAttribute("hasOffers", !offerPage.isEmpty());
 
         // Pagination metadata
         model.addAttribute("currentPage", offerPage.getNumber() + 1);
@@ -56,25 +56,25 @@ public class MarketController {
         model.addAttribute("totalItems", offerPage.getTotalElements());
 
         // Dynamic base URL and query string for pagination partial
-        model.addAttribute("pagBaseUrl", "/mercado");
+        model.addAttribute("paginationBaseUrl", "/mercado");
         StringBuilder qs = new StringBuilder();
         if (keyword != null && !keyword.isEmpty())
             qs.append("&keyword=").append(keyword);
         if (wasteType != null && !wasteType.isEmpty())
-            qs.append("&tipoResiduo=").append(wasteType);
-        if (industrialArea != null && !industrialArea.isEmpty())
-            qs.append("&poligono=").append(industrialArea);
-        model.addAttribute("pagQueryString", qs.toString());
+            qs.append("&wasteType=").append(wasteType);
+        if (industrialPark != null && !industrialPark.isEmpty())
+            qs.append("&industrialPark=").append(industrialPark);
+        model.addAttribute("paginationQueryString", qs.toString());
 
         model.addAttribute("keyword", keyword != null ? keyword : "");
-        model.addAttribute("tipoResiduo", wasteType != null ? wasteType : "");
-        model.addAttribute("poligono", industrialArea != null ? industrialArea : "");
+        model.addAttribute("wasteType", wasteType != null ? wasteType : "");
+        model.addAttribute("industrialPark", industrialPark != null ? industrialPark : "");
 
         if ("AutoAcuerdo".equals(error)) {
-            model.addAttribute("errorAutoAcuerdo", "No puedes realizar un acuerdo comercial con tu propia empresa.");
+            model.addAttribute("autoAgreementError", "No puedes realizar un acuerdo comercial con tu propia empresa.");
         }
 
-        model.addAttribute("navMercado", true);
+        model.addAttribute("navMarket", true);
         model.addAttribute("isMercado", true);
 
         return "mercado";
@@ -91,7 +91,7 @@ public class MarketController {
             offerService.registerVisit(id);
 
             Offer offer = offerOpt.get();
-            model.addAttribute("oferta", offer);
+            model.addAttribute("offer", offer);
             return "detalle_activo";
         }
         return "redirect:/mercado";

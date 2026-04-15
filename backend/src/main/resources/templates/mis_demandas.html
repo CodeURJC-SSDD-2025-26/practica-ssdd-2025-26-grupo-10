@@ -21,22 +21,22 @@
             </header>
 
             <section class="row g-4 mb-4">
-                <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body d-flex align-items-center"><div class="bg-success bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-check-circle text-success fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Activas</small><h4 class="fw-bold mb-0 text-dark">{{#totalDemandasActivas}}{{totalDemandasActivas}}{{/totalDemandasActivas}}{{^totalDemandasActivas}}0{{/totalDemandasActivas}}</h4></div></div></div></div>
+                <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body d-flex align-items-center"><div class="bg-success bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-check-circle text-success fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Activas</small><h4 class="fw-bold mb-0 text-dark">{{#totalActiveDemands}}{{totalActiveDemands}}{{/totalActiveDemands}}{{^totalActiveDemands}}0{{/totalActiveDemands}}</h4></div></div></div></div>
             </section>
 
             <div class="row g-4">
-                {{#demandas}}
+                {{#demands}}
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm card-hover border-top-success">
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title fw-bold"><i class="fas fa-bullhorn text-success me-2"></i>{{titulo}}</h5>
+                            <h5 class="card-title fw-bold"><i class="fas fa-bullhorn text-success me-2"></i>{{title}}</h5>
                             <div class="d-flex gap-2 mb-2 mt-2">
-                                <span class="badge bg-success">{{categoriaMaterial}}</span>
-                                <span class="badge bg-success rounded-pill">{{estado}}</span>
+                                <span class="badge bg-success">{{materialCategory}}</span>
+                                <span class="badge bg-success rounded-pill">{{status}}</span>
                             </div>
-                            <p class="card-text">{{descripcion}}</p>
-                            <p class="card-text text-muted small"><i class="fas fa-weight-hanging me-1"></i> {{cantidad}} {{unidad}}</p>
-                            <h5 class="text-success fw-bold mt-2 mb-1">Max: € {{presupuestoMaximo}}</h5>
+                            <p class="card-text">{{description}}</p>
+                            <p class="card-text text-muted small"><i class="fas fa-weight-hanging me-1"></i> {{quantity}} {{unit}}</p>
+                            <h5 class="text-success fw-bold mt-2 mb-1">Max: € {{maxBudget}}</h5>
                         </div>
                         <div class="card-footer bg-transparent border-top-0 pt-0 pb-3">
                             <div class="d-flex gap-2">
@@ -53,9 +53,9 @@
                         </div>
                     </div>
                 </div>
-                {{/demandas}}
+                {{/demands}}
 
-                {{^demandas}}
+                {{^demands}}
                 <div class="col-12 text-center py-5">
                     <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                         <i class="fas fa-clipboard-list fs-2 text-muted"></i>
@@ -64,7 +64,7 @@
                     <p class="text-muted">Las solicitudes de materiales que necesites aparecerán aquí.</p>
                     <a href="/demanda/nueva" class="btn btn-success mt-2 rounded-pill shadow-sm">Publicar mi primera demanda</a>
                 </div>
-                {{/demandas}}
+                {{/demands}}
 
                 <!-- Pagination Component -->
                 <div class="col-12">

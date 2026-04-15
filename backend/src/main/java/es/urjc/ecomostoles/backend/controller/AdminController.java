@@ -51,10 +51,6 @@ import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
  * All paths are under /admin/** and protected
  * by @PreAuthorize("hasRole('ADMIN')")
  * (additional reinforcement over the SecurityConfig rule).
- *
- * Used views (existing):
- * admin_panel, admin_usuarios, admin_ofertas, admin_reportes,
- * admin_configuracion
  */
 @Controller
 @RequestMapping("/admin")
@@ -124,8 +120,8 @@ public class AdminController {
 
         // Dynamic dates and labels for the view
         model.addAttribute("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM yyyy")));
-        model.addAttribute("labelPending", "Pendientes");
-        model.addAttribute("labelCompleted", "Completadas");
+        model.addAttribute("pendingLabel", "Pendientes");
+        model.addAttribute("completedLabel", "Completadas");
 
         return "admin_panel";
     }
@@ -141,7 +137,7 @@ public class AdminController {
         Page<Company> companiesPage;
         if (search != null && !search.isEmpty()) {
             companiesPage = companyService.filterCompaniesPaginated(search, pageable);
-            model.addAttribute("searchQuery", search);
+            model.addAttribute("search", search);
             model.addAttribute("isSearch", true);
         } else {
             companiesPage = companyService.getCompaniesPaginated(pageable.getPageNumber(), pageable.getPageSize());
@@ -152,14 +148,15 @@ public class AdminController {
         model.addAttribute("currentPage", companiesPage.getNumber() + 1);
         model.addAttribute("totalPages", companiesPage.getTotalPages());
         model.addAttribute("hasPrevious", companiesPage.hasPrevious());
+        model.addAttribute("hasPrev", companiesPage.hasPrevious());
         model.addAttribute("hasNext", companiesPage.hasNext());
         model.addAttribute("prevPage", companiesPage.getNumber() - 1);
         model.addAttribute("nextPage", companiesPage.getNumber() + 1);
 
         // Fix: Persist search parameters in pagination
-        model.addAttribute("pagBaseUrl", "/admin/usuarios");
+        model.addAttribute("paginationBaseUrl", "/admin/usuarios");
         String qs = (search != null && !search.isEmpty()) ? "&search=" + search : "";
-        model.addAttribute("pagQueryString", qs);
+        model.addAttribute("paginationQueryString", qs);
 
         return "admin_usuarios";
     }
@@ -179,7 +176,7 @@ public class AdminController {
         return "redirect:/perfil/" + id;
     }
 
-    // ── GET /admin/ofertas ─────────────────────────────────────────────────────
+    // ── GET /admin/offers ─────────────────────────────────────────────────────
     @GetMapping("/ofertas")
     public String offers(Model model, Principal principal,
             @RequestParam(required = false) String status,
@@ -200,18 +197,19 @@ public class AdminController {
             offersPage = offerService.getAllPaginated(pageable);
         }
 
-        model.addAttribute("allOffers", offersPage.getContent());
+        model.addAttribute("offers", offersPage.getContent());
         model.addAttribute("currentPage", offersPage.getNumber() + 1);
         model.addAttribute("totalPages", offersPage.getTotalPages());
         model.addAttribute("hasPrevious", offersPage.hasPrevious());
+        model.addAttribute("hasPrev", offersPage.hasPrevious());
         model.addAttribute("hasNext", offersPage.hasNext());
         model.addAttribute("prevPage", offersPage.getNumber() - 1);
         model.addAttribute("nextPage", offersPage.getNumber() + 1);
 
         // Fix: Persist state filter in pagination
-        model.addAttribute("pagBaseUrl", "/admin/ofertas");
-        String qs = (status != null && !status.isEmpty()) ? "&estado=" + status : "";
-        model.addAttribute("pagQueryString", qs);
+        model.addAttribute("paginationBaseUrl", "/admin/ofertas");
+        String qs = (status != null && !status.isEmpty()) ? "&status=" + status : "";
+        model.addAttribute("paginationQueryString", qs);
 
         return "admin_ofertas";
     }
@@ -220,7 +218,7 @@ public class AdminController {
     @GetMapping("/reportes")
     public String reports(Model model, Principal principal) {
         addCommonAttributes(model, principal);
-        model.addAttribute("activeReportes", true);
+        model.addAttribute("activeReports", true);
 
         // Enterprise Plus: Batch-fetch all CO2 stats to avoid N+1 query pattern
         Map<Long, Double> co2Map = agreementService.getCO2Ranking();
@@ -263,7 +261,7 @@ public class AdminController {
         Map<String, Object> reportMetrics = new HashMap<>();
         reportMetrics.put("co2Saved", model.getAttribute("co2Tons"));
         reportMetrics.put("transactions", model.getAttribute("totalAgreements"));
-        reportMetrics.put("activeCompanies", model.getAttribute("totalCompanies"));
+        reportMetrics.put("activeCompanies", model.getAttribute("totalUsers"));
 
         model.addAttribute("reportMetrics", reportMetrics);
 
@@ -274,25 +272,26 @@ public class AdminController {
     public String adminDemands(Model model, Principal principal,
             @PageableDefault(size = 10, sort = "publicationDate", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
         addCommonAttributes(model, principal);
-        model.addAttribute("activeDemandas", true);
+        model.addAttribute("activeDemands", true);
 
         Page<Demand> demandsPage = demandService.getAllPaginated(pageable);
 
-        model.addAttribute("demandas", demandsPage.getContent());
+        model.addAttribute("demands", demandsPage.getContent());
         model.addAttribute("currentPage", demandsPage.getNumber() + 1);
         model.addAttribute("totalPages", demandsPage.getTotalPages());
         model.addAttribute("hasPrevious", demandsPage.hasPrevious());
+        model.addAttribute("hasPrev", demandsPage.hasPrevious());
         model.addAttribute("hasNext", demandsPage.hasNext());
         model.addAttribute("prevPage", demandsPage.getNumber() - 1);
         model.addAttribute("nextPage", demandsPage.getNumber() + 1);
 
         // Dynamic stats for admin_demandas cards
-        model.addAttribute("totalDemandasActivas", demandService.countAll());
-        model.addAttribute("totalInteresados", messageService.countAll());
+        model.addAttribute("totalActiveDemands", demandService.countAll());
+        model.addAttribute("totalInterested", messageService.countAll());
 
         // Fix: Add base pagination meta for demands
-        model.addAttribute("pagBaseUrl", "/admin/demandas");
-        model.addAttribute("pagQueryString", "");
+        model.addAttribute("paginationBaseUrl", "/admin/demandas");
+        model.addAttribute("paginationQueryString", "");
 
         return "admin_demandas";
     }
@@ -301,21 +300,22 @@ public class AdminController {
     public String adminAgreements(Model model, Principal principal,
             @PageableDefault(size = 10, sort = "registrationDate", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
         addCommonAttributes(model, principal);
-        model.addAttribute("activeAcuerdos", true);
+        model.addAttribute("activeAgreements", true);
 
         Page<Agreement> agreementsPage = agreementService.getAllPaginated(pageable);
 
-        model.addAttribute("acuerdos", agreementsPage.getContent());
+        model.addAttribute("agreements", agreementsPage.getContent());
         model.addAttribute("currentPage", agreementsPage.getNumber() + 1);
         model.addAttribute("totalPages", agreementsPage.getTotalPages());
         model.addAttribute("hasPrevious", agreementsPage.hasPrevious());
+        model.addAttribute("hasPrev", agreementsPage.hasPrevious());
         model.addAttribute("hasNext", agreementsPage.hasNext());
         model.addAttribute("prevPage", agreementsPage.getNumber() - 1);
         model.addAttribute("nextPage", agreementsPage.getNumber() + 1);
 
         // Fix: Add base pagination meta for agreements
-        model.addAttribute("pagBaseUrl", "/admin/acuerdos");
-        model.addAttribute("pagQueryString", "");
+        model.addAttribute("paginationBaseUrl", "/admin/acuerdos");
+        model.addAttribute("paginationQueryString", "");
 
         return "admin_acuerdos";
     }
@@ -333,7 +333,7 @@ public class AdminController {
 
         Map<String, Object> configMap = new HashMap<>();
         configMap.put("contactEmail", configurationService.getAutoValue("contactEmail"));
-        configMap.put("platformFee", configurationService.getAutoValue("platformFee"));
+        configMap.put("platformCommission", configurationService.getAutoValue("platformCommission"));
         configMap.put("categoryList", configurationService.getAutoValue("categoryList"));
         configMap.put("unitList", configurationService.getAutoValue("unitList"));
         configMap.put("availabilityList", configurationService.getAutoValue("availabilityList"));
@@ -427,7 +427,6 @@ public class AdminController {
             model.addAttribute("company", companyOpt.get());
         }
 
-        // Variable required by perfil_empresa.html to avoid context error
         model.addAttribute("supportEmail", "soporte@ecomostoles.es");
 
         // Prepare sectors list with 'selected' status for UI
@@ -454,12 +453,12 @@ public class AdminController {
 
     @GetMapping("/demandas/ver/{id}")
     public String viewDemandAdmin(@PathVariable Long id) {
-        return "redirect:/demanda/" + id;
+        return "redirect:/demand/" + id;
     }
 
     @GetMapping("/acuerdos/ver/{id}")
     public String viewAgreementAdmin(@PathVariable Long id) {
-        return "redirect:/acuerdo/" + id;
+        return "redirect:/agreement/" + id;
     }
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdminController.class);
@@ -469,27 +468,27 @@ public class AdminController {
      */
     @PostMapping("/configuracion")
     public String saveConfiguration(@RequestParam(required = false) String contactEmail,
-            @RequestParam(required = false) Double platformComission,
-            @RequestParam(required = false) String categoriesList,
-            @RequestParam(required = false) String unitsList,
+            @RequestParam(required = false) Double platformCommission,
+            @RequestParam(required = false) String categoryList,
+            @RequestParam(required = false) String unitList,
             @RequestParam(required = false) String availabilityList,
-            @RequestParam(required = false) String sectorsList,
+            @RequestParam(required = false) String sectorList,
             RedirectAttributes redirectAttributes) {
 
-        log.info("Intento de guardado de configuración -> Email: {}, Comisión: {}%", contactEmail, platformComission);
+        log.info("Configuration save attempt -> Email: {}, Commission: {}%", contactEmail, platformCommission);
 
         // Validation: range 0-100% for business commissions (UX/Integrity)
-        if (platformComission != null && (platformComission < 0 || platformComission > 100)) {
+        if (platformCommission != null && (platformCommission < 0 || platformCommission > 100)) {
             redirectAttributes.addFlashAttribute("error", "La comisión debe estar entre 0 y 100%.");
             return "redirect:/admin/configuracion";
         }
 
         configurationService.saveOrUpdateConfiguration("contactEmail", contactEmail);
-        configurationService.saveOrUpdateConfiguration("platformFee", String.valueOf(platformComission));
-        configurationService.saveOrUpdateConfiguration("categoryList", categoriesList);
-        configurationService.saveOrUpdateConfiguration("unitList", unitsList);
+        configurationService.saveOrUpdateConfiguration("platformCommission", String.valueOf(platformCommission));
+        configurationService.saveOrUpdateConfiguration("categoryList", categoryList);
+        configurationService.saveOrUpdateConfiguration("unitList", unitList);
         configurationService.saveOrUpdateConfiguration("availabilityList", availabilityList);
-        configurationService.saveOrUpdateConfiguration("sectorList", sectorsList);
+        configurationService.saveOrUpdateConfiguration("sectorList", sectorList);
 
         redirectAttributes.addFlashAttribute("message",
                 "La configuración de la plataforma se ha actualizado correctamente en la base de datos.");
@@ -529,8 +528,6 @@ public class AdminController {
     private void injectFormOptions(Model model, String unit, String availability, String cat, Enum<?> state) {
         model.addAttribute("unitOptions", buildOptions("unitList", unit));
         model.addAttribute("availabilityOptions", buildOptions("availabilityList", availability));
-        model.addAttribute("urgencyOptions", buildOptions("availabilityList", availability));
-        model.addAttribute("typeOptions", buildOptions("categoryList", cat));
         model.addAttribute("categoryOptions", buildOptions("categoryList", cat));
 
         if (state != null) {

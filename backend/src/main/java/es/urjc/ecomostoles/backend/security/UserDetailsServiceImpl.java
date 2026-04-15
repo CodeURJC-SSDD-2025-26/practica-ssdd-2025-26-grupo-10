@@ -37,7 +37,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Company company = companyRepository.findByContactEmail(email)
                 .orElseThrow(() -> {
                     log.error("❌ User not found in DB: {}", email);
-                    return new UsernameNotFoundException("Empresa no encontrada: " + email);
+                    return new UsernameNotFoundException("Company not found: " + email);
                 });
 
         // Read roles from the entity; if none, assign COMPANY by default

@@ -45,7 +45,7 @@ public class PdfExportController {
 
         Agreement agreement = agreementService.findById(id)
                 .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Recurso no encontrado"));
+                        "Resource not found"));
 
         String userEmail = principal.getName();
         Company loggedCompany = companyService.findByEmail(userEmail)
@@ -59,7 +59,7 @@ public class PdfExportController {
 
         if (!isAdmin && !isOwner) {
             throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "No tienes permiso para acceder a este recurso");
+                    "You do not have permission to access this resource");
         }
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {

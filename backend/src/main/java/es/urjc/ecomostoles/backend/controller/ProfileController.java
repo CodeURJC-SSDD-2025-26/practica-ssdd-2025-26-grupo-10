@@ -41,12 +41,12 @@ public class ProfileController {
     @GetMapping("/perfil")
     public String showProfile(Model model, @RequestParam(required = false) boolean success, Principal principal) {
         Company company = companyService.findByEmail(principal.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
 
         CompanyDTO safeCompany = new CompanyDTO(company);
         model.addAttribute("isDashboard", true);
         if (success) {
-            model.addAttribute("exito", true);
+            model.addAttribute("success", true);
         }
         return "perfil_empresa";
     }
@@ -55,18 +55,18 @@ public class ProfileController {
     @GetMapping("/perfil/{id}")
     public String showProfileById(@PathVariable Long id, Model model) {
         Company company = companyService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa no encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found"));
 
         CompanyDTO companyDTO = new CompanyDTO(company);
-        model.addAttribute("empresaInspeccionada", companyDTO);
-        model.addAttribute("esVistaAdmin", true);
+        model.addAttribute("inspectedCompany", companyDTO);
+        model.addAttribute("isAdminView", true);
         model.addAttribute("isDashboard", true);
 
         return "perfil_empresa";
     }
 
     @PostMapping("/perfil/guardar")
-    public String saveProfile(@Valid @ModelAttribute("empresa") CompanyDTO companyDTO,
+    public String saveProfile(@Valid @ModelAttribute("company") CompanyDTO companyDTO,
             BindingResult bindingResult,
             @RequestParam(required = false) MultipartFile logoFile,
             HttpServletRequest request,
@@ -84,10 +84,10 @@ public class ProfileController {
 
         if (isAdmin && targetId != null) {
             company = companyService.findById(targetId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa no encontrada"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found"));
         } else {
             company = companyService.findByEmail(principal.getName())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
         }
 
         company.setCommercialName(companyDTO.getCommercialName());
@@ -100,15 +100,15 @@ public class ProfileController {
             try {
                 company.setLogo(logoFile.getBytes());
             } catch (Exception e) {
-                log.error("⚠️ Error al leer el logo", e);
+                log.error("⚠️ Error reading the logo", e);
             }
         }
 
         companyService.save(company);
 
         if (isAdmin && targetId != null) {
-            return "redirect:/perfil/" + targetId + "?exito=true";
+            return "redirect:/perfil/" + targetId + "?success=true";
         }
-        return "redirect:/perfil?exito=true";
+        return "redirect:/perfil?success=true";
     }
 }

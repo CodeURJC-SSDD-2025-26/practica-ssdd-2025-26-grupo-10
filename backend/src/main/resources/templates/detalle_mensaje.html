@@ -63,7 +63,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <h1 class="h3 fw-bold text-dark mb-0">Detalle del Mensaje</h1>
-                        <p class="text-secondary small mb-0">Conversación con {{mensaje.remitente.nombreComercial}}</p>
+                        <p class="text-secondary small mb-0">Conversación con {{message.sender.commercialName}}</p>
                     </div>
                     <div class="btn-toolbar">
                         <a href="/mensajes" class="btn btn-light border shadow-sm back-link px-3">
@@ -77,49 +77,49 @@
                         <div class="row align-items-center g-3">
                             <div class="col-auto">
                                 <div class="avatar-circle">
-                                    {{mensaje.remitente.inicial}}
+                                    {{message.sender.initial}}
                                 </div>
                             </div>
                             <div class="col">
-                                <h4 class="fw-bold text-dark mb-1">{{mensaje.asunto}}</h4>
+                                <h4 class="fw-bold text-dark mb-1">{{message.subject}}</h4>
                                 <div class="d-flex flex-wrap gap-3 align-items-center">
                                     <div>
                                         <div class="meta-label">Remitente</div>
-                                        <div class="fw-medium text-dark">{{mensaje.remitente.nombreComercial}}</div>
+                                        <div class="fw-medium text-dark">{{message.sender.commercialName}}</div>
                                     </div>
                                     <div class="vr mx-1 opacity-25 d-none d-md-block"></div>
                                     <div>
                                         <div class="meta-label">Fecha de Envío</div>
-                                        <div class="text-muted small"><i class="far fa-clock me-1"></i> {{mensaje.fechaEnvioFormateada}}</div>
+                                        <div class="text-muted small"><i class="far fa-clock me-1"></i> {{message.formattedSendDate}}</div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-auto text-md-end">
-                                {{#mensaje.leido}}
+                                {{#message.read}}
                                 <span class="badge rounded-pill bg-light text-secondary border px-3 py-2"><i class="fas fa-check-double me-1 text-success"></i> Leído</span>
-                                {{/mensaje.leido}}
-                                {{^mensaje.leido}}
+                                {{/message.read}}
+                                {{^message.read}}
                                 <span class="badge rounded-pill bg-success px-3 py-2">Nuevo</span>
-                                {{/mensaje.leido}}
+                                {{/message.read}}
                             </div>
                         </div>
                     </div>
                     
                     <div class="card-body p-4 p-md-5">
                         <div class="message-body">
-{{mensaje.contenido}}
+{{message.content}}
                         </div>
                     </div>
 
                     <div class="card-footer bg-white p-4 border-top-0">
                         <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
                             <div class="d-flex gap-2">
-                                {{#esRecibido}}
-                                <a href="/mensajes/nuevo?receptorId={{mensaje.remitente.id}}&asunto=Re: {{mensaje.asunto}}" class="btn btn-success px-4 py-2">
+                                {{#isReceived}}
+                                <a href="/mensajes/nuevo?recipientId={{message.sender.id}}&subject=Re: {{message.subject}}" class="btn btn-success px-4 py-2">
                                     <i class="fas fa-reply me-2"></i> Redactar Respuesta
                                 </a>
-                                {{/esRecibido}}
-                                <form action="/mensajes/{{mensaje.id}}/eliminar" method="POST" class="d-inline">
+                                {{/isReceived}}
+                                <form action="/mensajes/{{message.id}}/eliminar" method="POST" class="d-inline">
                                     {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                                     <button type="submit" class="btn btn-outline-danger px-4 py-2" onclick="return confirm('¿Seguro que deseas eliminar este mensaje?');">
                                         <i class="fas fa-trash-alt me-2"></i> Eliminar
@@ -127,7 +127,7 @@
                                 </form>
                             </div>
                             <div class="text-muted small italic">
-                                ECO-ID: #MSG-{{mensaje.id}}
+                                ECO-ID: #MSG-{{message.id}}
                             </div>
                         </div>
                     </div>
