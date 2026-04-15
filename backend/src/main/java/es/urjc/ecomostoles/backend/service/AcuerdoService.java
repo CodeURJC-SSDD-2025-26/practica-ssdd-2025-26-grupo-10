@@ -135,8 +135,12 @@ public class AcuerdoService {
         Optional<Empresa> empresa = empresaService.buscarPorId(empresaId);
         if (empresa.isEmpty()) return 0.0;
         
-        double totalKilos = sumarMaterialReintroducido(empresa.get());
-        return sustainabilityEngine.calcularImpactoCO2(totalKilos);
+        List<Acuerdo> acuerdos = acuerdoRepository.findByEmpresa(empresa.get());
+        return acuerdos.stream()
+                .filter(a -> es.urjc.ecomostoles.backend.model.EstadoAcuerdo.COMPLETADO.equals(a.getEstado()))
+                .mapToDouble(a -> sustainabilityEngine.calcularImpactoCO2(a.getCantidad(), 
+                    a.getOferta() != null ? a.getOferta().getTipoResiduo() : null))
+                .sum();
     }
 
     @Transactional(readOnly = true)
@@ -146,13 +150,18 @@ public class AcuerdoService {
  
     @Transactional(readOnly = true)
     public String calcularCO2Ahorrado() {
-        Double totalKilos = acuerdoRepository.sumTotalCantidadByEstadoCompletado();
-        if (totalKilos == null || totalKilos == 0) return "0";
+        // Granular calculation fetching all completed agreements to apply correct factors per material
+        List<Acuerdo> todos = acuerdoRepository.findAll(); 
         
-        // Delegation to Sustainability Engine for centralized calculation
-        double tonsCO2 = sustainabilityEngine.calcularImpactoCO2(totalKilos);
- 
+        double totalTonsCO2 = todos.stream()
+                .filter(a -> es.urjc.ecomostoles.backend.model.EstadoAcuerdo.COMPLETADO.equals(a.getEstado()))
+                .mapToDouble(a -> sustainabilityEngine.calcularImpactoCO2(a.getCantidad(), 
+                    a.getOferta() != null ? a.getOferta().getTipoResiduo() : null))
+                .sum();
+
+        if (totalTonsCO2 == 0) return "0";
+  
         java.text.DecimalFormat df = new java.text.DecimalFormat("#,###.###");
-        return df.format(tonsCO2);
+        return df.format(totalTonsCO2);
     }
 }

@@ -61,7 +61,7 @@ public class DashboardService {
             
             double reintroducido = acuerdoService.sumarMaterialReintroducido(empresa);
             stats.setMaterialReintroducido(reintroducido);
-            stats.setImpactoCO2(sustainabilityEngine.calcularImpactoCO2(reintroducido));
+            stats.setImpactoCO2(acuerdoService.calcularCO2AhorradoPorEmpresa(empresa.getId()));
 
             // Smart Matching
             List<Demanda> recommendedDemandas = demandaService.obtenerSmartRecommendations(empresa);

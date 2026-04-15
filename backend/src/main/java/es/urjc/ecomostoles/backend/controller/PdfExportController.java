@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.security.Principal;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 @Controller
 public class PdfExportController {
@@ -88,10 +90,13 @@ public class PdfExportController {
             table.setSpacingAfter(10f);
             table.setWidths(new float[]{1.5f, 3.5f});
 
+            NumberFormat formatoMoneda = NumberFormat.getCurrencyInstance(new Locale("es", "ES"));
+            String precioFormateado = formatoMoneda.format(agreement.getPrecioAcordado());
+
             addTableCell(table, "ID de Acuerdo:", agreement.getId().toString(), labelFont, normalFont);
             addTableCell(table, "Material:", agreement.getMaterialIntercambiado(), labelFont, normalFont);
             addTableCell(table, "Cantidad:", agreement.getCantidad() + " " + (agreement.getUnidad() != null ? agreement.getUnidad() : "uds"), labelFont, normalFont);
-            addTableCell(table, "Precio Acordado:", agreement.getPrecioAcordado() + " EUR", labelFont, normalFont);
+            addTableCell(table, "Precio Acordado:", precioFormateado, labelFont, normalFont);
             
             String originName = agreement.getEmpresaOrigen() != null ? agreement.getEmpresaOrigen().getNombreComercial() : "Empresa no disponible";
             String destName = agreement.getEmpresaDestino() != null ? agreement.getEmpresaDestino().getNombreComercial() : "Empresa no disponible";

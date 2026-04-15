@@ -56,6 +56,7 @@
                                 {{/poligonos}}
                                 <option value="Otro">Otro (Especificar)</option>
                             </select>
+                            <input type="text" id="direccionOtro" name="direccionOtro" class="form-control d-none mt-2" placeholder="Especifica tu ubicación...">
                             {{#err_direccion}}<div class="invalid-feedback">{{err_direccion}}</div>{{/err_direccion}}
                         </div>
 
@@ -120,4 +121,17 @@
     </div>
 </div>
 
+<script>
+  document.querySelector('select[name="direccion"]').addEventListener('change', function() {
+    const inputOtro = document.getElementById('direccionOtro');
+    if (this.value === 'Otro' || this.value === 'Otro (Especificar)') {
+      inputOtro.classList.remove('d-none');
+      inputOtro.setAttribute('required', 'true');
+    } else {
+      inputOtro.classList.add('d-none');
+      inputOtro.removeAttribute('required');
+      inputOtro.value = '';
+    }
+  });
+</script>
 {{> footer}}

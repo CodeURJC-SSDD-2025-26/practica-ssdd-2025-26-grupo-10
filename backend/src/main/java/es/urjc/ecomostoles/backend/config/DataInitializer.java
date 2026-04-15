@@ -1,16 +1,7 @@
 package es.urjc.ecomostoles.backend.config;
 
-import es.urjc.ecomostoles.backend.model.Empresa;
-import es.urjc.ecomostoles.backend.model.Oferta;
-import es.urjc.ecomostoles.backend.model.Demanda;
-import es.urjc.ecomostoles.backend.model.Acuerdo;
-import es.urjc.ecomostoles.backend.model.EstadoOferta;
-import es.urjc.ecomostoles.backend.model.EstadoDemanda;
-import es.urjc.ecomostoles.backend.model.EstadoAcuerdo;
-import es.urjc.ecomostoles.backend.repository.EmpresaRepository;
-import es.urjc.ecomostoles.backend.repository.OfertaRepository;
-import es.urjc.ecomostoles.backend.repository.DemandaRepository;
-import es.urjc.ecomostoles.backend.repository.AcuerdoRepository;
+import es.urjc.ecomostoles.backend.model.*;
+import es.urjc.ecomostoles.backend.repository.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,17 +19,6 @@ import java.util.Optional;
 
 /**
  * Single data initializer for the application.
- *
- * Creates sample data on startup (only when the DB is empty):
- *   - 1 ADMIN account  → admin@ecomostoles.es     / 1234  (BCrypt-encoded)
- *   - 3 company users  → contacto@metalesdelsur.es / 1234  (BCrypt-encoded)
- *                      → reciclajes@ecosur.es       / 1234  (BCrypt-encoded)
- *                      → paco@reciclajes.es          / 1234  (BCrypt-encoded)
- *   - 3 offers with real BLOB images
- *   - 3 demands
- *   - 1 agreement
- *
- * All passwords are hashed via {@link org.springframework.security.crypto.password.PasswordEncoder}.
  */
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -49,17 +29,20 @@ public class DataInitializer implements CommandLineRunner {
     private final OfertaRepository  ofertaRepository;
     private final DemandaRepository demandaRepository;
     private final AcuerdoRepository acuerdoRepository;
+    private final FactorImpactoRepository factorImpactoRepository;
     private final PasswordEncoder   passwordEncoder;
 
     public DataInitializer(EmpresaRepository empresaRepository,
-                           OfertaRepository ofertaRepository,
+                           OfertaRepository  ofertaRepository,
                            DemandaRepository demandaRepository,
                            AcuerdoRepository acuerdoRepository,
+                           FactorImpactoRepository factorImpactoRepository,
                            PasswordEncoder passwordEncoder) {
         this.empresaRepository = empresaRepository;
         this.ofertaRepository  = ofertaRepository;
         this.demandaRepository = demandaRepository;
         this.acuerdoRepository = acuerdoRepository;
+        this.factorImpactoRepository = factorImpactoRepository;
         this.passwordEncoder   = passwordEncoder;
     }
 
@@ -123,6 +106,21 @@ public class DataInitializer implements CommandLineRunner {
         log.info("════════════════════════════════════════════");
         log.info("  DataInitializer — Práctica 2 SSDD");
         log.info("════════════════════════════════════════════");
+
+        // ══════════════════════════════════════════
+        // 0. Factores de Impacto Ambiental (Sustainability)
+        // ══════════════════════════════════════════
+        if (factorImpactoRepository.count() == 0) {
+            log.info("🌱 Seeding environmental impact factors...");
+            factorImpactoRepository.save(new FactorImpacto("plástico", 1.5));
+            factorImpactoRepository.save(new FactorImpacto("metal", 2.0));
+            factorImpactoRepository.save(new FactorImpacto("aluminio", 2.0));
+            factorImpactoRepository.save(new FactorImpacto("acero", 2.0));
+            factorImpactoRepository.save(new FactorImpacto("madera", 0.8));
+            factorImpactoRepository.save(new FactorImpacto("vidrio", 1.2));
+            factorImpactoRepository.save(new FactorImpacto("papel/cartón", 1.1));
+            log.info("✅ {} factors created.", factorImpactoRepository.count());
+        }
 
         // ══════════════════════════════════════════
         // 1. ADMIN del sistema

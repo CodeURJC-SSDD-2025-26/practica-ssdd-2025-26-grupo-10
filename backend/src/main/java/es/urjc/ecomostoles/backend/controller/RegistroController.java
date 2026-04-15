@@ -12,6 +12,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import es.urjc.ecomostoles.backend.service.ConfiguracionService;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -20,9 +22,11 @@ public class RegistroController {
     private static final Logger log = LoggerFactory.getLogger(RegistroController.class);
 
     private final EmpresaService empresaService;
+    private final ConfiguracionService configuracionService;
 
-    public RegistroController(EmpresaService empresaService) {
+    public RegistroController(EmpresaService empresaService, ConfiguracionService configuracionService) {
         this.empresaService = empresaService;
+        this.configuracionService = configuracionService;
     }
 
     @GetMapping("/registro")
@@ -33,7 +37,11 @@ public class RegistroController {
     }
 
     private void injectDynamicOptions(Model model) {
-        model.addAttribute("sectores", List.of("Metalurgia", "Reciclaje y Medio Ambiente", "Tecnología", "Logística", "Construcción", "Industria", "Comercio", "Hostelería"));
+        // Fetch sectors dynamically from the platform settings
+        String categoriasStr = configuracionService.obtenerValorAuto("listaCategorias");
+        List<String> sectores = Arrays.asList(categoriasStr.split("\\r?\\n"));
+
+        model.addAttribute("sectores", sectores);
         model.addAttribute("poligonos", List.of("Polígono Industrial Regordoño", "Polígono Industrial Las Nieves", "Polígono Arroyomolinos", "Polígono Industrial Norte", "Móstoles Tecnológico"));
     }
 
