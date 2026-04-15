@@ -19,7 +19,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Controller provisioning raw access and organizational bootstrapping.
+ * 
+ * Manages the transition of anonymous prospect traffic into registered platform tenants.
+ * Coordinates heavy multipart constraints bridging raw HTTP payloads with the business logic
+ * establishing database baseline schemas for new organizations.
+ */
 @Controller
 public class RegistrationController {
 
@@ -33,21 +41,33 @@ public class RegistrationController {
         this.configurationService = configurationService;
     }
 
+    /**
+     * Renders the unauthenticated organizational registration funnel.
+     * 
+     * Intercepts authenticated traffic looping back to structural forms, bouncing them passively
+     * into the dashboard to prevent ghost registrations.
+     * 
+     * @param error URI-mapped query string flag signaling upload-size violations.
+     * @param model layout payload binder.
+     * @return logical path serving the registration HTML block.
+     */
     @GetMapping("/registro")
-    public String showRegistrationForm(@org.springframework.web.bind.annotation.RequestParam(value = "error", required = false) String error, Model model) {
-        // Redirigir si ya está autenticado
+    public String showRegistrationForm(
+            @org.springframework.web.bind.annotation.RequestParam(value = "error", required = false) String error,
+            Model model) {
+        // Redirect if user is already authenticated
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
             return "redirect:/dashboard";
         }
 
         model.addAttribute("registrationDTO", new RegistrationDTO());
-        
+
         if ("size".equals(error)) {
             model.addAttribute("error", true);
             model.addAttribute("errorMsg", "El archivo es demasiado grande. El tamaño máximo permitido es de 5MB.");
         }
-        
+
         injectDynamicOptions(model);
         return "registro";
     }
@@ -75,10 +95,20 @@ public class RegistrationController {
         }).collect(Collectors.toList()));
     }
 
+    /**
+     * Assembles complex registration inputs into persisted domain bounds.
+     * 
+     * @param dto strongly-typed form binding capturing company configurations.
+     * @param bindingResult proxy containing failed validation traces.
+     * @param model rendering target view data payload.
+     * @param redirectAttributes ephemeral storage for feedback resolution mapping over redirects.
+     * @return router string executing contextual UI jumps based on validation success.
+     */
     @PostMapping("/registro")
     public String registerCompany(@Valid @ModelAttribute("registrationDTO") RegistrationDTO dto,
             BindingResult bindingResult,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("hasErrors", true);
@@ -118,7 +148,7 @@ public class RegistrationController {
 
                 if (size > 5 * 1024 * 1024) { // 5MB Limit
                     model.addAttribute("error", true);
-                    model.addAttribute("errorMsg", "El logo es demasiado pesado. El límite máximo es 5MB.");
+                    model.addAttribute("errorMessage", "El logo es demasiado pesado. El límite máximo es 5MB.");
                     injectDynamicOptions(model);
                     return "registro";
                 }
@@ -127,7 +157,7 @@ public class RegistrationController {
                         !contentType.equals("image/png") &&
                         !contentType.equals("image/webp"))) {
                     model.addAttribute("error", true);
-                    model.addAttribute("errorMsg", "Formato de imagen no soportado. Usa JPG, PNG o WebP.");
+                    model.addAttribute("errorMessage", "Formato de imagen no soportado. Usa JPG, PNG o WebP.");
                     injectDynamicOptions(model);
                     return "registro";
                 }
@@ -139,7 +169,7 @@ public class RegistrationController {
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", true);
-            model.addAttribute("errorMsg", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
             injectDynamicOptions(model);
             return "registro";
         } catch (Exception e) {
@@ -149,6 +179,8 @@ public class RegistrationController {
             return "registro";
         }
 
-        return "redirect:/login?registrado";
+        redirectAttributes.addFlashAttribute("successMessage",
+                "¡Cuenta creada con éxito! Ya puedes acceder con tus credenciales.");
+        return "redirect:/login";
     }
 }

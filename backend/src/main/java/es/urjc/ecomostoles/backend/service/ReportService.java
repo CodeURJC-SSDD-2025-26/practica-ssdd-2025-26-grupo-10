@@ -18,8 +18,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
- * Service to handle document generation (PDF, CSV).
- * Extracted from AdminController to improve separation of concerns.
+ * Document Generation Factory for Administrative Intelligence.
+ * 
+ * Orchestrates the programmatic construction of structured data exports (PDF and CSV). 
+ * Implements in-memory streaming via ByteArrayOutputStream to ensure high performance 
+ * and avoid localized file-system persistence overhead during concurrent request 
+ * processing.
  */
 @Service
 public class ReportService {

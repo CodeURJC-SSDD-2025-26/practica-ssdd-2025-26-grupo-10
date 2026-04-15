@@ -25,28 +25,19 @@
                         <i class="fas fa-bullhorn me-1"></i> Demandas
                     </a>
                 </li>
+                {{^isAdmin}}
                 <li class="nav-item">
                     <a class="nav-link fw-bold {{#isDashboard}}active{{/isDashboard}}" href="/dashboard">
                         <i class="fas fa-tachometer-alt me-1"></i> Panel de Control
                     </a>
                 </li>
+                {{/isAdmin}}
 
                 {{#isAdmin}}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle fw-bold {{#isAdminPanel}}active{{/isAdminPanel}}"
-                        href="javascript:void(0)" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user-shield me-1"></i> Admin
+                <li class="nav-item">
+                    <a class="nav-link fw-bold {{#isAdminPanel}}active{{/isAdminPanel}}" href="/admin">
+                        <i class="fas fa-user-shield me-1"></i> Panel de Admin
                     </a>
-                    <ul class="dropdown-menu border-0 shadow-sm dropdown-rounded mt-2">
-                        <li><a class="dropdown-item" href="/admin/panel"><i
-                                    class="fas fa-tachometer-alt me-2 text-muted"></i> Panel Gestión</a></li>
-                        <li><a class="dropdown-item" href="/admin/usuarios"><i class="fas fa-users me-2 text-muted"></i>
-                                Usuarios</a></li>
-                        <li><a class="dropdown-item" href="/admin/ofertas"><i
-                                    class="fas fa-box-open me-2 text-muted"></i> Ofertas</a></li>
-                        <li><a class="dropdown-item" href="/admin/configuracion"><i
-                                    class="fas fa-cogs me-2 text-muted"></i> Configuración</a></li>
-                    </ul>
                 </li>
                 {{/isAdmin}}
                 <li class="nav-item dropdown ms-lg-2">
@@ -86,7 +77,7 @@
                         href="/">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" {{#isMercado}}style="color: #198754 !important;" {{/isMercado}}
+                    <a class="nav-link fw-bold" {{#isMarket}}style="color: #198754 !important;" {{/isMarket}}
                         href="/mercado">Ofertas</a>
                 </li>
                 <li class="nav-item">

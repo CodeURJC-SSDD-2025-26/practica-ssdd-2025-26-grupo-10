@@ -14,10 +14,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * UserDetailsService implementation that loads a user from the Company entity.
- *
- * Roles are read directly from Company.roles (@ElementCollection field).
- * If the list is empty or null, COMPANY is assigned by default.
+ * Custom authentication provider adapter bridging the DB schema with Spring Security.
+ * 
+ * Implements the Principal retrieval logic by mapping Company identity records to 
+ * UserDetails contracts. Dynamically evaluates role hierarchies to ensure the 
+ * security context is populated with correct authority tokens during the login handshake.
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

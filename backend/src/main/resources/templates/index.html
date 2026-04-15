@@ -3,7 +3,12 @@
 {{> header}}
 
 <main>
-    <!-- Hero Section -->
+    <!-- 
+        HERO SECTION ARCHITECTURE
+        Implements a high-engagement landing canvas with dynamic particle overlays.
+        The container uses a min-height of 60vh to establish visual dominance 
+        while ensuring accessibility on mobile viewports.
+    -->
     <header class="hero-section text-center py-5 position-relative overflow-hidden" style="min-height: 60vh; display: flex; align-items: center;">
         <!-- Particles: Hero (Absolute inside Header) -->
         <div id="particles-hero" class="position-absolute top-0 start-0 w-100 h-100"></div>
@@ -17,7 +22,11 @@
         </div>
     </header>
 
-    <!-- Featured Offers Grid -->
+    <!-- 
+        MARKETPLACE DISCOVERY GRID
+        Renders the most recent assets published to the platform.
+        Uses a standard 3-column Bootstrap grid (col-md-4) for responsive discovery.
+    -->
     <section id="offers" class="py-5 bg-white">
         <div class="container">
             <div class="d-flex justify-content-between align-items-end mb-5">
@@ -29,6 +38,11 @@
             </div>
 
             <div class="row g-4">
+                <!-- 
+                    MUSTACHE ITERATION: recentOffers
+                    Dynamically generates material cards. Injects a cacheBuster parameter 
+                    to ensure fresh image loads post-update.
+                -->
                 {{#recentOffers}}
                 <div class="col-md-4">
                     <div class="card h-100 border-0 shadow-sm card-hover rounded-4 overflow-hidden">
@@ -59,6 +73,7 @@
                 </div>
                 {{/recentOffers}}
 
+                <!-- FALLBACK: Empty State when no recent offers are available -->
                 {{^recentOffers}}
                 <div class="col-12 text-center py-5">
                     <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 100px; height: 100px;">
@@ -73,7 +88,10 @@
         </div>
     </section>
 
-    <!-- Stats / Call to Action -->
+    <!-- 
+        ANALYTICAL KPIS / SOCIAL PROOF
+        Displays platform-wide sustainability indices and growth metrics.
+    -->
     <section class="py-5 bg-light border-top border-bottom">
         <div class="container py-4">
             <div class="row g-4 text-center">

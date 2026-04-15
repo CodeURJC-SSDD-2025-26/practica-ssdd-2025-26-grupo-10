@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service layer for Offer business logic.
- * Intermediary between controllers and the OfferRepository, following
- * the Controller > Service > Repository architecture pattern.
+ * Marketplace Facilitator governing material provision lifecycles.
+ * 
+ * Orchestrates the high-throughput discovery ecosystem. Leverages lightweight 
+ * DTO projections (OfferSummary) for performant list rendering. Centralizes 
+ * complex multi-criteria material search algorithms and atomic visit auditing.
  */
 @Service
 @Transactional
@@ -100,7 +102,16 @@ public class OfferService {
         return offerRepository.save(offer);
     }
 
-    /** Deletes an offer by its ID. */
+    /**
+     * Executes the secure deletion of a material asset.
+     * 
+     * Asserts that no active commercial agreements (contracts) are pinned to this 
+     * record before delegating to the persistence layer, ensuring data structure 
+     * integrity across the platform.
+     * 
+     * @param id Identifier of the offer to be pruned.
+     * @throws ResponseStatusException 400 if contract invariants are violated.
+     */
     public void delete(Long id) {
         if (agreementRepository.countByOfferId(id) > 0) {
             throw new org.springframework.web.server.ResponseStatusException(

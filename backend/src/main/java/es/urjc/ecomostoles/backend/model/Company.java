@@ -19,6 +19,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Foundational tenant actor within the security and domain topology.
+ * 
+ * Represents an authenticated organization. Consolidates multi-directional mapping for Offers, 
+ * Demands, Messages, and Agreements. Functions as the root principal for Spring Security RBAC 
+ * validations and IDOR protection sweeps.
+ */
 @Entity
 public class Company {
 
@@ -66,7 +73,7 @@ public class Company {
 
     private boolean verified = true;
 
-    // Relationships
+    // Relationships: Cascade deletion ensures orphan states never pollute the database upon tenant destruction.
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Offer> offers = new ArrayList<>();
 
@@ -203,6 +210,16 @@ public class Company {
             return roles.get(0);
         }
         return "USER";
+    }
+
+    @Transient
+    public boolean isAdmin() {
+        return roles != null && roles.contains("ADMIN");
+    }
+
+    @Transient
+    public boolean isClient() {
+        return !isAdmin();
     }
 
     @Transient

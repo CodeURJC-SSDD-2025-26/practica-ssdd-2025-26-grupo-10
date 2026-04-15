@@ -5,8 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 /**
- * Repository interface for ImpactFactor entity.
- * Provides lookup capabilities by waste category.
+ * Repository for environmental sustainability tensors.
+ * 
+ * Provides high-speed lookup algorithms for CO2 impact multipliers, enabling the 
+ * Sustainability Engine to calculate environmental savings in O(1) time complexity 
+ * relative to the material catalog.
  */
 public interface ImpactFactorRepository extends JpaRepository<ImpactFactor, Long> {
 

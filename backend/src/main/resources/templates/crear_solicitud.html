@@ -41,7 +41,7 @@
                                         required>
                                         <option value="" selected="" disabled="">Seleccionar...</option>
                                         {{#wasteCategories}}
-                                        <option value="{{name}}">{{displayName}}</option>
+                                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                         {{/wasteCategories}}
                                     </select>
                                     <div class="invalid-feedback">Selecciona una categoría.</div>
@@ -82,9 +82,9 @@
                                     <select name="urgency"
                                         class="form-select {{#error_urgency}}is-invalid{{/error_urgency}}" required>
                                         <option value="" selected disabled>Seleccionar...</option>
-                                        <option value="Inmediata">Inmediata</option>
-                                        <option value="En 1 semana">En 1 semana</option>
-                                        <option value="Consultar">Consultar</option>
+                                        {{#availabilityOptions}}
+                                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                        {{/availabilityOptions}}
                                     </select>
                                     <div class="invalid-feedback">Indica la urgencia de tu solicitud.</div>
                                 </div>
@@ -107,11 +107,9 @@
                                     <label class="form-label text-secondary fw-bold small text-uppercase">Vigencia <span class="text-danger">*</span></label>
                                     <select name="validity" class="form-select {{#error_validity}}is-invalid{{/error_validity}}" required>
                                         <option value="" selected disabled>Seleccionar días...</option>
-                                        <option value="7">7 días</option>
-                                        <option value="15">15 días</option>
-                                        <option value="30">30 días</option>
-                                        <option value="90">90 días</option>
-                                        <option value="0">Indefinido / Consultar</option>
+                                        {{#validityOptions}}
+                                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                        {{/validityOptions}}
                                     </select>
                                     <div class="invalid-feedback">Selecciona el periodo de vigencia.</div>
                                 </div>

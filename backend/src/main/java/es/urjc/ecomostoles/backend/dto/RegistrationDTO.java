@@ -6,8 +6,11 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Data Transfer Object for company registration.
- * Includes Jakarta Bean Validation annotations.
+ * Form binder mapping the corporate registration funnel.
+ * 
+ * Orchestrates bidirectional state transformation, wrapping pre-flight multipart logic. 
+ * Asserts cross-field invariant constraints (Password Matching) enforcing tight 
+ * JSR 380 payload validations before triggering transactional database mutations.
  */
 public class RegistrationDTO {
 
@@ -46,7 +49,10 @@ public class RegistrationDTO {
     public RegistrationDTO() {
     }
 
-    // Method for cross-field validation
+    /**
+     * Executes custom JSR 380 cross-field logical evaluation.
+     * Validates that credential verification nodes remain implicitly synchronized.
+     */
     @AssertTrue(message = "Las contraseñas no coinciden")
     public boolean isPasswordsMatch() {
         if (password == null || confirmPassword == null)

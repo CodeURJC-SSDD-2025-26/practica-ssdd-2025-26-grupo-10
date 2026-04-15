@@ -1,6 +1,7 @@
 {{> head}}
 <body class="bg-theme-dark">
 <style>
+    /* B2B MESSAGING OVERRIDES: Enforces a strictly-contained messaging container */
     .contact-item { cursor: pointer; transition: background 0.2s; border-left: 3px solid transparent; background: #ffffff !important; color: #212529 !important; }
     .contact-item h6 { color: #212529 !important; }
     .contact-item p, .contact-item small { color: #6c757d !important; }
@@ -14,29 +15,37 @@
 
 <div class="container-fluid">
     <div class="row min-vh-100">
+        <!-- ROLE-DRIVEN NAVIGATION -->
         {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
         {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
+        <!-- 
+            MESSAGING HUB ARCHITECTURE
+            Implements a Split-View Layout (Master-Detail Pattern).
+            Left pane: Subscription/Notification list.
+            Right pane: Contextual thread viewer.
+        -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
             <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                 <div><h1 class="h2 fw-bold text-dark">Buzón de Mensajes</h1><p class="text-secondary small mb-0">Comunicaciones con otras empresas.</p></div>
             </header>
 
             <div class="row g-0">
+                <!-- Master Pane: Inbox/Outbox Tabs -->
                 <div class="col-lg-4 col-md-5">
                     <div class="p-3">
-                        <ul class="nav nav-tabs nav-fill mb-3" id="mensajesTab" role="tablist">
+                        <ul class="nav nav-tabs nav-fill mb-3" id="messagesTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active fw-bold text-success border-0 border-bottom border-3" id="recibidos-tab" data-bs-toggle="tab" data-bs-target="#recibidos" type="button" role="tab">Recibidos</button>
+                                <button class="nav-link active fw-bold text-success border-0 border-bottom border-3" id="received-tab" data-bs-toggle="tab" data-bs-target="#received" type="button" role="tab">Recibidos</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link fw-bold text-success border-0 border-bottom border-3" id="enviados-tab" data-bs-toggle="tab" data-bs-target="#enviados" type="button" role="tab">Enviados</button>
+                                <button class="nav-link fw-bold text-success border-0 border-bottom border-3" id="sent-tab" data-bs-toggle="tab" data-bs-target="#sent" type="button" role="tab">Enviados</button>
                             </li>
                         </ul>
 
-                        <div class="tab-content" id="mensajesTabContent">
-                            <!-- RECEIVED MESSAGES TAB -->
-                            <div class="tab-pane fade show active" id="recibidos" role="tabpanel">
+                        <div class="tab-content" id="messagesTabContent">
+                            <!-- RECEIVED MESSAGES TAB: Iterates over incoming communications -->
+                            <div class="tab-pane fade show active" id="received" role="tabpanel">
                                 <div class="list-group list-group-flush shadow-sm rounded-3 border overflow-auto" style="max-height: 500px;">
                                     {{#receivedMessages}}
                                     <a href="/mensajes/{{id}}" class="list-group-item list-group-item-action py-3 border-bottom contact-item">
@@ -55,8 +64,8 @@
                                 </div>
                             </div>
 
-                            <!-- SENT MESSAGES TAB -->
-                            <div class="tab-pane fade" id="enviados" role="tabpanel">
+                            <!-- SENT MESSAGES TAB: Outgoing audits -->
+                            <div class="tab-pane fade" id="sent" role="tabpanel">
                                 <div class="list-group list-group-flush shadow-sm rounded-3 border overflow-auto" style="max-height: 500px;">
                                     {{#sentMessages}}
                                     <a href="/mensajes/{{id}}" class="list-group-item list-group-item-action py-3 border-bottom contact-item">
@@ -78,6 +87,7 @@
                     </div>
                 </div>
 
+                <!-- Detail Pane: Default Selection Payload -->
                 <div class="col-lg-8 col-md-7">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-header bg-white border-bottom p-3 d-flex align-items-center">

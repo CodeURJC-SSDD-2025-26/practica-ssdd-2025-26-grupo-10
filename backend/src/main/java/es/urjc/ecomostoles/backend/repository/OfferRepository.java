@@ -13,7 +13,11 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 /**
- * Repository interface for Offer entity.
+ * Primary repository for marketplace material provision assets.
+ * 
+ * Implements a sophisticated multi-criteria search engine with full support for 
+ * dynamic filtering, pagination, and projection mapping. Optimized to handle 
+ * high-throughput read operations via lightweight DTO projection interfaces.
  */
 public interface OfferRepository extends JpaRepository<Offer, Long> {
 
@@ -53,6 +57,11 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
         @Query("SELECT o FROM Offer o JOIN FETCH o.company ORDER BY o.publicationDate DESC LIMIT 50")
         <T> List<T> findTop50ByOrderByPublicationDateDesc(Class<T> type);
 
+        /**
+         * Core marketplace multi-criteria search execution. 
+         * Implements optional filtering for keywords, material taxonomy, and geographic 
+         * industrial perimeters. Handles null parameters gracefully to allow broad discovery.
+         */
         @Query("SELECT o FROM Offer o JOIN FETCH o.company " +
                         "WHERE o.status = :status " +
                         "AND (:kw IS NULL OR :kw = '' OR LOWER(o.title) LIKE LOWER(CONCAT('%', :kw, '%')) OR LOWER(CAST(o.description AS string)) LIKE LOWER(CONCAT('%', :kw, '%'))) "

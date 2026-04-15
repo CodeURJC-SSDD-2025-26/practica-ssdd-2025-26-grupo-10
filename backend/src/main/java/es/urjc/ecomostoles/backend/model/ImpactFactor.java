@@ -3,9 +3,11 @@ package es.urjc.ecomostoles.backend.model;
 import jakarta.persistence.*;
 
 /**
- * Entity representing environmental impact factors for different waste
- * categories.
- * Allows dynamic management of CO2 multipliers without code redeployment.
+ * Analytical multiplier table for environmental profiling.
+ * 
+ * Maps localized waste categories to dynamic CO2 equivalence tensors. Grants system operators
+ * the capability to tune backend carbon-offset algorithms natively without necessitating
+ * codebase rebuilds or downtime.
  */
 @Entity
 public class ImpactFactor {

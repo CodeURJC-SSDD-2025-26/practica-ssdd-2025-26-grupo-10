@@ -9,9 +9,11 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 /**
- * Repository interface for Agreement entity.
- * Provides methods to retrieve agreements based on source or destination
- * companies.
+ * Persistence gateway for Agreement domain assets.
+ * 
+ * Orchestrates localized database transactions via Spring Data JPA. Leverages advanced 
+ * JPQL "JOIN FETCH" optimizations to mitigate N+1 retrieval anomalies during high-concurrency 
+ * dashboard reconciliation and marketplace audit sweeps.
  */
 public interface AgreementRepository extends JpaRepository<Agreement, Long> {
 
@@ -87,6 +89,9 @@ public interface AgreementRepository extends JpaRepository<Agreement, Long> {
         @org.springframework.data.jpa.repository.Query("SELECT SUM(a.co2Impact) FROM Agreement a WHERE (a.originCompany = :company OR a.destinationCompany = :company) AND a.status = 'COMPLETED'")
         Double sumCO2ImpactByCompanyCompleted(
                         @org.springframework.data.repository.query.Param("company") Company company);
+
+        @org.springframework.data.jpa.repository.Query("SELECT SUM(a.platformCommission) FROM Agreement a WHERE a.status = 'COMPLETED'")
+        Double sumTotalCommissionCompleted();
 
         long countByRegistrationDateAfter(java.time.LocalDateTime date);
 

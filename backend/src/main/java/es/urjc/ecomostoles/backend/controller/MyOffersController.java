@@ -1,13 +1,13 @@
 package es.urjc.ecomostoles.backend.controller;
 
 import es.urjc.ecomostoles.backend.model.OfferStatus;
-import es.urjc.ecomostoles.backend.model.WasteCategory;
 
 import es.urjc.ecomostoles.backend.model.Company;
 import es.urjc.ecomostoles.backend.model.Offer;
 import es.urjc.ecomostoles.backend.dto.OfferSummary;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.service.OfferService;
+import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -36,14 +36,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 
 /**
- * Manages offers for the authenticated user (CRUD + ownership logic).
- *
- * Follows Controller > Service > Repository architecture:
- * delegates all data access to OfferService and CompanyService.
- *
- * Ownership rule:
- * Before editing or deleting an offer, we verify that the logged-in user
- * is the author company OR has ADMIN role. Returns 403 Forbidden otherwise.
+ * Operational controller provisioning CRUD interfaces for Offer assets strictly tracked under the logged tenant.
+ * 
+ * Embeds zero-trust evaluation models explicitly blocking external data mutations by utilizing 
+ * ownership checks prior to all state-changing endpoints. Abstracts file processing complexity 
+ * safely away from the underlying persistence layers.
  */
 @Controller
 public class MyOffersController {
@@ -61,9 +58,14 @@ public class MyOffersController {
         this.configurationService = configurationService;
     }
 
-    // -------------------------------------------------------------------------
-    // Ownership helper: returns the offer if the user is the author or ADMIN.
-    // -------------------------------------------------------------------------
+    /**
+     * Defensive authorization gate. Resolves and validates asset alignment against the active security principle.
+     * 
+     * @param offerId unique constraint ID mapping the material asset.
+     * @param principal current authorized connection object.
+     * @return fully materialized Offer verified for logical accessibility.
+     * @throws ResponseStatusException if bounded context assertions fail (HTTP 403/404).
+     */
     private Offer verifyOwnership(Long offerId, Principal principal) {
         Offer offer = offerService.findById(offerId)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -147,15 +149,25 @@ public class MyOffersController {
     }
 
     private void injectDynamicOptions(Model model) {
-        model.addAttribute("wasteCategories", WasteCategory.values());
-        model.addAttribute("unitList", configurationService.getSanitizedList("unitList"));
-        model.addAttribute("availabilityList",
-                configurationService.getSanitizedList("availabilityList"));
+        model.addAttribute("wasteCategories",
+                FormOptionsHelper.getCategoryOptions(configurationService, null));
+        model.addAttribute("unitOptions",
+                FormOptionsHelper.getUnitOptions(configurationService, null));
+        model.addAttribute("availabilityOptions",
+                FormOptionsHelper.getUrgencyOptions(configurationService, null));
     }
 
-    // -------------------------------------------------------------------------
-    // POST /oferta/nueva — Create new offer with Bean Validation
-    // -------------------------------------------------------------------------
+    /**
+     * Marshals complex multipart form payloads handling both textual metadata and BLOB image buffers.
+     * 
+     * @param offer DTO automatically hydrated via Spring's internal binder.
+     * @param result JSR 380 constraint validation state holder.
+     * @param imageFile buffered input stream intercepting multipart network boundaries.
+     * @param model MVC rendering dictionary.
+     * @param principal authentication wrapping context.
+     * @param redirectAttributes flash storage container ensuring ephemeral messages persist over redirect jumps.
+     * @return logical redirect URI enforcing PRG interaction loops.
+     */
     @PostMapping("/oferta/nueva")
     public String saveNewOffer(@Valid @ModelAttribute("offer") Offer offer,
             BindingResult result,
@@ -182,7 +194,14 @@ public class MyOffersController {
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             model.addAttribute("errors", result.getAllErrors());
             model.addAttribute("offer", offer); // Ensure attribute name matches template
-            injectDynamicOptions(model);
+            loadSelectOptions(model, offer); // Fix: use loadSelectOptions instead of injectDynamicOptions
+            
+            // SECURITY: Ensure sidebar knows user role on validation fail
+            Company loggedUser = companyService.findByEmail(principal.getName()).orElse(null);
+            if (loggedUser != null && loggedUser.getRoles().contains("ADMIN")) {
+                model.addAttribute("isAdmin", true);
+            }
+            
             return "crear_activo";
         }
 
@@ -213,14 +232,21 @@ public class MyOffersController {
     @PostMapping("/ofertas/{id}/eliminar")
     public String deleteOffer(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
         Offer offer = verifyOwnership(id, principal);
-        
+
         if (offer.isClosed()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: No se puede eliminar una oferta que ya ha sido finalizada.");
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error: No se puede eliminar una oferta que ya ha sido finalizada.");
             return "redirect:/dashboard/mis-ofertas";
         }
 
         offerService.delete(id);
         redirectAttributes.addFlashAttribute("successMessage", "Oferta eliminada correctamente.");
+
+        // FIX: Redirect based on role to avoid 403
+        Company loggedUser = companyService.findByEmail(principal.getName()).orElseThrow();
+        if (loggedUser.getRoles().contains("ADMIN")) {
+            return "redirect:/admin/ofertas";
+        }
         return "redirect:/dashboard/mis-ofertas";
     }
 
@@ -228,37 +254,18 @@ public class MyOffersController {
     // GET /oferta/editar/{id} — Show edit form (ownership check)
     // -------------------------------------------------------------------------
     private void loadSelectOptions(Model model, Offer offer) {
-        // Dynamic Select Options for status
+        // Status with selection logic
         List<SelectOption> statusOptions = new ArrayList<>();
-        statusOptions.add(new SelectOption("ACTIVE", "ACTIVA",
-                "ACTIVE".equals(offer.getStatus() != null ? offer.getStatus().name() : "")));
-        statusOptions.add(new SelectOption("PAUSED", "PAUSADA",
-                "PAUSED".equals(offer.getStatus() != null ? offer.getStatus().name() : "")));
+        for (OfferStatus status : OfferStatus.values()) {
+            statusOptions.add(new SelectOption(status.name(), status.getDisplayName(), status.equals(offer.getStatus())));
+        }
         model.addAttribute("statusOptions", statusOptions);
 
-        // Dynamic Categories with selection logic
-        List<SelectOption> categoryOptions = new ArrayList<>();
-        for (WasteCategory cat : WasteCategory.values()) {
-            categoryOptions
-                    .add(new SelectOption(cat.name(), cat.getDisplayName(), cat.equals(offer.getWasteCategory())));
-        }
-        model.addAttribute("wasteCategories", categoryOptions);
-
-        // Dynamic Units
-        List<String> unitsList = configurationService.getSanitizedList("unitList");
-        List<SelectOption> unitOptions = new ArrayList<>();
-        for (String u : unitsList) {
-            unitOptions.add(new SelectOption(u, u, u.equals(offer.getUnit())));
-        }
-        model.addAttribute("unitOptions", unitOptions);
-
-        // Dynamic Availability
-        List<String> availabilityList = configurationService.getSanitizedList("availabilityList");
-        List<SelectOption> availabilityOptions = new ArrayList<>();
-        for (String d : availabilityList) {
-            availabilityOptions.add(new SelectOption(d, d, d.equals(offer.getAvailability())));
-        }
-        model.addAttribute("availabilityOptions", availabilityOptions);
+        model.addAttribute("wasteCategories",
+                FormOptionsHelper.getCategoryOptions(configurationService, offer.getWasteCategory()));
+        model.addAttribute("unitOptions", FormOptionsHelper.getUnitOptions(configurationService, offer.getUnit()));
+        model.addAttribute("availabilityOptions",
+                FormOptionsHelper.getUrgencyOptions(configurationService, offer.getAvailability()));
     }
 
     // -------------------------------------------------------------------------
@@ -272,7 +279,8 @@ public class MyOffersController {
         Offer offer = verifyOwnership(id, principal);
 
         if (offer.isClosed()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: No es posible editar ofertas que ya han sido finalizadas.");
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error: No es posible editar ofertas que ya han sido finalizadas.");
             return "redirect:/dashboard/mis-ofertas";
         }
 
@@ -297,10 +305,12 @@ public class MyOffersController {
             RedirectAttributes redirectAttributes) {
 
         // SECURITY: Verify ownership BEFORE validation to prevent Data Leak
+        Company loggedUser = companyService.findByEmail(principal.getName()).orElseThrow();
         Offer offer = verifyOwnership(id, principal);
 
         if (offer.isClosed()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error de seguridad: Intento de edición sobre una oferta finalizada.");
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error de seguridad: Intento de edición sobre una oferta finalizada.");
             return "redirect:/dashboard/mis-ofertas";
         }
 
@@ -321,6 +331,12 @@ public class MyOffersController {
             model.addAttribute("errors", result.getAllErrors());
             model.addAttribute("offer", offerForm); // Ensure attribute name matches template 'offer'
             offerForm.setId(id);
+            
+            // SECURITY: Ensure sidebar knows user role on validation fail
+            if (loggedUser.getRoles().contains("ADMIN")) {
+                model.addAttribute("isAdmin", true);
+            }
+            
             return "editar_activo";
         }
 
@@ -342,6 +358,12 @@ public class MyOffersController {
         }
 
         offerService.save(offer);
+        redirectAttributes.addFlashAttribute("successMessage", "Cambios guardados correctamente.");
+
+        // FIX: Redirect based on role to avoid 403
+        if (loggedUser.getRoles().contains("ADMIN")) {
+            return "redirect:/admin/ofertas";
+        }
         return "redirect:/dashboard/mis-ofertas";
     }
 }

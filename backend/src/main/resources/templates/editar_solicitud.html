@@ -12,7 +12,7 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2 text-dark fw-bold">Editar Demanda <span class="text-muted fs-6">#REQ-{{demand.id}}</span></h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <a href="/dashboard/mis-demandas" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-1"></i> Cancelar</a>
+                    <a href="{{#isAdmin}}/admin/demandas{{/isAdmin}}{{^isAdmin}}/dashboard/mis-demandas{{/isAdmin}}" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-1"></i> Cancelar</a>
                 </div>
             </div>
 

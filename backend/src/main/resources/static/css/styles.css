@@ -5,7 +5,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-/* === ROOT VARIABLES & DESIGN TOKENS === */
+/* === 1. ROOT VARIABLES & DESIGN TOKENS === */
 :root {
     /* Bases */
     --bg-body: #f8f9fa;
@@ -35,7 +35,7 @@
     --radius-pill: 9999px;
 }
 
-/* === GLOBAL RESET & TYPOGRAPHY === */
+/* === 2. GLOBAL RESET & TYPOGRAPHY === */
 body {
     background-color: var(--bg-body);
     color: var(--text-primary);
@@ -64,7 +64,11 @@ a:hover {
     color: var(--brand-dark);
 }
 
-/* === CARD COMPONENT === */
+/* === 4. COMPONENT LIBRARY === */
+
+/* Standard Card Pattern 
+ * Primary container for marketplace items and analytical data.
+ */
 .card, .card-modern {
     background-color: var(--bg-surface) !important;
     color: var(--text-primary) !important;
@@ -94,7 +98,11 @@ a:hover {
 .border-top-danger  { border-top: 4px solid var(--accent-red) !important; }
 .border-top-info    { border-top: 4px solid var(--accent-info) !important; }
 
-/* === HERO SECTION === */
+/* === 3. LAYOUT & NAVIGATION === */
+
+/* Hero Section: Dynamic Animated Canvas 
+ * Uses an animated gradient to create a sense of movement and energy.
+ */
 .hero-section {
     position: relative;
     background: linear-gradient(-45deg, #0a2e23, #0f5132, #198754, #0d3838);
@@ -240,7 +248,9 @@ a:hover {
     box-shadow: 0 0 15px rgba(25, 135, 84, 0.5);
 }
 
-/* === FORMS === */
+/* === 5. DATA PRESENTATION === */
+
+/* Standard Input Fields */
 .form-control, .form-select {
     border: 1px solid #dee2e6;
     border-radius: var(--radius-md);
@@ -286,7 +296,11 @@ a:hover {
     background-color: #f8f9fa;
 }
 
-/* === CARD SPOTLIGHT EFFECT === */
+/* === 6. ADVANCED EFFECTS === */
+
+/* Spotlight Interactive Glow 
+ * Complex layer-mask pattern to create a cursor-following lighting effect.
+ */
 .card {
     position: relative;
     z-index: 1;
@@ -642,7 +656,11 @@ a:hover {
     height: 100px;
 }
 
-/* Mensajes Area Styles */
+/* === 7. B2B FEATURES === */
+
+/* Internal Messaging & Chat Interface 
+ * Optimized for real-time B2B coordination.
+ */
 .chat-bubble {
     max-width: 75%;
     padding: 12px 16px;
@@ -696,8 +714,14 @@ a:hover {
     background: #ffffff !important;
 }
 
-/* Enforce perfect circles for all circular avatars and icons */
+/* === 8. UTILITIES & MEDIA === */
+
+/* UI Invariants: Proportion Enforcement 
+ * Critical aspect-ratio locks to ensure visual consistency of avatars across all payloads.
+ */
+/* Enforce square proportions for all circular UI actors */
 img.rounded-circle, .avatar-navbar, .avatar-profile, .avatar-table, .avatar-sm, .avatar-lg {
+    /* Critical for avoiding image distortion in multi-tenant uploads */
     aspect-ratio: 1 / 1 !important;
     object-fit: cover !important;
     border-radius: 50% !important;

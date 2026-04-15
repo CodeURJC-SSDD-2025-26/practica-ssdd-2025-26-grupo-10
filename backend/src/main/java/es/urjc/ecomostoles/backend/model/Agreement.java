@@ -7,7 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.Enumerated;
@@ -20,8 +19,11 @@ import java.util.Locale;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
- * Represents a transaction agreement between two companies.
- * This entity tracks the exchange of materials, quantities, and prices.
+ * Core commercial entity mapping finalized B2B transactions.
+ * 
+ * Orchestrates the persistent state of environmental material transfers. Embeds relational 
+ * links bridging original Offers and Demands, calculates platform commissions, and anchors 
+ * the statistical CO2 reduction metrics for dashboard reporting.
  */
 @Entity
 public class Agreement {

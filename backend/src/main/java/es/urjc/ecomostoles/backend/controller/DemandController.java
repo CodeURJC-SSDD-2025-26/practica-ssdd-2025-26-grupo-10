@@ -18,25 +18,33 @@ import java.security.Principal;
 import java.util.Optional;
 
 /**
- * Controller to handle demand-related web requests.
- *
- * Follows Controller > Service > Repository architecture:
- * delegates all data access to DemandService.
+ * Controller mapping HTTP requests corresponding to the Demand entity
+ * lifecycle.
+ * 
+ * Manages the front-end rendering and interaction flows for the Demand
+ * marketplace. Implements a
+ * strict Controller -> Service architecture, enforcing boundaries by delegating
+ * data retrieval,
+ * pagination, and business rules entirely to the service layer.
  */
 @Controller
 public class DemandController {
 
     private final DemandService demandService;
-    private final es.urjc.ecomostoles.backend.service.CompanyService companyService;
 
-    public DemandController(DemandService demandService, es.urjc.ecomostoles.backend.service.CompanyService companyService) {
+    public DemandController(DemandService demandService) {
         this.demandService = demandService;
-        this.companyService = companyService;
     }
 
     /**
-     * Retrieves active demands and displays the solicitudes marketplace page with
-     * pagination.
+     * Renders the marketplace board displaying all active material demands.
+     * 
+     * @param model     the Spring MVC model holding data to render the view.
+     * @param principal the authenticated user context.
+     * @param pageable  pagination parameters (page, size, sort) resolved from the
+     *                  URL footprint.
+     * @return the resolved path to the mustache template serving the demands
+     *         marketplace.
      */
     @GetMapping("/solicitudes")
     public String showDemandBoard(Model model, Principal principal,
@@ -67,8 +75,19 @@ public class DemandController {
     }
 
     /**
-     * Shows the detail view for a specific demand.
-     * Returns 404 redirect if the demand does not exist.
+     * Displays the detailed view for a single demand object.
+     * 
+     * Applies conditional logic to increment visit counters only if the accessor is
+     * not
+     * the entity owner, preventing skewed analytics.
+     * 
+     * @param id                 the unique identifier corresponding to the target
+     *                           Demand entity.
+     * @param model              the current MVC context model.
+     * @param principal          the current authenticated user instance.
+     * @param redirectAttributes flash context for propagating soft errors.
+     * @return the detailed view template, or redirects backwards on entity
+     *         resolution failure.
      */
     @GetMapping("/demanda/{id}")
     public String showDemandDetail(@PathVariable("id") Long id, Model model, Principal principal,
@@ -99,7 +118,13 @@ public class DemandController {
     }
 
     /**
-     * Saves a demand to the company's favorite list.
+     * Handles POST requests for favoriting a specific demand.
+     * 
+     * @param id                 the identifier of the demand being marked as
+     *                           preferred.
+     * @param redirectAttributes attribute dispatcher to render UI feedback to the
+     *                           client.
+     * @return redirection directive returning the user back to the detail view.
      */
     @PostMapping("/demandas/{id}/favorito")
     public String toggleFavorite(@PathVariable Long id, RedirectAttributes redirectAttributes) {

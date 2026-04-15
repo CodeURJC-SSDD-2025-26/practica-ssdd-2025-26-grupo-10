@@ -22,21 +22,26 @@ import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
-import es.urjc.ecomostoles.backend.dto.SelectOption;
 import es.urjc.ecomostoles.backend.exception.SelfAgreementException;
 import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Controller responsible for displaying and registering new commercial
- * agreements.
- *
- * Follows Controller > Service > Repository architecture:
- * delegates all data access to AgreementService, CompanyService and
- * OfferService.
+ * Primary state-machine controller mapping commercial material exchange
+ * contracts.
+ * 
+ * Regulates the negotiation bindings bridging Supply (Offers) and Demand models
+ * via
+ * rigorous business logic safeguards. Implements strict Controller <-> Service
+ * segmentation,
+ * explicitly blocking IDOR (Insecure Direct Object Reference) vulnerabilities
+ * during modifications.
  */
 @Controller
 public class AgreementController {
+
+    private static final Logger log = LoggerFactory.getLogger(AgreementController.class);
 
     private final AgreementService agreementService;
     private final CompanyService companyService;
@@ -53,7 +58,16 @@ public class AgreementController {
         this.configurationService = configurationService;
     }
 
-    /** Shows the form to register a new agreement. */
+    /**
+     * Displays form elements allowing organizations to craft contractual exchanges
+     * based on existing offers.
+     * Applies tenant-isolation ensuring companies can only allocate their
+     * registered assets.
+     * 
+     * @param model     MVC data map for the view dispatcher.
+     * @param principal user context determining entity accessibility parameters.
+     * @return relative classpath defining the creation form GUI.
+     */
     @GetMapping("/acuerdo/nuevo")
     public String showAgreementForm(Model model, Principal principal) {
         Optional<Company> companyOpt = companyService.findByEmail(principal.getName());
@@ -62,8 +76,9 @@ public class AgreementController {
             Company company = companyOpt.get();
             model.addAttribute("activeNewAgreement", true);
             model.addAttribute("isDashboard", true);
-            
-            // Business Logic: Only show offers belonging to the current company (Material Owner)
+
+            // Business Logic: Only show offers belonging to the current company (Material
+            // Owner)
             List<OfferSummary> myOffers = offerService.getActiveByCompany(company);
             model.addAttribute("offers", myOffers);
 
@@ -77,7 +92,15 @@ public class AgreementController {
         return "redirect:/";
     }
 
-    /** Shows the agreement history for the active company. */
+    /**
+     * Yields the persistent, historical timeline of commercial agreements
+     * concerning the logged party.
+     * 
+     * @param model     mutable attribute dictionary pushed into the view resolver.
+     * @param principal authenticated connection context mapped to a distinct
+     *                  Tenant.
+     * @return logical view path executing the agreement table loop layout.
+     */
     @GetMapping("/acuerdos")
     public String showMyAgreements(Model model, Principal principal) {
         Optional<Company> companyOpt = companyService.findByEmail(principal.getName());
@@ -102,7 +125,22 @@ public class AgreementController {
     }
 
     /**
-     * Processes the creation of a new agreement with Bean Validation.
+     * Executes domain persistence for incoming Agreement forms. Leverages JSR 380
+     * standards inside
+     * the payload schema via the @Valid annotation layout.
+     * 
+     * @param agreement            un-marshaled transient HTTP payload capturing
+     *                             form inputs.
+     * @param result               standardized carrier validating binding defects.
+     * @param offerId              external relational mapped Offer entity sequence.
+     * @param destinationCompanyId foreign target counter-part executing the pickup.
+     * @param model                generic template parameters.
+     * @param principal            authenticated executor triggering the command
+     *                             sequence.
+     * @param redirectAttributes   HTTP session proxy for feedback messages avoiding
+     *                             query pollution.
+     * @return contextual URL string steering the user away upon error/success
+     *         outcomes.
      */
     @PostMapping("/acuerdo/nuevo")
     public String registerAgreement(@Valid @ModelAttribute Agreement agreement,
@@ -117,14 +155,18 @@ public class AgreementController {
         Company loggedCompany = companyOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
         if (result.hasErrors() || offerId == null || destinationCompanyId == null) {
-            System.out.println("❌ Error de validación al registrar acuerdo:");
-            result.getAllErrors().forEach(System.out::println);
-            if (offerId == null) System.out.println("- Falta offerId");
-            if (destinationCompanyId == null) System.out.println("- Falta destinationCompanyId");
+            log.warn("Validation error when registering agreement: {} errors", result.getErrorCount());
+            result.getAllErrors().forEach(err -> log.debug("  - {}", err.getDefaultMessage()));
+            if (offerId == null)
+                log.warn("  - Missing offerId");
+            if (destinationCompanyId == null)
+                log.warn("  - Missing destinationCompanyId");
 
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
-            if (offerId == null) model.addAttribute("error_offerId", true);
-            if (destinationCompanyId == null) model.addAttribute("error_destinationCompanyId", true);
+            if (offerId == null)
+                model.addAttribute("error_offerId", true);
+            if (destinationCompanyId == null)
+                model.addAttribute("error_destinationCompanyId", true);
 
             // Re-populate with OWN offers and other companies
             model.addAttribute("offers", offerService.getActiveByCompany(loggedCompany));
@@ -139,12 +181,13 @@ public class AgreementController {
 
         try {
             agreementService.registerNewAgreement(agreement, principal.getName(), offerId, destinationCompanyId);
-            redirectAttributes.addFlashAttribute("successMessage", "¡Acuerdo registrado con éxito! El material ha sido reservado.");
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "¡Acuerdo registrado con éxito! El material ha sido reservado.");
         } catch (SelfAgreementException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/acuerdo/nuevo";
         } catch (Exception e) {
-            System.err.println("❌ Error inesperado al guardar acuerdo: " + e.getMessage());
+            log.error("Unexpected error saving agreement", e);
             redirectAttributes.addFlashAttribute("errorMessage", "Error interno al procesar el acuerdo.");
             return "redirect:/acuerdo/nuevo";
         }
@@ -214,10 +257,12 @@ public class AgreementController {
             model.addAttribute("agreement", updatedAgreement);
             updatedAgreement.setId(id);
             // Repopulate dynamic options (DRY with showEditForm)
-            model.addAttribute("unitOptions", 
-                es.urjc.ecomostoles.backend.utils.FormOptionsHelper.getUnitOptions(configurationService, updatedAgreement.getUnit()));
-            model.addAttribute("statusOptions", 
-                es.urjc.ecomostoles.backend.utils.FormOptionsHelper.getAgreementStatusOptions(updatedAgreement.getStatus()));
+            model.addAttribute("unitOptions",
+                    es.urjc.ecomostoles.backend.utils.FormOptionsHelper.getUnitOptions(configurationService,
+                            updatedAgreement.getUnit()));
+            model.addAttribute("statusOptions",
+                    es.urjc.ecomostoles.backend.utils.FormOptionsHelper
+                            .getAgreementStatusOptions(updatedAgreement.getStatus()));
             model.addAttribute("errors", result.getAllErrors());
             return "editar_acuerdo";
         }
@@ -252,7 +297,8 @@ public class AgreementController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
         if (!hasPermissionOverAgreement(agreement, loggedCompany, isAdminCompany(loggedCompany))) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete this agreement.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "You do not have permission to delete this agreement.");
         }
 
         if (AgreementStatus.COMPLETED.equals(agreement.getStatus())) {
@@ -263,6 +309,11 @@ public class AgreementController {
 
         agreementService.delete(id);
         redirectAttributes.addFlashAttribute("successMessage", "Acuerdo cancelado correctamente.");
+
+        // Redirect based on role to avoid 403
+        if (isAdminCompany(loggedCompany)) {
+            return "redirect:/admin/acuerdos";
+        }
         return "redirect:/acuerdos";
     }
 
@@ -280,4 +331,5 @@ public class AgreementController {
     private boolean isAdminCompany(Company company) {
         return company.getRoles() != null && company.getRoles().contains("ADMIN");
     }
+
 }

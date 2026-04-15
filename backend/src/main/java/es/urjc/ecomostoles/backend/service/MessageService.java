@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service layer for Message business logic.
- * Intermediary between controllers and the MessageRepository, following
- * the Controller > Service > Repository architecture pattern.
+ * Communication Hub governing cross-tenant interactions.
+ * 
+ * Facilitates the asynchronous messaging exchange between autonomous Companies. 
+ * Orchestrates unread-state propagation and governs the secure delivery logic 
+ * ensuring Principals can only access authorized communication streams.
  */
 @Service
 @Transactional
@@ -76,7 +78,15 @@ public class MessageService {
     }
 
     /**
-     * Logic for sending a new message, including automatic timestamping.
+     * Executes the secure delivery of a communication node. 
+     * 
+     * Initializes the message payload with mandatory temporal and audit fields (Send Date, 
+     * Read Status) prior to persistence.
+     * 
+     * @param subject   Topic identifier.
+     * @param content   Message body.
+     * @param sender    Originator tenant.
+     * @param recipient Target tenant.
      */
     public void sendMessage(String subject, String content, Company sender, Company recipient) {
         Message newMessage = new Message();

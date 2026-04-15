@@ -1,12 +1,11 @@
 package es.urjc.ecomostoles.backend.controller;
 
 import es.urjc.ecomostoles.backend.model.DemandStatus;
-import es.urjc.ecomostoles.backend.model.WasteCategory;
-
 import es.urjc.ecomostoles.backend.model.Demand;
 import es.urjc.ecomostoles.backend.model.Company;
 import es.urjc.ecomostoles.backend.service.DemandService;
 import es.urjc.ecomostoles.backend.service.CompanyService;
+import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -29,11 +28,11 @@ import java.util.ArrayList;
 import es.urjc.ecomostoles.backend.dto.SelectOption;
 
 /**
- * Controller to handle CRUD operations for demands specific to the logged-in
- * company.
- *
- * Follows Controller > Service > Repository architecture:
- * delegates all data access to DemandService and CompanyService.
+ * Controller managing the lifecycle of Demand entities spawned by the authenticated tenant.
+ * 
+ * Enforces strict multi-tenant boundary checks. All destructive actions (Edit/Delete) explicitly
+ * verify that the requesting principal legally owns the database record or harbors overriding 
+ * ADMIN privileges before executing modifications via the DemandService.
  */
 @Controller
 public class MyDemandsController {
@@ -49,9 +48,14 @@ public class MyDemandsController {
         this.configurationService = configurationService;
     }
 
-    // -------------------------------------------------------------------------
-    // Ownership helper: returns the demand if the user is the author or ADMIN.
-    // -------------------------------------------------------------------------
+    /**
+     * Secures object-level authorization by validating identity claims against entity schemas.
+     * 
+     * @param demandId target asset identifier sequence.
+     * @param principal authenticated executor containing the role context map.
+     * @return securely fetched demand entity safe for subsequent alterations.
+     * @throws ResponseStatusException HTTP 403 if ownership chains do not match or user lacks ADMIN role.
+     */
     private Demand verifyDemandOwnership(Long demandId, Principal principal) {
         Demand demand = demandService.findById(demandId)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -73,9 +77,14 @@ public class MyDemandsController {
         return demand;
     }
 
-    // -------------------------------------------------------------------------
-    // GET /dashboard/mis-demandas
-    // -------------------------------------------------------------------------
+    /**
+     * Binds the private demand registry matrix, constrained strictly to the active user's DB projection.
+     * 
+     * @param model UI payload mapping dictionary.
+     * @param principal proxy wrapping the current auth session identifier.
+     * @param pageable resolved spring-data offset instructions mitigating heavy loads.
+     * @return logical routing mapping rendering the private asset grid.
+     */
     @GetMapping("/dashboard/mis-demandas")
     public String showMyDemands(Model model, Principal principal,
             @PageableDefault(size = 6) Pageable pageable) {
@@ -103,10 +112,10 @@ public class MyDemandsController {
             model.addAttribute("paginationQueryString", "");
 
             // Summary counters
-            model.addAttribute("countActivas", demandService.countActiveByCompany(company));
-            model.addAttribute("countPausadas", demandService.countPausedByCompany(company));
-            model.addAttribute("countFinalizadas", demandService.countClosedByCompany(company));
-            model.addAttribute("countVisitasTotales", demandService.sumVisitsByCompany(company));
+            model.addAttribute("activeCount", demandService.countActiveByCompany(company));
+            model.addAttribute("pausedCount", demandService.countPausedByCompany(company));
+            model.addAttribute("closedCount", demandService.countClosedByCompany(company));
+            model.addAttribute("totalViews", demandService.sumVisitsByCompany(company));
 
             return "mis_demandas";
         }
@@ -130,15 +139,25 @@ public class MyDemandsController {
     }
 
     private void injectDynamicOptions(Model model) {
-        model.addAttribute("wasteCategories", WasteCategory.values());
-        model.addAttribute("unitList", configurationService.getSanitizedList("unitList"));
-        model.addAttribute("availabilityList",
-                configurationService.getSanitizedList("availabilityList"));
+        model.addAttribute("wasteCategories",
+                FormOptionsHelper.getCategoryOptions(configurationService, null));
+        model.addAttribute("availabilityOptions",
+                FormOptionsHelper.getUrgencyOptions(configurationService, null));
+        model.addAttribute("validityOptions",
+                FormOptionsHelper.getValidityOptions(null));
     }
 
-    // -------------------------------------------------------------------------
-    // POST /demanda/nueva — Create new demand with Bean Validation
-    // -------------------------------------------------------------------------
+    /**
+     * Orchestrates the persistence workflow mapping HTTP inputs into secure domain models.
+     * Relies on JSR 380 standards triggering automatic pre-flight data inspections.
+     * 
+     * @param demand marshaled transient DTO holding unverified form inputs.
+     * @param result interceptor carrying field constraint violations for iterative UI feedback.
+     * @param model layout binder context.
+     * @param principal authoritative session triggering the creation logic.
+     * @param redirectAttributes parameter carrier resolving post-redirect loops gracefully.
+     * @return conditional redirection routing context.
+     */
     @PostMapping("/demanda/nueva")
     public String saveNewDemand(@Valid @ModelAttribute("demand") Demand demand,
             BindingResult result,
@@ -158,9 +177,13 @@ public class MyDemandsController {
         if (companyOpt.isPresent()) {
             demand.setCompany(companyOpt.get());
             demand.setPublicationDate(LocalDateTime.now());
-            demand.setStatus(DemandStatus.ACTIVE);
             demandService.save(demand);
             redirectAttributes.addFlashAttribute("successMessage", "¡Demanda publicada con éxito!");
+            
+            // FIX: Redirect based on role to avoid 403
+            if (companyOpt.get().getRoles().contains("ADMIN")) {
+                return "redirect:/admin/demandas";
+            }
             return "redirect:/dashboard/mis-demandas";
         }
         return "redirect:/";
@@ -170,9 +193,18 @@ public class MyDemandsController {
     // POST /demandas/{id}/eliminar — Delete demand (ownership check)
     // -------------------------------------------------------------------------
     @PostMapping("/demandas/{id}/eliminar")
-    public String deleteDemand(@PathVariable Long id, Principal principal) {
+    public String deleteDemand(@PathVariable Long id, Principal principal,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         verifyDemandOwnership(id, principal);
         demandService.delete(id);
+        
+        redirectAttributes.addFlashAttribute("successMessage", "Demanda eliminada con éxito.");
+
+        // FIX: Redirect based on role to avoid 403
+        Company loggedUser = companyService.findByEmail(principal.getName()).orElseThrow();
+        if (loggedUser.getRoles().contains("ADMIN")) {
+            return "redirect:/admin/demandas";
+        }
         return "redirect:/dashboard/mis-demandas";
     }
 
@@ -180,44 +212,19 @@ public class MyDemandsController {
     // GET /demanda/editar/{id} — Show edit form (ownership check)
     // -------------------------------------------------------------------------
     private void loadSelectOptions(Model model, Demand demand) {
-        // Dynamic Categories with selection logic
-        List<SelectOption> categoryOptions = new ArrayList<>();
-        for (WasteCategory cat : WasteCategory.values()) {
-            categoryOptions.add(new SelectOption(cat.name(), cat.getDisplayName(), cat.equals(demand.getWasteCategory())));
-        }
-        model.addAttribute("wasteCategories", categoryOptions);
+        model.addAttribute("wasteCategories",
+                FormOptionsHelper.getCategoryOptions(configurationService, demand.getWasteCategory()));
+        model.addAttribute("unitOptions", FormOptionsHelper.getUnitOptions(configurationService, demand.getUnit()));
+        model.addAttribute("availabilityOptions",
+                FormOptionsHelper.getUrgencyOptions(configurationService, demand.getUrgency()));
+        model.addAttribute("validityOptions", FormOptionsHelper.getValidityOptions(demand.getValidity()));
 
-        // Dynamic Units
-        List<String> unitsList = configurationService.getSanitizedList("unitList");
-        List<SelectOption> unitOptions = new ArrayList<>();
-        for (String u : unitsList) {
-            unitOptions.add(new SelectOption(u, u, u.equals(demand.getUnit())));
-        }
-        model.addAttribute("unitOptions", unitOptions);
-
-        // Dynamic Urgency (reusing availability list)
-        List<String> availabiltyList = configurationService.getSanitizedList("availabilityList");
-        List<SelectOption> availabilityOptions = new ArrayList<>();
-        for (String d : availabiltyList) {
-            availabilityOptions.add(new SelectOption(d, d, d.equals(demand.getUrgency())));
-        }
-        model.addAttribute("availabilityOptions", availabilityOptions);
-
-        // Dynamic Select Options for status
+        // Dynamic Select Options for status (Spanish labels from Enum)
         List<SelectOption> statusOptions = new ArrayList<>();
-        statusOptions.add(new SelectOption("ACTIVE", "ACTIVA", DemandStatus.ACTIVE.equals(demand.getStatus())));
-        statusOptions.add(new SelectOption("PAUSED", "PAUSADA", DemandStatus.PAUSED.equals(demand.getStatus())));
-        statusOptions.add(new SelectOption("CLOSED", "FINALIZADA", DemandStatus.CLOSED.equals(demand.getStatus())));
+        for (DemandStatus status : DemandStatus.values()) {
+            statusOptions.add(new SelectOption(status.name(), status.getDisplayName(), status.equals(demand.getStatus())));
+        }
         model.addAttribute("statusOptions", statusOptions);
-
-        // Standard Validity Options
-        List<SelectOption> validityOptions = new ArrayList<>();
-        validityOptions.add(new SelectOption("7", "7 días", "7".equals(demand.getValidity())));
-        validityOptions.add(new SelectOption("15", "15 días", "15".equals(demand.getValidity())));
-        validityOptions.add(new SelectOption("30", "30 días", "30".equals(demand.getValidity())));
-        validityOptions.add(new SelectOption("90", "90 días", "90".equals(demand.getValidity())));
-        validityOptions.add(new SelectOption("0", "Indefinido / Consultar", "0".equals(demand.getValidity())));
-        model.addAttribute("validityOptions", validityOptions);
     }
 
     // -------------------------------------------------------------------------
@@ -234,17 +241,27 @@ public class MyDemandsController {
         return "editar_solicitud";
     }
 
-    // -------------------------------------------------------------------------
-    // POST /demanda/editar/{id} — Save changes with Bean Validation
-    // -------------------------------------------------------------------------
+    /**
+     * Modifies existing demand properties through tightly controlled data-binding.
+     * 
+     * @param id verified target identifier belonging to the requester.
+     * @param demandForm transient detached object encapsulating state changes.
+     * @param result internal error flag collector avoiding SQL-level constraint blasts.
+     * @param model HTTP response properties payload.
+     * @param principal active actor executing the update command.
+     * @param redirectAttributes proxy facilitating UX transitions safely via the PRG pattern.
+     * @return path command to revert back into the administrative table view.
+     */
     @PostMapping("/demandas/{id}/editar")
     public String saveEditedDemand(@PathVariable Long id,
             @Valid @ModelAttribute("demand") Demand demandForm,
             BindingResult result,
             Model model,
-            Principal principal) {
+            Principal principal,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
 
         // SECURITY: Verify ownership BEFORE validation to prevent Data Leak
+        Company loggedUser = companyService.findByEmail(principal.getName()).orElseThrow();
         Demand existingDemand = verifyDemandOwnership(id, principal);
 
         if (result.hasErrors()) {
@@ -254,6 +271,12 @@ public class MyDemandsController {
             model.addAttribute("errors", result.getAllErrors());
             model.addAttribute("demand", demandForm); // FIX: Add missing model attribute
             demandForm.setId(id);
+            
+            // SECURITY: Ensure sidebar knows user role on validation fail
+            if (loggedUser.getRoles().contains("ADMIN")) {
+                model.addAttribute("isAdmin", true);
+            }
+            
             return "editar_solicitud";
         }
 
@@ -271,6 +294,12 @@ public class MyDemandsController {
 
         demandService.save(existingDemand);
 
+        redirectAttributes.addFlashAttribute("successMessage", "Demanda actualizada con éxito.");
+
+        // FIX: Redirect based on role to avoid 403
+        if (loggedUser.getRoles().contains("ADMIN")) {
+            return "redirect:/admin/demandas";
+        }
         return "redirect:/dashboard/mis-demandas";
     }
 }

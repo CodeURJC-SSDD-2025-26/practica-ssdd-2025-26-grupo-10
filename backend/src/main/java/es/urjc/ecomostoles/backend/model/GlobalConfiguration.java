@@ -6,6 +6,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+/**
+ * Dynamic parameter dictionary mapping persistent deployment settings.
+ * 
+ * Enables runtime configuration of core platform logic (structural dropdown options) 
+ * without requiring recompilation or deployment cycles. Consumed actively during 
+ * bootstrap and UI layout composition.
+ */
 @Entity
 public class GlobalConfiguration {
 

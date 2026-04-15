@@ -5,7 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**
- * Entity representing a message exchanged between companies.
+ * B2B communication mapping tracking cross-tenant threads.
+ * 
+ * Isolates interaction state (Read/Unread flags, Sent dates) under strict relational boundaries.
+ * Governs mailboxes connecting autonomous Companies while shielding internal payloads behind
+ * JSR 380 assertions prior to persistence.
  */
 @Entity
 public class Message {

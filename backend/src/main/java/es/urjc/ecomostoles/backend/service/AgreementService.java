@@ -25,6 +25,15 @@ import org.springframework.data.domain.Pageable;
 import es.urjc.ecomostoles.backend.component.SustainabilityEngine;
 import es.urjc.ecomostoles.backend.exception.SelfAgreementException;
 
+/**
+ * Business Orchestrator for Commercial Agreements and environmental contracts.
+ * 
+ * Centralizes the transactional logic for finalized B2B material transfers. 
+ * Manages complex state transitions, coordinates CO2 impact calculations via the 
+ * Sustainability Engine, and enforces platform commission invariants. All operations 
+ * are wrapped in @Transactional contexts to ensure ACID compliance during dual 
+ * repository mutations.
+ */
 @Service
 @Transactional
 public class AgreementService {
@@ -125,6 +134,20 @@ public class AgreementService {
         return agreementRepository.countByCompany(company);
     }
 
+    /**
+     * Executes the formal registration of a commercial contract.
+     * 
+     * Injects critical business events: 
+     * 1. Mutates original Offer state to IN_NEGOTIATION to prevent double-booking.
+     * 2. Triggers the Sustainability Engine to bind CO2 impact to the agreement record.
+     * 3. Aggregates platform commissions based on dynamic Global Configuration tensors.
+     * 
+     * @param agreement The proposed agreement payload.
+     * @param userEmail Principal email for identity resolution.
+     * @param offerId Source offer identifier.
+     * @param destinationCompanyId Counter-party company identifier.
+     * @throws SelfAgreementException If a tenant attempts to contract their own inventory.
+     */
     public void registerNewAgreement(Agreement agreement, String userEmail, Long offerId, Long destinationCompanyId) {
         Offer offer = offerService.findById(offerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Offer not found"));
@@ -219,10 +242,10 @@ public class AgreementService {
             double co2 = (a.getCo2Impact() != null) ? a.getCo2Impact() : 0.0;
 
             if (a.getOriginCompany() != null) {
-                ranking.merge(a.getOriginCompany().getId(), co2, Double::sum);
+                ranking.merge(a.getOriginCompany().getId(), co2, (v1, v2) -> v1 + v2);
             }
             if (a.getDestinationCompany() != null) {
-                ranking.merge(a.getDestinationCompany().getId(), co2, Double::sum);
+                ranking.merge(a.getDestinationCompany().getId(), co2, (v1, v2) -> v1 + v2);
             }
         }
         return ranking;
@@ -246,8 +269,22 @@ public class AgreementService {
         return df.format(total);
     }
 
+    @Transactional(readOnly = true)
+    public String getTotalCommission() {
+        Double total = agreementRepository.sumTotalCommissionCompleted();
+        if (total == null || total == 0)
+            return "0,00";
+
+        DecimalFormat df = (DecimalFormat) NumberFormat.getInstance(Locale.of("es", "ES"));
+        df.applyPattern("#,##0.00");
+        return df.format(total);
+    }
+
     /**
-     * Updates an existing agreement with the provided data.
+     * Updates an agreement and synchronizes linked asset states.
+     * 
+     * Implements "Side-Effect" logic where Agreement state transitions (ACCEPTED, COMPLETED)
+     * are propagated back to the originating Offer status to maintain marketplace consistency.
      */
     public Agreement updateAgreement(Long id, Agreement updatedData) {
         Agreement existingAgreement = agreementRepository.findById(id)

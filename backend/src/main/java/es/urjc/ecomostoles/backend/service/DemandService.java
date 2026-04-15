@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service layer for Demand business logic.
- * Intermediary between controllers and the DemandRepository, following
- * the Controller > Service > Repository architecture pattern.
+ * Business Manager for material demand lifecycles.
+ * 
+ * Orchestrates the lifecycle of Tenant-published requests. Governs matching 
+ * discovery logic and enforces relational integrity constraints to prevent 
+ * premature deletion of records linked to active commercial agreements.
  */
 @Service
 @Transactional
@@ -118,7 +120,15 @@ public class DemandService {
         return demandRepository.save(demand);
     }
 
-    /** Deletes a demand by its ID. */
+    /**
+     * Executes the secure deletion of a material demand.
+     * 
+     * Asserts that no active agreements depend on this record (FK constraint check) 
+     * before delegating to the persistence layer.
+     * 
+     * @param id Identifier of the demand to be pruned.
+     * @throws ResponseStatusException 400 if relational invariants are violated.
+     */
     public void delete(Long id) {
         if (agreementRepository.countByDemandId(id) > 0) {
             throw new org.springframework.web.server.ResponseStatusException(
@@ -140,5 +150,11 @@ public class DemandService {
     @Transactional(readOnly = true)
     public long countAll() {
         return demandRepository.count();
+    }
+
+    /** Returns count of demands by status. */
+    @Transactional(readOnly = true)
+    public long countByStatus(es.urjc.ecomostoles.backend.model.DemandStatus status) {
+        return demandRepository.countByStatus(status);
     }
 }

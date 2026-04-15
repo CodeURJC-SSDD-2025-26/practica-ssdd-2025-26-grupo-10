@@ -21,11 +21,18 @@
                        <a href="mailto:{{supportEmail}}" class="text-success fw-bold text-decoration-none">{{supportEmail}}</a>
                     </p>
     
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                    <div class="d-grid gap-2 d-md-flex justify-content-center mt-4">
                         {{#company}}
-                        <a href="/dashboard" class="btn btn-success px-4 py-2 fw-bold rounded-pill mx-1 shadow-sm">
-                            <i class="fas fa-tachometer-alt me-2"></i> Volver al Panel
-                        </a>
+                            {{#isAdmin}}
+                            <a href="/admin/panel" class="btn btn-success px-4 py-2 fw-bold rounded-pill mx-1 shadow-sm">
+                                <i class="fas fa-tools me-2"></i> Panel de Administración
+                            </a>
+                            {{/isAdmin}}
+                            {{^isAdmin}}
+                            <a href="/dashboard" class="btn btn-success px-4 py-2 fw-bold rounded-pill mx-1 shadow-sm">
+                                <i class="fas fa-tachometer-alt me-2"></i> Mi Dashboard
+                            </a>
+                            {{/isAdmin}}
                         {{/company}}
                         {{^company}}
                         <a href="/login" class="btn btn-primary px-4 py-2 fw-bold rounded-pill mx-1 shadow-sm">

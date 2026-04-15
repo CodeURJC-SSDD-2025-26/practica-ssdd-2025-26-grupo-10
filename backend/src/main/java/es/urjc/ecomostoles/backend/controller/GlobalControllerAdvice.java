@@ -8,7 +8,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.multipart.MultipartException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,10 +15,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.Optional;
 
+/**
+ * Global advice controller for application-wide view scoping.
+ * 
+ * Intercepts all outgoing HTTP responses bounded by Spring MVC to ensure consistent
+ * global attributes (such as active user sessions, unread message counts, configuration options)
+ * are definitively present inside every rendered layout to prevent breaking the template engine.
+ */
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class GlobalControllerAdvice {
@@ -37,8 +42,16 @@ public class GlobalControllerAdvice {
         this.configurationService = configurationService;
     }
 
+    /**
+     * Binds the currently authenticated company to the global model hierarchy, enabling 
+     * contextual visual elements (ex: customized navbars and user-state specific layouts).
+     * 
+     * @param principal the currently authenticated security participant.
+     * @return wrapped company metadata block, or null for anonymous connections.
+     */
     @ModelAttribute("company")
     public es.urjc.ecomostoles.backend.dto.CompanyDTO getCompany(Principal principal) {
+        // Evaluate the active security context asynchronously via the underlying service proxy
         if (principal == null) {
             return null;
         }
@@ -82,12 +95,12 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute("supportEmail")
     public String supportEmail() {
-        return configurationService.getConfigurationValue("contactEmail", "soporte@ecomostoles.com");
+        return configurationService.getAutoValue("contactEmail");
     }
 
     @ModelAttribute("currentDate")
     public String currentDate() {
-        return java.time.format.DateTimeFormatter.ofPattern("MMMM yyyy", new java.util.Locale("es", "ES"))
+        return java.time.format.DateTimeFormatter.ofPattern("MMMM yyyy", java.util.Locale.of("es", "ES"))
                 .format(java.time.LocalDate.now());
     }
 
@@ -104,6 +117,11 @@ public class GlobalControllerAdvice {
     @ModelAttribute("categoryList")
     public java.util.List<String> categoryList() {
         return configurationService.getSanitizedList("categoryList");
+    }
+
+    @ModelAttribute("wasteCategories")
+    public java.util.List<es.urjc.ecomostoles.backend.dto.SelectOption> wasteCategories() {
+        return es.urjc.ecomostoles.backend.utils.FormOptionsHelper.getCategoryOptions(configurationService, null);
     }
 
     @ModelAttribute("sectorList")
@@ -149,7 +167,8 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute("platformLocation")
     public String platformLocation() {
-        return configurationService.getAutoValue("industrialAreaList").split("\\r?\\n")[0];
+        String[] areas = configurationService.getAutoValue("industrialAreaList").split("\\r?\\n");
+        return areas.length > 0 ? areas[0] : "Móstoles";
     }
 
     @ModelAttribute("isAdmin")

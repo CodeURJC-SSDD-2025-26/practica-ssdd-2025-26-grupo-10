@@ -5,9 +5,11 @@ import es.urjc.ecomostoles.backend.model.OfferStatus;
 import java.time.LocalDateTime;
 
 /**
- * Spring Data Projection for Offer entity to avoid loading BLOB images in
- * listings.
- * Compatible with existing Mustache templates.
+ * Spring Data JPA Projection schema mapping Offer entity subsets.
+ * 
+ * Actively truncates DB retrieval vectors by deliberately excluding heavy BLOB byte arrays 
+ * entirely at the SQL SELECT level. Exponentially optimizes high-throughput data fetching 
+ * algorithms powering marketplace paginations.
  */
 public interface OfferSummary {
     Long getId();

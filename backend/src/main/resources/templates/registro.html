@@ -3,6 +3,12 @@
 <body class="bg-theme-dark">
     {{> header}}
 
+    <!-- 
+        ONBOARDING WORKFLOW
+        Handles multi-entity registration (Company + User account).
+        The layout uses a 6-column grid (col-md-8 col-lg-6) to maintain 
+        form focused-readability on desktop.
+    -->
     <div class="row justify-content-center w-100 flex-grow-1 align-items-center mt-5 pt-5 mb-5">
         <div class="col-md-8 col-lg-6">
             <div class="card p-4 p-md-5 border-top-success shadow-sm">
@@ -15,19 +21,30 @@
                         <h4 class="mt-3 text-dark fw-bold">Alta de Nueva Empresa</h4>
                         <p class="text-secondary">Únete a la mayor red de simbiosis industrial de {{platformCity}}</p>
                     </div>
+ 
+                    <!-- GLOBAL ERROR CHANNEL: Backend validation summaries -->
+                    {{#errorMessage}}
+                    <div class="alert alert-danger py-2 small fw-bold text-center border-0 shadow-sm rounded-pill mb-4" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i> {{errorMessage}}
+                    </div>
+                    {{/errorMessage}}
 
 
 
+                    <!-- 
+                        DATA INGESTION FORM
+                        Configured as multipart/form-data to support BLOB/binary logo uploads.
+                    -->
                     <form action="/registro" method="POST" enctype="multipart/form-data">
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="nombreEmpresa"
+                                <label for="commercialName"
                                     class="form-label fw-bold small text-uppercase text-secondary">Nombre
                                     Comercial</label>
                                 <input type="text" name="commercialName"
                                     class="form-control {{#error_commercialName}}is-invalid{{/error_commercialName}}"
-                                    id="nombreEmpresa" placeholder="Ej. Metales del Sur S.L."
+                                    id="commercialName" placeholder="Ej. Metales del Sur S.L."
                                     value="{{#registrationDTO.commercialName}}{{.}}{{/registrationDTO.commercialName}}"
                                     required>
                                 {{#error_commercialName}}<div class="invalid-feedback">{{error_commercialName}}</div>
@@ -43,12 +60,17 @@
                                 {{#error_taxId}}<div class="invalid-feedback">{{error_taxId}}</div>{{/error_taxId}}
                             </div>
 
+                            <!-- 
+                                DYNAMIC ADDRESS RESOLUTION
+                                Combines a closed set of Industrial Areas with an "Other" fallback.
+                                Managed via client-side DOM toggling.
+                            -->
                             <div class="col-12">
-                                <label for="direccion"
+                                <label for="address"
                                     class="form-label fw-bold small text-uppercase text-secondary">Dirección /
                                     Polígono</label>
                                 <select name="address"
-                                    class="form-select {{#error_address}}is-invalid{{/error_address}}" id="direccion"
+                                    class="form-select {{#error_address}}is-invalid{{/error_address}}" id="address"
                                     required>
                                     <option value="" disabled>Seleccionar ubicación...</option>
                                     {{#areaOptions}}
@@ -82,14 +104,14 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="telefonoRegister" class="form-label fw-bold small text-uppercase text-secondary">Teléfono de Contacto</label>
-                                <input type="tel" name="phone" class="form-control {{#error_phone}}is-invalid{{/error_phone}}" id="telefonoRegister" placeholder="Ej. 916 123 456" value="{{#registrationDTO.phone}}{{.}}{{/registrationDTO.phone}}" required>
+                                <label for="phone" class="form-label fw-bold small text-uppercase text-secondary">Teléfono de Contacto</label>
+                                <input type="tel" name="phone" class="form-control {{#error_phone}}is-invalid{{/error_phone}}" id="phone" placeholder="Ej. 916 123 456" value="{{#registrationDTO.phone}}{{.}}{{/registrationDTO.phone}}" required>
                                 {{#error_phone}}<div class="invalid-feedback">{{error_phone}}</div>{{/error_phone}}
                             </div>
 
                             <div class="col-12">
-                                <label for="descripcionRegister" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
-                                <textarea name="description" class="form-control {{#error_description}}is-invalid{{/error_description}}" id="descripcionRegister" rows="3" placeholder="Describe brevemente la actividad de tu empresa..." required>{{#registrationDTO.description}}{{.}}{{/registrationDTO.description}}</textarea>
+                                <label for="description" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
+                                <textarea name="description" class="form-control {{#error_description}}is-invalid{{/error_description}}" id="description" rows="3" placeholder="Describe brevemente la actividad de tu empresa..." required>{{#registrationDTO.description}}{{.}}{{/registrationDTO.description}}</textarea>
                                 {{#error_description}}<div class="invalid-feedback">{{error_description}}</div>{{/error_description}}
                             </div>
 
@@ -108,8 +130,8 @@
 
                             <div class="col-12 mt-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="terms" value="aceptados" id="terminos" required>
-                                    <label class="form-check-label small text-secondary" for="terminos">
+                                    <input class="form-check-input" type="checkbox" name="terms" value="aceptados" id="terms" required>
+                                    <label class="form-check-label small text-secondary" for="terms">
                                         Acepto los <a href="/terminos" class="text-success text-decoration-none">Términos y Condiciones</a> y la Política de Privacidad de EcoMóstoles.
                                     </label>
                                 </div>
@@ -142,6 +164,11 @@
         </div>
     </div>
 
+    <!-- 
+        REGISTRATION ORCHESTRATOR
+        Handles UI state transitions for the dynamic address field and 
+        pre-flight file size checks for logos to prevent payload overflows.
+    -->
     <script>
         document.querySelector('select[name="address"]').addEventListener('change', function () {
             const inputOtro = document.getElementById('otherAddress');
@@ -155,7 +182,7 @@
             }
         });
 
-        // Validación de tamaño de archivo (Logo)
+        // Validation de tamaño de archivo (Logo): Prevents 413 Payload Too Large on proxy layers.
         document.getElementById('logoFile').addEventListener('change', function() {
             if (this.files[0] && this.files[0].size > 5 * 1024 * 1024) {
                 alert('El archivo es demasiado grande. El tamaño máximo permitido es de 5MB.');

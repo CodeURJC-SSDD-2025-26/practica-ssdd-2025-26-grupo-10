@@ -5,8 +5,14 @@ import es.urjc.ecomostoles.backend.repository.ConfigurationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
+/**
+ * Dynamic Configuration Engine managing platform architectural constants.
+ * 
+ * Implements a "Software-Defined Parameters" pattern, allowing the injection of 
+ * operational defaults (Commissions, Service Lists) that can be overridden at 
+ * runtime via the database. Provides sanitized list processing for UI components.
+ */
 @Service
 public class ConfigurationService {
 
@@ -46,8 +52,13 @@ public class ConfigurationService {
     }
 
     /**
-     * Specialized lookup that automatically injects the official platform defaults
-     * if the key is missing from the database.
+     * Specialized lookup orchestrator with hierarchical fallback logic. 
+     * 
+     * Attempts to resolve keys from the persistent repository. If absent, it injects 
+     * hardcoded platform-standard defaults specified in the internal switch matrix.
+     * 
+     * @param key The configuration identifier.
+     * @return The resolved value from DB or internal fallback.
      */
     public String getAutoValue(String key) {
         String fallback = switch (key) {

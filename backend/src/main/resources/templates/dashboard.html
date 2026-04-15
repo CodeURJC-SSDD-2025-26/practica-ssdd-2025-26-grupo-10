@@ -5,14 +5,22 @@
 
     <div class="container-fluid">
         <div class="row min-vh-100">
-            <!-- Sidebar -->
+            <!-- 
+                LAYOUT SEGREGATION
+                Dynamically injects sidebars based on Principal authority tokens.
+            -->
             {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
             {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
-            <!-- Main Content -->
+            <!-- 
+                ANALYTICAL WORKSPACE
+                Primary viewport for platform intelligence. Uses col-lg-10 to maintain 
+                readability on ultra-wide screens while pinning the sidebar.
+            -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent position-relative"
                 style="z-index: 1;">
 
+                <!-- FEEDBACK BUS: Session messaging for transaction audits -->
                 {{#errorMessage}}
                 <div class="alert alert-danger alert-dismissible fade show shadow-sm border-start border-4 border-danger rounded-4" role="alert">
                     <div class="d-flex align-items-center">
@@ -39,6 +47,7 @@
                 </div>
                 {{/successMessage}}
 
+                <!-- PAGE HEADER: Identity Context -->
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                     <div>
@@ -55,7 +64,10 @@
                     </div>
                 </div>
 
-                <!-- Dashboard Content -->
+                <!-- 
+                    KPI SCORECARDS
+                    Aggregates operational indices: Material throughput, Active Negotiations, and CO2 offset.
+                -->
                 <div class="row g-4 mb-4">
                     <div class="col-md-4">
                         <div
@@ -100,7 +112,11 @@
                     </div>
                 </div>
 
-                <!-- Dynamic Visualization: simbiosis chart -->
+                <!-- 
+                    VISUAL INTELLIGENCE: Bar Chart 
+                    Implements Chart.js to render lifecycle stats. The canvas wrapper ensures
+                    relative positioning for responsive resizing.
+                -->
                 <div class="row g-4 mb-4">
                     <div class="col-12">
                         <div
@@ -119,6 +135,10 @@
                 </div>
 
                 <div class="row g-4">
+                    <!-- 
+                        FEATURED MODULE: Smart Matching
+                        Dynamically filtered list based on material category affinity.
+                    -->
                     <div class="col-lg-8">
                         {{#userIsAdmin}}
                         <div class="card shadow-sm border-0 rounded-4 bg-light p-5 text-center">
@@ -159,6 +179,7 @@
                         {{/userIsAdmin}}
                     </div>
 
+                    <!-- CTA: Inventory Ingestion -->
                     <div class="col-lg-4">
                         <div
                             class="card shadow-sm border-0 rounded-4 h-100 bg-success bg-opacity-10 border border-success border-opacity-25">
@@ -181,6 +202,12 @@
         </div>
     </div>
 
+    <!-- 
+        CHART ORCHESTRATOR
+        Binds server-side dataset (chartData) to the DOM canvas.
+        Uses triple braces for chartData to prevent Mustache HTML escaping 
+        of the JSON array payload.
+    -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const ctx = document.getElementById('userChart').getContext('2d');

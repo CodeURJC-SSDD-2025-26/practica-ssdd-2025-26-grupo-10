@@ -17,15 +17,18 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import java.util.Collection;
 
 /**
- * Spring Security configuration with RBAC (Role-Based Access Control).
- *
- * System roles:
- *  - ROLE_ADMIN   → platform administrator → redirects to /admin/panel
- *  - ROLE_COMPANY → registered company (normal user) → redirects to /dashboard
+ * Perimeter security matrix and RBAC (Role-Based Access Control) orchestrator.
+ * 
+ * Configures the platform's security posture, enforcing HTTPS-only channels and
+ * defining hierarchical access boundaries. Regulates the navigation flows via a
+ * custom
+ * AuthenticationSuccessHandler that directs Principals based on their assigned
+ * authority
+ * vectors (ADMIN vs. COMPANY).
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity   // enables @PreAuthorize on controller methods
+@EnableMethodSecurity // Enables method-level granularity via @PreAuthorize annotations
 public class SecurityConfig {
 
     @Bean
@@ -35,17 +38,17 @@ public class SecurityConfig {
 
     /**
      * Login success handler that redirects according to role:
-     *   ROLE_ADMIN   → /admin/panel
-     *   ROLE_COMPANY → /dashboard
+     * ROLE_ADMIN → /admin/panel
+     * ROLE_COMPANY → /dashboard
      */
     @Bean
     public AuthenticationSuccessHandler roleBasedSuccessHandler() {
         return (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            String targetUrl = "/dashboard";            // default destination (company)
+            String targetUrl = "/dashboard"; // default destination (company)
             for (GrantedAuthority authority : authorities) {
                 if ("ROLE_ADMIN".equals(authority.getAuthority())) {
-                    targetUrl = "/admin/panel";         // admin → admin control panel
+                    targetUrl = "/admin/panel"; // admin → admin control panel
                     break;
                 }
             }
@@ -55,51 +58,61 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .requiresChannel(channel -> channel.anyRequest().requiresSecure())
-            .authorizeHttpRequests(auth -> auth
-
-                // ── Public resources and pages ──────────────────────────────
-                .requestMatchers(
-                    "/", "/index.html",
-                    "/login", "/registro", "/recuperar_password",
-                    "/privacidad", "/terminos",
-                    "/error",                               // custom error page
-                    "/css/**", "/js/**", "/img/**", "/images/**"
-                ).permitAll()
-
-                // ── Administration panel: ADMIN only ──────────────────────
-                .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
-
-                // ── Dashboard: COMPANY only ───────────────────────────────
-                .requestMatchers("/dashboard", "/dashboard/**").hasRole("COMPANY")
-
-                // ── Creation, edition and marketplace: any authenticated user ────────
-                .requestMatchers(
-                    "/mercado", "/mercado/**",              // private marketplace
-                    "/oferta/**", "/ofertas/**",            // offers: detail and management
-                    "/solicitudes", "/solicitudes/**",      // demands board
-                    "/demanda/**", "/demandas/**",          // demands: detail and management
-                    "/perfil", "/perfil/**",                // company profile
-                    "/mensajes", "/mensajes/**",            // internal messaging system
-                    "/acuerdo/**", "/acuerdos/**"           // commercial agreements
-                ).authenticated()
-
-                // ── The rest requires authentication ─────────────────────────
-                .anyRequest().authenticated()
+        // Modern Transport Security Strategy (Non-deprecated)
+        http.headers(headers -> headers
+            // HSTS: Forces browsers to use HTTPS for all future requests
+            .httpStrictTransportSecurity(hsts -> hsts
+                .includeSubDomains(true)
+                .preload(true)
+                .maxAgeInSeconds(31536000) // 1 year
             )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .successHandler(roleBasedSuccessHandler())  // ← redirect by role
-                .permitAll()
+            // CSP: Instructs the browser to upgrade all HTTP requests to HTTPS
+            .contentSecurityPolicy(csp -> csp
+                .policyDirectives("upgrade-insecure-requests")
             )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .permitAll()
-            );
+        );
+
+        // Define authorization rules
+        http.authorizeHttpRequests(auth -> auth
+
+                        // ── Public resources and pages ──────────────────────────────
+                        .requestMatchers(
+                                "/", "/index.html",
+                                "/login", "/registro", "/recuperar_password",
+                                "/privacidad", "/terminos",
+                                "/error", // custom error page
+                                "/css/**", "/js/**", "/img/**", "/images/**")
+                        .permitAll()
+
+                        // ── Administration panel: ADMIN only ──────────────────────
+                        .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
+
+                        // ── Dashboard: COMPANY only ───────────────────────────────
+                        .requestMatchers("/dashboard", "/dashboard/**").hasRole("COMPANY")
+
+                        // ── Creation, edition and marketplace: any authenticated user ────────
+                        .requestMatchers(
+                                "/mercado", "/mercado/**", // private marketplace
+                                "/oferta/**", "/ofertas/**", // offers: detail and management
+                                "/solicitudes", "/solicitudes/**", // demands board
+                                "/demanda/**", "/demandas/**", // demands: detail and management
+                                "/perfil", "/perfil/**", // company profile
+                                "/mensajes", "/mensajes/**", // internal messaging system
+                                "/acuerdo/**", "/acuerdos/**" // commercial agreements
+                        ).authenticated()
+
+                        // ── The rest requires authentication ─────────────────────────
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .successHandler(roleBasedSuccessHandler()) // ← redirect by role
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .permitAll());
 
         return http.build();
     }

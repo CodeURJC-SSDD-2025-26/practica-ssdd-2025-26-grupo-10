@@ -1,12 +1,13 @@
 package es.urjc.ecomostoles.backend.dto;
 
-import es.urjc.ecomostoles.backend.model.Demand;
 import java.util.List;
 
 /**
- * Data Transfer Object for Dashboard statistics.
- * Replaces the generic Map<String, Object> to provide strong typing and better
- * maintainability.
+ * Analytical payload aggregate for Dashboard monitoring.
+ * 
+ * Consolidates complex multi-dimensional database metrics (Offer counts, CO2 Impact, 
+ * interaction workflows) into a single strongly-typed schema. Bypasses the overhead 
+ * of generic Maps, guaranteeing compile-time type safety across the presentation layer.
  */
 public class DashboardStatsDTO {
 

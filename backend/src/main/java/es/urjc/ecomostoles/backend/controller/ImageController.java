@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
 import java.util.Optional;
@@ -24,8 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Controller that serves images stored as BLOB in the database.
- * Uses the service layer for data access (Strict MVC Architecture).
+ * BLOB interface mapping controller.
+ * 
+ * Intercepts HTTP requests directed at platform assets (Company Logos, Offer Images).
+ * Streams database-backed byte arrays directly to the network layer, applying appropriate 
+ * caching heuristics (Cache-Control) to mitigate identical binary-retrieval latency over repeat fetches.
  */
 @RestController
 public class ImageController {
@@ -44,7 +46,10 @@ public class ImageController {
     // ── Company Logo ──────────────────────────────────────────────────────
 
     /**
-     * Returns a company logo as binary response.
+     * Resolves and streams a specific company's corporate identity graphic.
+     * 
+     * @param id the unique sequence primary key mapping to the tenant company.
+     * @return cacheable binary HTTP response embedding the dynamically resolved image payload.
      */
     @GetMapping("/images/empresa/{id}")
     public ResponseEntity<byte[]> serveCompanyLogo(@PathVariable Long id) {
@@ -65,7 +70,10 @@ public class ImageController {
     // ── Offer Image ─────────────────────────────────────────────────────
 
     /**
-     * Returns an offer image as binary response.
+     * Resolves and streams the visual proof-of-material graphic affixed to a published offer.
+     * 
+     * @param id the unique sequence referencing the market offer.
+     * @return bounded byte-array HTTP payload carrying the native image geometry.
      */
     @GetMapping("/images/oferta/{id}")
     public ResponseEntity<byte[]> serveOfferImage(@PathVariable Long id) {
@@ -84,9 +92,12 @@ public class ImageController {
     }
 
     /**
-     * Loads and serves the default corporate image from the classpath.
-     * 'Bulletproof' Architecture: prevents uncontrolled exceptions even if the file
-     * system fails.
+     * Emits a graceful fallback geometric graphic whenever targeted payloads fail resolution.
+     * 
+     * Bulletproof layout tactic: Guarantees DOM img tags never hang or break structurally 
+     * causing cascading layout shifts when a vendor purges an asset unpredictably.
+     * 
+     * @return standard default graphic asset streamed from the local classpath.
      */
     private ResponseEntity<byte[]> serveDefaultImage() {
         try {

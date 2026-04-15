@@ -17,8 +17,11 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 
 /**
- * Represents an Offer in the domain model.
- * Each offer is associated with a specific company (Company).
+ * Primary commercial asset schema governing material provisions.
+ * 
+ * Projects the raw marketplace dataset into an operational JPA entity. Handles integrated BLOB
+ * byte-arrays for image persistence safely and exposes localized Spanish-formatting macros
+ * seamlessly to the Mustache templating engine.
  */
 @Entity
 public class Offer {
@@ -46,9 +49,8 @@ public class Offer {
     /**
      * Category of waste or material.
      */
-    @NotNull(message = "Debes seleccionar un tipo de residuo")
-    @Enumerated(EnumType.STRING)
-    private WasteCategory wasteCategory;
+    @NotBlank(message = "Debes seleccionar un tipo de residuo")
+    private String wasteCategory;
 
     /**
      * Quantity of the material offered.
@@ -124,7 +126,7 @@ public class Offer {
      * @param image           image byte array
      * @param company         associated company
      */
-    public Offer(String title, String description, WasteCategory wasteCategory, Double quantity, String unit,
+    public Offer(String title, String description, String wasteCategory, Double quantity, String unit,
             Double price, String availability, OfferStatus status, LocalDateTime publicationDate,
             byte[] image, Company company) {
         this.title = title;
@@ -166,19 +168,35 @@ public class Offer {
         this.description = description;
     }
 
-    public WasteCategory getWasteCategory() {
+    public String getWasteCategory() {
         return wasteCategory;
     }
 
-    public void setWasteCategory(WasteCategory wasteCategory) {
+    public void setWasteCategory(String wasteCategory) {
         this.wasteCategory = wasteCategory;
+    }
+
+    public WasteCategory getWasteCategoryEnum() {
+        if (this.wasteCategory == null) return null;
+        try {
+            return WasteCategory.valueOf(this.wasteCategory);
+        } catch (IllegalArgumentException e) {
+            // Try to match by display name
+            for (WasteCategory cat : WasteCategory.values()) {
+                if (cat.getDisplayName().equalsIgnoreCase(this.wasteCategory) || 
+                    cat.name().equalsIgnoreCase(this.wasteCategory)) {
+                    return cat;
+                }
+            }
+            return null;
+        }
     }
 
     // Format the residue type to be user-friendly using the Enum's display name
     public String getFormattedWasteType() {
-        if (this.wasteCategory == null)
-            return "";
-        return this.wasteCategory.getDisplayName();
+        WasteCategory cat = getWasteCategoryEnum();
+        if (cat != null) return cat.getDisplayName();
+        return this.wasteCategory != null ? this.wasteCategory : "";
     }
 
     public String getCategory() {

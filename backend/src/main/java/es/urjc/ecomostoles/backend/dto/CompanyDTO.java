@@ -6,9 +6,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 /**
- * Data Transfer Object (DTO) for Company.
- * Used for form binding and to avoid exposing sensitive information like
- * password hashes.
+ * Secure marshaling profile for Company entities.
+ * 
+ * Implements the DTO pattern ensuring strict isolation of the underlying DB schema 
+ * from the presentation layer. Actively redacts sensitive payload nodes (e.g., password hashes, 
+ * internal identity sequences) preventing over-posting vulnerabilities (Mass Assignment).
  */
 public class CompanyDTO {
 

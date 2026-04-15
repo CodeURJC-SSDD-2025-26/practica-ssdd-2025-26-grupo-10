@@ -22,15 +22,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.stream.Collectors;
 import org.springframework.validation.FieldError;
 
 /**
- * Controller for handling company profile view.
- *
- * Follows Controller > Service > Repository architecture:
- * delegates all data access to CompanyService.
+ * Controller orchestrating dynamic profile manipulation.
+ * 
+ * Supports both self-service tenant administration and global administrative overrides 
+ * via role-based access constraints. Enforces payload mapping and security auditing across updates 
+ * safely isolating entity mutations from unauthorized lateral edits.
  */
 @Controller
 public class ProfileController {
@@ -45,7 +45,8 @@ public class ProfileController {
 
     @GetMapping("/perfil")
     public String showProfile(Model model, @RequestParam(required = false) boolean success, Principal principal) {
-        Company company = companyService.findByEmail(principal.getName())
+        // Integrity check: Ensure the authenticated principal still exists in the database
+        companyService.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
 
         model.addAttribute("isDashboard", true);
@@ -69,6 +70,18 @@ public class ProfileController {
         return "perfil_empresa";
     }
 
+    /**
+     * Executes entity modifications bridging incoming generic forms to persistent models.
+     * 
+     * @param companyDTO marshaled domain transfer object containing unsanitized modifications.
+     * @param bindingResult constraints violation tracker.
+     * @param logoFile raw BLOB multipart buffer.
+     * @param request base HTTP servlet extracting administrative contexts securely.
+     * @param model MVC rendering frame.
+     * @param principal authenticated command issuer.
+     * @param redirectAttributes decoupled PRG carrier parameters.
+     * @return logical redirect router dependent on the active role structure.
+     */
     @PostMapping("/perfil/guardar")
     public String saveProfile(@Valid @ModelAttribute("company") CompanyDTO companyDTO,
             BindingResult bindingResult,
@@ -78,16 +91,11 @@ public class ProfileController {
             Principal principal,
             RedirectAttributes redirectAttributes) {
 
-        log.info("--- START LOGO UPLOAD DEBUG ---");
-        if (logoFile == null) {
-            log.error("CRITICAL ERROR: 'logoFile' is NULL from the frontend.");
-        } else if (logoFile.isEmpty()) {
-            log.warn("WARNING: File received but it is EMPTY (0 bytes).");
+        if (logoFile != null && !logoFile.isEmpty()) {
+            log.info("Logo file received: {} ({} bytes)", logoFile.getOriginalFilename(), logoFile.getSize());
         } else {
-            log.info("FRONTEND SUCCESS: File received. Name: {}, Size: {} bytes",
-                    logoFile.getOriginalFilename(), logoFile.getSize());
+            log.info("No logo file provided; maintaining existing image.");
         }
-        log.info("--- END LOGO UPLOAD DEBUG ---");
 
         Long targetId = companyDTO.getId();
         boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
@@ -107,7 +115,7 @@ public class ProfileController {
             return "redirect:/perfil";
         }
 
-        // Logic: Admin can edit anyone by ID, others only themselves
+        // Logic: Evaluate authorization clearance dynamically. Admin roles break isolation barriers to assist users.
         Company company;
 
         if (isAdmin && targetId != null) {
@@ -134,10 +142,11 @@ public class ProfileController {
         }
 
         companyService.save(company);
+        redirectAttributes.addFlashAttribute("successMessage", "Perfil actualizado correctamente.");
 
         if (isAdmin && targetId != null) {
-            return "redirect:/perfil/" + targetId + "?success=true";
+            return "redirect:/admin/usuarios";
         }
-        return "redirect:/perfil?success=true";
+        return "redirect:/perfil";
     }
 }

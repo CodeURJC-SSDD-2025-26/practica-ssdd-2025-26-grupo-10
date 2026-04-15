@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -18,8 +17,11 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 
 /**
- * Represents a Demand (Demand/Request) in the domain model.
- * Each demand is associated with an Company (Company) that requests it.
+ * Persistent schema detailing material necessities published by Tenants.
+ * 
+ * Implements JSR 380 structural constraints internally. Triggers custom @PrePersist lifecycle 
+ * hooks ensuring temporal invariants (expiration calculations) are strictly synchronized 
+ * before yielding to the database transaction context.
  */
 @Entity
 public class Demand {
@@ -40,9 +42,8 @@ public class Demand {
     /**
      * Category of waste or material.
      */
-    @NotNull(message = "Debes seleccionar una categoría de material")
-    @Enumerated(EnumType.STRING)
-    private WasteCategory wasteCategory;
+    @NotBlank(message = "Debes seleccionar una categoría de material")
+    private String wasteCategory;
 
     /**
      * Detailed description of the demand.
@@ -68,7 +69,6 @@ public class Demand {
      * Urgency level of the demand.
      */
     @NotBlank(message = "El nivel de urgencia es obligatorio")
-    @jakarta.validation.constraints.Pattern(regexp = "Inmediata|En 1 semana|Consultar", message = "El nivel de urgencia debe ser Inmediata, En 1 semana o Consultar")
     private String urgency;
 
     /**
@@ -109,7 +109,8 @@ public class Demand {
     private LocalDateTime expiryDate;
 
     /**
-     * Lifecycle management: Automatically set values on first persist.
+     * Lifecycle management hook.
+     * Intercepts transient entities prior to flush, aligning intrinsic properties and establishing calculated bounds.
      */
     @jakarta.persistence.PrePersist
     protected void onCreate() {
@@ -194,7 +195,7 @@ public class Demand {
      * @param publicationDate publication date
      * @param company         company
      */
-    public Demand(String title, WasteCategory wasteCategory, String description, Double quantity, String unit,
+    public Demand(String title, String wasteCategory, String description, Double quantity, String unit,
             String urgency, Double maxBudget, String pickupZone, String validity, DemandStatus status,
             LocalDateTime publicationDate, Company company) {
         this.title = title;
@@ -238,19 +239,35 @@ public class Demand {
         this.title = title;
     }
 
-    public WasteCategory getWasteCategory() {
+    public String getWasteCategory() {
         return wasteCategory;
     }
 
-    public void setWasteCategory(WasteCategory wasteCategory) {
+    public void setWasteCategory(String wasteCategory) {
         this.wasteCategory = wasteCategory;
+    }
+
+    public WasteCategory getWasteCategoryEnum() {
+        if (this.wasteCategory == null) return null;
+        try {
+            return WasteCategory.valueOf(this.wasteCategory);
+        } catch (IllegalArgumentException e) {
+            // Match by display name
+            for (WasteCategory cat : WasteCategory.values()) {
+                if (cat.getDisplayName().equalsIgnoreCase(this.wasteCategory) || 
+                    cat.name().equalsIgnoreCase(this.wasteCategory)) {
+                    return cat;
+                }
+            }
+            return null;
+        }
     }
 
     // Helper for Mustache templates
     public String getFormattedWasteType() {
-        if (this.wasteCategory == null)
-            return "";
-        return this.wasteCategory.getDisplayName();
+        WasteCategory cat = getWasteCategoryEnum();
+        if (cat != null) return cat.getDisplayName();
+        return this.wasteCategory != null ? this.wasteCategory : "";
     }
 
     public String getDescription() {

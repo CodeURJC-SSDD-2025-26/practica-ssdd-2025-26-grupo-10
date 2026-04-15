@@ -1,5 +1,11 @@
 package es.urjc.ecomostoles.backend.dto;
 
+/**
+ * Dynamic view rendering payload mapping configuration options.
+ * 
+ * Centralizes UI projection structures for dropdown components (Select/Option arrays), 
+ * safely decoupling static domain Enums and YAML configurations from the Mustache execution layer.
+ */
 public class SelectOption {
     private String value;
     private String label;

@@ -9,14 +9,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.security.Principal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Custom Error Controller to handle all platform errors (404, 403, 500, etc.).
- * Guarantees that global layout attributes are present to prevent Mustache
- * rendering crashes.
+ * Global error routing interceptor.
+ * 
+ * Safely wraps HTTP error codes (404, 500, 403) and maps them to a uniform templated view. 
+ * Guarantees that essential layout variables (navbar globals, auth states) remain present, 
+ * shielding end-users from the raw Spring Whitelabel Error Page.
  */
 @Controller
 public class CustomErrorController implements ErrorController {
+
+    private static final Logger log = LoggerFactory.getLogger(CustomErrorController.class);
 
     private final ConfigurationService configurationService;
     private final CompanyService companyService;
@@ -26,22 +32,30 @@ public class CustomErrorController implements ErrorController {
         this.companyService = companyService;
     }
 
+    /**
+     * Intercepts container-level routing exceptions and populates the model with safe error contexts.
+     * 
+     * @param request the inbound HTTP request containing the original error attributes.
+     * @param model the current Spring MVC view model context.
+     * @param principal the authenticated user context, crucial for rendering logged-in navigation.
+     * @return the string reference to the custom mapped template.
+     */
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request, Model model, Principal principal) {
-        System.out.println("DEBUG: CustomErrorController interceptando petición a /error");
+        log.debug("CustomErrorController intercepting request to /error");
 
         // 1. Recover status code
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         String statusCode = status != null ? status.toString() : "Unknown";
-        System.out.println("DEBUG: Código de estado detectado: " + statusCode);
+        log.debug("HTTP status code detected: {}", statusCode);
 
-        // 2. Inject Mandatory Global Attributes for Navbar/Footer
+        // Inject mandatory global attributes for Navbar/Footer
         model.addAttribute("platformName", configurationService.getAutoValue("platformName"));
         model.addAttribute("supportEmail", configurationService.getAutoValue("contactEmail"));
         model.addAttribute("currentYear", java.time.LocalDate.now().getYear());
         model.addAttribute("cacheBuster", System.currentTimeMillis());
 
-        // 3. Inject Session Info (for Navbar state)
+        // Inject session info (for Navbar state)
         if (principal != null) {
             companyService.findByEmail(principal.getName()).ifPresent(c -> {
                 model.addAttribute("company", new es.urjc.ecomostoles.backend.dto.CompanyDTO(c));
@@ -49,7 +63,7 @@ public class CustomErrorController implements ErrorController {
             });
         }
 
-        // 4. Define dynamic error message and title
+        // Define dynamic error message based on status code
         String message = "Ha ocurrido un error inesperado.";
         String title = "¡Vaya! Algo ha fallado";
 
@@ -77,9 +91,9 @@ public class CustomErrorController implements ErrorController {
         model.addAttribute("errorMessage", message);
         model.addAttribute("statusCode", statusCode);
 
-        System.out.println("DEBUG: Renderizando custom_error con Title: " + title);
+        log.debug("Rendering custom_error with title: {}", title);
 
-        // 5. Render the renamed template
+        // Return the custom error template view
         return "custom_error";
     }
 }

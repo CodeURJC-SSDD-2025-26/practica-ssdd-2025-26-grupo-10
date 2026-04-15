@@ -11,14 +11,11 @@ import es.urjc.ecomostoles.backend.service.DashboardService;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 
 /**
- * Controller for handling the Dashboard view.
- *
- * Follows Controller > Service > Repository architecture:
- * delegates all domain data access to the four services.
- * Now uses MessageService instead of direct repository access.
- *
- * - ADMIN: sees global KPIs for the entire platform.
- * - COMPANY: sees its own KPIs (offers, demands, agreements, messages).
+ * Controller positioning the main authenticated landing area (Dashboard).
+ * 
+ * Functions as an aggregator facade, orchestrating cross-domain data fetching 
+ * (Offers, Demands, Sustainability milestones), and packing it into a cohesive DashboardStatsDTO.
+ * Abstracts heavy DB computations behind the DashboardService to keep presentation layer thin.
  */
 @Controller
 public class DashboardController {
@@ -31,6 +28,13 @@ public class DashboardController {
         this.dashboardService = dashboardService;
     }
 
+    /**
+     * Renders the unified operational dashboard tailored exclusively to the connected company.
+     * 
+     * @param model the template payload carrier context.
+     * @param principal represents the current authorized security identity.
+     * @return routing string mapping towards the corresponding Mustache view.
+     */
     @GetMapping("/dashboard")
     public String showDashboard(Model model, Principal principal) {
         Optional<Company> companyOpt = companyService.findByEmail(principal.getName());
@@ -49,8 +53,8 @@ public class DashboardController {
             model.addAttribute("totalDemands", stats.getTotalDemands());
             model.addAttribute("totalActiveAgreements", stats.getActiveAgreements());
             model.addAttribute("chartData", stats.getChartData());
-            model.addAttribute("reintroducedMaterial", stats.getReintroducedMaterial());
-            model.addAttribute("co2Impact", stats.getCo2Impact());
+            model.addAttribute("reintroducedMaterial", String.format(java.util.Locale.US, "%.2f", stats.getReintroducedMaterial()));
+            model.addAttribute("co2Impact", String.format(java.util.Locale.US, "%.2f", stats.getCo2Impact()));
 
             // Smart Matching logic
             model.addAttribute("userIsAdmin", stats.isAdmin());

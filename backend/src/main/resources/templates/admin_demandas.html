@@ -10,6 +10,16 @@
         <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent">
 
+            {{#successMessage}}
+            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-4 mb-4 d-flex align-items-center" role="alert">
+                <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                    <i class="fas fa-check-circle text-success"></i>
+                </div>
+                <div class="flex-grow-1 fw-bold text-success">{{successMessage}}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {{/successMessage}}
+
             <!-- Header -->
             <section class="card shadow-sm border-0 rounded-4 mb-4">
                 <div class="card-body p-4">
@@ -23,15 +33,27 @@
                     <!-- Stats row -->
                     <div class="row g-3">
                         <div class="col-md-3">
-                            <div class="border rounded-4 p-3 text-center bg-light">
-                                <h4 class="fw-bold text-success mb-0">{{#totalActiveDemands}}{{totalActiveDemands}}{{/totalActiveDemands}}{{^totalActiveDemands}}0{{/totalActiveDemands}}</h4>
+                            <div class="border rounded-4 p-3 text-center bg-light shadow-sm">
+                                <h4 class="fw-bold text-primary mb-0">{{totalDemands}}</h4>
+                                <small class="text-muted fw-bold text-uppercase small">Total</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded-4 p-3 text-center bg-light shadow-sm">
+                                <h4 class="fw-bold text-success mb-0">{{totalActiveDemands}}</h4>
                                 <small class="text-muted fw-bold text-uppercase small">Activas</small>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="border rounded-4 p-3 text-center bg-light">
-                                <h4 class="fw-bold text-primary mb-0">{{#totalInterested}}{{totalInterested}}{{/totalInterested}}{{^totalInterested}}0{{/totalInterested}}</h4>
-                                <small class="text-muted fw-bold text-uppercase small">Interesados</small>
+                            <div class="border rounded-4 p-3 text-center bg-light shadow-sm">
+                                <h4 class="fw-bold text-warning mb-0">{{totalPausedDemands}}</h4>
+                                <small class="text-muted fw-bold text-uppercase small">Pausadas</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded-4 p-3 text-center bg-light shadow-sm">
+                                <h4 class="fw-bold text-secondary mb-0">{{totalClosedDemands}}</h4>
+                                <small class="text-muted fw-bold text-uppercase small">Cerradas</small>
                             </div>
                         </div>
                     </div>
@@ -59,7 +81,10 @@
                                 {{#demands}}
                                 <tr>
                                     <td class="ps-4">
-                                        <div class="fw-bold text-dark">{{title}}</div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="fw-bold text-dark">{{title}}</div>
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-2 py-1 small" style="font-size: 0.7rem;">{{status.displayName}}</span>
+                                        </div>
                                         <small class="text-muted text-uppercase small">{{formattedWasteType}}</small>
                                     </td>
                                     <td class="text-secondary small fw-bold">{{company.commercialName}}</td>
@@ -96,7 +121,9 @@
                 </div>
                 
                 <!-- Pagination Footer -->
-                {{> pagination_control}}
+                <div class="card-footer bg-white border-0 py-3">
+                    {{> pagination_control}}
+                </div>
             </section>
 
         </main>

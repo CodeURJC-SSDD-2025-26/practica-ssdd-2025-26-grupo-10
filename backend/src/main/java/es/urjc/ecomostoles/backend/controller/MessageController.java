@@ -23,8 +23,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Controller to handle reading and listing messages.
- * Uses Controller > Service > Repository architecture.
+ * B2B communication synchronization controller.
+ * 
+ * Orchestrates internal mailboxes allowing cross-tenant discussions regarding
+ * materials and logistic operations. Implements assertive permission sweeps guaranteeing 
+ * that companies strictly process mail chains explicitly bounding them (as sender or recipient).
  */
 @Controller
 public class MessageController {
@@ -45,10 +48,11 @@ public class MessageController {
         }
 
         /**
-         * Shows the inbox messages for the active company.
-         *
-         * @param model Spring UI model
-         * @return view template "mensajes"
+         * Resolves and maps the dual-inbox architecture (Sent/Received) for the active tenant.
+         * 
+         * @param model layout dictionary payload.
+         * @param principal strictly validated authentication token mapping to a Company.
+         * @return DOM sequence executing the mailbox UI tree.
          */
         @GetMapping("/mensajes")
         public String showMessages(Model model, Principal principal) {
@@ -76,7 +80,12 @@ public class MessageController {
         }
 
         /**
-         * Shows the detail of a specific message.
+         * Fetches message body contents, enforcing IDOR protection boundaries.
+         * 
+         * @param id primary unique reference of the target message.
+         * @param model presentation logic mapping object.
+         * @param principal authenticated connection executing the read.
+         * @return detailed message template, or redirects natively if bounds are breached.
          */
         @GetMapping("/mensajes/{id}")
         public String showMessageDetail(@PathVariable Long id, Model model, Principal principal) {
@@ -88,7 +97,7 @@ public class MessageController {
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                                 "Company not found"));
 
-                // Security: Only the sender or the recipient can view the message
+                // Security: Enforce Strict IDOR isolation. Read sweeps are blocked if the user isn't in the thread.
                 boolean isRecipient = message.getRecipient().getId().equals(company.getId());
                 boolean isSender = message.getSender().getId().equals(company.getId());
 
@@ -110,7 +119,13 @@ public class MessageController {
         }
 
         /**
-         * Sends a message to the owner of an offer.
+         * Triggers a contact action initializing a thread derived directly from an active Offer.
+         * 
+         * @param offerId external relational constraint ID anchoring the discussion topic.
+         * @param content raw UTF-8 string block containing the user dispatch payload.
+         * @param principal originator security context.
+         * @param redirectAttributes attribute dispatcher to render UI feedback to the client.
+         * @return backwards redirect resuming the previous view layout seamlessly.
          */
         @PostMapping("/mensajes/enviar/{offerId}")
         public String sendOfferMessage(@PathVariable Long offerId, @RequestParam String content,
@@ -192,7 +207,11 @@ public class MessageController {
         }
 
         /**
-         * Deletes a message (Security: ownership check).
+         * Destroys an existing communication link safely.
+         * 
+         * @param id message entity key targeted for cleanup.
+         * @param principal interacting user validated securely via RBAC/Email match.
+         * @return route directive looping back into the mailbox pane.
          */
         @PostMapping("/mensajes/{id}/eliminar")
         public String deleteMessage(@PathVariable Long id, Principal principal) {

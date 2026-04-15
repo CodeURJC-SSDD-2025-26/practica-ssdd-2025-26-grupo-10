@@ -14,7 +14,7 @@
                     <h1 class="h2 text-dark fw-bold">Editar Activo <span
                             class="text-muted fs-6">#REF-{{offer.id}}</span></h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/dashboard/mis-ofertas" class="btn btn-sm btn-outline-secondary rounded-pill"><i
+                        <a href="{{#isAdmin}}/admin/ofertas{{/isAdmin}}{{^isAdmin}}/dashboard/mis-ofertas{{/isAdmin}}" class="btn btn-sm btn-outline-secondary rounded-pill"><i
                                 class="fas fa-arrow-left me-1"></i> Cancelar</a>
                     </div>
                 </div>
@@ -36,12 +36,12 @@
                                     <div class="invalid-feedback">Por favor, indica un título válido.</div>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="tipo"
+                                    <label for="wasteCategory"
                                         class="form-label text-secondary fw-bold small text-uppercase">Tipo <span
                                             class="text-danger">*</span></label>
                                     <select name="wasteCategory"
                                         class="form-select {{#error_wasteCategory}}is-invalid{{/error_wasteCategory}}"
-                                        id="tipo" required="">
+                                        id="wasteCategory" required="">
                                         {{#wasteCategories}}
                                         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                         {{/wasteCategories}}
@@ -61,7 +61,7 @@
                                 </div>
 
                                 <div class="col-md-4">
-                                    <label for="cantidad"
+                                    <label for="quantity"
                                         class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span
                                             class="text-danger">*</span></label>
                                     <div class="input-group">
@@ -113,7 +113,7 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <label for="imagenFile"
+                                    <label for="imageFile"
                                         class="form-label text-secondary fw-bold small text-uppercase">Fotografía del
                                         Activo</label>
                                     <div class="mb-2">
@@ -122,7 +122,7 @@
                                             class="img-thumbnail rounded object-fit-cover mt-2 mb-3 shadow-sm"
                                             style="max-height: 200px;" onerror="this.src='/img/logo.webp';">
                                     </div>
-                                    <input class="form-control" type="file" id="imagen" name="imageFile"
+                                    <input class="form-control" type="file" id="imageFile" name="imageFile"
                                         accept="image/png, image/jpeg, image/webp">
                                     <div class="form-text">Deja vacío para conservar la imagen actual.</div>
                                 </div>
@@ -142,7 +142,7 @@
 
 
     <script>
-        document.getElementById('imagen').addEventListener('change', function () {
+        document.getElementById('imageFile').addEventListener('change', function () {
             const file = this.files[0];
             if (file) {
                 if (file.size > 5 * 1024 * 1024) {

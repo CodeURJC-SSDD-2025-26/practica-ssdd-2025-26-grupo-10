@@ -1,16 +1,17 @@
 package es.urjc.ecomostoles.backend.service;
 
 import es.urjc.ecomostoles.backend.dto.DashboardStatsDTO;
-import es.urjc.ecomostoles.backend.model.Demand;
 import es.urjc.ecomostoles.backend.model.Company;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-import es.urjc.ecomostoles.backend.component.SustainabilityEngine;
-
 /**
- * Service to handle business logic for the Dashboard.
- * Extracts logic from the controller to follow the Controller-Service pattern.
+ * Intelligence Aggregator for the Platform Dashboard.
+ * 
+ * Orchestrates multi-dimensional data retrieval across the service ecosystem. 
+ * Implements role-segregated KPI logic:
+ * - ADMIN: Global platform trajectory (Total impact, total revenue).
+ * - COMPANY: Individual performance metrics and Smart Recommendation discovery.
  */
 @Service
 public class DashboardService {
@@ -18,24 +19,24 @@ public class DashboardService {
     private final OfferService offerService;
     private final DemandService demandService;
     private final AgreementService agreementService;
-    private final SustainabilityEngine sustainabilityEngine;
 
     public DashboardService(OfferService offerService,
             DemandService demandService,
-            AgreementService agreementService,
-            SustainabilityEngine sustainabilityEngine) {
+            AgreementService agreementService) {
         this.offerService = offerService;
         this.demandService = demandService;
         this.agreementService = agreementService;
-        this.sustainabilityEngine = sustainabilityEngine;
     }
 
     /**
-     * Calculates all KPIs, charts data and recommendations for a given company (or
-     * admin).
+     * Consolidates platform-wide or tenant-specific analytical indices.
      * 
-     * @param company The company for which stats are calculated.
-     * @return A DTO containing all dashboard attributes.
+     * Dynamically branches query vectors based on Principal roles to ensure 
+     * security-compliant statistical snapshots. Populates the unified DashboardStatsDTO 
+     * schema for presentation.
+     * 
+     * @param company The Subject for whom indices are being aggregated.
+     * @return A consolidated payload for UI rendering.
      */
     public DashboardStatsDTO getStats(Company company) {
         DashboardStatsDTO stats = new DashboardStatsDTO();

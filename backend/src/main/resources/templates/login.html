@@ -2,9 +2,20 @@
 <body class="bg-theme-dark d-flex flex-column min-vh-100">
 {{> header}}
 
+<!-- 
+    AUTHENTICATION GATEWAY
+    Uses a centered layout (d-flex align-items-center) to focus the user's attention
+    on the primary conversion point. The container leverages flex-grow-1 to 
+    push the footer to the bottom of the viewport.
+-->
 <main class="container flex-grow-1 d-flex align-items-center justify-content-center py-5">
     <div class="row justify-content-center w-100">
         <div class="col-md-5 col-lg-4">
+            <!-- 
+                LOGIN CARD 
+                Implements a high-contrast top-border to distinguish the 'Success' identity.
+                Rounded-4 and shadow-sm follow the Vercel-style aesthetic.
+            -->
             <div class="card p-4 border-top-success shadow-sm rounded-4">
                 <div class="card-body">
                     <div class="text-center mb-4">
@@ -14,18 +25,34 @@
                         <p class="text-muted small fw-bold text-uppercase ls-wide">Acceso para Empresas</p>
                     </div>
                     
+                    <!-- 
+                        FEEDBACK LOOP: Authentication States
+                        Handles error, registration success, and partial updates (email).
+                        Uses rounded-pill alerts for a premium, less aggressive feel.
+                    -->
                     {{#error}}
                     <div class="alert alert-danger py-2 small fw-bold text-center border-0 shadow-sm rounded-pill mb-4" role="alert">
                         <i class="fas fa-exclamation-circle me-2"></i> Credenciales incorrectas
                     </div>
                     {{/error}}
 
+                    {{#successMessage}}
+                    <div class="alert alert-success py-2 small fw-bold text-center border-0 shadow-sm rounded-pill mb-4" role="alert">
+                        <i class="fas fa-check-circle me-2"></i> {{successMessage}}
+                    </div>
+                    {{/successMessage}}
+
                     {{#updatedEmail}}
-                    <div class="alert alert-info py-2 small fw-bold text-center" role="alert">
-                        <i class="fas fa-info-circle me-1"></i> Email actualizado. Por favor, identifícate con tus nuevas credenciales.
+                    <div class="alert alert-info py-2 small fw-bold text-center border-0 shadow-sm rounded-pill mb-4" role="alert">
+                        <i class="fas fa-info-circle me-2"></i> Email actualizado. Por favor, identifícate.
                     </div>
                     {{/updatedEmail}}
                     
+                    <!-- 
+                        LOGIN FORM 
+                        Integrates Spring Security default endpoint (/login) with 
+                        standard CSRF token injection for session integrity.
+                    -->
                     <form action="/login" method="POST" class="needs-validation" novalidate="">
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                         <div class="mb-3">

@@ -24,8 +24,14 @@ import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.security.Principal;
 import java.text.NumberFormat;
-import java.util.Locale;
 
+/**
+ * Reporting controller managing dynamic generation of binary PDF artifacts.
+ * 
+ * Utilizes the iText runtime framework to render compliant document structures directly from 
+ * database entities. Streamlines reporting overheads bypassing intermediary files via in-memory 
+ * byte array streams (ByteArrayOutputStream). Enforces tight data-leakage boundaries before compilation.
+ */
 @Controller
 public class PdfExportController {
 
@@ -37,6 +43,16 @@ public class PdfExportController {
         this.companyService = companyService;
     }
 
+    /**
+     * Executes dynamic PDF construction for an individual completed agreement.
+     * 
+     * Checks data boundaries to ensure the accessor physically partook in the negotiation, 
+     * preventing lateral leakage of transaction price metrics.
+     * 
+     * @param id key routing to the specific materialized agreement.
+     * @param principal security node resolving the requester's organizational map.
+     * @return binary HTTP packet wrapping the PDF byte stream under attachment disposition.
+     */
     @GetMapping("/acuerdo/{id}/pdf")
     public ResponseEntity<byte[]> generateAgreementPdf(@PathVariable Long id, Principal principal) {
         if (principal == null) {
@@ -112,7 +128,7 @@ public class PdfExportController {
             table.setSpacingAfter(20f);
             table.setWidths(new float[] { 1.8f, 3.2f });
 
-            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "ES"));
+            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(java.util.Locale.of("es", "ES"));
             String formattedPrice = currencyFormat.format(agreement.getAgreedPrice());
 
             addProfessionalCell(table, "ID del Acuerdo", agreement.getId().toString(), headerFont, normalFont);
@@ -134,7 +150,7 @@ public class PdfExportController {
             // Spanish translation from Enum displayName
             addProfessionalCell(table, "Estado del Acuerdo", agreement.getStatus().getDisplayName(), headerFont, normalFont);
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy, HH:mm", new Locale("es", "ES"));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy, HH:mm", java.util.Locale.of("es", "ES"));
             String formattedDate = agreement.getRegistrationDate() != null
                     ? agreement.getRegistrationDate().format(formatter)
                     : "Fecha no disponible";

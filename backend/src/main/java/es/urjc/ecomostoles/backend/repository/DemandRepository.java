@@ -11,8 +11,11 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 /**
- * Repository interface for Demand entity.
- * Handles database operations for requests made by companies.
+ * Persistence interface for material demand broadcasts.
+ * 
+ * Implements complex query logic to identify "Smart Matches" across the B2B Material Graph. 
+ * Orchestrates temporal validity filtering to exclude expired requests from public 
+ * marketplace view-ports.
  */
 public interface DemandRepository extends JpaRepository<Demand, Long> {
 
@@ -34,7 +37,13 @@ public interface DemandRepository extends JpaRepository<Demand, Long> {
     long countByCompany(Company company);
 
     long countByCompanyAndStatus(Company company, DemandStatus status);
+    
+    long countByStatus(DemandStatus status);
 
+    /**
+     * Executes the "Smart Matching" algorithm looking for offers that satisfy existing 
+     * tenant demands while excluding the tenant's own inventory to avoid self-matches.
+     */
     @Query("SELECT o FROM es.urjc.ecomostoles.backend.model.Offer o JOIN FETCH o.company WHERE o.status = es.urjc.ecomostoles.backend.model.OfferStatus.ACTIVE AND o.company.id != :companyId AND o.wasteCategory IN (SELECT d.wasteCategory FROM Demand d WHERE d.company.id = :companyId AND d.status = es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE)")
     List<es.urjc.ecomostoles.backend.model.Offer> findOffersMatchingDemand(@Param("companyId") Long companyId,
             org.springframework.data.domain.Pageable pageable);

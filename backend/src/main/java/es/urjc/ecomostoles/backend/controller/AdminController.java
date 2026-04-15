@@ -10,7 +10,6 @@ import es.urjc.ecomostoles.backend.model.OfferStatus;
 import es.urjc.ecomostoles.backend.model.Offer;
 import es.urjc.ecomostoles.backend.model.Demand;
 import es.urjc.ecomostoles.backend.model.Agreement;
-import es.urjc.ecomostoles.backend.model.WasteCategory;
 import es.urjc.ecomostoles.backend.dto.SelectOption;
 import es.urjc.ecomostoles.backend.dto.OfferSummary;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +26,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Arrays;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import es.urjc.ecomostoles.backend.dto.CompanyDTO;
@@ -36,22 +34,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import es.urjc.ecomostoles.backend.service.ReportService;
 import es.urjc.ecomostoles.backend.service.ConfigurationService;
-import es.urjc.ecomostoles.backend.service.MessageService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.context.SecurityContextHolder;
 import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
 
 /**
- * Administration panel controller.
- *
- * All paths are under /admin/** and protected
- * by @PreAuthorize("hasRole('ADMIN')")
- * (additional reinforcement over the SecurityConfig rule).
+ * Master controller for all back-office administration workflows.
+ * 
+ * Orchestrates entity curation, platform configuration, usage auditing, and
+ * report synthesis. Architecturally enforced by strict method-level security
+ * interceptors
+ * (@PreAuthorize) mapped against the ADMIN role context to guarantee zero-trust
+ * boundary protection.
  */
 @Controller
 @RequestMapping("/admin")
@@ -64,22 +62,19 @@ public class AdminController {
     private final AgreementService agreementService;
     private final ConfigurationService configurationService;
     private final ReportService reportService;
-    private final MessageService messageService;
 
     public AdminController(CompanyService companyService,
             OfferService offerService,
             DemandService demandService,
             AgreementService agreementService,
             ConfigurationService configurationService,
-            ReportService reportService,
-            MessageService messageService) {
+            ReportService reportService) {
         this.companyService = companyService;
         this.offerService = offerService;
         this.demandService = demandService;
         this.agreementService = agreementService;
         this.configurationService = configurationService;
         this.reportService = reportService;
-        this.messageService = messageService;
     }
 
     // ... (keep private methods)
@@ -101,18 +96,32 @@ public class AdminController {
         model.addAttribute("totalReported", offerService.countByStatus(OfferStatus.REPORTED));
         model.addAttribute("totalCompleted", agreementService.countByStatus(AgreementStatus.COMPLETED, filter));
         model.addAttribute("co2Tons", agreementService.calculateCO2Saved());
+        model.addAttribute("totalCommission", agreementService.getTotalCommission());
+        model.addAttribute("isAdmin", true);
         model.addAttribute("isDashboard", true);
         model.addAttribute("isAdminView", true);
-        model.addAttribute("supportEmail", "soporte@ecomostoles.es");
     }
 
-    // ── GET /admin → redirects to /admin/panel ───────────────────────────
+    /**
+     * Root interceptor for legacy or bare /admin requests. Restores proper routing
+     * topology.
+     * 
+     * @return redirection dispatch string to the active administration panel.
+     */
     @GetMapping
     public String adminRoot() {
         return "redirect:/admin/panel";
     }
 
-    // ── GET /admin/panel ───────────────────────────────────────────────────────
+    /**
+     * Aggregates platform-wide Key Performance Indicators (KPIs).
+     * 
+     * @param model     MVC model map to embed statistical attributes.
+     * @param principal active authenticated security principal.
+     * @param filter    optional UI modifier to calculate subsets (e.g., this
+     *                  month's stats).
+     * @return mapping pointing to the main administrator hub template.
+     */
     @GetMapping("/panel")
     public String panel(Model model, Principal principal, @RequestParam(required = false) String filter) {
         addCommonAttributes(model, principal, filter);
@@ -127,7 +136,17 @@ public class AdminController {
         return "admin_panel";
     }
 
-    // ── GET /admin/usuarios ────────────────────────────────────────────────────
+    /**
+     * Returns a paginated dataset modeling the entire registered entity directory.
+     * 
+     * @param model     template layout schema block.
+     * @param principal active session identifier.
+     * @param search    conditional string targeting fuzzy substring matching across
+     *                  domain identities.
+     * @param pageable  resolved offset/limit rules managed directly by Spring Data
+     *                  capabilities.
+     * @return fully rendered user-list fragment or view.
+     */
     @GetMapping("/usuarios")
     public String users(Model model, Principal principal,
             @RequestParam(required = false) String search,
@@ -137,24 +156,31 @@ public class AdminController {
 
         Page<Company> companiesPage;
         if (search != null && !search.isEmpty()) {
-            companiesPage = companyService.filterCompaniesPaginated(search, pageable);
+            companiesPage = companyService.searchClientsPaginated(search, pageable);
             model.addAttribute("search", search);
             model.addAttribute("isSearch", true);
         } else {
-            companiesPage = companyService.getCompaniesPaginated(pageable.getPageNumber(), pageable.getPageSize());
+            companiesPage = companyService.getClientsPaginated(pageable);
             model.addAttribute("isSearch", false);
         }
 
+        // Security: Inject current user for frontend validations
+        if (principal != null) {
+            companyService.findByEmail(principal.getName()).ifPresent(c -> model.addAttribute("currentUser", c));
+        }
+
         model.addAttribute("companies", companiesPage.getContent());
+
+        // Pagination metadata
         model.addAttribute("currentPage", companiesPage.getNumber() + 1);
-        model.addAttribute("totalPages", companiesPage.getTotalPages());
+        model.addAttribute("totalPages", companiesPage.getTotalPages() == 0 ? 1 : companiesPage.getTotalPages());
         model.addAttribute("hasPrevious", companiesPage.hasPrevious());
-        model.addAttribute("hasPrev", companiesPage.hasPrevious());
         model.addAttribute("hasNext", companiesPage.hasNext());
         model.addAttribute("prevPage", companiesPage.getNumber() - 1);
         model.addAttribute("nextPage", companiesPage.getNumber() + 1);
+        model.addAttribute("totalItems", companiesPage.getTotalElements());
 
-        // Fix: Persist search parameters in pagination
+        // Base URL and query string for pagination
         model.addAttribute("paginationBaseUrl", "/admin/usuarios");
         String qs = (search != null && !search.isEmpty()) ? "&search=" + search : "";
         model.addAttribute("paginationQueryString", qs);
@@ -162,11 +188,45 @@ public class AdminController {
         return "admin_usuarios";
     }
 
+    /**
+     * Invokes destructive operational routines on targeted company objects.
+     * Includes defensive checks
+     * against self-deletion or altering equivalent security scopes (other admins).
+     * 
+     * @param id                 remote unique sequence corresponding to the
+     *                           scheduled company record.
+     * @param principal          current authority verifying authorization
+     *                           boundaries are not exceeded.
+     * @param redirectAttributes decoupled carrier for post-redirect flash feedback
+     *                           interactions.
+     * @return logical redirect URI enforcing the post/redirect/get paradigm.
+     */
     @PostMapping("/usuarios/eliminar/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        // CascadeType.ALL in Company.java will delete the user and all their
-        // dependencies.
-        companyService.delete(id);
+    public String deleteUser(@PathVariable Long id, Principal principal,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+
+        Optional<Company> userToDelete = companyService.findById(id);
+
+        if (userToDelete.isPresent()) {
+            Company target = userToDelete.get();
+
+            // Safety: Prevent self-deletion or deletion of other admins
+            if (target.getRoles().contains("ADMIN")) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Operación denegada: No puedes eliminar a un administrador.");
+                return "redirect:/admin/usuarios";
+            }
+
+            if (principal != null && target.getContactEmail().equals(principal.getName())) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Operación denegada: No puedes eliminar tu propia cuenta.");
+                return "redirect:/admin/usuarios";
+            }
+
+            companyService.delete(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Empresa eliminada con éxito.");
+        }
+
         return "redirect:/admin/usuarios";
     }
 
@@ -199,18 +259,26 @@ public class AdminController {
         }
 
         model.addAttribute("offers", offersPage.getContent());
+
+        // Pagination metadata
         model.addAttribute("currentPage", offersPage.getNumber() + 1);
-        model.addAttribute("totalPages", offersPage.getTotalPages());
+        model.addAttribute("totalPages", offersPage.getTotalPages() == 0 ? 1 : offersPage.getTotalPages());
         model.addAttribute("hasPrevious", offersPage.hasPrevious());
-        model.addAttribute("hasPrev", offersPage.hasPrevious());
         model.addAttribute("hasNext", offersPage.hasNext());
         model.addAttribute("prevPage", offersPage.getNumber() - 1);
         model.addAttribute("nextPage", offersPage.getNumber() + 1);
+        model.addAttribute("totalItems", offersPage.getTotalElements());
 
         // Fix: Persist state filter in pagination
         model.addAttribute("paginationBaseUrl", "/admin/ofertas");
         String qs = (status != null && !status.isEmpty()) ? "&status=" + status : "";
         model.addAttribute("paginationQueryString", qs);
+
+        // Real metrics for KPI cards
+        model.addAttribute("countTotal", offerService.countAll());
+        model.addAttribute("countActive", offerService.countByStatus(OfferStatus.ACTIVE));
+        model.addAttribute("countPaused", offerService.countByStatus(OfferStatus.PAUSED));
+        model.addAttribute("countFinished", offerService.countByStatus(OfferStatus.FINISHED));
 
         return "admin_ofertas";
     }
@@ -278,19 +346,26 @@ public class AdminController {
         Page<Demand> demandsPage = demandService.getAllPaginated(pageable);
 
         model.addAttribute("demands", demandsPage.getContent());
+
+        // Pagination metadata
         model.addAttribute("currentPage", demandsPage.getNumber() + 1);
-        model.addAttribute("totalPages", demandsPage.getTotalPages());
+        model.addAttribute("totalPages", demandsPage.getTotalPages() == 0 ? 1 : demandsPage.getTotalPages());
         model.addAttribute("hasPrevious", demandsPage.hasPrevious());
-        model.addAttribute("hasPrev", demandsPage.hasPrevious());
         model.addAttribute("hasNext", demandsPage.hasNext());
         model.addAttribute("prevPage", demandsPage.getNumber() - 1);
         model.addAttribute("nextPage", demandsPage.getNumber() + 1);
+        model.addAttribute("totalItems", demandsPage.getTotalElements());
 
         // Dynamic stats for admin_demandas cards
-        model.addAttribute("totalActiveDemands", demandService.countAll());
-        model.addAttribute("totalInterested", messageService.countAll());
+        model.addAttribute("totalDemands", demandService.countAll());
+        model.addAttribute("totalActiveDemands",
+                demandService.countByStatus(es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE));
+        model.addAttribute("totalPausedDemands",
+                demandService.countByStatus(es.urjc.ecomostoles.backend.model.DemandStatus.PAUSED));
+        model.addAttribute("totalClosedDemands",
+                demandService.countByStatus(es.urjc.ecomostoles.backend.model.DemandStatus.CLOSED));
 
-        // Fix: Add base pagination meta for demands
+        // Pagination meta
         model.addAttribute("paginationBaseUrl", "/admin/demandas");
         model.addAttribute("paginationQueryString", "");
 
@@ -306,15 +381,22 @@ public class AdminController {
         Page<Agreement> agreementsPage = agreementService.getAllPaginated(pageable);
 
         model.addAttribute("agreements", agreementsPage.getContent());
+
+        // Pagination metadata
         model.addAttribute("currentPage", agreementsPage.getNumber() + 1);
-        model.addAttribute("totalPages", agreementsPage.getTotalPages());
+        model.addAttribute("totalPages", agreementsPage.getTotalPages() == 0 ? 1 : agreementsPage.getTotalPages());
         model.addAttribute("hasPrevious", agreementsPage.hasPrevious());
-        model.addAttribute("hasPrev", agreementsPage.hasPrevious());
         model.addAttribute("hasNext", agreementsPage.hasNext());
         model.addAttribute("prevPage", agreementsPage.getNumber() - 1);
         model.addAttribute("nextPage", agreementsPage.getNumber() + 1);
+        model.addAttribute("totalItems", agreementsPage.getTotalElements());
 
-        // Fix: Add base pagination meta for agreements
+        // Dynamic stats for admin_acuerdos cards
+        model.addAttribute("totalAgreements", agreementService.countAll());
+        model.addAttribute("totalCompleted",
+                agreementService.countByStatus(es.urjc.ecomostoles.backend.model.AgreementStatus.COMPLETED));
+
+        // Pagination meta
         model.addAttribute("paginationBaseUrl", "/admin/acuerdos");
         model.addAttribute("paginationQueryString", "");
 
@@ -350,9 +432,20 @@ public class AdminController {
     @PostMapping("/ofertas/{id}/eliminar")
     public String deleteOffer(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         offerService.delete(id);
-        redirectAttributes.addFlashAttribute("message",
+        redirectAttributes.addFlashAttribute("successMessage",
                 "La oferta ha sido eliminada correctamente por el administrador.");
         return "redirect:/admin/ofertas";
+    }
+
+    @GetMapping("/ofertas/ver/{id}")
+    public String viewOfferAdmin(@PathVariable Long id, Model model, Principal principal) {
+        addCommonAttributes(model, principal);
+        Offer offer = offerService.findById(id).orElse(null);
+        if (offer == null) {
+            return "redirect:/admin/ofertas";
+        }
+        model.addAttribute("offer", offer);
+        return "detalle_activo";
     }
 
     @GetMapping("/ofertas/editar/{id}")
@@ -362,17 +455,31 @@ public class AdminController {
         if (offer == null)
             return "redirect:/admin/ofertas";
 
+        model.addAttribute("offer", offer);
+
         // Inject select options for the form using helper
-        injectFormOptions(model, offer.getUnit(), offer.getAvailability(), offer.getWasteCategory(),
+        injectFormOptions(model, offer.getUnit(), offer.getAvailability(), null, offer.getWasteCategory(),
                 offer.getStatus());
 
         return "editar_activo";
     }
 
     @PostMapping("/demandas/eliminar/{id}")
-    public String deleteDemandAdmin(@PathVariable Long id) {
+    public String deleteDemandAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         demandService.delete(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Demanda eliminada con éxito por el administrador.");
         return "redirect:/admin/demandas";
+    }
+
+    @GetMapping("/demandas/ver/{id}")
+    public String viewDemandAdmin(@PathVariable Long id, Model model, Principal principal) {
+        addCommonAttributes(model, principal);
+        Demand demand = demandService.findById(id).orElse(null);
+        if (demand == null) {
+            return "redirect:/admin/demandas";
+        }
+        model.addAttribute("demand", demand);
+        return "detalle_solicitud";
     }
 
     @GetMapping("/demandas/editar/{id}")
@@ -385,16 +492,29 @@ public class AdminController {
         model.addAttribute("demand", demand);
 
         // Inject select options for the form using helper
-        injectFormOptions(model, demand.getUnit(), demand.getUrgency(), demand.getWasteCategory(),
+        injectFormOptions(model, demand.getUnit(), demand.getUrgency(), demand.getValidity(), demand.getWasteCategory(),
                 demand.getStatus());
 
         return "editar_solicitud";
     }
 
     @PostMapping("/acuerdos/eliminar/{id}")
-    public String deleteAgreementAdmin(@PathVariable Long id) {
+    public String deleteAgreementAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         agreementService.delete(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Acuerdo eliminado con éxito por el administrador.");
         return "redirect:/admin/acuerdos";
+    }
+
+    @GetMapping("/acuerdos/ver/{id}")
+    public String viewAgreementAdmin(@PathVariable Long id, Model model, Principal principal) {
+        addCommonAttributes(model, principal);
+        Agreement agreement = agreementService.findById(id).orElse(null);
+        if (agreement == null) {
+            return "redirect:/admin/acuerdos";
+        }
+        model.addAttribute("agreement", agreement);
+        model.addAttribute("isAdminView", true);
+        return "detalle_acuerdo";
     }
 
     @GetMapping("/acuerdos/editar/{id}")
@@ -445,21 +565,6 @@ public class AdminController {
         model.addAttribute("sectorList", sectorsList);
 
         return "perfil_empresa";
-    }
-
-    @GetMapping("/ofertas/ver/{id}")
-    public String viewOfferAdmin(@PathVariable Long id) {
-        return "redirect:/oferta/" + id;
-    }
-
-    @GetMapping("/demandas/ver/{id}")
-    public String viewDemandAdmin(@PathVariable Long id) {
-        return "redirect:/demand/" + id;
-    }
-
-    @GetMapping("/acuerdos/ver/{id}")
-    public String viewAgreementAdmin(@PathVariable Long id) {
-        return "redirect:/agreement/" + id;
     }
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdminController.class);
@@ -526,35 +631,34 @@ public class AdminController {
      * Helper to inject common select options into the model for administrative
      * forms.
      */
-    private void injectFormOptions(Model model, String unit, String availability, WasteCategory cat, Enum<?> state) {
-        model.addAttribute("unitOptions", buildOptions("unitList", unit));
-        model.addAttribute("availabilityOptions", buildOptions("availabilityList", availability));
+    private void injectFormOptions(Model model, String unit, String availability, String validity, Object cat,
+            Enum<?> state) {
+        model.addAttribute("unitOptions", FormOptionsHelper.getUnitOptions(configurationService, unit));
+        model.addAttribute("availabilityOptions",
+                FormOptionsHelper.getUrgencyOptions(configurationService, availability));
 
-        List<SelectOption> categoryOptions = new ArrayList<>();
-        for (WasteCategory wcat : WasteCategory.values()) {
-            categoryOptions.add(new SelectOption(wcat.name(), wcat.getDisplayName(), wcat.equals(cat)));
+        if (validity != null || "".equals(validity)) {
+            model.addAttribute("validityOptions", FormOptionsHelper.getValidityOptions(validity));
         }
-        model.addAttribute("wasteCategories", categoryOptions);
+
+        model.addAttribute("wasteCategories", FormOptionsHelper.getCategoryOptions(configurationService, cat));
 
         if (state != null) {
             List<SelectOption> options = new ArrayList<>();
             for (Object obj : state.getClass().getEnumConstants()) {
                 Enum<?> constant = (Enum<?>) obj;
-                options.add(new SelectOption(constant.name(), constant.name(), constant.equals(state)));
+                String label = constant.name();
+                try {
+                    // Use reflection to get localized name if available (OfferStatus, DemandStatus,
+                    // etc)
+                    label = (String) constant.getClass().getMethod("getDisplayName").invoke(constant);
+                } catch (Exception e) {
+                    // Fallback to name
+                }
+                options.add(new SelectOption(constant.name(), label, constant.equals(state)));
             }
             model.addAttribute("statusOptions", options);
         }
     }
 
-    /**
-     * Helper to build a list of SelectOption objects from a configuration key.
-     */
-    private List<SelectOption> buildOptions(String configKey, String selected) {
-        List<String> items = configurationService.getSanitizedList(configKey);
-        List<SelectOption> options = new ArrayList<>();
-        for (String item : items) {
-            options.add(new SelectOption(item, item, item.equals(selected)));
-        }
-        return options;
-    }
 }

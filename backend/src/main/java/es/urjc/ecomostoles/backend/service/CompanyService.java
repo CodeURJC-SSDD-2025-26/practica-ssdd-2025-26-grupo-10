@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service layer for Company business logic.
- * Intermediary between controllers and the CompanyRepository, following
- * the Controller > Service > Repository architecture pattern.
+ * Identity Management Service governing the lifecycle of corporate Tenants.
+ * 
+ * Orchestrates secure registration workflows, role-based boundary filtering, and 
+ * credential management. Implements the specialized logic for administrative 
+ * identity reconciliation and public client discovery.
  */
 @Service
 @Transactional
@@ -39,6 +41,12 @@ public class CompanyService {
     public Page<Company> getCompaniesPaginated(int page, int size) {
         return companyRepository
                 .findAll(PageRequest.of(page, size, org.springframework.data.domain.Sort.by("id").descending()));
+    }
+
+    /** Returns a page of companies EXCLUDING administrators. */
+    @Transactional(readOnly = true)
+    public Page<Company> getClientsPaginated(org.springframework.data.domain.Pageable pageable) {
+        return companyRepository.findAllClients(pageable);
     }
 
     /** Finds a company by its contact email (used as username). */
@@ -83,6 +91,12 @@ public class CompanyService {
                         search, search, search, pageable);
     }
 
+    /** Filters ONLY client companies with pagination. */
+    @Transactional(readOnly = true)
+    public Page<Company> searchClientsPaginated(String search, org.springframework.data.domain.Pageable pageable) {
+        return companyRepository.searchClients(search, pageable);
+    }
+
     /** Filters companies by name, email, or CIF (Return top 50 as fallback). */
     @Transactional(readOnly = true)
     public List<Company> filterCompanies(String search) {
@@ -93,8 +107,16 @@ public class CompanyService {
     }
 
     /**
-     * Handles the professional registration of a new company, including
-     * password encryption and data persistence.
+     * Executes the secure registration of a new corporate tenant.
+     * 
+     * Enforces unique identity constraints (Email) and applies unidirectional salt-based 
+     * password hashing via the configured PasswordEncoder. Dynamically attaches 
+     * binary logo assets to the persistent entity profile.
+     * 
+     * @param company Initial company template.
+     * @param rawPassword Plaintext credential to be encrypted.
+     * @param logoBytes Binary payload for the corporate logo.
+     * @return The persisted Company entity with secured credentials.
      */
     public Company registerNewCompany(Company company, String rawPassword, byte[] logoBytes) {
         if (companyRepository.findByContactEmail(company.getContactEmail()).isPresent()) {

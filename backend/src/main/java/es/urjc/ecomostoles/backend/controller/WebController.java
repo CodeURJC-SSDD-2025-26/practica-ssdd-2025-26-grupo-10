@@ -12,6 +12,12 @@ import org.springframework.security.core.Authentication;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 
+/**
+ * Core perimeter controller managing unauthenticated routing footprints.
+ * 
+ * Hosts the initial marketing funnels, legal disclosure pages, and resolves routing
+ * redirects pushing authenticated organic traffic seamlessly towards their segregated Dashboards.
+ */
 @Controller
 public class WebController {
 
@@ -27,6 +33,12 @@ public class WebController {
         this.agreementService = agreementService;
     }
 
+    /**
+     * Resolves the primary perimeter landing view, populating dynamic platform KPIs.
+     * 
+     * @param model MVC data dictionary targeting the "index" template.
+     * @return resolved path linking to the front-facing sales facade.
+     */
     @GetMapping("/")
     public String index(Model model) {
         List<OfferSummary> recentOffers = offerService.getActiveRecent();
@@ -51,6 +63,16 @@ public class WebController {
         return "privacidad";
     }
 
+    /**
+     * Gateway router capturing organic authentication transitions.
+     * 
+     * Applies defensive fallback evaluating role structures via the raw servlet request, 
+     * bouncing active traces precisely towards their highest clearance landing zones.
+     * 
+     * @param auth active security principal state container.
+     * @param request base servlet footprint mapping the protocol execution.
+     * @return 302 Redirection directive towards restricted panels.
+     */
     @GetMapping("/home")
     public String homeRouter(Authentication auth, HttpServletRequest request) {
         if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {

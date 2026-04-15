@@ -1,12 +1,12 @@
 <!-- Generic Pagination Partial for EcoMóstoles -->
-{{#totalPages}}
 <nav aria-label="Page navigation" class="mt-4">
     <ul class="pagination justify-content-center pagination-rounded gap-2">
-        
+
         <!-- Previous Button -->
         {{#hasPrevious}}
         <li class="page-item">
-            <a class="page-link border-0 shadow-sm rounded-pill px-4" href="{{paginationBaseUrl}}?page={{prevPage}}{{paginationQueryString}}">
+            <a class="page-link border-0 shadow-sm rounded-pill px-4"
+                href="{{paginationBaseUrl}}?page={{prevPage}}{{paginationQueryString}}">
                 <i class="fas fa-chevron-left me-2"></i> Anterior
             </a>
         </li>
@@ -20,16 +20,19 @@
         {{/hasPrevious}}
 
         <!-- Page Indicator -->
+        {{#totalPages}}
         <li class="page-item active">
             <span class="page-link border-0 bg-success text-white shadow-sm rounded-pill px-4 fw-bold">
                 Página {{currentPage}} de {{totalPages}}
             </span>
         </li>
+        {{/totalPages}}
 
         <!-- Next Button -->
         {{#hasNext}}
         <li class="page-item">
-            <a class="page-link border-0 shadow-sm rounded-pill px-4" href="{{paginationBaseUrl}}?page={{nextPage}}{{paginationQueryString}}">
+            <a class="page-link border-0 shadow-sm rounded-pill px-4"
+                href="{{paginationBaseUrl}}?page={{nextPage}}{{paginationQueryString}}">
                 Siguiente <i class="fas fa-chevron-right ms-2"></i>
             </a>
         </li>
@@ -44,4 +47,3 @@
 
     </ul>
 </nav>
-{{/totalPages}}

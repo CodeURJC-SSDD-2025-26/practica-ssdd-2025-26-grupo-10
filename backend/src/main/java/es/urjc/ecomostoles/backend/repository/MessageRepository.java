@@ -6,6 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
+/**
+ * Persistence layer for cross-tenant asynchronous communication.
+ * 
+ * Isolates mailbox streams for individual companies. Supports unread-count aggregation 
+ * algorithms powering real-time UI notification badges for the messaging subsystem.
+ */
 public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findByRecipient(Company recipient);
 

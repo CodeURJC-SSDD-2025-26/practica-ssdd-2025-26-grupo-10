@@ -1,9 +1,11 @@
 package es.urjc.ecomostoles.backend.model;
 
 /**
- * Technical definition of waste categories.
- * Members are in English (Technical Standard), 
- * while display names are in Spanish (User Interface).
+ * Taxonomy schema strictly cataloging domain material clusters.
+ * 
+ * Enforces robust English technical namespaces while embedding localized Spanish display
+ * aliases. Optimizes query-binding and distributes configurations natively across the
+ * platform ecosystem.
  */
 public enum WasteCategory {
     METAL_WASTE("Residuo Metálico"),

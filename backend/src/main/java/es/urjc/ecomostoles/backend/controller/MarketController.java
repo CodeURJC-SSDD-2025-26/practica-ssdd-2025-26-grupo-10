@@ -14,10 +14,11 @@ import java.security.Principal;
 import java.util.Optional;
 
 /**
- * Controller to handle market-related (Mercado) web requests.
- *
- * Follows Controller > Service > Repository architecture:
- * delegates data access to OfertaService.
+ * Commercial hub presentation controller for Offer entities.
+ * 
+ * Brokers interactions across the public/authenticated marketplace viewing pane. Reconciles complex
+ * multifaceted HTTP query profiles (keywords, topological constraints, taxonomy) bridging them natively 
+ * into the service-layer specification schemas to guarantee seamless offset pagination behavior.
  */
 @Controller
 public class MarketController {
@@ -29,8 +30,16 @@ public class MarketController {
     }
 
     /**
-     * Retrieves active offers from the database and displays the marketplace page.
-     * Supports filtering by keyword, wasteType, and industrialArea with pagination.
+     * Compiles the dynamic, paginated matrix of active environmental trading offers.
+     * 
+     * @param model template layout schema block.
+     * @param principal active session identifier indicating context scoping.
+     * @param keyword regex/contains subset query modifier matching titles/descriptions.
+     * @param wasteCategory vertical taxonomy constraint.
+     * @param industrialPark geographical scoping boundary.
+     * @param error state flag catching business-logic faults (ex: self-contracting).
+     * @param pageable resolved offset/limit bindings injected safely via the HandlerInterceptor.
+     * @return string directive targeting the marketplace DOM tree.
      */
     @GetMapping("/mercado")
     public String showMarket(Model model, Principal principal,
@@ -75,13 +84,22 @@ public class MarketController {
         }
 
         model.addAttribute("navMarket", true);
-        model.addAttribute("isMercado", true);
+        model.addAttribute("isMarket", true);
 
         return "mercado";
     }
 
     /**
-     * Shows the details of a specific offer.
+     * Displays exhaustive granular specifics regarding an isolated supply unit.
+     * 
+     * Conditionally evaluates the identity of the invoker to halt analytical contamination 
+     * (e.g., locking out interaction metrics when the owner views their own listing).
+     * 
+     * @param id remote unique sequence corresponding to the offer.
+     * @param model MVC data dictionary.
+     * @param principal authenticated user envelope (used for ownership detection).
+     * @param redirectAttributes decoupled carrier for post-redirect flash alerts.
+     * @return logical view path exposing granular offer variables.
      */
     @GetMapping("/oferta/{id}")
     public String showOfferDetail(@PathVariable("id") Long id, Model model, Principal principal,
