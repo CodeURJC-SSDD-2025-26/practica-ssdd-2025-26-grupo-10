@@ -31,6 +31,8 @@ import es.urjc.ecomostoles.backend.service.ConfiguracionService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Administration panel controller.
@@ -266,14 +268,22 @@ public class AdminController {
     }
 
     @PostMapping("/ajustes")
-    public String guardarAjustes(@RequestParam String emailAdmin, Principal principal, RedirectAttributes redirectAttributes) {
+    public String guardarAjustes(@RequestParam String emailAdmin, 
+                                 Principal principal, 
+                                 HttpServletRequest request,
+                                 RedirectAttributes redirectAttributes) {
         Optional<Empresa> adminOpt = empresaService.buscarPorEmail(principal.getName());
         if (adminOpt.isPresent()) {
             Empresa admin = adminOpt.get();
             admin.setEmailContacto(emailAdmin);
             empresaService.guardar(admin);
-            redirectAttributes.addFlashAttribute("mensaje", "Email de administrador actualizado correctamente.");
+            
+            // SECURITY PROTOCOL: Invalidate current session after identity change
+            request.getSession().invalidate();
+            SecurityContextHolder.clearContext();
+            
+            return "redirect:/login?emailActualizado=true";
         }
-        return "redirect:/admin/ajustes?exito=true";
+        return "redirect:/admin/panel";
     }
 }

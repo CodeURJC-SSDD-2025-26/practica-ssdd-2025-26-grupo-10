@@ -72,6 +72,7 @@ public class MisDemandasController {
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("empresa", empresa);
+            model.addAttribute("activeDemandas", true);
             List<Demanda> misDemandas = demandaService.obtenerPorEmpresa(empresa);
             model.addAttribute("demandas", misDemandas);
             model.addAttribute("totalDemandasActivas", demandaService.contarActivasPorEmpresa(empresa));
@@ -88,6 +89,7 @@ public class MisDemandasController {
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
         if (empresaOpt.isPresent()) {
             model.addAttribute("empresa", empresaOpt.get());
+            model.addAttribute("activeNuevaDemanda", true);
             model.addAttribute("demanda", new Demanda());
             return "crear_solicitud";
         }

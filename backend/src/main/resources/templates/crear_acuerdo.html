@@ -23,8 +23,6 @@
                     {{/errores}}
                     <form action="/acuerdo/nuevo" method="POST" class="needs-validation" novalidate="">
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
-                        <input type="hidden" name="unidad" value="kg/uds">
-                        <input type="hidden" name="materialIntercambiado" value="Material a convenir">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Oferta Relacionada <span class="text-danger">*</span></label>

@@ -41,4 +41,9 @@ public class GlobalControllerAdvice {
         }
         return 0;
     }
+
+    @ModelAttribute("currentYear")
+    public int currentYear() {
+        return java.time.LocalDate.now().getYear();
+    }
 }

@@ -50,6 +50,7 @@ public class MensajeController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
  
         model.addAttribute("empresa", empresa);
+        model.addAttribute("activeMensajes", true);
  
         // Recupera lista de mensajes donde la empresa actual es la destinataria
         List<Mensaje> misMensajes = mensajeService.obtenerPorDestinatario(empresa);
@@ -141,6 +142,27 @@ public class MensajeController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Destinatario no encontrado"));
 
         mensajeService.enviarMensaje(asunto, contenido, remitente, destinatario);
+        return "redirect:/mensajes?exito=true";
+    }
+
+    /**
+     * Deletes a message (Security: ownership check).
+     */
+    @PostMapping("/mensajes/{id}/eliminar")
+    public String eliminarMensaje(@PathVariable Long id, Principal principal) {
+        Mensaje mensaje = mensajeService.buscarPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Mensaje no encontrado"));
+
+        // IDOR protection: only sender or recipient can delete
+        // principal.getName() is the email (standard in this project)
+        boolean esDestinatario = mensaje.getDestinatario().getEmailContacto().equals(principal.getName());
+        boolean esRemitente = mensaje.getRemitente().getEmailContacto().equals(principal.getName());
+
+        if (!esDestinatario && !esRemitente) {
+             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para eliminar este mensaje");
+        }
+
+        mensajeService.eliminar(id);
         return "redirect:/mensajes?exito=true";
     }
 }

@@ -26,6 +26,7 @@
 
             <form action="/perfil/guardar" method="POST" enctype="multipart/form-data">
                 {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
+                <input type="hidden" name="id" value="{{#empresa}}{{id}}{{/empresa}}">
                 
                 <div class="row g-4 justify-content-center">
                     <div class="col-lg-4">

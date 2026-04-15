@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.security.access.prepost.PreAuthorize;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Controller for handling company profile view.
@@ -67,6 +68,7 @@ public class PerfilController {
     public String guardarPerfil(@Valid @ModelAttribute("empresa") EmpresaDTO empresaDTO,
                                 BindingResult bindingResult,
                                 @RequestParam(required = false) MultipartFile logoFile,
+                                HttpServletRequest request,
                                 Model model,
                                 Principal principal) {
 
@@ -75,8 +77,18 @@ public class PerfilController {
             return "perfil_empresa";
         }
 
-        Empresa empresa = empresaService.buscarPorEmail(principal.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
+        // Logic: Admin can edit anyone by ID, others only themselves
+        Empresa empresa;
+        Long idAltera = empresaDTO.getId();
+        boolean esAdmin = request.isUserInRole("ROLE_ADMIN");
+
+        if (esAdmin && idAltera != null) {
+            empresa = empresaService.buscarPorId(idAltera)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa no encontrada"));
+        } else {
+            empresa = empresaService.buscarPorEmail(principal.getName())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
+        }
 
         empresa.setNombreComercial(empresaDTO.getNombreComercial());
         empresa.setTelefono(empresaDTO.getTelefono());
@@ -93,6 +105,10 @@ public class PerfilController {
         }
 
         empresaService.guardar(empresa);
+
+        if (esAdmin && idAltera != null) {
+            return "redirect:/perfil/" + idAltera + "?exito=true";
+        }
         return "redirect:/perfil?exito=true";
     }
 }

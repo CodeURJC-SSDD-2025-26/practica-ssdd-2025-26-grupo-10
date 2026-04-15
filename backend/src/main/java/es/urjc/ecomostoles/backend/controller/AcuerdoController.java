@@ -52,6 +52,7 @@ public class AcuerdoController {
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("empresa", empresa);
+            model.addAttribute("activeNuevoAcuerdo", true);
             List<OfertaResumen> misOfertas = ofertaService.obtenerPorEmpresa(empresa);
             model.addAttribute("ofertas", misOfertas);
 
@@ -73,6 +74,7 @@ public class AcuerdoController {
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("empresa", empresa);
+            model.addAttribute("activeAcuerdos", true);
             List<Acuerdo> misAcuerdos = acuerdoService.obtenerPorEmpresa(empresa);
             model.addAttribute("acuerdos", misAcuerdos);
 

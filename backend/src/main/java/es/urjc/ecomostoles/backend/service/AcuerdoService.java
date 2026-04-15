@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
 
+import es.urjc.ecomostoles.backend.component.SustainabilityEngine;
+
 @Service
 @Transactional
 public class AcuerdoService {
@@ -21,11 +23,16 @@ public class AcuerdoService {
     private final AcuerdoRepository acuerdoRepository;
     private final EmpresaService empresaService;
     private final OfertaService ofertaService;
+    private final SustainabilityEngine sustainabilityEngine;
 
-    public AcuerdoService(AcuerdoRepository acuerdoRepository, EmpresaService empresaService, OfertaService ofertaService) {
+    public AcuerdoService(AcuerdoRepository acuerdoRepository, 
+                          EmpresaService empresaService, 
+                          OfertaService ofertaService,
+                          SustainabilityEngine sustainabilityEngine) {
         this.acuerdoRepository = acuerdoRepository;
         this.empresaService = empresaService;
         this.ofertaService = ofertaService;
+        this.sustainabilityEngine = sustainabilityEngine;
     }
 
     @Transactional(readOnly = true)
@@ -130,7 +137,7 @@ public class AcuerdoService {
         if (empresa.isEmpty()) return 0.0;
         
         double totalKilos = sumarMaterialReintroducido(empresa.get());
-        return totalKilos * 0.45;
+        return sustainabilityEngine.calcularImpactoCO2(totalKilos);
     }
 
     @Transactional(readOnly = true)
@@ -143,9 +150,8 @@ public class AcuerdoService {
         Double totalKilos = acuerdoRepository.sumTotalCantidadByEstadoCompletado();
         if (totalKilos == null || totalKilos == 0) return "0";
         
-        // Algorithm: 0.5 tons of CO2 saved for every 1000kg (1 ton) of material
-        // Actually, the prompt says "0.5 tons per each unit". I'll assume 1 unit = 1000kg or simply use quantity * 0.5 as suggested.
-        double tonsCO2 = totalKilos * 0.5;
+        // Delegation to Sustainability Engine for centralized calculation
+        double tonsCO2 = sustainabilityEngine.calcularImpactoCO2(totalKilos);
  
         java.text.DecimalFormat df = new java.text.DecimalFormat("#,###.###");
         return df.format(tonsCO2);

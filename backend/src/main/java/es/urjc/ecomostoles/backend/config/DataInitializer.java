@@ -135,7 +135,7 @@ public class DataInitializer implements CommandLineRunner {
             "Sede Central — Móstoles",
             "916 000 000",
             "Cuenta de administración de la plataforma EcoMóstoles.",
-            "logo.jfif",
+            "logo.webp",
             List.of("ADMIN")          // ← rol ADMIN
         );
         log.info("✅ ADMIN created/updated → {} | password: 1234 | roles: {}", admin.getEmailContacto(), admin.getRoles());
@@ -151,7 +151,7 @@ public class DataInitializer implements CommandLineRunner {
             "Polígono Industrial Norte, Nave 7 — Móstoles",
             "916 123 456",
             "Gestión y comercialización de residuos metálicos en el área de Móstoles.",
-            "logo.jfif",
+            "logo.webp",
             List.of("EMPRESA")        // ← rol USER/EMPRESA
         );
         log.info("✅ Company 1 → {} | roles: {}", empresa1.getEmailContacto(), empresa1.getRoles());
@@ -167,7 +167,7 @@ public class DataInitializer implements CommandLineRunner {
             "Polígono Las Nieves, Nave 12 — Móstoles",
             "916 654 321",
             "Centro de reciclaje especializado en plásticos y metales no ferrosos.",
-            "logo.jfif",
+            "logo.webp",
             List.of("EMPRESA")
         );
         log.info("✅ Company 2 → {} | roles: {}", empresa2.getEmailContacto(), empresa2.getRoles());
@@ -256,7 +256,7 @@ public class DataInitializer implements CommandLineRunner {
             "Polígono Industrial, Nave 44 — Móstoles",
             "916 777 777",
             "Specialists in non-ferrous metal recycling.",
-            "logo.jfif",
+            "logo.webp",
             List.of("EMPRESA")
         );
         log.info("✅ Company 3 → {} | roles: {}", empresa3.getEmailContacto(), empresa3.getRoles());

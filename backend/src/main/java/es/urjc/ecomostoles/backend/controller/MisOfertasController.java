@@ -84,6 +84,7 @@ public class MisOfertasController {
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("empresa", empresa);
+            model.addAttribute("activeOfertas", true);
             List<OfertaResumen> misOfertas = ofertaService.obtenerPorEmpresa(empresa);
             model.addAttribute("ofertas", misOfertas);
  
@@ -106,6 +107,7 @@ public class MisOfertasController {
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
         if (empresaOpt.isPresent()) {
             model.addAttribute("empresa", empresaOpt.get());
+            model.addAttribute("activeNuevaOferta", true);
             model.addAttribute("oferta", new Oferta());
             return "crear_activo";
         }

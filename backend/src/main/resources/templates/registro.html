@@ -49,18 +49,19 @@
                         
                         <div class="col-12">
                             <label for="direccion" class="form-label fw-bold small text-uppercase text-secondary">Dirección / Polígono</label>
-                            <select name="direccion" class="form-select" id="direccion" required="">
+                            <select name="direccion" class="form-select {{#err_direccion}}is-invalid{{/err_direccion}}" id="direccion" required="">
                                 <option value="" selected="" disabled="">Selecciona tu ubicación...</option>
                                 <option value="regordono">Polígono Industrial Regordoño</option>
                                 <option value="arroyomolinos">Polígono Industrial Arroyomolinos</option>
                                 <option value="nieves">Polígono Industrial Las Nieves</option>
                                 <option value="otro">Otro (Especificar)</option>
                             </select>
+                            {{#err_direccion}}<div class="invalid-feedback">{{err_direccion}}</div>{{/err_direccion}}
                         </div>
 
                         <div class="col-md-6">
                             <label for="sector" class="form-label fw-bold small text-uppercase text-secondary">Sector Industrial</label>
-                            <select name="sector" class="form-select" id="sector" required="">
+                            <select name="sector" class="form-select {{#err_sector}}is-invalid{{/err_sector}}" id="sector" required="">
                                 <option value="" selected="" disabled="">Seleccionar...</option>
                                 <option value="metal">Metalúrgico</option>
                                 <option value="quimico">Químico</option>
@@ -69,6 +70,7 @@
                                 <option value="agro">Agroalimentario</option>
                                 <option value="construccion">Construcción</option>
                             </select>
+                            {{#err_sector}}<div class="invalid-feedback">{{err_sector}}</div>{{/err_sector}}
                         </div>
 
                         <div class="col-md-6">
@@ -85,8 +87,9 @@
                         
                         <div class="col-md-6">
                             <label for="confirmPassword" class="form-label fw-bold small text-uppercase text-secondary">Confirmar Contraseña</label>
-                            <input type="password" name="confirmPassword" class="form-control {{#err_confirmPassword}}is-invalid{{/err_confirmPassword}}" id="confirmPassword" required="">
+                            <input type="password" name="confirmPassword" class="form-control {{#err_confirmPassword}}is-invalid{{/err_confirmPassword}} {{#err_passwordsMatch}}is-invalid{{/err_passwordsMatch}}" id="confirmPassword" required="">
                             {{#err_confirmPassword}}<div class="invalid-feedback">{{err_confirmPassword}}</div>{{/err_confirmPassword}}
+                            {{#err_passwordsMatch}}<div class="invalid-feedback">{{err_passwordsMatch}}</div>{{/err_passwordsMatch}}
                         </div>
 
                         <div class="col-12 mt-4">

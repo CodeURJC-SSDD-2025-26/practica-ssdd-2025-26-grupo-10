@@ -67,4 +67,9 @@ public class MensajeService {
         nuevo.setLeido(false);
         mensajeRepository.save(nuevo);
     }
+
+    /** Deletes a message by its ID. */
+    public void eliminar(Long id) {
+        mensajeRepository.deleteById(id);
+    }
 }

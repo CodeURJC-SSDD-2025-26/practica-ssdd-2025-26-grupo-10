@@ -6,6 +6,8 @@ import es.urjc.ecomostoles.backend.model.Empresa;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
+import es.urjc.ecomostoles.backend.component.SustainabilityEngine;
+
 /**
  * Service to handle business logic for the Dashboard.
  * Extracts logic from the controller to follow the Controller-Service pattern.
@@ -16,13 +18,16 @@ public class DashboardService {
     private final OfertaService  ofertaService;
     private final DemandaService demandaService;
     private final AcuerdoService acuerdoService;
+    private final SustainabilityEngine sustainabilityEngine;
 
     public DashboardService(OfertaService ofertaService, 
                             DemandaService demandaService, 
-                            AcuerdoService acuerdoService) {
+                            AcuerdoService acuerdoService,
+                            SustainabilityEngine sustainabilityEngine) {
         this.ofertaService  = ofertaService;
         this.demandaService = demandaService;
         this.acuerdoService = acuerdoService;
+        this.sustainabilityEngine = sustainabilityEngine;
     }
 
     /**
@@ -56,7 +61,7 @@ public class DashboardService {
             
             double reintroducido = acuerdoService.sumarMaterialReintroducido(empresa);
             stats.setMaterialReintroducido(reintroducido);
-            stats.setImpactoCO2(reintroducido * 0.45);
+            stats.setImpactoCO2(sustainabilityEngine.calcularImpactoCO2(reintroducido));
 
             // Smart Matching
             List<Demanda> recommendedDemandas = demandaService.obtenerSmartRecommendations(empresa);
