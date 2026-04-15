@@ -18,68 +18,73 @@
 
             <div class="card card-modern border-top-primary">
                 <div class="card-body p-4">
-                    {{#errors}}
-                    <div class="alert alert-danger d-flex align-items-center" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <span>{{defaultMessage}}</span>
-                    </div>
-                    {{/errors}}
+
                     <form action="/demandas/{{demand.id}}/editar" method="POST" class="needs-validation" novalidate="">
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                         <div class="row g-3">
                             <div class="col-md-8">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Título de lo que buscas <span class="text-danger">*</span></label>
-                                <input type="text" name="title" class="form-control {{#error_title}}is-invalid{{/error_title}}" value="{{demand.title}}" required="">
+                                <input type="text" name="title" class="form-control {{#error_title}}is-invalid{{/error_title}}" value="{{#demand.title}}{{demand.title}}{{/demand.title}}" required="">
                                 <div class="invalid-feedback">Indica un título descriptivo.</div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Categoría <span class="text-danger">*</span></label>
-                                <select name="materialCategory" class="form-select {{#error_materialCategory}}is-invalid{{/error_materialCategory}}" required="">
-                                    {{#categoryOptions}}
+                                <select name="wasteCategory" class="form-select {{#error_wasteCategory}}is-invalid{{/error_wasteCategory}}" required="">
+                                    {{#wasteCategories}}
                                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                                    {{/categoryOptions}}
+                                    {{/wasteCategories}}
                                  </select>
                             </div>
 
                             <div class="col-12">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Descripción detallada <span class="text-danger">*</span></label>
-                                <textarea name="description" class="form-control {{#error_description}}is-invalid{{/error_description}}" rows="4" required="">{{demand.description}}</textarea>
+                                <textarea name="description" class="form-control {{#error_description}}is-invalid{{/error_description}}" rows="4" required="">{{#demand.description}}{{demand.description}}{{/demand.description}}</textarea>
                                  <div class="invalid-feedback">La descripción es obligatoria.</div>
                             </div>
 
                              <div class="col-md-4">
-                                 <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad requerida</label>
+                                 <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad requerida <span class="text-danger">*</span></label>
                                  <div class="input-group">
-                                     <input type="number" name="quantity" class="form-control" value="{{demand.quantity}}" min="0">
-                                     <select name="unit" class="form-select" style="max-width: 120px;" required>
+                                     <input type="number" name="quantity" class="form-control {{#error_quantity}}is-invalid{{/error_quantity}}" value="{{#demand.quantity}}{{demand.quantity}}{{/demand.quantity}}" min="0" required>
+                                     <select name="unit" class="form-select {{#error_unit}}is-invalid{{/error_unit}}" style="max-width: 120px;" required>
                                          {{#unitOptions}}
                                          <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                          {{/unitOptions}}
                                      </select>
                                  </div>
+                                 <div class="invalid-feedback">Indica la cantidad y unidad requeridas.</div>
                              </div>
                             
                             <div class="col-md-4">
-                                <label class="form-label text-secondary fw-bold small text-uppercase">Urgencia</label>
-                                <select name="urgency" class="form-select" required>
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Urgencia <span class="text-danger">*</span></label>
+                                <select name="urgency" class="form-select {{#error_urgency}}is-invalid{{/error_urgency}}" required>
                                     {{#availabilityOptions}}
                                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                     {{/availabilityOptions}}
                                 </select>
+                                <div class="invalid-feedback">Indica el nivel de urgencia.</div>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label text-secondary fw-bold small text-uppercase">Presupuesto máximo (€)</label>
-                                <input type="number" name="maxBudget" class="form-control" value="{{demand.maxBudget}}" step="0.01" min="0">
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label text-secondary fw-bold small text-uppercase">Zona de Recogida</label>
-                                <input type="text" name="pickupZone" class="form-control" value="{{#demand.pickupZone}}{{demand.pickupZone}}{{/demand.pickupZone}}">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Presupuesto máximo (€) <span class="text-danger">*</span></label>
+                                <input type="number" name="maxBudget" class="form-control {{#error_maxBudget}}is-invalid{{/error_maxBudget}}" value="{{#demand.maxBudget}}{{demand.maxBudget}}{{/demand.maxBudget}}" step="0.01" min="0" required>
+                                <div class="invalid-feedback">Indica el presupuesto máximo.</div>
                             </div>
 
                             <div class="col-md-4">
-                                <label class="form-label text-secondary fw-bold small text-uppercase">Vigencia</label>
-                                <input type="text" name="validity" class="form-control" value="{{#demand.validity}}{{demand.validity}}{{/demand.validity}}">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Zona de Recogida <span class="text-danger">*</span></label>
+                                <input type="text" name="pickupZone" class="form-control {{#error_pickupZone}}is-invalid{{/error_pickupZone}}" 
+                                    value="{{#demand.pickupZone}}{{demand.pickupZone}}{{/demand.pickupZone}}" required>
+                                <div class="invalid-feedback">La zona de recogida es obligatoria.</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label text-secondary fw-bold small text-uppercase">Vigencia <span class="text-danger">*</span></label>
+                                <select name="validity" class="form-select {{#error_validity}}is-invalid{{/error_validity}}" required>
+                                    {{#validityOptions}}
+                                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                    {{/validityOptions}}
+                                </select>
+                                <div class="invalid-feedback">Indica el periodo de vigencia.</div>
                             </div>
 
                             <div class="col-md-4">

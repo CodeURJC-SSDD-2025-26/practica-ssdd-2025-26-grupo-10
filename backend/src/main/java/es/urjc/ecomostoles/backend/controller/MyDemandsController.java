@@ -1,6 +1,7 @@
 package es.urjc.ecomostoles.backend.controller;
 
 import es.urjc.ecomostoles.backend.model.DemandStatus;
+import es.urjc.ecomostoles.backend.model.WasteCategory;
 
 import es.urjc.ecomostoles.backend.model.Demand;
 import es.urjc.ecomostoles.backend.model.Company;
@@ -77,7 +78,7 @@ public class MyDemandsController {
     // -------------------------------------------------------------------------
     @GetMapping("/dashboard/mis-demandas")
     public String showMyDemands(Model model, Principal principal,
-            @PageableDefault(size = 5) Pageable pageable) {
+            @PageableDefault(size = 6) Pageable pageable) {
         Optional<Company> companyOpt = companyService.findByEmail(principal.getName());
         if (companyOpt.isPresent()) {
             Company company = companyOpt.get();
@@ -90,18 +91,23 @@ public class MyDemandsController {
 
             // Pagination metadata
             model.addAttribute("currentPage", demandsPage.getNumber() + 1);
-            model.addAttribute("totalPages", demandsPage.getTotalPages());
+            model.addAttribute("totalPages", demandsPage.getTotalPages() == 0 ? 1 : demandsPage.getTotalPages());
             model.addAttribute("hasNext", demandsPage.hasNext());
-            model.addAttribute("hasPrev", demandsPage.hasPrevious());
+            model.addAttribute("hasPrevious", demandsPage.hasPrevious());
             model.addAttribute("prevPage", demandsPage.getNumber() - 1);
             model.addAttribute("nextPage", demandsPage.getNumber() + 1);
             model.addAttribute("totalItems", demandsPage.getTotalElements());
 
-            // Dynamic base URL for pagination partial
-            model.addAttribute("paginationBaseUrl", "/dashboard/mis-demands");
+            // Pagination metadata
+            model.addAttribute("paginationBaseUrl", "/dashboard/mis-demandas");
             model.addAttribute("paginationQueryString", "");
 
-            model.addAttribute("totalActiveDemands", demandService.countActiveByCompany(company));
+            // Summary counters
+            model.addAttribute("countActivas", demandService.countActiveByCompany(company));
+            model.addAttribute("countPausadas", demandService.countPausedByCompany(company));
+            model.addAttribute("countFinalizadas", demandService.countClosedByCompany(company));
+            model.addAttribute("countVisitasTotales", demandService.sumVisitsByCompany(company));
+
             return "mis_demandas";
         }
         return "redirect:/";
@@ -124,7 +130,7 @@ public class MyDemandsController {
     }
 
     private void injectDynamicOptions(Model model) {
-        model.addAttribute("categoryList", configurationService.getSanitizedList("categoryList"));
+        model.addAttribute("wasteCategories", WasteCategory.values());
         model.addAttribute("unitList", configurationService.getSanitizedList("unitList"));
         model.addAttribute("availabilityList",
                 configurationService.getSanitizedList("availabilityList"));
@@ -137,7 +143,8 @@ public class MyDemandsController {
     public String saveNewDemand(@Valid @ModelAttribute("demand") Demand demand,
             BindingResult result,
             Model model,
-            Principal principal) {
+            Principal principal,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
@@ -153,7 +160,8 @@ public class MyDemandsController {
             demand.setPublicationDate(LocalDateTime.now());
             demand.setStatus(DemandStatus.ACTIVE);
             demandService.save(demand);
-            return "redirect:/dashboard/mis-demands";
+            redirectAttributes.addFlashAttribute("successMessage", "¡Demanda publicada con éxito!");
+            return "redirect:/dashboard/mis-demandas";
         }
         return "redirect:/";
     }
@@ -165,20 +173,19 @@ public class MyDemandsController {
     public String deleteDemand(@PathVariable Long id, Principal principal) {
         verifyDemandOwnership(id, principal);
         demandService.delete(id);
-        return "redirect:/dashboard/mis-demands";
+        return "redirect:/dashboard/mis-demandas";
     }
 
     // -------------------------------------------------------------------------
     // GET /demanda/editar/{id} — Show edit form (ownership check)
     // -------------------------------------------------------------------------
     private void loadSelectOptions(Model model, Demand demand) {
-        // Dynamic Categories
-        List<String> categories = configurationService.getSanitizedList("categoryList");
+        // Dynamic Categories with selection logic
         List<SelectOption> categoryOptions = new ArrayList<>();
-        for (String cat : categories) {
-            categoryOptions.add(new SelectOption(cat, cat, cat.equals(demand.getMaterialCategory())));
+        for (WasteCategory cat : WasteCategory.values()) {
+            categoryOptions.add(new SelectOption(cat.name(), cat.getDisplayName(), cat.equals(demand.getWasteCategory())));
         }
-        model.addAttribute("categoryOptions", categoryOptions);
+        model.addAttribute("wasteCategories", categoryOptions);
 
         // Dynamic Units
         List<String> unitsList = configurationService.getSanitizedList("unitList");
@@ -199,8 +206,18 @@ public class MyDemandsController {
         // Dynamic Select Options for status
         List<SelectOption> statusOptions = new ArrayList<>();
         statusOptions.add(new SelectOption("ACTIVE", "ACTIVA", DemandStatus.ACTIVE.equals(demand.getStatus())));
-        statusOptions.add(new SelectOption("CLOSED", "CERRADA", DemandStatus.CLOSED.equals(demand.getStatus())));
+        statusOptions.add(new SelectOption("PAUSED", "PAUSADA", DemandStatus.PAUSED.equals(demand.getStatus())));
+        statusOptions.add(new SelectOption("CLOSED", "FINALIZADA", DemandStatus.CLOSED.equals(demand.getStatus())));
         model.addAttribute("statusOptions", statusOptions);
+
+        // Standard Validity Options
+        List<SelectOption> validityOptions = new ArrayList<>();
+        validityOptions.add(new SelectOption("7", "7 días", "7".equals(demand.getValidity())));
+        validityOptions.add(new SelectOption("15", "15 días", "15".equals(demand.getValidity())));
+        validityOptions.add(new SelectOption("30", "30 días", "30".equals(demand.getValidity())));
+        validityOptions.add(new SelectOption("90", "90 días", "90".equals(demand.getValidity())));
+        validityOptions.add(new SelectOption("0", "Indefinido / Consultar", "0".equals(demand.getValidity())));
+        model.addAttribute("validityOptions", validityOptions);
     }
 
     // -------------------------------------------------------------------------
@@ -235,23 +252,25 @@ public class MyDemandsController {
             loadSelectOptions(model, demandForm);
 
             model.addAttribute("errors", result.getAllErrors());
+            model.addAttribute("demand", demandForm); // FIX: Add missing model attribute
             demandForm.setId(id);
             return "editar_solicitud";
         }
 
         existingDemand.setTitle(demandForm.getTitle());
         existingDemand.setDescription(demandForm.getDescription());
-        existingDemand.setMaterialCategory(demandForm.getMaterialCategory());
+        existingDemand.setWasteCategory(demandForm.getWasteCategory());
         existingDemand.setQuantity(demandForm.getQuantity());
         existingDemand.setUnit(demandForm.getUnit());
         existingDemand.setUrgency(demandForm.getUrgency());
         existingDemand.setMaxBudget(demandForm.getMaxBudget());
-        existingDemand.setValidity(demandForm.getValidity());
+        existingDemand.setMaxBudget(demandForm.getMaxBudget());
         existingDemand.setPickupZone(demandForm.getPickupZone());
+        existingDemand.setValidity(demandForm.getValidity());
         existingDemand.setStatus(demandForm.getStatus());
 
         demandService.save(existingDemand);
 
-        return "redirect:/dashboard/mis-demands";
+        return "redirect:/dashboard/mis-demandas";
     }
 }

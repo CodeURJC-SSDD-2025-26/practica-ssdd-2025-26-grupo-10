@@ -67,76 +67,92 @@ public class PdfExportController {
             PdfWriter.getInstance(document, baos);
             document.open();
 
-            // --- Font Styles ---
-            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, Color.DARK_GRAY);
+            // --- Colors and Fonts ---
+            Color corporateGreen = new Color(46, 125, 50);
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, Color.WHITE);
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, corporateGreen);
             Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10, Color.BLACK);
-            Font labelFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Color.DARK_GRAY);
+            Font footerFont = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, Color.GRAY);
 
-            // --- Company Logo (if exists) ---
+            // --- Header Section ---
+            PdfPTable headerTable = new PdfPTable(2);
+            headerTable.setWidthPercentage(100);
+            headerTable.setWidths(new float[]{4f, 1.2f});
+
+            // Title with background
+            PdfPCell titleCell = new PdfPCell(new Phrase("RESGUARDO DE ACUERDO OFICIAL", titleFont));
+            titleCell.setBackgroundColor(corporateGreen);
+            titleCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            titleCell.setPadding(12f);
+            titleCell.setBorder(Rectangle.NO_BORDER);
+            headerTable.addCell(titleCell);
+
+            // Logo cell
+            PdfPCell logoCell = new PdfPCell();
+            logoCell.setBorder(Rectangle.NO_BORDER);
+            logoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             if (agreement.getOriginCompany() != null && agreement.getOriginCompany().getLogo() != null) {
                 try {
                     Image logo = Image.getInstance(agreement.getOriginCompany().getLogo());
-                    logo.scaleToFit(80, 80);
-                    logo.setAlignment(Image.RIGHT);
-                    document.add(logo);
-                } catch (Exception imgEx) {
-                    // Silently ignore logo if it fails to process
-                }
+                    logo.scaleToFit(50, 50);
+                    logoCell.setImage(logo);
+                } catch (Exception ignored) {}
             }
+            headerTable.addCell(logoCell);
+            document.add(headerTable);
 
-            // --- Title ---
-            Paragraph title = new Paragraph("ECO-MÓSTOLES: RESGUARDO DE ACUERDO OFICIAL", titleFont);
-            title.setAlignment(Element.ALIGN_CENTER);
-            title.setSpacingAfter(20);
-            document.add(title);
-
-            // --- Separator ---
-            LineSeparator separator = new LineSeparator();
-            separator.setLineColor(Color.LIGHT_GRAY);
-            document.add(new Chunk(separator));
             document.add(new Paragraph("\n"));
 
             // --- Detail Table ---
             PdfPTable table = new PdfPTable(2);
             table.setWidthPercentage(100);
             table.setSpacingBefore(10f);
-            table.setSpacingAfter(10f);
-            table.setWidths(new float[] { 1.5f, 3.5f });
+            table.setSpacingAfter(20f);
+            table.setWidths(new float[] { 1.8f, 3.2f });
 
             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "ES"));
             String formattedPrice = currencyFormat.format(agreement.getAgreedPrice());
 
-            addTableCell(table, "ID de Acuerdo:", agreement.getId().toString(), labelFont, normalFont);
-            addTableCell(table, "Material:", agreement.getExchangedMaterial(), labelFont, normalFont);
-            addTableCell(table, "Cantidad:",
+            addProfessionalCell(table, "ID del Acuerdo", agreement.getId().toString(), headerFont, normalFont);
+            addProfessionalCell(table, "Producto / Material", agreement.getExchangedMaterial(), headerFont, normalFont);
+            addProfessionalCell(table, "Cantidad Pactada",
                     agreement.getQuantity() + " " + (agreement.getUnit() != null ? agreement.getUnit() : "uds"),
-                    labelFont, normalFont);
-            addTableCell(table, "Precio Acordado:", formattedPrice, labelFont, normalFont);
+                    headerFont, normalFont);
+            addProfessionalCell(table, "Importe Acordado", formattedPrice, headerFont, normalFont);
 
             String originName = agreement.getOriginCompany() != null ? agreement.getOriginCompany().getCommercialName()
-                    : "Empresa no disponible";
+                    : "No disponible";
             String destName = agreement.getDestinationCompany() != null
                     ? agreement.getDestinationCompany().getCommercialName()
-                    : "Empresa no disponible";
+                    : "No disponible";
 
-            addTableCell(table, "Empresa Proveedora:", originName, labelFont, normalFont);
-            addTableCell(table, "Empresa Receptora:", destName, labelFont, normalFont);
-            addTableCell(table, "Estado del Acuerdo:", agreement.getStatus().name(), labelFont, normalFont);
+            addProfessionalCell(table, "Empresa Proveedora", originName, headerFont, normalFont);
+            addProfessionalCell(table, "Empresa Receptora", destName, headerFont, normalFont);
+            
+            // Spanish translation from Enum displayName
+            addProfessionalCell(table, "Estado del Acuerdo", agreement.getStatus().getDisplayName(), headerFont, normalFont);
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy, HH:mm", new Locale("es", "ES"));
             String formattedDate = agreement.getRegistrationDate() != null
                     ? agreement.getRegistrationDate().format(formatter)
                     : "Fecha no disponible";
-            addTableCell(table, "Fecha de Registro:", formattedDate, labelFont, normalFont);
+            addProfessionalCell(table, "Fecha de Emisión", formattedDate, headerFont, normalFont);
 
             document.add(table);
 
             // --- Footer ---
-            document.add(new Paragraph("\n"));
+            LineSeparator ls = new LineSeparator();
+            ls.setLineColor(new Color(210, 210, 210));
+            document.add(new Chunk(ls));
+            
             Paragraph footer = new Paragraph(
-                    "Este documento es un comprobante automático generado por la plataforma Eco-Móstoles para el fomento de la simbiosis industrial.",
-                    FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, Color.GRAY));
+                    "Este documento es un comprobante automático generado por la plataforma EcoMóstoles.\n" +
+                    "Fomentando la economía circular y la simbiosis industrial.",
+                    footerFont);
             footer.setAlignment(Element.ALIGN_CENTER);
+            footer.setSpacingBefore(15f);
             document.add(footer);
 
             document.close();
@@ -151,15 +167,20 @@ public class PdfExportController {
         }
     }
 
-    private void addTableCell(PdfPTable table, String label, String value, Font labelFont, Font valueFont) {
-        PdfPCell labelCell = new PdfPCell(new Phrase(label, labelFont));
-        labelCell.setBorder(com.lowagie.text.Rectangle.NO_BORDER);
-        labelCell.setPaddingBottom(8f);
+    private void addProfessionalCell(PdfPTable table, String label, String value, Font labelFont, Font valueFont) {
+        PdfPCell labelCell = new PdfPCell(new Phrase(label.toUpperCase(), labelFont));
+        labelCell.setBorder(Rectangle.BOTTOM);
+        labelCell.setBorderColor(new Color(230, 230, 230));
+        labelCell.setPaddingTop(10f);
+        labelCell.setPaddingBottom(10f);
+        labelCell.setPaddingLeft(5f);
         table.addCell(labelCell);
 
         PdfPCell valueCell = new PdfPCell(new Phrase(value != null ? value : "N/A", valueFont));
-        valueCell.setBorder(com.lowagie.text.Rectangle.NO_BORDER);
-        valueCell.setPaddingBottom(8f);
+        valueCell.setBorder(Rectangle.BOTTOM);
+        valueCell.setBorderColor(new Color(230, 230, 230));
+        valueCell.setPaddingTop(10f);
+        valueCell.setPaddingBottom(10f);
         table.addCell(valueCell);
     }
 }

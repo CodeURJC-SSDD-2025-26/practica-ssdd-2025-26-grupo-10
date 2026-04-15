@@ -1,90 +1,132 @@
 {{> head}}
+
 <body class="bg-theme-dark">
-{{> header}}
+    {{> header}}
 
-<div class="container-fluid">
-    <div class="row min-vh-100">
-        {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
-        {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            {{#isAdmin}}{{> sidebar_admin}}{{/isAdmin}}
+            {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2 text-dark fw-bold">Publicar Nueva Demanda</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <a href="/dashboard/mis-demandas" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-1"></i> Cancelar</a>
-                </div>
-            </div>
-
-            <div class="card card-modern border-top-success">
-                <div class="card-body p-4">
-                    {{#errors}}
-                    <div class="alert alert-danger d-flex align-items-center" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <span>{{defaultMessage}}</span>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2 text-dark fw-bold">Publicar Nueva Demanda</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <a href="/dashboard/mis-demandas" class="btn btn-sm btn-outline-secondary rounded-pill"><i
+                                class="fas fa-arrow-left me-1"></i> Cancelar</a>
                     </div>
-                    {{/errors}}
-                    <form action="/demanda/nueva" method="POST" class="needs-validation" novalidate>
-                        {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <label class="form-label text-secondary fw-bold small text-uppercase">Título de lo que buscas <span class="text-danger">*</span></label>
-                                <input type="text" name="title" class="form-control {{#error_title}}is-invalid{{/error_title}}" placeholder="Ej. Busco Palés Europeos en buen estado" value="{{#demand.title}}{{demand.title}}{{/demand.title}}" required="">
-                                <div class="invalid-feedback">Por favor, indica un título descriptivo.</div>
-                            </div>
-                             <div class="col-md-4">
-                                 <label class="form-label text-secondary fw-bold small text-uppercase">Categoría <span class="text-danger">*</span></label>
-                                 <select name="materialCategory" class="form-select {{#error_materialCategory}}is-invalid{{/error_materialCategory}}" required>
-                                     <option value="" selected="" disabled="">Seleccionar...</option>
-                                     {{#categoryList}}
-                                     <option value="{{.}}">{{.}}</option>
-                                     {{/categoryList}}
-                                 </select>
-                                 <div class="invalid-feedback">Selecciona una categoría.</div>
-                             </div>
-                             
-                             <div class="col-12">
-                                 <label class="form-label text-secondary fw-bold small text-uppercase">Descripción detallada <span class="text-danger">*</span></label>
-                                 <textarea name="description" class="form-control {{#error_description}}is-invalid{{/error_description}}" rows="4" placeholder="Describe qué material necesitas..." required="">{{#demand.description}}{{demand.description}}{{/demand.description}}</textarea>
-                                 <div class="invalid-feedback">La descripción es obligatoria.</div>
-                             </div>
- 
-                             <div class="col-md-4">
-                                 <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad requerida</label>
-                                 <div class="input-group">
-                                     <input type="number" name="quantity" class="form-control" placeholder="Ej. 500" min="0" value="{{#demand.quantity}}{{demand.quantity}}{{/demand.quantity}}">
-                                     <select name="unit" class="form-select" style="max-width: 120px;" required>
-                                         <option value="" selected disabled>Und...</option>
-                                         {{#unitList}}
-                                         <option value="{{.}}">{{.}}</option>
-                                         {{/unitList}}
-                                     </select>
-                                 </div>
-                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label text-secondary fw-bold small text-uppercase">Urgencia</label>
-                                <select name="urgency" class="form-select" required>
-                                    <option value="" selected disabled>Seleccionar...</option>
-                                    {{#availabilityList}}
-                                    <option value="{{.}}">{{.}}</option>
-                                    {{/availabilityList}}
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label text-secondary fw-bold small text-uppercase">Presupuesto máx (€)</label>
-                                <input type="number" name="maxBudget" class="form-control" placeholder="Ej. 2000" step="0.01" min="0" value="{{#demand.maxBudget}}{{demand.maxBudget}}{{/demand.maxBudget}}">
-                            </div>
-
-                            <div class="col-12 mt-4 d-flex justify-content-end">
-                                <button type="submit" class="btn btn-success px-4 fw-bold rounded-pill">
-                                    <i class="fas fa-bullhorn me-2"></i> Publicar Demanda
-                                </button>
-                            </div>
-                        </div>
-                    </form>
                 </div>
-            </div>
-        </main>
-    </div>
-</div>
 
-{{> footer}}
+                <div class="card card-modern border-top-success">
+                    <div class="card-body p-4">
+
+                        <form action="/demanda/nueva" method="POST" class="needs-validation" novalidate>
+                            {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label class="form-label text-secondary fw-bold small text-uppercase">Título de lo
+                                        que buscas <span class="text-danger">*</span></label>
+                                    <input type="text" name="title"
+                                        class="form-control {{#error_title}}is-invalid{{/error_title}}"
+                                        placeholder="Ej. Busco Palés Europeos en buen estado"
+                                        value="{{#demand.title}}{{demand.title}}{{/demand.title}}" required="">
+                                    <div class="invalid-feedback">Por favor, indica un título descriptivo.</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-secondary fw-bold small text-uppercase">Categoría
+                                        <span class="text-danger">*</span></label>
+                                    <select name="wasteCategory"
+                                        class="form-select {{#error_wasteCategory}}is-invalid{{/error_wasteCategory}}"
+                                        required>
+                                        <option value="" selected="" disabled="">Seleccionar...</option>
+                                        {{#wasteCategories}}
+                                        <option value="{{name}}">{{displayName}}</option>
+                                        {{/wasteCategories}}
+                                    </select>
+                                    <div class="invalid-feedback">Selecciona una categoría.</div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label text-secondary fw-bold small text-uppercase">Descripción
+                                        detallada <span class="text-danger">*</span></label>
+                                    <textarea name="description"
+                                        class="form-control {{#error_description}}is-invalid{{/error_description}}"
+                                        rows="4" placeholder="Describe qué material necesitas..."
+                                        required="">{{#demand.description}}{{demand.description}}{{/demand.description}}</textarea>
+                                    <div class="invalid-feedback">La descripción es obligatoria.</div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad
+                                        requerida <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="number" name="quantity"
+                                            class="form-control {{#error_quantity}}is-invalid{{/error_quantity}}"
+                                            placeholder="Ej. 500" min="0"
+                                            value="{{#demand.quantity}}{{demand.quantity}}{{/demand.quantity}}"
+                                            required>
+                                        <select name="unit" class="form-select {{#error_unit}}is-invalid{{/error_unit}}"
+                                            style="max-width: 120px;" required>
+                                            <option value="" selected disabled>Und...</option>
+                                            {{#unitList}}
+                                            <option value="{{.}}">{{.}}</option>
+                                            {{/unitList}}
+                                        </select>
+                                    </div>
+                                    <div class="invalid-feedback">Indica la cantidad y unidad requeridas.</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-secondary fw-bold small text-uppercase">Urgencia <span
+                                            class="text-danger">*</span></label>
+                                    <select name="urgency"
+                                        class="form-select {{#error_urgency}}is-invalid{{/error_urgency}}" required>
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Inmediata">Inmediata</option>
+                                        <option value="En 1 semana">En 1 semana</option>
+                                        <option value="Consultar">Consultar</option>
+                                    </select>
+                                    <div class="invalid-feedback">Indica la urgencia de tu solicitud.</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-secondary fw-bold small text-uppercase">Presupuesto máx (€) <span class="text-danger">*</span></label>
+                                    <input type="number" name="maxBudget"
+                                        class="form-control {{#error_maxBudget}}is-invalid{{/error_maxBudget}}"
+                                        placeholder="Ej. 2000" step="0.01" min="0"
+                                        value="{{#demand.maxBudget}}{{demand.maxBudget}}{{/demand.maxBudget}}" required>
+                                    <div class="invalid-feedback">Introduce el presupuesto máximo previsto.</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary fw-bold small text-uppercase">Zona de Recogida <span class="text-danger">*</span></label>
+                                    <input type="text" name="pickupZone" class="form-control {{#error_pickupZone}}is-invalid{{/error_pickupZone}}" 
+                                        placeholder="Ej. Polígono Industrial Norte, Móstoles" value="{{#demand.pickupZone}}{{demand.pickupZone}}{{/demand.pickupZone}}" required>
+                                    <div class="invalid-feedback">Indica dónde se recogería el material.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary fw-bold small text-uppercase">Vigencia <span class="text-danger">*</span></label>
+                                    <select name="validity" class="form-select {{#error_validity}}is-invalid{{/error_validity}}" required>
+                                        <option value="" selected disabled>Seleccionar días...</option>
+                                        <option value="7">7 días</option>
+                                        <option value="15">15 días</option>
+                                        <option value="30">30 días</option>
+                                        <option value="90">90 días</option>
+                                        <option value="0">Indefinido / Consultar</option>
+                                    </select>
+                                    <div class="invalid-feedback">Selecciona el periodo de vigencia.</div>
+                                </div>
+
+                                <div class="col-12 mt-4 d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-success px-4 fw-bold rounded-pill">
+                                        <i class="fas fa-bullhorn me-2"></i> Publicar Demanda
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    {{> footer}}

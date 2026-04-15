@@ -30,6 +30,7 @@ public class DataInitializer implements CommandLineRunner {
     private final DemandRepository demandRepository;
     private final AgreementRepository agreementRepository;
     private final ImpactFactorRepository impactFactorRepository;
+    private final MessageRepository messageRepository;
     private final PasswordEncoder passwordEncoder;
     private final es.urjc.ecomostoles.backend.component.SustainabilityEngine sustainabilityEngine;
 
@@ -38,6 +39,7 @@ public class DataInitializer implements CommandLineRunner {
             DemandRepository demandRepository,
             AgreementRepository agreementRepository,
             ImpactFactorRepository impactFactorRepository,
+            MessageRepository messageRepository,
             PasswordEncoder passwordEncoder,
             es.urjc.ecomostoles.backend.component.SustainabilityEngine sustainabilityEngine) {
         this.companyRepository = companyRepository;
@@ -45,6 +47,7 @@ public class DataInitializer implements CommandLineRunner {
         this.demandRepository = demandRepository;
         this.agreementRepository = agreementRepository;
         this.impactFactorRepository = impactFactorRepository;
+        this.messageRepository = messageRepository;
         this.passwordEncoder = passwordEncoder;
         this.sustainabilityEngine = sustainabilityEngine;
     }
@@ -182,13 +185,13 @@ public class DataInitializer implements CommandLineRunner {
             createOffer(company1,
                     "Virutas de Acero Inoxidable",
                     "Virutas limpias de acero inoxidable 316L libres de aceite. Listas para fundición.",
-                    "Metal", 500.0, "kg", 0.45, "Inmediata",
+                    WasteCategory.METAL_WASTE, 500.0, "kg", 0.45, "Inmediata",
                     LocalDateTime.now().minusDays(5), "virutas.webp");
 
             createOffer(company1,
                     "Bobinas de Cobre Recuperado",
                     "Bobinas de cobre de alta pureza (99.2%) recuperadas de transformadores.",
-                    "Metal", 120.0, "kg", 4.80, "Esta semana",
+                    WasteCategory.METAL_WASTE, 120.0, "kg", 4.80, "Esta semana",
                     LocalDateTime.now().minusDays(2), "bobinas-cobre.webp");
 
             log.info("✅ 2 offers created for Company 1.");
@@ -208,7 +211,7 @@ public class DataInitializer implements CommandLineRunner {
             createOffer(company2,
                     "Retales de PVC Industrial",
                     "Recortes de PVC rígido (2-10mm). Ideales para reciclaje en piezas pequeñas.",
-                    "Plástico", 80.0, "kg", 0.20, "Consultar",
+                    WasteCategory.PLASTIC_WASTE, 80.0, "kg", 0.20, "Consultar",
                     LocalDateTime.now().minusDays(1), "retales-pvc.webp");
 
             log.info("✅ 1 offer created for Company 2.");
@@ -223,14 +226,14 @@ public class DataInitializer implements CommandLineRunner {
             Demand demand1 = new Demand();
             demand1.setTitle("Se necesita Aluminio para inyección");
             demand1.setDescription("Requerimos aluminio puro para moldes.");
-            demand1.setMaterialCategory("Metal");
+            demand1.setWasteCategory(WasteCategory.METAL_WASTE);
             demand1.setQuantity(200.0);
             demand1.setUnit("kg");
             demand1.setMaxBudget(1.50);
-            demand1.setUrgency("Alta");
+            demand1.setUrgency("Inmediata");
             demand1.setStatus(DemandStatus.ACTIVE);
             demand1.setPublicationDate(LocalDateTime.now().minusDays(1));
-            demand1.setValidity("30 días");
+            demand1.setValidity("30");
             demand1.setPickupZone("Polígono Industrial Sur — Móstoles");
             demand1.setCompany(company1);
             demandRepository.save(demand1);
@@ -239,13 +242,14 @@ public class DataInitializer implements CommandLineRunner {
             Demand demand2 = new Demand();
             demand2.setTitle("Plásticos Mixtos para procesar");
             demand2.setDescription("Recortes de plásticos mixtos listos para reprocesado industrial.");
-            demand2.setMaterialCategory("Plástico");
+            demand2.setWasteCategory(WasteCategory.PLASTIC_WASTE);
             demand2.setQuantity(150.0);
             demand2.setUnit("kg");
             demand2.setMaxBudget(2.0);
+            demand2.setUrgency("Consultar");
             demand2.setStatus(DemandStatus.ACTIVE);
             demand2.setPublicationDate(LocalDateTime.now());
-            demand2.setValidity("Inmediata");
+            demand2.setValidity("0");
             demand2.setPickupZone("Móstoles Central");
             demand2.setCompany(company2);
             demandRepository.save(demand2);
@@ -270,13 +274,14 @@ public class DataInitializer implements CommandLineRunner {
             Demand pacoDemand = new Demand();
             pacoDemand.setTitle("Virutas de Acero");
             pacoDemand.setDescription("Buscamos virutas de acero limpias para reciclado industrial.");
-            pacoDemand.setMaterialCategory("Metal");
+            pacoDemand.setWasteCategory(WasteCategory.METAL_WASTE);
             pacoDemand.setQuantity(1500.0);
             pacoDemand.setUnit("kg");
             pacoDemand.setMaxBudget(1.20);
+            pacoDemand.setUrgency("En 1 semana");
             pacoDemand.setStatus(DemandStatus.ACTIVE);
             pacoDemand.setPublicationDate(LocalDateTime.now());
-            pacoDemand.setValidity("Fin de mes");
+            pacoDemand.setValidity("15");
             pacoDemand.setPickupZone("Sector IV — Móstoles");
             pacoDemand.setCompany(company3);
             demandRepository.save(pacoDemand);
@@ -298,12 +303,172 @@ public class DataInitializer implements CommandLineRunner {
             agreement1.setPlatformCommission(Math.round(1200.0 * 0.025 * 100.0) / 100.0);
 
             // Calculate initial CO2 impact (Steel/Metal ~ 2.0)
-            agreement1.setCo2Impact(sustainabilityEngine.calculateCo2Impact(agreement1.getQuantity(), "Metal"));
+            agreement1.setCo2Impact(
+                    sustainabilityEngine.calculateCo2Impact(agreement1.getQuantity(), WasteCategory.METAL_WASTE));
 
             agreementRepository.save(agreement1);
         }
 
+        // ══════════════════════════════════════════
+        // 7. Bulk Data Seeding for "Metales del Sur S.L." (Pagination Testing)
+        // ══════════════════════════════════════════
+        if (offerRepository.countByCompany(company1) < 5) {
+            log.info("📊 Injecting bulk sample data for Metales del Sur S.L. (Pagination testing)...");
+
+            String[] metals = { "Cobre", "Aluminio", "Acero Corten", "Latón", "Plomo", "Zinc", "Retales de Hierro",
+                    "Virutas de Bronce" };
+            String[] availabilities = { "Inmediata", "En 1 semana", "Consultar" };
+            String[] images = { "virutas.webp", "bobinas-cobre.webp", "retales-pvc.webp" };
+
+            java.util.Random random = new java.util.Random();
+
+            for (int i = 1; i <= 10; i++) {
+                String material = metals[random.nextInt(metals.length)];
+                double qty = 50 + random.nextInt(1951);
+                double price = 0.10 + (14.90 * random.nextDouble());
+                String availability = availabilities[random.nextInt(availabilities.length)];
+                String image = images[random.nextInt(images.length)];
+                OfferStatus status = (i <= 7) ? OfferStatus.ACTIVE : OfferStatus.PAUSED;
+
+                Offer bulkOffer = new Offer();
+                bulkOffer.setTitle("Lote de " + material + " (" + i + ")");
+                bulkOffer.setDescription("Suministro industrial de " + material.toLowerCase()
+                        + " reciclado de alta calidad, procesado mecánicamente.");
+                bulkOffer.setWasteCategory(WasteCategory.METAL_WASTE);
+                bulkOffer.setQuantity(qty);
+                bulkOffer.setUnit("kg");
+                bulkOffer.setPrice(Math.round(price * 100.0) / 100.0);
+                bulkOffer.setAvailability(availability);
+                bulkOffer.setStatus(status);
+                bulkOffer.setPublicationDate(LocalDateTime.now().minusHours(i));
+                bulkOffer.setCompany(company1);
+                bulkOffer.setImage(loadImage(image));
+                offerRepository.save(bulkOffer);
+            }
+
+            for (int i = 1; i <= 10; i++) {
+                String material = metals[random.nextInt(metals.length)];
+                double qty = 100 + random.nextInt(2001);
+                double budget = 0.50 + (10.0 * random.nextDouble());
+                String urgency = availabilities[random.nextInt(availabilities.length)];
+
+                Demand bulkDemand = new Demand();
+                bulkDemand.setTitle("Buscamos " + material + " para fundir (" + i + ")");
+                bulkDemand.setDescription("Necesitamos suministro recurrente de " + material.toLowerCase()
+                        + " para nuestros nuevos procesos de fabricación circular.");
+                bulkDemand.setWasteCategory(WasteCategory.METAL_WASTE);
+                bulkDemand.setQuantity(qty);
+                bulkDemand.setUnit("kg");
+                bulkDemand.setMaxBudget(Math.round(budget * 100.0) / 100.0);
+                bulkDemand.setUrgency(urgency);
+                bulkDemand.setStatus(DemandStatus.ACTIVE);
+                bulkDemand.setPublicationDate(LocalDateTime.now().minusHours(i));
+                bulkDemand.setValidity("30");
+                bulkDemand.setPickupZone("Polígono Norte — Móstoles");
+                bulkDemand.setCompany(company1);
+                demandRepository.save(bulkDemand);
+            }
+            log.info("✅ 20 bulk records injected for Metales del Sur S.L.");
+        }
+
+        // ══════════════════════════════════════════
+        // 8. Bulk Agreement Seeding for "Metales del Sur S.L." (Pagination Testing)
+        // ══════════════════════════════════════════
+        if (agreementRepository.count() < 10) {
+            log.info("🤝 Injecting 20 bulk agreements for Metales del Sur S.L. (Pagination testing)...");
+            java.util.Random random = new java.util.Random();
+            AgreementStatus[] statuses = {AgreementStatus.PENDING, AgreementStatus.ACCEPTED, AgreementStatus.COMPLETED};
+            String[] materials = {"Cobre Reciclado", "Virutas de Aluminio", "Acero Inoxidable", "Plástico Triturado"};
+            
+            for (int i = 1; i <= 20; i++) {
+                Agreement bulkAgreement = new Agreement();
+                bulkAgreement.setExchangedMaterial(materials[random.nextInt(materials.length)] + " (" + i + ")");
+                bulkAgreement.setQuantity(100.0 + random.nextInt(900));
+                bulkAgreement.setUnit("kg");
+                
+                double price = 200.0 + random.nextInt(3000);
+                bulkAgreement.setAgreedPrice(price);
+                
+                // Status alternation/random
+                bulkAgreement.setStatus(statuses[random.nextInt(statuses.length)]);
+                
+                bulkAgreement.setRegistrationDate(LocalDateTime.now().minusDays(i));
+                bulkAgreement.setPickupDate(java.time.LocalDate.now().plusDays(random.nextInt(10)));
+                
+                bulkAgreement.setOriginCompany(company1);
+                bulkAgreement.setDestinationCompany(company3);
+                
+                // Commission (2.5%)
+                bulkAgreement.setPlatformCommission(Math.round(price * 0.025 * 100.0) / 100.0);
+                
+                // CO2 impact
+                bulkAgreement.setCo2Impact(sustainabilityEngine.calculateCo2Impact(bulkAgreement.getQuantity(), WasteCategory.METAL_WASTE));
+                
+                agreementRepository.save(bulkAgreement);
+            }
+            log.info("✅ 20 bulk agreements injected.");
+        }
+
         log.info("════════════════════════════════════════════");
+        // ══════════════════════════════════════════
+        // 9. Sample Message Seeding (Mailbox Testing)
+        // ══════════════════════════════════════════
+        if (messageRepository.count() == 0) {
+            log.info("📧 Seeding sample messages for mailbox UI testing...");
+
+            // Message 1: EcoSur -> Metales del Sur (Read)
+            messageRepository.save(new Message(
+                "Consulta sobre virutas",
+                "Hola, ¿seguís teniendo stock de las virutas de acero inox? Necesitamos 300kg.",
+                LocalDateTime.now().minusDays(2),
+                true,
+                company2,
+                company1
+            ));
+
+            // Message 2: EcoSur -> Metales del Sur (Unread)
+            messageRepository.save(new Message(
+                "Factura pendiente",
+                "Te adjunto la factura proforma del último acuerdo. Confírmame recepción.",
+                LocalDateTime.now().minusHours(5),
+                false,
+                company2,
+                company1
+            ));
+
+            // Message 3: Paco -> Metales del Sur (Unread)
+            messageRepository.save(new Message(
+                "¡Oportunidad de Aluminio!",
+                "Paco aquí. Acabamos de recibir un lote de aluminio que te puede interesar.",
+                LocalDateTime.now().minusMinutes(30),
+                false,
+                company3,
+                company1
+            ));
+
+            // Message 4: Metales del Sur -> Paco (Sent)
+            messageRepository.save(new Message(
+                "RE: Oportunidad de Aluminio",
+                "Hola Paco, pásame fotos del material y lo cerramos mañana.",
+                LocalDateTime.now().minusMinutes(10),
+                true,
+                company1,
+                company3
+            ));
+
+            // Message 5: Paco -> Metales del Sur (Read)
+            messageRepository.save(new Message(
+                "Horario de recogida",
+                "Nuestros camiones pasarán el jueves a las 09:00h. Saludos.",
+                LocalDateTime.now().minusDays(1),
+                true,
+                company3,
+                company1
+            ));
+
+            log.info("✅ 5 sample messages injected.");
+        }
+
         log.info("  Sample credentials (password: 1234 for all):");
         log.info("  ADMIN  → admin@ecomostoles.es");
         log.info("  USER 1 → contacto@metalesdelsur.es");
@@ -313,13 +478,13 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void createOffer(Company company, String title, String description,
-            String wasteType, Double quantity, String unit,
+            WasteCategory wasteCategory, Double quantity, String unit,
             Double price, String availability,
             LocalDateTime date, String imageFile) {
         Offer offer = new Offer();
         offer.setTitle(title);
         offer.setDescription(description);
-        offer.setWasteType(wasteType);
+        offer.setWasteCategory(wasteCategory);
         offer.setQuantity(quantity);
         offer.setUnit(unit);
         offer.setPrice(price);

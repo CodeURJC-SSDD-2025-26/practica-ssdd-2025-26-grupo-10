@@ -16,26 +16,7 @@
                         <p class="text-secondary">Únete a la mayor red de simbiosis industrial de {{platformCity}}</p>
                     </div>
 
-                    {{#error}}
-                    <div class="alert alert-danger py-2 small fw-bold text-center" role="alert">
-                        <i class="fas fa-exclamation-triangle me-1"></i>
-                        {{#errorMsg}}{{errorMsg}}{{/errorMsg}}
-                        {{^errorMsg}}Este email ya está registrado. Por favor, inicia sesión.{{/errorMsg}}
-                    </div>
-                    {{/error}}
 
-                    {{#hasErrors}}
-                    <div class="alert alert-danger py-2 small fw-bold text-center" role="alert">
-                        <i class="fas fa-exclamation-triangle me-1"></i> Por favor, corrige los errores en el
-                        formulario.
-                    </div>
-                    {{/hasErrors}}
-
-                    {{#error_global}}
-                    <div class="alert alert-danger py-2 small fw-bold text-center" role="alert">
-                        <i class="fas fa-exclamation-triangle me-1"></i> {{error_global}}
-                    </div>
-                    {{/error_global}}
 
                     <form action="/registro" method="POST" enctype="multipart/form-data">
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}

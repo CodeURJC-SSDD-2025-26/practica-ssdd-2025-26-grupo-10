@@ -46,6 +46,17 @@ public class MessageService {
     public long countByRecipient(Company recipient) {
         return messageRepository.countByRecipient(recipient);
     }
+    
+    @Transactional(readOnly = true)
+    public long countUnreadByRecipient(Company recipient) {
+        return messageRepository.countByRecipientAndReadFalse(recipient);
+    }
+    
+    public void markAllAsRead(Company recipient) {
+        List<Message> unread = messageRepository.findByRecipient(recipient);
+        unread.stream().filter(m -> !m.isRead()).forEach(m -> m.setRead(true));
+        messageRepository.saveAll(unread);
+    }
 
     /** Returns the total count of messages. */
     @Transactional(readOnly = true)

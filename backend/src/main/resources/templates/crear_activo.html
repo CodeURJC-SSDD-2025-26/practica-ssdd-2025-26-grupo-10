@@ -24,18 +24,7 @@
 
                 <div class="card card-modern border-top-success">
                     <div class="card-body p-4">
-                        {{#error}}
-                        <div class="alert alert-danger d-flex align-items-center shadow-sm" role="alert">
-                            <i class="fas fa-exclamation-circle me-2 fs-5"></i>
-                            <span>{{error}}</span>
-                        </div>
-                        {{/error}}
-                        {{#errors}}
-                        <div class="alert alert-danger d-flex align-items-center" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <span>{{defaultMessage}}</span>
-                        </div>
-                        {{/errors}}
+
                         <form action="/oferta/nueva" method="POST" enctype="multipart/form-data"
                             class="needs-validation" novalidate>
                             {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
@@ -53,12 +42,13 @@
                                     <label for="tipo"
                                         class="form-label text-secondary fw-bold small text-uppercase">Tipo <span
                                             class="text-danger">*</span></label>
-                                    <select class="form-select {{#error_wasteType}}is-invalid{{/error_wasteType}}"
-                                        id="tipo" name="wasteType" required>
+                                    <select
+                                        class="form-select {{#error_wasteCategory}}is-invalid{{/error_wasteCategory}}"
+                                        id="tipo" name="wasteCategory" required>
                                         <option value="" selected disabled>Seleccionar...</option>
-                                        {{#categoryList}}
-                                        <option value="{{.}}">{{.}}</option>
-                                        {{/categoryList}}
+                                        {{#wasteCategories}}
+                                        <option value="{{name}}">{{displayName}}</option>
+                                        {{/wasteCategories}}
                                     </select>
                                     <div class="invalid-feedback">Selecciona una categoría.</div>
                                 </div>
@@ -81,48 +71,53 @@
                                         class="form-label text-secondary fw-bold small text-uppercase">Cantidad y Unidad
                                         <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="quantity" name="quantity"
-                                            placeholder="Ej. 500" min="0"
-                                            value="{{#offer.quantity}}{{offer.quantity}}{{/offer.quantity}}"
-                                            required>
-                                        <select class="form-select" id="unidadMedida" name="unit" required>
+                                        <input type="number"
+                                            class="form-control {{#error_quantity}}is-invalid{{/error_quantity}}"
+                                            id="quantity" name="quantity" placeholder="Ej. 500" min="0"
+                                            value="{{#offer.quantity}}{{offer.quantity}}{{/offer.quantity}}" required>
+                                        <select class="form-select {{#error_unit}}is-invalid{{/error_unit}}"
+                                            id="unidadMedida" name="unit" required>
                                             <option value="" selected disabled>Und...</option>
                                             {{#unitList}}
                                             <option value="{{.}}">{{.}}</option>
                                             {{/unitList}}
                                         </select>
                                     </div>
-                                    <div class="invalid-feedback">Indica la cantidad.</div>
+                                    <div class="invalid-feedback">Indica la cantidad y unidad.</div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <label for="price"
                                         class="form-label text-secondary fw-bold small text-uppercase">Precio
                                         (€)</label>
-                                    <input type="number"
-                                        class="form-control {{#error_price}}is-invalid{{/error_price}}" id="price"
-                                        name="price" placeholder="Ej. 1500" step="0.01" min="0"
-                                        value="{{#offer.price}}{{offer.price}}{{/offer.price}}">
+                                    <input type="number" class="form-control {{#error_price}}is-invalid{{/error_price}}"
+                                        id="price" name="price" placeholder="Ej. 1500" step="0.01" min="0"
+                                        value="{{#offer.price}}{{offer.price}}{{/offer.price}}" required>
                                     <div class="invalid-feedback">Introduce un precio válido.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="availability"
-                                        class="form-label text-secondary fw-bold small text-uppercase">Disponibilidad</label>
-                                    <select class="form-select" id="availability" name="availability">
+                                        class="form-label text-secondary fw-bold small text-uppercase">Disponibilidad
+                                        <span class="text-danger">*</span></label>
+                                    <select class="form-select {{#error_availability}}is-invalid{{/error_availability}}"
+                                        id="availability" name="availability" required>
                                         <option value="" selected disabled>Seleccionar disponibilidad...</option>
                                         {{#availabilityList}}
                                         <option value="{{.}}">{{.}}</option>
                                         {{/availabilityList}}
                                     </select>
+                                    <div class="invalid-feedback">Indica la disponibilidad.</div>
                                 </div>
 
                                 <div class="col-12">
                                     <label for="imagen"
                                         class="form-label text-secondary fw-bold small text-uppercase">Fotografía del
-                                        Activo</label>
+                                        Activo <span class="text-danger">*</span></label>
                                     <input class="form-control" type="file" id="imagen" name="imageFile"
-                                        accept="image/*">
+                                        accept="image/png, image/jpeg, image/webp" required>
                                     <div class="form-text">Formatos aceptados: JPG, PNG, WEBP. Máx 5 MB.</div>
+                                    <div class="invalid-feedback">La imagen es obligatoria para publicar una oferta.
+                                    </div>
                                 </div>
 
                                 <div class="col-12 mt-4 d-flex justify-content-end">
@@ -139,4 +134,23 @@
     </div>
 
     <script src="/js/form-validation.js"></script>
+    <script>
+        document.getElementById('imagen').addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                // Check size (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('El archivo es demasiado grande. El máximo permitido es 5MB.');
+                    this.value = '';
+                    return;
+                }
+                // Check type
+                if (!file.type.startsWith('image/')) {
+                    alert('Solo se permiten archivos de imagen (JPG, PNG, WEBP).');
+                    this.value = '';
+                    return;
+                }
+            }
+        });
+    </script>
     {{> footer}}

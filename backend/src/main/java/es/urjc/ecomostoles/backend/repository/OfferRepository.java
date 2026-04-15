@@ -31,17 +31,16 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 
         /**
          * Finds a paginated list of offers associated with a specific company.
-         * Use second parameter to choose between Offer entity or OfferSummary
-         * projection.
          */
         <T> Page<T> findByCompany(Company company, Pageable pageable, Class<T> type);
 
         /**
          * Finds a list of offers associated with a specific company.
-         * Use second parameter to choose between Offer entity or OfferSummary
-         * projection.
          */
         <T> List<T> findByCompany(Company company, Class<T> type);
+
+        /** Finds offers of a company with a specific status. */
+        <T> List<T> findByCompanyAndStatus(Company company, OfferStatus status, Class<T> type);
 
         long countByCompany(Company company);
 
@@ -58,12 +57,16 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
                         "WHERE o.status = :status " +
                         "AND (:kw IS NULL OR :kw = '' OR LOWER(o.title) LIKE LOWER(CONCAT('%', :kw, '%')) OR LOWER(CAST(o.description AS string)) LIKE LOWER(CONCAT('%', :kw, '%'))) "
                         +
-                        "AND (:type IS NULL OR :type = '' OR o.wasteType = :type) " +
+                        "AND (:type IS NULL OR o.wasteCategory = :type) " +
                         "AND (:industrialPark IS NULL OR :industrialPark = '' OR LOWER(o.company.address) LIKE LOWER(CONCAT('%', :industrialPark, '%')))")
         Page<OfferSummary> searchFiltered(@Param("status") OfferStatus status, @Param("kw") String kw,
-                        @Param("type") String type, @Param("industrialPark") String industrialPark, Pageable pageable);
+                        @Param("type") es.urjc.ecomostoles.backend.model.WasteCategory type, @Param("industrialPark") String industrialPark, Pageable pageable);
 
-        @Query("SELECT o FROM Offer o JOIN FETCH o.company WHERE o.status = :status AND o.company.id != :companyId AND o.wasteType IN :categories")
+        @Query("SELECT o FROM Offer o JOIN FETCH o.company WHERE o.status = :status AND o.company.id != :companyId AND o.wasteCategory IN :categories")
         List<Offer> findSmartMatches(@Param("status") OfferStatus status, @Param("companyId") Long companyId,
-                        @Param("categories") List<String> categories, Pageable pageable);
+                        @Param("categories") List<es.urjc.ecomostoles.backend.model.WasteCategory> categories, Pageable pageable);
+
+        /** Finds active offers NOT belonging to the given company using an explicit query to avoid derivation issues. */
+        @Query("SELECT o FROM Offer o WHERE o.status = :status AND o.company != :company")
+        <T> List<T> findAllExternalOffers(@Param("status") OfferStatus status, @Param("company") Company company, Class<T> type);
 }

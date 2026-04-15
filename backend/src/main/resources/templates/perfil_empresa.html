@@ -72,8 +72,9 @@
                                 <p class="text-muted small mb-4">Actualiza tus datos para que otras empresas puedan encontrarte.</p>
 
                                 <div class="mb-3">
-                                    <label for="nombreEmpresa" class="form-label fw-bold small text-uppercase text-secondary">Nombre Comercial</label>
-                                    <input type="text" class="form-control" id="nombreEmpresa" name="commercialName" value="{{#inspectedCompany}}{{inspectedCompany.commercialName}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.commercialName}}{{/inspectedCompany}}" required>
+                                    <label for="nombreEmpresa" class="form-label fw-bold small text-uppercase text-secondary">Nombre Comercial <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control {{#errors.commercialName}}is-invalid{{/errors.commercialName}}" id="nombreEmpresa" name="commercialName" value="{{#inspectedCompany}}{{inspectedCompany.commercialName}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.commercialName}}{{/inspectedCompany}}" required>
+                                    <div class="invalid-feedback">El nombre comercial es obligatorio.</div>
                                 </div>
 
                                 <div class="row g-3 mb-3">
@@ -82,12 +83,13 @@
                                         <input type="email" class="form-control" id="contactEmail" value="{{#inspectedCompany}}{{inspectedCompany.contactEmail}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.contactEmail}}{{/inspectedCompany}}" disabled>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="phone" class="form-label fw-bold small text-uppercase text-secondary">Teléfono</label>
-                                        <input type="tel" class="form-control" id="phone" name="phone" value="{{#inspectedCompany}}{{inspectedCompany.phone}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.phone}}{{/inspectedCompany}}" required>
+                                        <label for="phone" class="form-label fw-bold small text-uppercase text-secondary">Teléfono <span class="text-danger">*</span></label>
+                                        <input type="tel" class="form-control {{#errors.phone}}is-invalid{{/errors.phone}}" id="phone" name="phone" value="{{#inspectedCompany}}{{inspectedCompany.phone}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.phone}}{{/inspectedCompany}}" required>
+                                        <div class="invalid-feedback">Indica un teléfono de contacto.</div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="sectorIndustrial" class="form-label fw-bold small text-uppercase text-secondary">Sector Industrial</label>
-                                        <select class="form-select" id="sectorIndustrial" name="industrialSector" required>
+                                        <label for="sectorIndustrial" class="form-label fw-bold small text-uppercase text-secondary">Sector Industrial <span class="text-danger">*</span></label>
+                                        <select class="form-select {{#errors.industrialSector}}is-invalid{{/errors.industrialSector}}" id="sectorIndustrial" name="industrialSector" required>
                                             {{#sectorList}}
                                             <option value="{{name}}" {{#selected}}selected{{/selected}}>{{displayName}}</option>
                                             {{/sectorList}}
@@ -97,12 +99,14 @@
                                             </option>
                                             {{/sectorList}}
                                         </select>
+                                        <div class="invalid-feedback">Selecciona tu sector industrial.</div>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="direccion" class="form-label fw-bold small text-uppercase text-secondary">Dirección / Polígono</label>
-                                    <input type="text" class="form-control" id="address" name="address" value="{{#inspectedCompany}}{{inspectedCompany.address}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.address}}{{/inspectedCompany}}" required>
+                                    <label for="direccion" class="form-label fw-bold small text-uppercase text-secondary">Dirección / Polígono <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control {{#errors.address}}is-invalid{{/errors.address}}" id="address" name="address" value="{{#inspectedCompany}}{{inspectedCompany.address}}{{/inspectedCompany}}{{^inspectedCompany}}{{company.address}}{{/inspectedCompany}}" required>
+                                    <div class="invalid-feedback">La dirección es obligatoria.</div>
                                 </div>
 
                                 <div class="mb-4">

@@ -1,9 +1,11 @@
 package es.urjc.ecomostoles.backend.controller;
 
 import es.urjc.ecomostoles.backend.model.Company;
+import es.urjc.ecomostoles.backend.model.Demand;
 import es.urjc.ecomostoles.backend.model.Message;
 import es.urjc.ecomostoles.backend.model.Offer;
 import es.urjc.ecomostoles.backend.service.CompanyService;
+import es.urjc.ecomostoles.backend.service.DemandService;
 import es.urjc.ecomostoles.backend.service.MessageService;
 import es.urjc.ecomostoles.backend.service.OfferService;
 import org.springframework.stereotype.Controller;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
@@ -29,13 +32,16 @@ public class MessageController {
         private final CompanyService companyService;
         private final MessageService messageService;
         private final OfferService offerService;
+        private final DemandService demandService;
 
         public MessageController(CompanyService companyService,
                         MessageService messageService,
-                        OfferService offerService) {
+                        OfferService offerService,
+                        DemandService demandService) {
                 this.companyService = companyService;
                 this.messageService = messageService;
                 this.offerService = offerService;
+                this.demandService = demandService;
         }
 
         /**
@@ -46,20 +52,25 @@ public class MessageController {
          */
         @GetMapping("/mensajes")
         public String showMessages(Model model, Principal principal) {
-                Company company = companyService.findByEmail(principal.getName())
-                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "Resource not found"));
+                Optional<Company> companyOpt = companyService.findByEmail(principal.getName());
+                if (companyOpt.isEmpty()) {
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
+                }
+                Company company = companyOpt.get();
 
-                model.addAttribute("activeMensajes", true);
+                model.addAttribute("activeMessages", true);
                 model.addAttribute("isDashboard", true);
 
                 // Retrieves messages where the current company is the recipient or the sender
                 List<Message> received = messageService.getByRecipient(company);
                 List<Message> sent = messageService.getBySender(company);
 
+                // Mark all received messages as read when viewing the inbox
+                messageService.markAllAsRead(company);
+
                 model.addAttribute("receivedMessages", received);
                 model.addAttribute("sentMessages", sent);
-                model.addAttribute("messages", received); // for backward compatibility in templates if needed
+                model.addAttribute("messages", received); 
 
                 return "mensajes";
         }
@@ -103,7 +114,7 @@ public class MessageController {
          */
         @PostMapping("/mensajes/enviar/{offerId}")
         public String sendOfferMessage(@PathVariable Long offerId, @RequestParam String content,
-                Principal principal) {
+                Principal principal, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
                 Offer offer = offerService.findById(offerId)
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                                 "Offer not found"));
@@ -116,7 +127,30 @@ public class MessageController {
 
                 messageService.sendMessage(subject, content, sender, recipient);
 
-                return "redirect:/mensajes";
+                redirectAttributes.addFlashAttribute("successMessage", "Mensaje enviado correctamente a " + recipient.getCommercialName());
+
+                return "redirect:/oferta/" + offerId;
+        }
+
+        /**
+         * Sends a message to the owner of a demand.
+         */
+        @PostMapping("/mensajes/enviar/demanda/{demandId}")
+        public String sendDemandMessage(@PathVariable Long demandId, @RequestParam String content,
+                        Principal principal, RedirectAttributes redirectAttributes) {
+                Demand demand = demandService.findById(demandId)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Demand not found"));
+                Company sender = companyService.findByEmail(principal.getName())
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender not found"));
+
+                Company recipient = demand.getCompany();
+                String subject = "Interés en la demanda: " + demand.getTitle();
+
+                messageService.sendMessage(subject, content, sender, recipient);
+
+                redirectAttributes.addFlashAttribute("successMessage", "Mensaje enviado correctamente a la empresa solicitante.");
+
+                return "redirect:/solicitudes";
         }
 
         /**
@@ -133,6 +167,7 @@ public class MessageController {
 
                 model.addAttribute("recipient", recipientOpt.get());
                 model.addAttribute("subject", subject != null ? subject : "");
+                model.addAttribute("activeMessages", true);
                 model.addAttribute("isDashboard", true);
                 return "redactar_mensaje";
         }

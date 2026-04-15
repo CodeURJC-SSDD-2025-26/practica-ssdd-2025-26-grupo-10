@@ -695,3 +695,32 @@ a:hover {
     overflow-y: auto;
     background: #ffffff !important;
 }
+
+/* Enforce perfect circles for all circular avatars and icons */
+img.rounded-circle, .avatar-navbar, .avatar-profile, .avatar-table, .avatar-sm, .avatar-lg {
+    aspect-ratio: 1 / 1 !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+    flex-shrink: 0;
+}
+
+.avatar-navbar { width: 35px; height: 35px; }
+.avatar-profile { width: 140px !important; height: 140px !important; }
+.avatar-table, .avatar-sm-45 { width: 45px !important; height: 45px !important; }
+.avatar-sm { width: 32px !important; height: 32px !important; }
+
+/* Perfect circle buttons */
+.btn-circle {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50% !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.btn-circle:hover {
+    transform: scale(1.1);
+}

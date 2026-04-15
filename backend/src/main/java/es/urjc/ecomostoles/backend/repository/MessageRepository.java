@@ -12,6 +12,8 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findBySender(Company sender);
 
     long countByRecipient(Company recipient);
+    
+    long countByRecipientAndReadFalse(Company recipient);
 
     @Query("SELECT m FROM Message m JOIN FETCH m.sender JOIN FETCH m.recipient ORDER BY m.sendDate DESC")
     List<Message> findTop100ByOrderBySendDateDesc();

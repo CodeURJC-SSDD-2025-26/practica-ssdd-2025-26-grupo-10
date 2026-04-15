@@ -38,10 +38,11 @@ public class Demand {
     private String title;
 
     /**
-     * Category of the requested material.
+     * Category of waste or material.
      */
-    @NotBlank(message = "Debes seleccionar una categoría de material")
-    private String materialCategory;
+    @NotNull(message = "Debes seleccionar una categoría de material")
+    @Enumerated(EnumType.STRING)
+    private WasteCategory wasteCategory;
 
     /**
      * Detailed description of the demand.
@@ -53,18 +54,21 @@ public class Demand {
     /**
      * Quantity needed.
      */
-    @NotNull(message = "La quantity es obligatoria")
-    @DecimalMin(value = "0.0", inclusive = false, message = "La quantity debe ser mayor que cero")
+    @NotNull(message = "La cantidad es obligatoria")
+    @DecimalMin(value = "0.0", inclusive = false, message = "La cantidad debe ser mayor que cero")
     private Double quantity;
 
     /**
      * Unit of measurement (e.g., kg, uds).
      */
+    @NotBlank(message = "La unidad de medida es obligatoria")
     private String unit;
 
     /**
      * Urgency level of the demand.
      */
+    @NotBlank(message = "El nivel de urgencia es obligatorio")
+    @jakarta.validation.constraints.Pattern(regexp = "Inmediata|En 1 semana|Consultar", message = "El nivel de urgencia debe ser Inmediata, En 1 semana o Consultar")
     private String urgency;
 
     /**
@@ -74,14 +78,13 @@ public class Demand {
     @DecimalMin(value = "0.0", message = "El presupuesto no puede ser negativo")
     private Double maxBudget;
 
-    /**
-     * Zone or area for pickup/delivery.
-     */
+    @NotBlank(message = "La zona de recogida es obligatoria")
     private String pickupZone;
 
     /**
      * Validity period of the demand.
      */
+    @NotBlank(message = "La vigencia es obligatoria")
     private String validity;
 
     /**
@@ -91,9 +94,77 @@ public class Demand {
     private DemandStatus status;
 
     /**
+     * Internal timestamp for entity creation.
+     */
+    private LocalDateTime createdAt;
+
+    /**
      * Date and time when the demand was published.
      */
     private LocalDateTime publicationDate;
+
+    /**
+     * Calculated expiration date for efficient filtering.
+     */
+    private LocalDateTime expiryDate;
+
+    /**
+     * Lifecycle management: Automatically set values on first persist.
+     */
+    @jakarta.persistence.PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        if (this.publicationDate == null) {
+            this.publicationDate = this.createdAt;
+        }
+        updateExpiryDate();
+    }
+
+    /**
+     * Synchronizes expiryDate with current validity days.
+     */
+    public void updateExpiryDate() {
+        if (publicationDate == null || validity == null || "0".equals(validity)) {
+            this.expiryDate = null;
+        } else {
+            try {
+                long days = Long.parseLong(validity);
+                this.expiryDate = publicationDate.plusDays(days);
+            } catch (NumberFormatException e) {
+                this.expiryDate = null;
+            }
+        }
+    }
+
+    /**
+     * Checks if the demand has expired.
+     */
+    public boolean isExpired() {
+        if (expiryDate == null) return false;
+        return LocalDateTime.now().isAfter(expiryDate);
+    }
+
+    public LocalDateTime getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(LocalDateTime expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    /**
+     * Calculates days remaining until expiration.
+     */
+    public Long getDaysRemaining() {
+        if (expiryDate == null) return null;
+        long days = java.time.Duration.between(LocalDateTime.now(), expiryDate).toDays();
+        return days < 0 ? 0 : days;
+    }
+
+    /**
+     * Number of times the demand has been viewed by users.
+     */
+    private int visits = 0;
 
     /**
      * The company that published this demand.
@@ -110,24 +181,24 @@ public class Demand {
     /**
      * Full constructor for Demand.
      * 
-     * @param title            title
-     * @param materialCategory material category
-     * @param description      long description
-     * @param quantity         amount
-     * @param unit             unit
-     * @param urgency          urgency
-     * @param maxBudget        max budget
-     * @param pickupZone       area
-     * @param validity         validity
-     * @param status           status
-     * @param publicationDate  publication date
-     * @param company          company
+     * @param title           title
+     * @param wasteCategory   waste category
+     * @param description     long description
+     * @param quantity        amount
+     * @param unit            unit
+     * @param urgency         urgency
+     * @param maxBudget       max budget
+     * @param pickupZone      area
+     * @param validity        validity
+     * @param status          status
+     * @param publicationDate publication date
+     * @param company         company
      */
-    public Demand(String title, String materialCategory, String description, Double quantity, String unit,
+    public Demand(String title, WasteCategory wasteCategory, String description, Double quantity, String unit,
             String urgency, Double maxBudget, String pickupZone, String validity, DemandStatus status,
             LocalDateTime publicationDate, Company company) {
         this.title = title;
-        this.materialCategory = materialCategory;
+        this.wasteCategory = wasteCategory;
         this.description = description;
         this.quantity = quantity;
         this.unit = unit;
@@ -138,9 +209,18 @@ public class Demand {
         this.status = status;
         this.publicationDate = publicationDate;
         this.company = company;
+        updateExpiryDate();
     }
 
     // Getters and Setters
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public Long getId() {
         return id;
@@ -158,12 +238,19 @@ public class Demand {
         this.title = title;
     }
 
-    public String getMaterialCategory() {
-        return materialCategory;
+    public WasteCategory getWasteCategory() {
+        return wasteCategory;
     }
 
-    public void setMaterialCategory(String materialCategory) {
-        this.materialCategory = materialCategory;
+    public void setWasteCategory(WasteCategory wasteCategory) {
+        this.wasteCategory = wasteCategory;
+    }
+
+    // Helper for Mustache templates
+    public String getFormattedWasteType() {
+        if (this.wasteCategory == null)
+            return "";
+        return this.wasteCategory.getDisplayName();
     }
 
     public String getDescription() {
@@ -201,6 +288,14 @@ public class Demand {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public int getVisits() {
+        return visits;
+    }
+
+    public void setVisits(int visits) {
+        this.visits = visits;
     }
 
     public String getUrgency() {
@@ -247,6 +342,22 @@ public class Demand {
 
     public void setValidity(String validity) {
         this.validity = validity;
+        updateExpiryDate();
+    }
+
+    /**
+     * Helper for Mustache templates to display validity as a readable string.
+     */
+    public String getFormattedValidity() {
+        if (this.validity == null) return "No definido";
+        return switch (this.validity) {
+            case "7" -> "7 días";
+            case "15" -> "15 días";
+            case "30" -> "30 días";
+            case "90" -> "90 días";
+            case "0" -> "Indefinido / Consultar";
+            default -> this.validity;
+        };
     }
 
     public DemandStatus getStatus() {
@@ -263,6 +374,7 @@ public class Demand {
 
     public void setPublicationDate(LocalDateTime publicationDate) {
         this.publicationDate = publicationDate;
+        updateExpiryDate();
     }
 
     public Company getCompany() {

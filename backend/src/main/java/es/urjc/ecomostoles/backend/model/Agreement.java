@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 /**
  * Represents a transaction agreement between two companies.
  * This entity tracks the exchange of materials, quantities, and prices.
@@ -34,7 +36,6 @@ public class Agreement {
     /**
      * Description of the material being exchanged.
      */
-    @NotBlank(message = "El material intercambiado es obligatorio")
     private String exchangedMaterial;
 
     /**
@@ -60,6 +61,8 @@ public class Agreement {
     /**
      * Scheduled date for the material pickup.
      */
+    @NotNull(message = "La fecha de recogida es obligatoria")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate pickupDate;
 
     /**
@@ -281,5 +284,9 @@ public class Agreement {
         if (this.registrationDate == null)
             return "Fecha no disponible";
         return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(this.registrationDate);
+    }
+
+    public boolean isDeletable() {
+        return !AgreementStatus.COMPLETED.equals(this.status);
     }
 }

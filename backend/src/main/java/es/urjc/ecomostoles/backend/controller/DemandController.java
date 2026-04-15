@@ -27,9 +27,11 @@ import java.util.Optional;
 public class DemandController {
 
     private final DemandService demandService;
+    private final es.urjc.ecomostoles.backend.service.CompanyService companyService;
 
-    public DemandController(DemandService demandService) {
+    public DemandController(DemandService demandService, es.urjc.ecomostoles.backend.service.CompanyService companyService) {
         this.demandService = demandService;
+        this.companyService = companyService;
     }
 
     /**
@@ -48,16 +50,16 @@ public class DemandController {
 
         // Pagination metadata
         model.addAttribute("currentPage", demandPage.getNumber() + 1);
-        model.addAttribute("totalPages", demandPage.getTotalPages());
+        model.addAttribute("totalPages", demandPage.getTotalPages() == 0 ? 1 : demandPage.getTotalPages());
         model.addAttribute("hasNext", demandPage.hasNext());
-        model.addAttribute("hasPrev", demandPage.hasPrevious());
+        model.addAttribute("hasPrevious", demandPage.hasPrevious());
         model.addAttribute("prevPage", demandPage.getNumber() - 1);
         model.addAttribute("nextPage", demandPage.getNumber() + 1);
         model.addAttribute("totalItems", demandPage.getTotalElements());
 
         // Dynamic base URL for pagination partial
-        model.addAttribute("pagBaseUrl", "/solicitudes");
-        model.addAttribute("pagQueryString", "");
+        model.addAttribute("paginationBaseUrl", "/solicitudes");
+        model.addAttribute("paginationQueryString", "");
 
         model.addAttribute("navDemands", true);
 
@@ -69,15 +71,30 @@ public class DemandController {
      * Returns 404 redirect if the demand does not exist.
      */
     @GetMapping("/demanda/{id}")
-    public String showDemandDetail(@PathVariable("id") Long id, Model model, Principal principal) {
+    public String showDemandDetail(@PathVariable("id") Long id, Model model, Principal principal,
+            RedirectAttributes redirectAttributes) {
         Optional<Demand> demandOpt = demandService.findById(id);
 
         if (demandOpt.isPresent()) {
-            model.addAttribute("demand", demandOpt.get());
+            Demand demand = demandOpt.get();
+            model.addAttribute("demand", demand);
+
+            boolean isOwner = false;
+            if (principal != null) {
+                // Use email comparison for consistency since principal.getName() is email
+                isOwner = demand.getCompany().getContactEmail().equals(principal.getName());
+            }
+            model.addAttribute("isOwner", isOwner);
+
+            // Only register visit if not viewed by owner
+            if (!isOwner) {
+                demandService.registerVisit(id);
+            }
 
             return "detalle_solicitud";
         }
 
+        redirectAttributes.addFlashAttribute("errorMessage", "La demanda solicitada no existe o ha sido eliminada.");
         return "redirect:/solicitudes";
     }
 

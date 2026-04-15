@@ -21,12 +21,7 @@
 
                 <div class="card card-modern border-top-primary">
                     <div class="card-body p-4">
-                        {{#errors}}
-                        <div class="alert alert-danger d-flex align-items-center" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <span>{{defaultMessage}}</span>
-                        </div>
-                        {{/errors}}
+
                         <form action="/ofertas/{{offer.id}}/editar" method="POST" enctype="multipart/form-data"
                             class="needs-validation" novalidate="">
                             {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
@@ -37,19 +32,19 @@
                                         <span class="text-danger">*</span></label>
                                     <input type="text" name="title"
                                         class="form-control {{#error_title}}is-invalid{{/error_title}}" id="title"
-                                        value="{{offer.title}}" required="">
+                                        value="{{#offer.title}}{{offer.title}}{{/offer.title}}" required="">
                                     <div class="invalid-feedback">Por favor, indica un título válido.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="tipo"
                                         class="form-label text-secondary fw-bold small text-uppercase">Tipo <span
                                             class="text-danger">*</span></label>
-                                    <select name="wasteType"
-                                        class="form-select {{#error_wasteType}}is-invalid{{/error_wasteType}}"
+                                    <select name="wasteCategory"
+                                        class="form-select {{#error_wasteCategory}}is-invalid{{/error_wasteCategory}}"
                                         id="tipo" required="">
-                                        {{#categoryOptions}}
+                                        {{#wasteCategories}}
                                         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                                        {{/categoryOptions}}
+                                        {{/wasteCategories}}
                                     </select>
                                     <div class="invalid-feedback">Selecciona una categoría.</div>
                                 </div>
@@ -60,24 +55,28 @@
                                         Detallada <span class="text-danger">*</span></label>
                                     <textarea name="description"
                                         class="form-control {{#error_description}}is-invalid{{/error_description}}"
-                                        id="description" rows="4" required="">{{offer.description}}</textarea>
+                                        id="description" rows="4"
+                                        required="">{{#offer.description}}{{offer.description}}{{/offer.description}}</textarea>
                                     <div class="invalid-feedback">La descripción es obligatoria.</div>
                                 </div>
 
                                 <div class="col-md-4">
-                                    <label for="quantity"
+                                    <label for="cantidad"
                                         class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span
                                             class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <input type="number" name="quantity" class="form-control" id="quantity"
-                                            value="{{offer.quantity}}" min="0" required="">
-                                        <select class="form-select" id="unit" name="unit" required>
+                                        <input type="number" name="quantity"
+                                            class="form-control {{#error_quantity}}is-invalid{{/error_quantity}}"
+                                            id="quantity" value="{{#offer.quantity}}{{offer.quantity}}{{/offer.quantity}}" min="0" required="">
+                                        <select class="form-select {{#error_unit}}is-invalid{{/error_unit}}" id="unit"
+                                            name="unit" required>
                                             {{#unitOptions}}
                                             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}
                                             </option>
                                             {{/unitOptions}}
                                         </select>
                                     </div>
+                                    <div class="invalid-feedback">Indica una cantidad y unidad válidas.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="price"
@@ -85,26 +84,32 @@
                                         (€)</label>
                                     <input type="number" name="price"
                                         class="form-control {{#error_price}}is-invalid{{/error_price}}" id="price"
-                                        value="{{offer.price}}" step="0.01" min="0">
+                                        value="{{#offer.price}}{{offer.price}}{{/offer.price}}" step="0.01" min="0" required="">
                                     <div class="invalid-feedback">Introduce un precio válido.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="availability"
-                                        class="form-label text-secondary fw-bold small text-uppercase">Disponibilidad</label>
-                                    <select class="form-select" id="availability" name="availability">
+                                        class="form-label text-secondary fw-bold small text-uppercase">Disponibilidad
+                                        <span class="text-danger">*</span></label>
+                                    <select class="form-select {{#error_availability}}is-invalid{{/error_availability}}"
+                                        id="availability" name="availability" required>
                                         {{#availabilityOptions}}
                                         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                         {{/availabilityOptions}}
                                     </select>
+                                    <div class="invalid-feedback">Indica la disponibilidad.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="status"
-                                        class="form-label text-secondary fw-bold small text-uppercase">Estado</label>
-                                    <select class="form-select" id="status" name="status">
+                                        class="form-label text-secondary fw-bold small text-uppercase">Estado <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select {{#error_status}}is-invalid{{/error_status}}" id="status"
+                                        name="status" required>
                                         {{#statusOptions}}
                                         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                         {{/statusOptions}}
                                     </select>
+                                    <div class="invalid-feedback">Selecciona un estado válido.</div>
                                 </div>
 
                                 <div class="col-12">
@@ -113,12 +118,12 @@
                                         Activo</label>
                                     <div class="mb-2">
                                         <small class="text-muted">Imagen actual:</small><br>
-                                        <img src="/images/offer/{{offer.id}}" alt="Imagen del activo"
+                                        <img src="/images/oferta/{{offer.id}}?t={{cacheBuster}}" alt="Imagen del activo"
                                             class="img-thumbnail rounded object-fit-cover mt-2 mb-3 shadow-sm"
                                             style="max-height: 200px;" onerror="this.src='/img/logo.webp';">
                                     </div>
-                                    <input class="form-control" type="file" id="imagenFile" name="imageFile"
-                                        accept="image/*">
+                                    <input class="form-control" type="file" id="imagen" name="imageFile"
+                                        accept="image/png, image/jpeg, image/webp">
                                     <div class="form-text">Deja vacío para conservar la imagen actual.</div>
                                 </div>
 
@@ -136,4 +141,21 @@
     </div>
 
 
+    <script>
+        document.getElementById('imagen').addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('El archivo es demasiado grande. El máximo permitido es 5MB.');
+                    this.value = '';
+                    return;
+                }
+                if (!file.type.startsWith('image/')) {
+                    alert('Solo se permiten archivos de imagen (JPG, PNG, WEBP).');
+                    this.value = '';
+                    return;
+                }
+            }
+        });
+    </script>
     {{> footer}}

@@ -42,7 +42,8 @@ public class SustainabilityEngine {
      *                       granular calculation.
      * @return The calculated CO2 impact in tons.
      */
-    public double calculateCo2Impact(double materialAmount, String wasteType) {
+    public double calculateCo2Impact(double materialAmount,
+            es.urjc.ecomostoles.backend.model.WasteCategory wasteCategory) {
         String factorStr = configurationService.getConfigurationValue("CO2_FACTOR",
                 String.valueOf(defaultCo2Factor));
         double factor;
@@ -57,8 +58,8 @@ public class SustainabilityEngine {
 
         // Granular Multipliers fetched from the dedicated environmental factors table
         double materialMultiplier = 1.0;
-        if (wasteType != null) {
-            materialMultiplier = impactFactorRepository.findByCategoryIgnoreCase(wasteType)
+        if (wasteCategory != null) {
+            materialMultiplier = impactFactorRepository.findByCategoryIgnoreCase(wasteCategory.name())
                     .map(ImpactFactor::getMultiplier)
                     .orElse(1.0);
         }

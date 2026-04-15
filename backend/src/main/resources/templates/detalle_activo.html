@@ -10,6 +10,12 @@
             {{^isAdmin}}{{> sidebar}}{{/isAdmin}}
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                {{#successMessage}}
+                <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
+                    <i class="fas fa-check-circle me-2"></i> {{successMessage}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {{/successMessage}}
                 <div class="card shadow-sm border-top border-success border-4 rounded">
                     <div class="card-body p-4">
                         <nav aria-label="breadcrumb">
@@ -25,7 +31,7 @@
 
                         <div class="row g-5">
                             <div class="col-lg-6 mb-4 mb-lg-0">
-                                <img src="/images/oferta/{{offer.id}}"
+                                <img src="/images/oferta/{{offer.id}}?t={{cacheBuster}}"
                                     class="img-fluid rounded shadow-sm w-100 object-fit-cover" alt="Imagen del Residuo"
                                     onerror="this.src='/img/logo.webp';">
                             </div>
@@ -36,26 +42,40 @@
                                         <span
                                             class="badge bg-warning text-dark mb-2 text-uppercase fw-bold">{{offer.category}}</span>
                                         <h1 class="fw-bold mb-1 text-dark">{{offer.title}}</h1>
-                                        <div class="d-flex align-items-center text-muted small">
-                                            <i class="fas fa-industry me-1 text-primary"></i>
-                                            {{offer.company.commercialName}}
+                                        <div class="d-flex align-items-center text-muted small mt-1">
+                                            <img src="/images/empresa/{{offer.company.id}}"
+                                                class="rounded-circle object-fit-cover me-2"
+                                                style="width: 32px; height: 32px; border: 1px solid #eee;"
+                                                onerror="this.src='/img/logo.webp';">
+                                            <span>{{offer.company.commercialName}}</span>
                                         </div>
                                     </div>
-                                    <div class="text-end">
-                                        <span class="badge bg-success rounded-pill px-3 py-2">{{offer.status.displayName}}</span>
+                                    <div class="text-end d-flex flex-column align-items-end gap-2">
+                                        <span
+                                            class="badge bg-success rounded-pill px-3 py-2">{{offer.status.displayName}}</span>
+                                        <button class="btn btn-outline-secondary btn-circle shadow-sm" title="Compartir"
+                                            onclick="compartirRecurso()">
+                                            <i class="fas fa-share-alt"></i>
+                                        </button>
                                     </div>
                                 </div>
 
                                 <div
                                     class="d-flex align-items-end my-4 p-3 bg-white rounded shadow-sm border-start border-4 border-success">
-                                    <div class="me-4">
+                                    <div class="me-4 border-end pe-4">
                                         <small class="text-uppercase text-muted fw-bold d-block">Precio</small>
                                         <span class="h2 text-success fw-bold mb-0">€ {{offer.price}}</span>
                                     </div>
-                                    <div class="me-4">
+                                    <div class="me-4 border-end pe-4">
                                         <small class="text-uppercase text-muted fw-bold d-block">Cantidad</small>
                                         <span class="h4 text-dark fw-bold mb-0">{{offer.quantity}}
                                             {{offer.unit}}</span>
+                                    </div>
+                                    <div class="ms-2">
+                                        <small class="text-uppercase text-muted fw-bold d-block">Disponibilidad</small>
+                                        <span class="h5 text-dark fw-bold mb-0">
+                                            <i class="fas fa-clock text-success me-1"></i> {{offer.availability}}
+                                        </span>
                                     </div>
                                 </div>
 
@@ -67,6 +87,7 @@
                                 </p>
 
                                 <div class="mt-4 pt-4 border-top">
+                                    {{^isOwner}}
                                     <form action="/mensajes/enviar/{{offer.id}}" method="POST">
                                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                                         <div class="mb-3">
@@ -93,6 +114,32 @@
                                             <i class="fas fa-shield-alt me-1"></i> Mensajería segura B2B verificada
                                         </p>
                                     </form>
+                                    {{/isOwner}}
+
+                                    {{#isOwner}}
+                                    <div class="alert alert-info border-0 shadow-sm rounded-4 p-4 text-center">
+                                        <i class="fas fa-user-circle fa-2x mb-3 text-primary"></i>
+                                        <h5 class="fw-bold">Esta es tu propia oferta</h5>
+                                        <p class="mb-3 text-muted">No puedes enviarte mensajes a ti mismo. Gestiona este
+                                            activo desde tu panel de control.</p>
+                                        <div class="d-flex justify-content-center gap-3">
+                                            {{^offer.isClosed}}
+                                            <a href="/ofertas/{{offer.id}}/editar"
+                                                class="btn btn-primary rounded-pill px-4">
+                                                <i class="fas fa-edit me-1"></i> Editar Oferta
+                                            </a>
+                                            {{/offer.isClosed}}
+                                            {{#offer.isClosed}}
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary rounded-pill px-4 py-2">
+                                                <i class="fas fa-history me-1"></i> Histórico (Solo Lectura)
+                                            </span>
+                                            {{/offer.isClosed}}
+                                            <a href="/mercado" class="btn btn-outline-secondary rounded-pill px-4">
+                                                <i class="fas fa-arrow-left me-1"></i> Volver al Mercado
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {{/isOwner}}
                                 </div>
                             </div>
                         </div>
@@ -103,3 +150,20 @@
     </div>
 
     {{> footer}}
+
+    <script>
+        function compartirRecurso() {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    text: 'Mira este recurso en EcoMóstoles',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert("Enlace copiado al portapapeles");
+                });
+            }
+        }
+    </script>
+</body>

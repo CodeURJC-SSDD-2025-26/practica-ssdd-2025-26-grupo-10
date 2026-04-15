@@ -18,6 +18,16 @@
                 </div>
             </header>
 
+            {{#successMessage}}
+            <div class="alert alert-success alert-dismissible fade show mb-4 rounded-3 border-0 shadow-sm" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle me-3 fa-lg"></i>
+                    <div>{{successMessage}}</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {{/successMessage}}
+
             <section class="row g-4 mb-4">
                 <div class="col-md-3"><div class="card border-0 shadow-sm card-modern"><div class="card-body d-flex align-items-center"><div class="bg-success bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-check-circle text-success fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Completados</small><h4 class="fw-bold mb-0 text-dark">{{totalCompleted}}</h4></div></div></div></div>
                 <div class="col-md-3"><div class="card border-0 shadow-sm card-modern"><div class="card-body d-flex align-items-center"><div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3"><i class="fas fa-clock text-warning fa-lg"></i></div><div><small class="text-muted fw-bold text-uppercase">Pendientes</small><h4 class="fw-bold mb-0 text-dark">{{totalPending}}</h4></div></div></div></div>
@@ -55,10 +65,12 @@
                                     <td class="text-end pe-4">
                                         <div class="d-flex gap-1 justify-content-end">
                                             <a href="/acuerdo/{{id}}" class="btn btn-sm btn-outline-success rounded-pill text-nowrap"><i class="fas fa-eye me-1"></i></a>
+                                            {{#isDeletable}}
                                             <form action="/mis_acuerdos/eliminar/{{id}}" method="POST" class="d-inline mb-0" onsubmit="return confirm('¿Estás seguro de que deseas cancelar este acuerdo?');">
                                                 {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                                                 <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fas fa-times"></i></button>
                                             </form>
+                                            {{/isDeletable}}
                                         </div>
                                     </td>
                                 </tr>

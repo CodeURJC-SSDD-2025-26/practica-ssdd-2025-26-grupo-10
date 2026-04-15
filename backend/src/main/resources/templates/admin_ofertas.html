@@ -1,135 +1,160 @@
 {{> head_admin}}
+
 <body class="bg-theme-dark">
-{{> header}}
+    {{> header}}
 
-<div class="container-fluid">
-    <div class="row min-vh-100">
-        <!-- Admin Sidebar -->
-        {{> sidebar_admin}}
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            <!-- Admin Sidebar -->
+            {{> sidebar_admin}}
 
-        <!-- Main Content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent">
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent">
 
-            <!-- Header -->
-            <section class="card shadow-sm border-0 rounded-4 mb-4">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                        <div>
-                          <h1 class="h2 fw-bold text-dark mb-0"><i class="fas fa-recycle me-2 text-success"></i> Ofertas y Residuos</h1>
-                          <p class="text-secondary small">Supervisión de materiales y recursos publicados en el mercado.</p>
+                <!-- Header -->
+                <section class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <div
+                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                            <div>
+                                <h1 class="h2 fw-bold text-dark mb-0"><i class="fas fa-recycle me-2 text-success"></i>
+                                    Ofertas y Residuos</h1>
+                                <p class="text-secondary small">Supervisión de materiales y recursos publicados en el
+                                    mercado.</p>
+                            </div>
+                            <form action="/admin/ofertas" method="GET" class="d-flex align-items-center gap-2">
+                                <select name="status" class="form-select form-select-sm rounded-pill px-3"
+                                    style="width: auto;">
+                                    <option value="">Todos los estados</option>
+                                    <option value="ACTIVE">Activa</option>
+                                    <option value="PAUSED">Pausada</option>
+                                    <option value="RESERVED">Reservada</option>
+                                    <option value="FINISHED">Finalizada</option>
+                                    <option value="REPORTED">Denunciada</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm"><i
+                                        class="fas fa-filter me-1"></i> Filtrar</button>
+                            </form>
                         </div>
-                        <form action="/admin/ofertas" method="GET" class="d-flex align-items-center gap-2">
-                            <select name="status" class="form-select form-select-sm rounded-pill px-3" style="width: auto;">
-                                <option value="">Todos los estados</option>
-                                <option value="ACTIVE">Activa</option>
-                                <option value="PAUSED">Pausada</option>
-                                <option value="RESERVED">Reservada</option>
-                                <option value="FINISHED">Finalizada</option>
-                                <option value="REPORTED">Denunciada</option>
-                            </select>
-                            <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm"><i class="fas fa-filter me-1"></i> Filtrar</button>
-                        </form>
+
+                        <!-- Stats row -->
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <div class="border rounded-4 p-3 text-center bg-light">
+                                    <h4 class="fw-bold text-success mb-0">{{totalOffers}}</h4>
+                                    <small class="text-muted fw-bold text-uppercase small">Publicadas</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="border rounded-4 p-3 text-center bg-light">
+                                    <h4 class="fw-bold text-warning mb-0">{{totalPending}}</h4>
+                                    <small class="text-muted fw-bold text-uppercase small">Pendientes</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="border rounded-4 p-3 text-center bg-light">
+                                    <h4 class="fw-bold text-danger mb-0">{{totalReported}}</h4>
+                                    <small class="text-muted fw-bold text-uppercase small">Denunciadas</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="border rounded-4 p-3 text-center bg-light">
+                                    <h4 class="fw-bold text-secondary mb-0">{{totalCompleted}}</h4>
+                                    <small class="text-muted fw-bold text-uppercase small">Finalizadas</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Offers Table -->
+                <section class="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden shadow-sm">
+                    <div class="card-header bg-white border-0 fw-bold pt-4 pb-0 px-4">
+                        <h5 class="fw-bold text-dark mb-0">Listado de Ofertas</h5>
+                        <p class="text-muted small mb-0">Gestión de inventario global de la plataforma EcoMóstoles</p>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light text-secondary small text-uppercase">
+                                    <tr>
+                                        <th class="ps-4">Imagen</th>
+                                        <th>Residuo / Material</th>
+                                        <th>Publicado por</th>
+                                        <th>Cantidad</th>
+                                        <th>Estado</th>
+                                        <th class="text-end pe-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#offers}}
+                                    <tr>
+                                        <td class="ps-4">
+                                            <img src="/images/oferta/{{id}}?t={{cacheBuster}}" alt=""
+                                                class="rounded-3 object-fit-cover shadow-sm"
+                                                style="width: 50px; height: 50px;" onerror="this.src='/img/logo.webp';">
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-dark">{{title}}</div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <small class="text-muted text-uppercase small">{{category}}</small>
+                                                <small class="text-success small fw-bold"><i class="fas fa-clock"></i>
+                                                    {{availability}}</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-secondary small fw-bold">{{company.commercialName}}</td>
+                                        <td class="text-secondary fw-bold">{{quantity}} {{unit}}</td>
+                                        <td><span
+                                                class="badge bg-success rounded-pill px-3">{{status.displayName}}</span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="/admin/ofertas/ver/{{id}}"
+                                                    class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center p-0 fs-5"
+                                                    style="width: 45px; height: 45px; flex-shrink: 0;"
+                                                    title="Ver Detalle">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a href="/admin/ofertas/editar/{{id}}"
+                                                    class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0 fs-5"
+                                                    style="width: 45px; height: 45px; flex-shrink: 0;" title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <form action="/admin/ofertas/{{id}}/eliminar" method="POST"
+                                                    style="display: inline-block; margin: 0;"
+                                                    onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta oferta? Esta acción no se puede deshacer.');">
+                                                    {{#_csrf}}<input type="hidden" name="_csrf"
+                                                        value="{{token}}">{{/_csrf}}
+                                                    <button type="submit"
+                                                        class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center p-0 fs-5"
+                                                        style="width: 45px; height: 45px; flex-shrink: 0;"
+                                                        title="Eliminar">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{/offers}}
+                                    {{^offers}}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5 text-muted">
+                                            <div class="mb-3"><i class="fas fa-box-open fs-1 opacity-25"></i></div>
+                                            <p class="mb-0">No hay ofertas disponibles en este momento.</p>
+                                        </td>
+                                    </tr>
+                                    {{/offers}}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <!-- Stats row -->
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <div class="border rounded-4 p-3 text-center bg-light">
-                                <h4 class="fw-bold text-success mb-0">{{totalOffers}}</h4>
-                                <small class="text-muted fw-bold text-uppercase small">Publicadas</small>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="border rounded-4 p-3 text-center bg-light">
-                                <h4 class="fw-bold text-warning mb-0">{{totalPending}}</h4>
-                                <small class="text-muted fw-bold text-uppercase small">Pendientes</small>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="border rounded-4 p-3 text-center bg-light">
-                                <h4 class="fw-bold text-danger mb-0">{{totalReported}}</h4>
-                                <small class="text-muted fw-bold text-uppercase small">Denunciadas</small>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="border rounded-4 p-3 text-center bg-light">
-                                <h4 class="fw-bold text-secondary mb-0">{{totalCompleted}}</h4>
-                                <small class="text-muted fw-bold text-uppercase small">Finalizadas</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                    <!-- Pagination Footer -->
+                    {{> pagination_control}}
+                </section>
 
-            <!-- Offers Table -->
-            <section class="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden shadow-sm">
-                <div class="card-header bg-white border-0 fw-bold pt-4 pb-0 px-4">
-                    <h5 class="fw-bold text-dark mb-0">Listado de Ofertas</h5>
-                    <p class="text-muted small mb-0">Gestión de inventario global de la plataforma EcoMóstoles</p>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light text-secondary small text-uppercase">
-                                <tr>
-                                    <th class="ps-4">Imagen</th>
-                                    <th>Residuo / Material</th>
-                                    <th>Publicado por</th>
-                                    <th>Cantidad</th>
-                                    <th>Estado</th>
-                                    <th class="text-end pe-4">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#offers}}
-                                <tr>
-                                    <td class="ps-4">
-                                        <img src="/images/offer/{{id}}" alt="" class="rounded-3 object-fit-cover shadow-sm" style="width: 50px; height: 50px;" onerror="this.src='/img/logo.webp';">
-                                    </td>
-                                    <td>
-                                        <div class="fw-bold text-dark">{{title}}</div>
-                                        <small class="text-muted text-uppercase small">{{category}}</small>
-                                    </td>
-                                    <td class="text-secondary small fw-bold">{{company.commercialName}}</td>
-                                    <td class="text-secondary fw-bold">{{quantity}} {{unit}}</td>
-                                    <td><span class="badge bg-success rounded-pill px-3">{{status.displayName}}</span></td>
-                                    <td class="text-end pe-4">
-                                        <div class="d-flex justify-content-center gap-2">
-                                            <a href="/admin/ofertas/ver/{{id}}" class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center p-0 fs-5" style="width: 45px; height: 45px; flex-shrink: 0;" title="Ver Detalle">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <a href="/admin/ofertas/editar/{{id}}" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0 fs-5" style="width: 45px; height: 45px; flex-shrink: 0;" title="Editar">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            <form action="/admin/ofertas/{{id}}/eliminar" method="POST" style="display: inline-block; margin: 0;">
-                                                {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
-                                                <button type="submit" class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center p-0 fs-5" style="width: 45px; height: 45px; flex-shrink: 0;" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este registro?');">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {{/offers}}
-                                {{^offers}}
-                                <tr>
-                                    <td colspan="6" class="text-center py-5 text-muted">
-                                        <div class="mb-3"><i class="fas fa-box-open fs-1 opacity-25"></i></div>
-                                        <p class="mb-0">No hay ofertas disponibles en este momento.</p>
-                                    </td>
-                                </tr>
-                                {{/offers}}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Pagination Footer -->
-                {{> pagination_control}}
-            </section>
-
-        </main>
+            </main>
+        </div>
     </div>
-</div>
 
-{{> footer}}
+    {{> footer}}

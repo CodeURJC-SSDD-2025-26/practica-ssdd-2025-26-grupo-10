@@ -33,15 +33,22 @@
                 <div class="col-md-4">
                     <div class="card h-100 border-0 shadow-sm card-hover rounded-4 overflow-hidden">
                         <div class="position-relative">
-                            <img src="/images/oferta/{{id}}" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{title}}" onerror="this.src='/img/logo.webp';">
+                            <img src="/images/oferta/{{id}}?t={{cacheBuster}}" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{title}}" onerror="this.src='/img/logo.webp';">
                             <span class="badge bg-success position-absolute top-0 end-0 m-3 shadow-sm px-3 py-2 rounded-pill">{{category}}</span>
                         </div>
                         <div class="card-body p-4">
                             <h5 class="card-title fw-bold text-dark mb-2">{{title}}</h5>
-                            <div class="d-flex align-items-center mb-3 text-muted small">
-                                <i class="fas fa-industry me-2 text-success"></i> {{company.commercialName}}
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="/images/empresa/{{company.id}}" class="rounded-circle object-fit-cover me-2" style="width: 24px; height: 24px; border: 1px solid #eee;" onerror="this.src='/img/logo.webp';">
+                                <small class="text-muted">{{company.commercialName}}</small>
                             </div>
-                            <p class="card-text text-secondary line-clamp-2 small mb-4">{{description}}</p>
+                            <p class="card-text text-secondary line-clamp-2 small mb-3">{{description}}</p>
+                            
+                            <div class="mb-3">
+                                <span class="text-muted small">
+                                    <i class="fas fa-clock text-success me-1"></i> <strong>Disponibilidad:</strong> {{availability}}
+                                </span>
+                            </div>
                             
                             <div class="d-flex justify-content-between align-items-center pt-3 border-top">
                                 <span class="h5 fw-bold text-success mb-0">{{quantity}} {{unit}}</span>

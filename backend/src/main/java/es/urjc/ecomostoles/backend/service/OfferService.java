@@ -77,6 +77,12 @@ public class OfferService {
         return offerRepository.findByCompany(company, pageable, OfferSummary.class);
     }
 
+    /** Returns all ACTIVE offers belonging to a specific company. */
+    public List<OfferSummary> getActiveByCompany(Company company) {
+        return offerRepository.findByCompanyAndStatus(company,
+                es.urjc.ecomostoles.backend.model.OfferStatus.ACTIVE, OfferSummary.class);
+    }
+
     /** Optimized count (does not fetch entire list) */
     @Transactional(readOnly = true)
     public long countByCompany(Company company) {
@@ -116,7 +122,8 @@ public class OfferService {
     }
 
     @Transactional(readOnly = true)
-    public Page<OfferSummary> searchFilteredOffers(String keyword, String wasteType, String industrialPark,
+    public Page<OfferSummary> searchFilteredOffers(String keyword,
+            es.urjc.ecomostoles.backend.model.WasteCategory wasteType, String industrialPark,
             Pageable pageable) {
         return offerRepository.searchFiltered(es.urjc.ecomostoles.backend.model.OfferStatus.ACTIVE, keyword,
                 wasteType, industrialPark, pageable);
@@ -126,5 +133,12 @@ public class OfferService {
     @Transactional
     public void registerVisit(Long id) {
         offerRepository.incrementVisits(id);
+    }
+
+    /** Returns all active offers EXCEPT those belonging to the specified company. */
+    @Transactional(readOnly = true)
+    public List<OfferSummary> getActiveByOtherCompanies(Company company) {
+        return offerRepository.findAllExternalOffers(
+                es.urjc.ecomostoles.backend.model.OfferStatus.ACTIVE, company, OfferSummary.class);
     }
 }

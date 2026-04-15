@@ -54,10 +54,25 @@ public class GlobalControllerAdvice {
         }
         Optional<Company> userOpt = companyService.findByEmail(principal.getName());
         if (userOpt.isPresent()) {
-            // Optimized: Atomic count from DB instead of loading all messages to memory
             return (int) messageService.countByRecipient(userOpt.get());
         }
         return 0;
+    }
+
+    @ModelAttribute("unreadCount")
+    public long unreadCount(Principal principal) {
+        if (principal == null) return 0;
+        return companyService.findByEmail(principal.getName())
+            .map(messageService::countUnreadByRecipient)
+            .orElse(0L);
+    }
+
+    @ModelAttribute("hasUnreadMessages")
+    public boolean hasUnreadMessages(Principal principal) {
+        if (principal == null) return false;
+        return companyService.findByEmail(principal.getName())
+            .map(c -> messageService.countUnreadByRecipient(c) > 0)
+            .orElse(false);
     }
 
     @ModelAttribute("currentYear")

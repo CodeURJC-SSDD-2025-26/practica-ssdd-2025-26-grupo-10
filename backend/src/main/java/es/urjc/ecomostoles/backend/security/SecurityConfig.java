@@ -21,7 +21,7 @@ import java.util.Collection;
  *
  * System roles:
  *  - ROLE_ADMIN   → platform administrator → redirects to /admin/panel
- *  - ROLE_EMPRESA → registered company (normal user) → redirects to /dashboard
+ *  - ROLE_COMPANY → registered company (normal user) → redirects to /dashboard
  */
 @Configuration
 @EnableWebSecurity
@@ -36,7 +36,7 @@ public class SecurityConfig {
     /**
      * Login success handler that redirects according to role:
      *   ROLE_ADMIN   → /admin/panel
-     *   ROLE_EMPRESA → /dashboard
+     *   ROLE_COMPANY → /dashboard
      */
     @Bean
     public AuthenticationSuccessHandler roleBasedSuccessHandler() {
@@ -69,18 +69,20 @@ public class SecurityConfig {
                 ).permitAll()
 
                 // ── Administration panel: ADMIN only ──────────────────────
-                .requestMatchers(org.springframework.http.HttpMethod.POST, "/admin/configuracion").hasRole("ADMIN")
                 .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
+
+                // ── Dashboard: COMPANY only ───────────────────────────────
+                .requestMatchers("/dashboard", "/dashboard/**").hasRole("COMPANY")
 
                 // ── Creation, edition and marketplace: any authenticated user ────────
                 .requestMatchers(
-                    "/mercado", "/mercado/**",              // private offer listing
-                    "/oferta/{id:\\d+}",                    // private offer detail
-                    "/solicitudes", "/solicitudes/**",
-                    "/oferta/nueva", "/offers/*/editar",
-                    "/demand/nueva", "/demands/*/editar",
-                    "/dashboard/**", "/perfil/**",
-                    "/mensajes/**", "/agreements/**", "/agreement/**"
+                    "/mercado", "/mercado/**",              // private marketplace
+                    "/oferta/**", "/ofertas/**",            // offers: detail and management
+                    "/solicitudes", "/solicitudes/**",      // demands board
+                    "/demanda/**", "/demandas/**",          // demands: detail and management
+                    "/perfil", "/perfil/**",                // company profile
+                    "/mensajes", "/mensajes/**",            // internal messaging system
+                    "/acuerdo/**", "/acuerdos/**"           // commercial agreements
                 ).authenticated()
 
                 // ── The rest requires authentication ─────────────────────────

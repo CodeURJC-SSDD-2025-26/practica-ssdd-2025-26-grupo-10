@@ -44,10 +44,11 @@ public class Offer {
     private String description;
 
     /**
-     * Type of waste or material.
+     * Category of waste or material.
      */
-    @NotBlank(message = "Debes seleccionar un tipo de residuo")
-    private String wasteType;
+    @NotNull(message = "Debes seleccionar un tipo de residuo")
+    @Enumerated(EnumType.STRING)
+    private WasteCategory wasteCategory;
 
     /**
      * Quantity of the material offered.
@@ -111,24 +112,24 @@ public class Offer {
     /**
      * Constructor with all parameters.
      *
-     * @param title            title of the offer
-     * @param description      detailed description
-     * @param wasteType        type of waste
-     * @param quantity         quantity offered
-     * @param unit             unit of measurement
-     * @param price            price
-     * @param availability     availability status
-     * @param status           current state
-     * @param publicationDate  publication date and time
-     * @param image            image byte array
-     * @param company          associated company
+     * @param title           title of the offer
+     * @param description     detailed description
+     * @param wasteCategory   type of waste
+     * @param quantity        quantity offered
+     * @param unit            unit of measurement
+     * @param price           price
+     * @param availability    availability status
+     * @param status          current state
+     * @param publicationDate publication date and time
+     * @param image           image byte array
+     * @param company         associated company
      */
-    public Offer(String title, String description, String wasteType, Double quantity, String unit,
+    public Offer(String title, String description, WasteCategory wasteCategory, Double quantity, String unit,
             Double price, String availability, OfferStatus status, LocalDateTime publicationDate,
             byte[] image, Company company) {
         this.title = title;
         this.description = description;
-        this.wasteType = wasteType;
+        this.wasteCategory = wasteCategory;
         this.quantity = quantity;
         this.unit = unit;
         this.price = price;
@@ -165,21 +166,19 @@ public class Offer {
         this.description = description;
     }
 
-    public String getWasteType() {
-        return wasteType;
+    public WasteCategory getWasteCategory() {
+        return wasteCategory;
     }
 
-    public void setWasteType(String wasteType) {
-        this.wasteType = wasteType;
+    public void setWasteCategory(WasteCategory wasteCategory) {
+        this.wasteCategory = wasteCategory;
     }
 
-    // Format the residue type to be user-friendly (e.g., "residuo_madera" ->
-    // "Residuo madera")
+    // Format the residue type to be user-friendly using the Enum's display name
     public String getFormattedWasteType() {
-        if (this.wasteType == null || this.wasteType.isEmpty())
+        if (this.wasteCategory == null)
             return "";
-        String formatted = this.wasteType.replace("_", " ");
-        return formatted.substring(0, 1).toUpperCase() + formatted.substring(1).toLowerCase();
+        return this.wasteCategory.getDisplayName();
     }
 
     public String getCategory() {
@@ -281,5 +280,9 @@ public class Offer {
         if (this.publicationDate == null)
             return "Fecha no disponible";
         return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(this.publicationDate);
+    }
+
+    public boolean isClosed() {
+        return OfferStatus.FINISHED.equals(this.status);
     }
 }

@@ -10,6 +10,7 @@ import es.urjc.ecomostoles.backend.model.OfferStatus;
 import es.urjc.ecomostoles.backend.model.Offer;
 import es.urjc.ecomostoles.backend.model.Demand;
 import es.urjc.ecomostoles.backend.model.Agreement;
+import es.urjc.ecomostoles.backend.model.WasteCategory;
 import es.urjc.ecomostoles.backend.dto.SelectOption;
 import es.urjc.ecomostoles.backend.dto.OfferSummary;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -362,7 +363,7 @@ public class AdminController {
             return "redirect:/admin/ofertas";
 
         // Inject select options for the form using helper
-        injectFormOptions(model, offer.getUnit(), offer.getAvailability(), offer.getWasteType(),
+        injectFormOptions(model, offer.getUnit(), offer.getAvailability(), offer.getWasteCategory(),
                 offer.getStatus());
 
         return "editar_activo";
@@ -384,7 +385,7 @@ public class AdminController {
         model.addAttribute("demand", demand);
 
         // Inject select options for the form using helper
-        injectFormOptions(model, demand.getUnit(), demand.getUrgency(), demand.getMaterialCategory(),
+        injectFormOptions(model, demand.getUnit(), demand.getUrgency(), demand.getWasteCategory(),
                 demand.getStatus());
 
         return "editar_solicitud";
@@ -525,10 +526,15 @@ public class AdminController {
      * Helper to inject common select options into the model for administrative
      * forms.
      */
-    private void injectFormOptions(Model model, String unit, String availability, String cat, Enum<?> state) {
+    private void injectFormOptions(Model model, String unit, String availability, WasteCategory cat, Enum<?> state) {
         model.addAttribute("unitOptions", buildOptions("unitList", unit));
         model.addAttribute("availabilityOptions", buildOptions("availabilityList", availability));
-        model.addAttribute("categoryOptions", buildOptions("categoryList", cat));
+
+        List<SelectOption> categoryOptions = new ArrayList<>();
+        for (WasteCategory wcat : WasteCategory.values()) {
+            categoryOptions.add(new SelectOption(wcat.name(), wcat.getDisplayName(), wcat.equals(cat)));
+        }
+        model.addAttribute("wasteCategories", categoryOptions);
 
         if (state != null) {
             List<SelectOption> options = new ArrayList<>();

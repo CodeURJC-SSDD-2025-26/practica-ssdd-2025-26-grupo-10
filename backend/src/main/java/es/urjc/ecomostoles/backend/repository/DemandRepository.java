@@ -28,11 +28,14 @@ public interface DemandRepository extends JpaRepository<Demand, Long> {
 
     Page<Demand> findByStatus(DemandStatus status, Pageable pageable);
 
+    @Query("SELECT d FROM Demand d WHERE d.status = :status AND (d.expiryDate IS NULL OR d.expiryDate > :now)")
+    Page<Demand> findActiveAndNotExpired(@Param("status") DemandStatus status, @Param("now") java.time.LocalDateTime now, Pageable pageable);
+
     long countByCompany(Company company);
 
     long countByCompanyAndStatus(Company company, DemandStatus status);
 
-    @Query("SELECT o FROM es.urjc.ecomostoles.backend.model.Offer o JOIN FETCH o.company WHERE o.status = es.urjc.ecomostoles.backend.model.OfferStatus.ACTIVE AND o.company.id != :companyId AND o.wasteType IN (SELECT d.materialCategory FROM Demand d WHERE d.company.id = :companyId AND d.status = es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE)")
+    @Query("SELECT o FROM es.urjc.ecomostoles.backend.model.Offer o JOIN FETCH o.company WHERE o.status = es.urjc.ecomostoles.backend.model.OfferStatus.ACTIVE AND o.company.id != :companyId AND o.wasteCategory IN (SELECT d.wasteCategory FROM Demand d WHERE d.company.id = :companyId AND d.status = es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE)")
     List<es.urjc.ecomostoles.backend.model.Offer> findOffersMatchingDemand(@Param("companyId") Long companyId,
             org.springframework.data.domain.Pageable pageable);
 

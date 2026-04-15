@@ -40,9 +40,9 @@
                 <a class="nav-link {{#activeMessages}}active text-success fw-bold{{/activeMessages}} {{^activeMessages}}text-dark{{/activeMessages}}"
                     href="/mensajes">
                     <i class="fas fa-envelope me-2"></i> Mensajes
-                    {{#totalMessages}}
-                    <span class="badge bg-danger rounded-pill ms-1">{{totalMessages}}</span>
-                    {{/totalMessages}}
+                    {{#hasUnreadMessages}}
+                    <span class="badge bg-danger rounded-pill ms-1">{{unreadCount}}</span>
+                    {{/hasUnreadMessages}}
                 </a>
             </li>
         </ul>

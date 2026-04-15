@@ -40,6 +40,10 @@ public interface OfferSummary {
 
     OfferStatus getStatus();
 
+    default boolean isClosed() {
+        return OfferStatus.FINISHED.equals(getStatus());
+    }
+
     LocalDateTime getPublicationDate();
 
     Company getCompany();

@@ -12,66 +12,84 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2 text-dark fw-bold">Registrar Nuevo Acuerdo</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <a href="/dashboard/mis-acuerdos" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-1"></i> Cancelar</a>
+                    <a href="/acuerdos" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-1"></i> Cancelar</a>
                 </div>
             </div>
 
             <div class="card card-modern border-top-success">
                 <div class="card-body p-4">
-                    {{#errors}}
-                      <div class="alert alert-danger" role="alert">
-                        <i class="fas fa-exclamation-triangle"></i> {{defaultMessage}}
-                      </div>
-                    {{/errors}}
+                    {{#successMessage}}
+                    <div class="alert alert-success alert-dismissible fade show mb-4 rounded-3 border-0 shadow-sm" role="alert">
+                        <i class="fas fa-check-circle me-2"></i> {{successMessage}}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {{/successMessage}}
+
+                    {{#errorMessage}}
+                    <div class="alert alert-danger alert-dismissible fade show mb-4 rounded-3 border-0 shadow-sm" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i> {{errorMessage}}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {{/errorMessage}}
+
                     <form action="/acuerdo/nuevo" method="POST" class="needs-validation" novalidate="">
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Oferta Relacionada <span class="text-danger">*</span></label>
-                                <select name="offerId" class="form-select" required="">
+                                <select name="offerId" class="form-select {{#error_offerId}}is-invalid{{/error_offerId}}" required="">
                                     <option value="" selected="" disabled="">Seleccionar tu oferta...</option>
                                     {{#offers}}
                                     <option value="{{id}}">REF-{{id}}: {{title}}</option>
                                     {{/offers}}
                                 </select>
+                                <div class="invalid-feedback">Selecciona una oferta para vincular el acuerdo.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Empresa Destino <span class="text-danger">*</span></label>
-                                <select name="destinationCompanyId" class="form-select" required="">
+                                <select name="destinationCompanyId" class="form-select {{#error_destinationCompanyId}}is-invalid{{/error_destinationCompanyId}}" required="">
                                     <option value="" selected="" disabled="">Seleccionar empresa...</option>
                                     {{#companies}}
                                     <option value="{{id}}">{{commercialName}}</option>
                                     {{/companies}}
                                 </select>
+                                <div class="invalid-feedback">Selecciona la empresa destino del material.</div>
                             </div>
 
                             <div class="col-md-5">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <input type="number" name="quantity" class="form-control" placeholder="Ej. 500" min="0" value="{{#agreement.quantity}}{{agreement.quantity}}{{/agreement.quantity}}" required="">
-                                    <select name="unit" class="form-select" style="max-width: 120px;" required>
+                                <div class="input-group has-validation">
+                                    <input type="number" name="quantity" class="form-control {{#error_quantity}}is-invalid{{/error_quantity}}" placeholder="Ej. 500" min="0" value="{{#agreement.quantity}}{{agreement.quantity}}{{/agreement.quantity}}" required="">
+                                    <select name="unit" class="form-select {{#error_unit}}is-invalid{{/error_unit}}" style="max-width: 120px;" required>
                                         {{#unitList}}
                                         <option value="{{.}}">{{.}}</option>
                                         {{/unitList}}
                                     </select>
+                                    <div class="invalid-feedback">Indica la cantidad y unidad acordadas.</div>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Precio Acordado (€) <span class="text-danger">*</span></label>
-                                 <input type="number" name="agreedPrice" class="form-control" placeholder="Ej. 1200" step="0.01" min="0" value="{{#agreement.agreedPrice}}{{agreement.agreedPrice}}{{/agreement.agreedPrice}}" required="">
+                                <div class="input-group has-validation">
+                                    <input type="number" name="agreedPrice" class="form-control {{#error_agreedPrice}}is-invalid{{/error_agreedPrice}}" id="agreedPrice" placeholder="Ej. 1200" step="0.01" min="0" value="{{#agreement.agreedPrice}}{{agreement.agreedPrice}}{{/agreement.agreedPrice}}" required="">
+                                    <span class="input-group-text">€</span>
+                                    <div class="invalid-feedback">Introduce el precio total del acuerdo.</div>
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Fecha de Recogida <span class="text-danger">*</span></label>
-                                 <input type="date" name="pickupDate" class="form-control" value="{{#agreement.pickupDate}}{{agreement.pickupDate}}{{/agreement.pickupDate}}" required="">
+                                 <input type="date" name="pickupDate" class="form-control {{#error_pickupDate}}is-invalid{{/error_pickupDate}}" id="pickupDate" value="{{#agreement.pickupDate}}{{agreement.pickupDate}}{{/agreement.pickupDate}}" required="">
+                                 <div class="invalid-feedback">Selecciona una fecha de recogida.</div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Estado <span class="text-danger">*</span></label>
-                                <select name="status" class="form-select" required="">
+                                <select class="form-select {{#error_status}}is-invalid{{/error_status}}" id="status" name="status" required>
                                     <option value="PENDING" selected="">Pendiente</option>
                                     <option value="ACCEPTED">Aceptado</option>
                                     <option value="REJECTED">Rechazado</option>
                                 </select>
+                                <div class="invalid-feedback">Indica el estado del acuerdo.</div>
                             </div>
 
                             <div class="col-12">

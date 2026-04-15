@@ -1,6 +1,7 @@
 package es.urjc.ecomostoles.backend.controller;
 
 import es.urjc.ecomostoles.backend.model.OfferStatus;
+import es.urjc.ecomostoles.backend.model.WasteCategory;
 
 import es.urjc.ecomostoles.backend.model.Company;
 import es.urjc.ecomostoles.backend.model.Offer;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -89,7 +91,7 @@ public class MyOffersController {
     // -------------------------------------------------------------------------
     @GetMapping("/dashboard/mis-ofertas")
     public String showMyOffers(Model model, Principal principal,
-            @PageableDefault(size = 5) Pageable pageable) {
+            @PageableDefault(size = 6) Pageable pageable) {
         Optional<Company> companyOpt = companyService.findByEmail(principal.getName());
         if (companyOpt.isPresent()) {
             Company company = companyOpt.get();
@@ -102,15 +104,15 @@ public class MyOffersController {
 
             // Pagination metadata
             model.addAttribute("currentPage", offerPage.getNumber() + 1);
-            model.addAttribute("totalPages", offerPage.getTotalPages());
+            model.addAttribute("totalPages", offerPage.getTotalPages() == 0 ? 1 : offerPage.getTotalPages());
             model.addAttribute("hasNext", offerPage.hasNext());
-            model.addAttribute("hasPrev", offerPage.hasPrevious());
+            model.addAttribute("hasPrevious", offerPage.hasPrevious());
             model.addAttribute("prevPage", offerPage.getNumber() - 1);
             model.addAttribute("nextPage", offerPage.getNumber() + 1);
             model.addAttribute("totalItems", offerPage.getTotalElements());
 
             // Dynamic base URL for pagination partial
-            model.addAttribute("paginationBaseUrl", "/dashboard/mis-offers");
+            model.addAttribute("paginationBaseUrl", "/dashboard/mis-ofertas");
             model.addAttribute("paginationQueryString", "");
 
             // KPI stats based on ALL user offers (for consistency)
@@ -145,7 +147,7 @@ public class MyOffersController {
     }
 
     private void injectDynamicOptions(Model model) {
-        model.addAttribute("categoryList", configurationService.getSanitizedList("categoryList"));
+        model.addAttribute("wasteCategories", WasteCategory.values());
         model.addAttribute("unitList", configurationService.getSanitizedList("unitList"));
         model.addAttribute("availabilityList",
                 configurationService.getSanitizedList("availabilityList"));
@@ -159,12 +161,27 @@ public class MyOffersController {
             BindingResult result,
             @RequestParam(required = false) MultipartFile imageFile,
             Model model,
-            Principal principal) {
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
 
-        if (result.hasErrors()) {
+        // Check image errors separately but let field validation run
+        boolean imageError = false;
+        if (imageFile == null || imageFile.isEmpty()) {
+            model.addAttribute("errorMessage", "Error: Es obligatorio subir una imagen para publicar la oferta.");
+            imageError = true;
+        } else {
+            String contentType = imageFile.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                model.addAttribute("errorMessage",
+                        "Error: El archivo seleccionado no es una imagen válida (JPG, PNG, WEBP).");
+                imageError = true;
+            }
+        }
+
+        if (result.hasErrors() || imageError) {
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             model.addAttribute("errors", result.getAllErrors());
-            model.addAttribute("offer", offer);
+            model.addAttribute("offer", offer); // Ensure attribute name matches template
             injectDynamicOptions(model);
             return "crear_activo";
         }
@@ -184,6 +201,7 @@ public class MyOffersController {
             }
 
             offerService.save(offer);
+            redirectAttributes.addFlashAttribute("successMessage", "¡Oferta publicada con éxito!");
             return "redirect:/dashboard/mis-ofertas";
         }
         return "redirect:/";
@@ -193,9 +211,16 @@ public class MyOffersController {
     // POST /ofertas/{id}/eliminar — Delete offer (ownership check)
     // -------------------------------------------------------------------------
     @PostMapping("/ofertas/{id}/eliminar")
-    public String deleteOffer(@PathVariable Long id, Principal principal) {
-        verifyOwnership(id, principal);
+    public String deleteOffer(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+        Offer offer = verifyOwnership(id, principal);
+        
+        if (offer.isClosed()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: No se puede eliminar una oferta que ya ha sido finalizada.");
+            return "redirect:/dashboard/mis-ofertas";
+        }
+
         offerService.delete(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Oferta eliminada correctamente.");
         return "redirect:/dashboard/mis-ofertas";
     }
 
@@ -211,13 +236,13 @@ public class MyOffersController {
                 "PAUSED".equals(offer.getStatus() != null ? offer.getStatus().name() : "")));
         model.addAttribute("statusOptions", statusOptions);
 
-        // Dynamic Categories
-        List<String> categories = configurationService.getSanitizedList("categoryList");
+        // Dynamic Categories with selection logic
         List<SelectOption> categoryOptions = new ArrayList<>();
-        for (String cat : categories) {
-            categoryOptions.add(new SelectOption(cat, cat, cat.equals(offer.getWasteType())));
+        for (WasteCategory cat : WasteCategory.values()) {
+            categoryOptions
+                    .add(new SelectOption(cat.name(), cat.getDisplayName(), cat.equals(offer.getWasteCategory())));
         }
-        model.addAttribute("categoryOptions", categoryOptions);
+        model.addAttribute("wasteCategories", categoryOptions);
 
         // Dynamic Units
         List<String> unitsList = configurationService.getSanitizedList("unitList");
@@ -242,8 +267,15 @@ public class MyOffersController {
     @GetMapping("/ofertas/{id}/editar")
     public String showEditOfferForm(@PathVariable Long id,
             Model model,
-            Principal principal) {
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
         Offer offer = verifyOwnership(id, principal);
+
+        if (offer.isClosed()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: No es posible editar ofertas que ya han sido finalizadas.");
+            return "redirect:/dashboard/mis-ofertas";
+        }
+
         model.addAttribute("offer", offer);
         model.addAttribute("isDashboard", true);
 
@@ -261,17 +293,33 @@ public class MyOffersController {
             BindingResult result,
             @RequestParam(required = false) MultipartFile imageFile,
             Model model,
-            Principal principal) {
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
 
         // SECURITY: Verify ownership BEFORE validation to prevent Data Leak
         Offer offer = verifyOwnership(id, principal);
 
-        if (result.hasErrors()) {
+        if (offer.isClosed()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error de seguridad: Intento de edición sobre una oferta finalizada.");
+            return "redirect:/dashboard/mis-ofertas";
+        }
+
+        // Validate image content type (Security check)
+        boolean imageError = false;
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String contentType = imageFile.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                model.addAttribute("errorMessage",
+                        "Error: El archivo seleccionado no es una imagen válida (JPG, PNG, WEBP).");
+                imageError = true;
+            }
+        }
+
+        if (result.hasErrors() || imageError) {
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             loadSelectOptions(model, offerForm);
-
             model.addAttribute("errors", result.getAllErrors());
-            model.addAttribute("offer", offerForm);
+            model.addAttribute("offer", offerForm); // Ensure attribute name matches template 'offer'
             offerForm.setId(id);
             return "editar_activo";
         }
@@ -280,7 +328,7 @@ public class MyOffersController {
         offer.setDescription(offerForm.getDescription());
         offer.setQuantity(offerForm.getQuantity());
         offer.setPrice(offerForm.getPrice());
-        offer.setWasteType(offerForm.getWasteType());
+        offer.setWasteCategory(offerForm.getWasteCategory());
         offer.setUnit(offerForm.getUnit());
         offer.setAvailability(offerForm.getAvailability());
         offer.setStatus(offerForm.getStatus());

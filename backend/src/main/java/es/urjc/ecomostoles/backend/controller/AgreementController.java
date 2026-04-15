@@ -62,12 +62,14 @@ public class AgreementController {
             Company company = companyOpt.get();
             model.addAttribute("activeNewAgreement", true);
             model.addAttribute("isDashboard", true);
-            List<OfferSummary> myOffers = offerService.getByCompany(company);
+            
+            // Business Logic: Only show offers belonging to the current company (Material Owner)
+            List<OfferSummary> myOffers = offerService.getActiveByCompany(company);
             model.addAttribute("offers", myOffers);
 
-            List<Company> allCompanies = companyService.getAll();
-            allCompanies.removeIf(e -> e.getId().equals(company.getId()));
-            model.addAttribute("companies", allCompanies);
+            List<Company> otherCompanies = companyService.getAll();
+            otherCompanies.removeIf(e -> e.getId().equals(company.getId()));
+            model.addAttribute("companies", otherCompanies);
 
             return "crear_acuerdo";
         }
@@ -108,14 +110,24 @@ public class AgreementController {
             @RequestParam(name = "offerId", required = false) Long offerId,
             @RequestParam(name = "destinationCompanyId", required = false) Long destinationCompanyId,
             Model model,
-            Principal principal) {
+            Principal principal,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
 
         Optional<Company> companyOpt = companyService.findByEmail(principal.getName());
         Company loggedCompany = companyOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
-        if (result.hasErrors()) {
-            model.addAttribute("offers", offerService.getByCompany(loggedCompany));
+        if (result.hasErrors() || offerId == null || destinationCompanyId == null) {
+            System.out.println("❌ Error de validación al registrar acuerdo:");
+            result.getAllErrors().forEach(System.out::println);
+            if (offerId == null) System.out.println("- Falta offerId");
+            if (destinationCompanyId == null) System.out.println("- Falta destinationCompanyId");
 
+            result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
+            if (offerId == null) model.addAttribute("error_offerId", true);
+            if (destinationCompanyId == null) model.addAttribute("error_destinationCompanyId", true);
+
+            // Re-populate with OWN offers and other companies
+            model.addAttribute("offers", offerService.getActiveByCompany(loggedCompany));
             List<Company> allCompanies = companyService.getAll();
             allCompanies.removeIf(e -> e.getId().equals(loggedCompany.getId()));
             model.addAttribute("companies", allCompanies);
@@ -125,14 +137,16 @@ public class AgreementController {
             return "crear_acuerdo";
         }
 
-        // ── Business Logic delegated to the Service
-        // ────────────────────────────────────
         try {
-            if (offerId != null && agreement != null) {
-                agreementService.registerNewAgreement(agreement, principal.getName(), offerId, destinationCompanyId);
-            }
+            agreementService.registerNewAgreement(agreement, principal.getName(), offerId, destinationCompanyId);
+            redirectAttributes.addFlashAttribute("successMessage", "¡Acuerdo registrado con éxito! El material ha sido reservado.");
         } catch (SelfAgreementException e) {
-            return "redirect:/mercado?error=AutoAcuerdo";
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/acuerdo/nuevo";
+        } catch (Exception e) {
+            System.err.println("❌ Error inesperado al guardar acuerdo: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error interno al procesar el acuerdo.");
+            return "redirect:/acuerdo/nuevo";
         }
 
         return "redirect:/acuerdos";
@@ -196,6 +210,14 @@ public class AgreementController {
     public String updateAgreement(@PathVariable Long id, @Valid @ModelAttribute Agreement updatedAgreement,
             BindingResult result, Model model, Principal principal) {
         if (result.hasErrors()) {
+            result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
+            model.addAttribute("agreement", updatedAgreement);
+            updatedAgreement.setId(id);
+            // Repopulate dynamic options (DRY with showEditForm)
+            model.addAttribute("unitOptions", 
+                es.urjc.ecomostoles.backend.utils.FormOptionsHelper.getUnitOptions(configurationService, updatedAgreement.getUnit()));
+            model.addAttribute("statusOptions", 
+                es.urjc.ecomostoles.backend.utils.FormOptionsHelper.getAgreementStatusOptions(updatedAgreement.getStatus()));
             model.addAttribute("errors", result.getAllErrors());
             return "editar_acuerdo";
         }
@@ -212,7 +234,7 @@ public class AgreementController {
 
         agreementService.updateAgreement(id, updatedAgreement);
 
-        return "redirect:/acuerdos/" + id;
+        return "redirect:/acuerdo/" + id;
     }
 
     /**
@@ -221,7 +243,8 @@ public class AgreementController {
      * destination.
      */
     @PostMapping("/mis_acuerdos/eliminar/{id}")
-    public String deleteAgreementAsUser(@PathVariable Long id, Principal principal) {
+    public String deleteAgreementAsUser(@PathVariable Long id, Principal principal,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         Agreement agreement = agreementService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agreement not found"));
 
@@ -233,12 +256,14 @@ public class AgreementController {
         }
 
         if (AgreementStatus.COMPLETED.equals(agreement.getStatus())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Completed agreements cannot be deleted to preserve the historical impact data.");
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "No se puede eliminar un acuerdo ya finalizado para no perder el histórico de impacto de CO2.");
+            return "redirect:/acuerdos";
         }
 
         agreementService.delete(id);
-        return "redirect:/acuerdos?success=eliminado";
+        redirectAttributes.addFlashAttribute("successMessage", "Acuerdo cancelado correctamente.");
+        return "redirect:/acuerdos";
     }
 
     private boolean hasPermissionOverAgreement(Agreement agreement, Company loggedCompany, boolean isAdmin) {

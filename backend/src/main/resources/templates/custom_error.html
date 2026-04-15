@@ -1,0 +1,42 @@
+{{> head}}
+<body class="bg-theme-dark">
+{{> header}}
+
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center py-5">
+        <div class="col-md-8 col-lg-6 text-center">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-exclamation-circle text-danger display-1 opacity-25"></i>
+                    </div>
+    
+                    <h1 class="display-5 fw-bold text-dark mb-2">{{errorTitle}}</h1>
+                    <p class="text-muted fw-bold mb-3 small text-uppercase">Código de Error: {{statusCode}}</p>
+                    
+                    <p class="lead text-secondary mb-4 px-3">{{errorMessage}}</p>
+                    
+                    <hr class="my-4 opacity-25">
+                    <p class="text-secondary small">Si consideras que esto es un error técnico, por favor contacta con nuestro equipo de soporte: 
+                       <a href="mailto:{{supportEmail}}" class="text-success fw-bold text-decoration-none">{{supportEmail}}</a>
+                    </p>
+    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                        {{#company}}
+                        <a href="/dashboard" class="btn btn-success px-4 py-2 fw-bold rounded-pill mx-1 shadow-sm">
+                            <i class="fas fa-tachometer-alt me-2"></i> Volver al Panel
+                        </a>
+                        {{/company}}
+                        {{^company}}
+                        <a href="/login" class="btn btn-primary px-4 py-2 fw-bold rounded-pill mx-1 shadow-sm">
+                            <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
+                        </a>
+                        {{/company}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> footer}}

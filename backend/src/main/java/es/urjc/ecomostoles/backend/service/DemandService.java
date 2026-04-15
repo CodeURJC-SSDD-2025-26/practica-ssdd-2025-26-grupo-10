@@ -51,7 +51,7 @@ public class DemandService {
     @Transactional(readOnly = true)
     public Page<Demand> getByStatusPaginated(es.urjc.ecomostoles.backend.model.DemandStatus status,
             Pageable pageable) {
-        return demandRepository.findByStatus(status, pageable);
+        return demandRepository.findActiveAndNotExpired(status, java.time.LocalDateTime.now(), pageable);
     }
 
     /**
@@ -89,6 +89,24 @@ public class DemandService {
                 es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE);
     }
 
+    @Transactional(readOnly = true)
+    public long countPausedByCompany(Company company) {
+        return demandRepository.countByCompanyAndStatus(company,
+                es.urjc.ecomostoles.backend.model.DemandStatus.PAUSED);
+    }
+
+    @Transactional(readOnly = true)
+    public long countClosedByCompany(Company company) {
+        return demandRepository.countByCompanyAndStatus(company,
+                es.urjc.ecomostoles.backend.model.DemandStatus.CLOSED);
+    }
+
+    @Transactional(readOnly = true)
+    public long sumVisitsByCompany(Company company) {
+        List<Demand> demands = demandRepository.findByCompany(company);
+        return demands.stream().mapToLong(Demand::getVisits).sum();
+    }
+
     /** Returns a demand by its ID, or empty if not found. */
     @Transactional(readOnly = true)
     public Optional<Demand> findById(Long id) {
@@ -108,6 +126,14 @@ public class DemandService {
                     "Cannot be deleted because it has associated agreements");
         }
         demandRepository.deleteById(id);
+    }
+
+    /** Increments the visit counter for a demand. */
+    public void registerVisit(Long id) {
+        demandRepository.findById(id).ifPresent(demand -> {
+            demand.setVisits(demand.getVisits() + 1);
+            demandRepository.save(demand);
+        });
     }
 
     /** Returns the total count of demands. */

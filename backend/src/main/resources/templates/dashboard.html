@@ -13,6 +13,32 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent position-relative"
                 style="z-index: 1;">
 
+                {{#errorMessage}}
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm border-start border-4 border-danger rounded-4" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-shield fs-4 me-3"></i>
+                        <div>
+                            <h6 class="fw-bold mb-0">Atención</h6>
+                            <p class="mb-0 small">{{errorMessage}}</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {{/errorMessage}}
+
+                {{#successMessage}}
+                <div class="alert alert-success alert-dismissible fade show shadow-sm border-start border-4 border-success rounded-4" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle fs-4 me-3"></i>
+                        <div>
+                            <h6 class="fw-bold mb-0">Operación Exitosa</h6>
+                            <p class="mb-0 small">{{successMessage}}</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {{/successMessage}}
+
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                     <div>

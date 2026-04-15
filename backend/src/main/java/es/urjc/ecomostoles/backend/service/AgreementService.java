@@ -82,7 +82,16 @@ public class AgreementService {
     }
 
     public void delete(Long id) {
-        agreementRepository.deleteById(id);
+        Optional<Agreement> agreementOpt = agreementRepository.findById(id);
+        if (agreementOpt.isPresent()) {
+            Agreement agreement = agreementOpt.get();
+            if (agreement.getOffer() != null) {
+                Offer offer = agreement.getOffer();
+                offer.setStatus(OfferStatus.ACTIVE);
+                offerService.save(offer);
+            }
+            agreementRepository.deleteById(id);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -127,7 +136,12 @@ public class AgreementService {
             throw new SelfAgreementException("The origin and destination cannot be the same entity.");
         }
 
-        offer.setStatus(OfferStatus.RESERVED);
+        if (!offer.getCompany().getId().equals(originCompany.getId())) {
+            throw new SelfAgreementException("The selected offer must belong to your company (you are the material owner).");
+        }
+
+        // --- NEW OFFER LIFECYCLE ---
+        offer.setStatus(OfferStatus.IN_NEGOTIATION);
         offerService.save(offer);
 
         agreement.setOffer(offer);
@@ -137,7 +151,7 @@ public class AgreementService {
 
         // --- CALCULATE CO2 IMPACT ---
         double co2 = sustainabilityEngine.calculateCo2Impact(agreement.getQuantity(),
-                offer.getWasteType());
+                offer.getWasteCategory());
         agreement.setCo2Impact(co2);
         // ------------------------------
 
@@ -239,12 +253,33 @@ public class AgreementService {
         Agreement existingAgreement = agreementRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agreement not found"));
 
+        // SYNC OFFER STATUS BASED ON AGREEMENT STATE CHANGE
+        if (existingAgreement.getOffer() != null && !updatedData.getStatus().equals(existingAgreement.getStatus())) {
+            Offer offer = existingAgreement.getOffer();
+            
+            if (AgreementStatus.COMPLETED.equals(updatedData.getStatus())) {
+                offer.setStatus(OfferStatus.FINISHED);
+            } 
+            else if (AgreementStatus.ACCEPTED.equals(updatedData.getStatus())) {
+                offer.setStatus(OfferStatus.RESERVED);
+            } 
+            else if (AgreementStatus.REJECTED.equals(updatedData.getStatus())) {
+                offer.setStatus(OfferStatus.ACTIVE);
+            }
+            // If it goes back to PENDING for some reason, we could set it to IN_NEGOTIATION
+            else if (AgreementStatus.PENDING.equals(updatedData.getStatus())) {
+                 offer.setStatus(OfferStatus.IN_NEGOTIATION);
+            }
+
+            offerService.save(offer);
+        }
+
         // If transitioning to COMPLETED, freeze the CO2 impact
         if (AgreementStatus.COMPLETED.equals(updatedData.getStatus()) &&
                 !AgreementStatus.COMPLETED.equals(existingAgreement.getStatus())) {
 
             double co2 = sustainabilityEngine.calculateCo2Impact(updatedData.getQuantity(),
-                    existingAgreement.getOffer() != null ? existingAgreement.getOffer().getWasteType() : null);
+                    existingAgreement.getOffer() != null ? existingAgreement.getOffer().getWasteCategory() : null);
             existingAgreement.setCo2Impact(co2);
         }
 
