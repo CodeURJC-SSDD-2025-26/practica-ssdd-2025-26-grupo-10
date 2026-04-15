@@ -53,6 +53,10 @@ public class DashboardService {
             stats.setAcuerdosActivos(acuerdosActivos);
             
             stats.setChartData(List.of(totalOfertas, totalDemandas, acuerdosActivos));
+            
+            // Admin Global Impact Stats
+            stats.setMaterialReintroducido(acuerdoService.sumarTotalMaterialReintroducido());
+            stats.setImpactoCO2(Double.parseDouble(acuerdoService.calcularCO2Ahorrado().replace(".", "").replace(",", ".")));
         } else {
             // ── Empresa: Personal KPIs ──────────────────────────────────────
             int misOfertas = (int) ofertaService.contarPorEmpresa(empresa);

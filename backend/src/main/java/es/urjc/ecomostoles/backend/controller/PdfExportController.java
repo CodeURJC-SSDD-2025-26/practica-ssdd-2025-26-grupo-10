@@ -55,12 +55,12 @@ public class PdfExportController {
             PdfWriter.getInstance(document, baos);
             document.open();
 
-            // --- Estilos de Fuente ---
+            // --- Font Styles ---
             Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, Color.DARK_GRAY);
             Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10, Color.BLACK);
             Font labelFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Color.DARK_GRAY);
 
-            // --- Logo de la Empresa (si existe) ---
+            // --- Company Logo (if exists) ---
             if (agreement.getEmpresaOrigen() != null && agreement.getEmpresaOrigen().getLogo() != null) {
                 try {
                     Image logo = Image.getInstance(agreement.getEmpresaOrigen().getLogo());
@@ -72,19 +72,19 @@ public class PdfExportController {
                 }
             }
 
-            // --- Título ---
+            // --- Title ---
             Paragraph title = new Paragraph("ECO-MÓSTOLES: RESGUARDO DE ACUERDO OFICIAL", titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
             title.setSpacingAfter(20);
             document.add(title);
 
-            // --- Separador ---
+            // --- Separator ---
             LineSeparator separator = new LineSeparator();
             separator.setLineColor(Color.LIGHT_GRAY);
             document.add(new Chunk(separator));
             document.add(new Paragraph("\n"));
 
-            // --- Tabla de Detalles ---
+            // --- Detail Table ---
             PdfPTable table = new PdfPTable(2);
             table.setWidthPercentage(100);
             table.setSpacingBefore(10f);
@@ -112,7 +112,7 @@ public class PdfExportController {
 
             document.add(table);
 
-            // --- Pie de página ---
+            // --- Footer ---
             document.add(new Paragraph("\n"));
             Paragraph footer = new Paragraph("Este documento es un comprobante automático generado por la plataforma Eco-Móstoles para el fomento de la simbiosis industrial.", FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, Color.GRAY));
             footer.setAlignment(Element.ALIGN_CENTER);

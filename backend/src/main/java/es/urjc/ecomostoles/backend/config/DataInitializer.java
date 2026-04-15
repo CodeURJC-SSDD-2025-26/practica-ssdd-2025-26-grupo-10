@@ -108,7 +108,7 @@ public class DataInitializer implements CommandLineRunner {
         log.info("════════════════════════════════════════════");
 
         // ══════════════════════════════════════════
-        // 0. Factores de Impacto Ambiental (Sustainability)
+        // 0. Environmental Impact Factors (Sustainability)
         // ══════════════════════════════════════════
         if (factorImpactoRepository.count() == 0) {
             log.info("🌱 Seeding environmental impact factors...");
@@ -123,7 +123,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         // ══════════════════════════════════════════
-        // 1. ADMIN del sistema
+        // 1. System ADMIN
         // ══════════════════════════════════════════
         Empresa admin = upsertEmpresa(
             "admin@ecomostoles.es",
@@ -134,12 +134,12 @@ public class DataInitializer implements CommandLineRunner {
             "916 000 000",
             "Cuenta de administración de la plataforma EcoMóstoles.",
             "logo.webp",
-            List.of("ADMIN")          // ← rol ADMIN
+            List.of("ADMIN")          // ← ADMIN role
         );
         log.info("✅ ADMIN created/updated → {} | password: 1234 | roles: {}", admin.getEmailContacto(), admin.getRoles());
 
         // ══════════════════════════════════════════
-        // 2. Empresa 1 — Metales del Sur (USER)
+        // 2. Company 1 — Metales del Sur (USER)
         // ══════════════════════════════════════════
         Empresa empresa1 = upsertEmpresa(
             "contacto@metalesdelsur.es",
@@ -150,12 +150,12 @@ public class DataInitializer implements CommandLineRunner {
             "916 123 456",
             "Gestión y comercialización de residuos metálicos en el área de Móstoles.",
             "logo.webp",
-            List.of("EMPRESA")        // ← rol USER/EMPRESA
+            List.of("EMPRESA")        // ← USER/COMPANY role
         );
         log.info("✅ Company 1 → {} | roles: {}", empresa1.getEmailContacto(), empresa1.getRoles());
 
         // ══════════════════════════════════════════
-        // 3. Empresa 2 — EcoSur Reciclajes (USER)
+        // 3. Company 2 — EcoSur Reciclajes (USER)
         // ══════════════════════════════════════════
         Empresa empresa2 = upsertEmpresa(
             "reciclajes@ecosur.es",
@@ -244,7 +244,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         // ══════════════════════════════════════════
-        // 6. Empresa 3 — Reciclajes Paco (same sector as empresa1 for Smart Matching)
+        // 6. Company 3 — Reciclajes Paco (same sector as empresa1 for Smart Matching)
         // ══════════════════════════════════════════
         Empresa empresa3 = upsertEmpresa(
             "paco@reciclajes.es",

@@ -40,7 +40,8 @@ public class GlobalControllerAdvice {
         }
         Optional<Empresa> userOpt = empresaService.buscarPorEmail(principal.getName());
         if (userOpt.isPresent()) {
-            return mensajeService.obtenerPorDestinatario(userOpt.get()).size();
+            // Optimized: Atomic count from DB instead of loading all messages to memory
+            return (int) mensajeService.contarPorDestinatario(userOpt.get());
         }
         return 0;
     }
@@ -55,13 +56,36 @@ public class GlobalControllerAdvice {
         return configuracionService.obtenerValorConfiguracion("emailContacto", "soporte@ecomostoles.com");
     }
 
-    @ModelAttribute("listaUnidades")
-    public java.util.List<String> listaUnidades() {
-        return java.util.List.of("kg", "uds", "toneladas", "m2", "litros");
+    @ModelAttribute("currentDate")
+    public String currentDate() {
+        return java.time.format.DateTimeFormatter.ofPattern("MMMM yyyy", new java.util.Locale("es", "ES"))
+                .format(java.time.LocalDate.now());
     }
 
+    @ModelAttribute("listaUnidades")
+    public java.util.List<String> listaUnidades() {
+        String units = configuracionService.obtenerValorAuto("listaUnidades");
+        return java.util.Arrays.asList(units.split("\\r?\\n"));
+    }
+    
     @ModelAttribute("listaDisponibilidades")
     public java.util.List<String> listaDisponibilidades() {
-        return java.util.List.of("Inmediata", "En 1 semana", "Consultar");
+        String disp = configuracionService.obtenerValorAuto("listaDisponibilidades");
+        return java.util.Arrays.asList(disp.split("\\r?\\n"));
+    }
+
+    @ModelAttribute("platformName")
+    public String getPlatformName() {
+        return "EcoMóstoles";
+    }
+
+    @ModelAttribute("platformCity")
+    public String platformCity() {
+        return configuracionService.obtenerValorAuto("platformCity");
+    }
+
+    @ModelAttribute("platformLocation")
+    public String platformLocation() {
+        return configuracionService.obtenerValorAuto("platformLocation");
     }
 }

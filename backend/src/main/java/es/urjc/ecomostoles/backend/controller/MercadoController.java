@@ -50,11 +50,6 @@ public class MercadoController {
         model.addAttribute("tipoResiduo", tipoResiduo != null ? tipoResiduo : "");
         model.addAttribute("poligono",   poligono   != null ? poligono   : "");
 
-        if (principal != null) {
-            empresaService.buscarPorEmail(principal.getName())
-                          .ifPresent(empresa -> model.addAttribute("empresa", empresa));
-        }
-        
         if ("AutoAcuerdo".equals(error)) {
             model.addAttribute("errorAutoAcuerdo", "No puedes realizar un acuerdo comercial con tu propia empresa.");
         }
@@ -71,15 +66,11 @@ public class MercadoController {
     public String mostrarDetalleOferta(@PathVariable("id") Long id, Model model, Principal principal) {
         Optional<Oferta> ofertaOpt = ofertaService.buscarPorId(id);
         if (ofertaOpt.isPresent()) {
-            // Unica llamada limpia al servicio para registrar visita atomica
+            // Single clean call to the service to register an atomic visit
             ofertaService.registrarVisita(id);
             
             Oferta oferta = ofertaOpt.get();
             model.addAttribute("oferta", oferta);
-            if (principal != null) {
-                empresaService.buscarPorEmail(principal.getName())
-                              .ifPresent(empresa -> model.addAttribute("empresa", empresa));
-            }
             return "detalle_activo";
         }
         return "redirect:/mercado";

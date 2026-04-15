@@ -47,7 +47,6 @@ public class Demanda {
      * Detailed description of the demand.
      */
     @NotBlank(message = "La descripción es obligatoria")
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 

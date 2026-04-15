@@ -29,36 +29,32 @@
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Título de lo que buscas <span class="text-danger">*</span></label>
                                 <input type="text" name="titulo" class="form-control" placeholder="Ej. Busco Palés Europeos en buen estado" value="{{#demanda.titulo}}{{demanda.titulo}}{{/demanda.titulo}}" required="">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label text-secondary fw-bold small text-uppercase">Categoría <span class="text-danger">*</span></label>
-                                <select name="categoriaMaterial" class="form-select" required>
-                                    <option value="" selected="" disabled="">Seleccionar...</option>
-                                    <option value="Metal">Metal</option>
-                                    <option value="Madera">Madera</option>
-                                    <option value="Plástico">Plástico</option>
-                                    <option value="Químico">Químico</option>
-                                    <option value="Maquinaria">Maquinaria</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-12">
-                                <label class="form-label text-secondary fw-bold small text-uppercase">Descripción detallada <span class="text-danger">*</span></label>
-                                <textarea name="descripcion" class="form-control" rows="4" placeholder="Describe qué material necesitas..." required="">{{#demanda.descripcion}}{{demanda.descripcion}}{{/demanda.descripcion}}</textarea>
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad requerida</label>
-                                <div class="input-group">
-                                    <input type="number" name="cantidad" class="form-control" placeholder="Ej. 500" min="0" value="{{#demanda.cantidad}}{{demanda.cantidad}}{{/demanda.cantidad}}">
-                                    <select name="unidad" class="form-select" style="max-width: 120px;" required>
-                                        <option value="kg" selected>kg</option>
-                                        <option value="uds">uds</option>
-                                        <option value="ton">toneladas</option>
-                                        <option value="m2">m²</option>
-                                        <option value="L">litros</option>
-                                    </select>
-                                </div>
-                            </div>
+                             <div class="col-md-4">
+                                 <label class="form-label text-secondary fw-bold small text-uppercase">Categoría <span class="text-danger">*</span></label>
+                                 <select name="categoriaMaterial" class="form-select" required>
+                                     <option value="" selected="" disabled="">Seleccionar...</option>
+                                     {{#listaCategorias}}
+                                     <option value="{{.}}">{{.}}</option>
+                                     {{/listaCategorias}}
+                                 </select>
+                             </div>
+                             
+                             <div class="col-12">
+                                 <label class="form-label text-secondary fw-bold small text-uppercase">Descripción detallada <span class="text-danger">*</span></label>
+                                 <textarea name="descripcion" class="form-control" rows="4" placeholder="Describe qué material necesitas..." required="">{{#demanda.descripcion}}{{demanda.descripcion}}{{/demanda.descripcion}}</textarea>
+                             </div>
+ 
+                             <div class="col-md-4">
+                                 <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad requerida</label>
+                                 <div class="input-group">
+                                     <input type="number" name="cantidad" class="form-control" placeholder="Ej. 500" min="0" value="{{#demanda.cantidad}}{{demanda.cantidad}}{{/demanda.cantidad}}">
+                                     <select name="unidad" class="form-select" style="max-width: 120px;" required>
+                                         {{#listaUnidades}}
+                                         <option value="{{.}}">{{.}}</option>
+                                         {{/listaUnidades}}
+                                     </select>
+                                 </div>
+                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Urgencia</label>
                                 <select name="urgencia" class="form-select">

@@ -78,10 +78,6 @@ public class AdminController {
     }
 
     private void addCommonAttributes(Model model, Principal principal, String filtro) {
-        if (principal != null) {
-            Optional<Empresa> opt = empresaService.buscarPorEmail(principal.getName());
-            opt.ifPresent(e -> model.addAttribute("empresa", e));
-        }
         // Global platform KPIs
         model.addAttribute("totalUsuarios",  empresaService.contarTodas());
         model.addAttribute("totalOfertas",   ofertaService.contarTodas());
@@ -182,10 +178,13 @@ public class AdminController {
         addCommonAttributes(model, principal);
         model.addAttribute("activeReportes", true);
 
-        // Fetch companies and enrich with CO2 stats
+        // Enterprise Plus: Batch-fetch all CO2 stats to avoid N+1 query pattern
+        Map<Long, Double> co2Map = acuerdoService.obtenerRankingCO2();
+
+        // Fetch companies and enrich with pre-calculated CO2 stats
         List<EmpresaDTO> empresas = empresaService.obtenerTodas().stream().map(e -> {
             EmpresaDTO dto = new EmpresaDTO(e);
-            dto.setCo2Ahorrado(acuerdoService.calcularCO2AhorradoPorEmpresa(e.getId()));
+            dto.setCo2Ahorrado(co2Map.getOrDefault(e.getId(), 0.0));
             return dto;
         }).sorted((a, b) -> b.getCo2Ahorrado().compareTo(a.getCo2Ahorrado())) // Order by CO2 descending
           .collect(Collectors.toList());
@@ -233,12 +232,22 @@ public class AdminController {
                                        @RequestParam(required = false) String emailContacto,
                                        @RequestParam(required = false) Double comisionPlataforma,
                                        @RequestParam(required = false) String listaCategorias,
+                                       @RequestParam(required = false) String listaUnidades,
+                                       @RequestParam(required = false) String listaDisponibilidades,
                                        RedirectAttributes redirectAttributes) {
+        
+        // Validation: range 0-100% for business commissions (UX/Integrity)
+        if (comisionPlataforma != null && (comisionPlataforma < 0 || comisionPlataforma > 100)) {
+            redirectAttributes.addFlashAttribute("error", "La comisión debe estar entre 0 y 100%.");
+            return "redirect:/admin/configuracion";
+        }
         
         configuracionService.guardarOActualizarConfiguracion("modoMantenimiento", modoMantenimiento != null ? "true" : "false");
         configuracionService.guardarOActualizarConfiguracion("emailContacto", emailContacto);
         configuracionService.guardarOActualizarConfiguracion("comisionPlataforma", String.valueOf(comisionPlataforma));
         configuracionService.guardarOActualizarConfiguracion("listaCategorias", listaCategorias);
+        configuracionService.guardarOActualizarConfiguracion("listaUnidades", listaUnidades);
+        configuracionService.guardarOActualizarConfiguracion("listaDisponibilidades", listaDisponibilidades);
 
         redirectAttributes.addFlashAttribute("mensaje", "La configuración de la plataforma se ha actualizado correctamente en la base de datos.");
         return "redirect:/admin/configuracion";
@@ -286,6 +295,14 @@ public class AdminController {
         Optional<Empresa> adminOpt = empresaService.buscarPorEmail(principal.getName());
         if (adminOpt.isPresent()) {
             Empresa admin = adminOpt.get();
+            
+            // Integrity: duplicated email check across all companies
+            Optional<Empresa> duplicado = empresaService.buscarPorEmail(emailAdmin);
+            if (duplicado.isPresent() && !duplicado.get().getId().equals(admin.getId())) {
+                redirectAttributes.addFlashAttribute("error", "El email especificado ya está siendo usado por otra entidad.");
+                return "redirect:/admin/ajustes";
+            }
+
             admin.setEmailContacto(emailAdmin);
             empresaService.guardar(admin);
             

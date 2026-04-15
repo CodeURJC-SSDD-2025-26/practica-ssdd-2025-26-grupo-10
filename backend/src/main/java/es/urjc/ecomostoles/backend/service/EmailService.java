@@ -21,7 +21,7 @@ public class EmailService {
      */
     public void enviarEmailRecuperacion(String emailDestino) {
         log.info("Iniciando proceso de recuperación para: {}", emailDestino);
-        // Simulación lógica de generación de token y enlace
+        // Logical simulation of token and link generation
         String mockResetLink = "https://ecomostoles.urjc.es/reset?token=a1b2c3d4e5f6";
         
         log.info("Enviando email de recuperación de contraseña a: {} con enlace de reseteo temporal: {}", 

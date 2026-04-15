@@ -1,7 +1,7 @@
 package es.urjc.ecomostoles.backend.controller;
 
-
 import es.urjc.ecomostoles.backend.model.Acuerdo;
+import es.urjc.ecomostoles.backend.model.EstadoAcuerdo;
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.dto.OfertaResumen;
 import es.urjc.ecomostoles.backend.service.AcuerdoService;
@@ -27,10 +27,12 @@ import es.urjc.ecomostoles.backend.dto.SelectOption;
 import es.urjc.ecomostoles.backend.exception.SelfAgreementException;
 
 /**
- * Controller responsible for displaying and registering new commercial agreements.
+ * Controller responsible for displaying and registering new commercial
+ * agreements.
  *
  * Follows Controller > Service > Repository architecture:
- * delegates all data access to AcuerdoService, EmpresaService and OfertaService.
+ * delegates all data access to AcuerdoService, EmpresaService and
+ * OfertaService.
  */
 @Controller
 public class AcuerdoController {
@@ -40,11 +42,11 @@ public class AcuerdoController {
     private final OfertaService ofertaService;
 
     public AcuerdoController(AcuerdoService acuerdoService,
-                             EmpresaService empresaService,
-                             OfertaService ofertaService) {
+            EmpresaService empresaService,
+            OfertaService ofertaService) {
         this.acuerdoService = acuerdoService;
         this.empresaService = empresaService;
-        this.ofertaService  = ofertaService;
+        this.ofertaService = ofertaService;
     }
 
     /** Shows the form to register a new agreement. */
@@ -54,7 +56,6 @@ public class AcuerdoController {
 
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
-            model.addAttribute("empresa", empresa);
             model.addAttribute("activeNuevoAcuerdo", true);
             List<OfertaResumen> misOfertas = ofertaService.obtenerPorEmpresa(empresa);
             model.addAttribute("ofertas", misOfertas);
@@ -76,15 +77,14 @@ public class AcuerdoController {
 
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
-            model.addAttribute("empresa", empresa);
             model.addAttribute("activeAcuerdos", true);
             List<Acuerdo> misAcuerdos = acuerdoService.obtenerPorEmpresa(empresa);
             model.addAttribute("acuerdos", misAcuerdos);
 
             // Dynamic KPI counts for status section
-            model.addAttribute("acuerdosCompletados", acuerdoService.contarPorEmpresaYEstado(empresa, "COMPLETADO"));
-            model.addAttribute("acuerdosPendientes",  acuerdoService.contarPorEmpresaYEstado(empresa, "PENDIENTE"));
-            
+            model.addAttribute("acuerdosCompletados", acuerdoService.contarPorEmpresaYEstado(empresa, EstadoAcuerdo.COMPLETADO));
+            model.addAttribute("acuerdosPendientes", acuerdoService.contarPorEmpresaYEstado(empresa, EstadoAcuerdo.PENDIENTE));
+
             return "mis_acuerdos";
         }
 
@@ -96,17 +96,16 @@ public class AcuerdoController {
      */
     @PostMapping("/acuerdo/nuevo")
     public String registrarAcuerdo(@Valid @ModelAttribute Acuerdo acuerdo,
-                                   BindingResult result,
-                                   @RequestParam(name = "ofertaId", required = false) Long ofertaId,
-                                   @RequestParam(name = "empresaDestinoId", required = false) Long empresaDestinoId,
-                                   Model model,
-                                   Principal principal) {
+            BindingResult result,
+            @RequestParam(name = "ofertaId", required = false) Long ofertaId,
+            @RequestParam(name = "empresaDestinoId", required = false) Long empresaDestinoId,
+            Model model,
+            Principal principal) {
 
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
         Empresa empresaLogueada = empresaOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
         if (result.hasErrors()) {
-            model.addAttribute("empresa", empresaLogueada);
             model.addAttribute("ofertas", ofertaService.obtenerPorEmpresa(empresaLogueada));
 
             List<Empresa> todasEmpresas = empresaService.obtenerTodas();
@@ -118,7 +117,7 @@ public class AcuerdoController {
             return "crear_acuerdo";
         }
 
-        // ── Lógica de Negocio delegada al Service ────────────────────────────────────
+        // ── Business Logic delegated to the Service ────────────────────────────────────
         try {
             if (ofertaId != null && acuerdo != null) {
                 acuerdoService.registrarNuevoAcuerdo(acuerdo, principal.getName(), ofertaId, empresaDestinoId);
@@ -143,18 +142,19 @@ public class AcuerdoController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
         boolean esAdmin = logueada.getRoles() != null && logueada.getRoles().contains("ADMIN");
-        boolean esOrigen = acuerdo.getEmpresaOrigen() != null && acuerdo.getEmpresaOrigen().getEmailContacto().equals(userEmail);
-        boolean esDestino = acuerdo.getEmpresaDestino() != null && acuerdo.getEmpresaDestino().getEmailContacto().equals(userEmail);
+        boolean esOrigen = acuerdo.getEmpresaOrigen() != null
+                && acuerdo.getEmpresaOrigen().getEmailContacto().equals(userEmail);
+        boolean esDestino = acuerdo.getEmpresaDestino() != null
+                && acuerdo.getEmpresaDestino().getEmailContacto().equals(userEmail);
 
         if (!esAdmin && !esOrigen && !esDestino) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para ver este acuerdo");
         }
 
         model.addAttribute("acuerdo", acuerdo);
-        model.addAttribute("empresa", logueada);
         return "detalle_acuerdo";
     }
- 
+
     /**
      * Shows the form to edit an existing agreement.
      */
@@ -162,15 +162,17 @@ public class AcuerdoController {
     public String mostrarFormularioEditar(@PathVariable Long id, Model model, Principal principal) {
         Acuerdo acuerdo = acuerdoService.buscarPorId(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
- 
+
         String userEmail = principal.getName();
-        boolean esOrigen = acuerdo.getEmpresaOrigen() != null && acuerdo.getEmpresaOrigen().getEmailContacto().equals(userEmail);
-        boolean esDestino = acuerdo.getEmpresaDestino() != null && acuerdo.getEmpresaDestino().getEmailContacto().equals(userEmail);
- 
+        boolean esOrigen = acuerdo.getEmpresaOrigen() != null
+                && acuerdo.getEmpresaOrigen().getEmailContacto().equals(userEmail);
+        boolean esDestino = acuerdo.getEmpresaDestino() != null
+                && acuerdo.getEmpresaDestino().getEmailContacto().equals(userEmail);
+
         if (!esOrigen && !esDestino) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para editar este acuerdo");
         }
- 
+
         model.addAttribute("acuerdo", acuerdo);
 
         // Dynamic Select Options for unit
@@ -184,50 +186,45 @@ public class AcuerdoController {
 
         // Dynamic Select Options for status
         List<SelectOption> opcionesEstado = new ArrayList<>();
-        String estadoActual = (acuerdo.getEstado() != null) ? acuerdo.getEstado().name() : "";
-        
-        opcionesEstado.add(new SelectOption("PENDIENTE", "Pendiente de firma", "PENDIENTE".equals(estadoActual)));
-        opcionesEstado.add(new SelectOption("EN_CURSO", "En curso / Procesando", "EN_CURSO".equals(estadoActual)));
-        opcionesEstado.add(new SelectOption("COMPLETADO", "Completado / Finalizado", "COMPLETADO".equals(estadoActual)));
-        opcionesEstado.add(new SelectOption("ACEPTADO", "Aceptado", "ACEPTADO".equals(estadoActual)));
-        opcionesEstado.add(new SelectOption("RECHAZADO", "Rechazado", "RECHAZADO".equals(estadoActual)));
+        opcionesEstado
+                .add(new SelectOption("PENDIENTE", "Pendiente de firma", "PENDIENTE".equals(acuerdo.getEstado())));
+        opcionesEstado
+                .add(new SelectOption("EN_CURSO", "En curso / Procesando", "EN_CURSO".equals(acuerdo.getEstado())));
+        opcionesEstado.add(
+                new SelectOption("COMPLETADO", "Completado / Finalizado", "COMPLETADO".equals(acuerdo.getEstado())));
+        opcionesEstado.add(new SelectOption("ACEPTADO", "Aceptado", "ACEPTADO".equals(acuerdo.getEstado())));
+        opcionesEstado.add(new SelectOption("RECHAZADO", "Rechazado", "RECHAZADO".equals(acuerdo.getEstado())));
         model.addAttribute("opcionesEstado", opcionesEstado);
 
         return "editar_acuerdo";
     }
- 
+
     /**
      * Processes the update of an existing agreement.
      */
     @PostMapping("/acuerdos/{id}/editar")
     public String actualizarAcuerdo(@PathVariable Long id, @Valid @ModelAttribute Acuerdo acuerdoActualizado,
-                                    BindingResult result, Model model, Principal principal) {
+            BindingResult result, Model model, Principal principal) {
         if (result.hasErrors()) {
             model.addAttribute("errores", result.getAllErrors());
             return "editar_acuerdo";
         }
- 
+
         Acuerdo acuerdoExistente = acuerdoService.buscarPorId(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
- 
+
         String userEmail = principal.getName();
-        boolean esOrigen = acuerdoExistente.getEmpresaOrigen() != null && acuerdoExistente.getEmpresaOrigen().getEmailContacto().equals(userEmail);
-        boolean esDestino = acuerdoExistente.getEmpresaDestino() != null && acuerdoExistente.getEmpresaDestino().getEmailContacto().equals(userEmail);
- 
+        boolean esOrigen = acuerdoExistente.getEmpresaOrigen() != null
+                && acuerdoExistente.getEmpresaOrigen().getEmailContacto().equals(userEmail);
+        boolean esDestino = acuerdoExistente.getEmpresaDestino() != null
+                && acuerdoExistente.getEmpresaDestino().getEmailContacto().equals(userEmail);
+
         if (!esOrigen && !esDestino) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para editar este acuerdo");
         }
- 
-        // Update allowed fields
-        acuerdoExistente.setMaterialIntercambiado(acuerdoActualizado.getMaterialIntercambiado());
-        acuerdoExistente.setCantidad(acuerdoActualizado.getCantidad());
-        acuerdoExistente.setUnidad(acuerdoActualizado.getUnidad());
-        acuerdoExistente.setPrecioAcordado(acuerdoActualizado.getPrecioAcordado());
-        acuerdoExistente.setFechaRecogida(acuerdoActualizado.getFechaRecogida());
-        acuerdoExistente.setEstado(acuerdoActualizado.getEstado());
- 
-        acuerdoService.guardar(acuerdoExistente);
- 
+
+        acuerdoService.actualizarAcuerdo(id, acuerdoActualizado);
+
         return "redirect:/acuerdos/" + id;
     }
 }

@@ -51,13 +51,19 @@ public interface AcuerdoRepository extends JpaRepository<Acuerdo, Long> {
     Double sumCantidadByEmpresaAndEstadoCompletado(@org.springframework.data.repository.query.Param("empresa") Empresa empresa);
 
     @org.springframework.data.jpa.repository.Query("SELECT COUNT(a) FROM Acuerdo a WHERE (a.empresaOrigen = :empresa OR a.empresaDestino = :empresa) AND a.estado = :estado")
-    long countByEmpresaAndEstado(@org.springframework.data.repository.query.Param("empresa") Empresa empresa, @org.springframework.data.repository.query.Param("estado") String estado);
+    long countByEmpresaAndEstado(@org.springframework.data.repository.query.Param("empresa") Empresa empresa, @org.springframework.data.repository.query.Param("estado") es.urjc.ecomostoles.backend.model.EstadoAcuerdo estado);
 
     @org.springframework.data.jpa.repository.Query("SELECT a FROM Acuerdo a JOIN FETCH a.empresaOrigen JOIN FETCH a.empresaDestino ORDER BY a.fechaRegistro DESC LIMIT 50")
     List<Acuerdo> findTop50ByOrderByFechaRegistroDesc();
  
     @org.springframework.data.jpa.repository.Query("SELECT SUM(a.cantidad) FROM Acuerdo a WHERE a.estado = 'COMPLETADO'")
     Double sumTotalCantidadByEstadoCompletado();
+
+    @org.springframework.data.jpa.repository.Query("SELECT a FROM Acuerdo a JOIN FETCH a.empresaOrigen JOIN FETCH a.empresaDestino LEFT JOIN FETCH a.oferta WHERE a.estado = :estado")
+    List<Acuerdo> findAllByEstado(@org.springframework.data.repository.query.Param("estado") EstadoAcuerdo estado);
+
+    @org.springframework.data.jpa.repository.Query("SELECT SUM(a.cantidad) FROM Acuerdo a WHERE a.estado = :estado")
+    Double sumTotalCantidadByEstado(@org.springframework.data.repository.query.Param("estado") EstadoAcuerdo estado);
 
     long countByFechaRegistroAfter(java.time.LocalDateTime fecha);
 

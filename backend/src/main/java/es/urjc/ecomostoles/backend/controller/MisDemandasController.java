@@ -35,10 +35,12 @@ public class MisDemandasController {
 
     private final EmpresaService empresaService;
     private final DemandaService demandaService;
+    private final es.urjc.ecomostoles.backend.service.ConfiguracionService configuracionService;
 
-    public MisDemandasController(EmpresaService empresaService, DemandaService demandaService) {
+    public MisDemandasController(EmpresaService empresaService, DemandaService demandaService, es.urjc.ecomostoles.backend.service.ConfiguracionService configuracionService) {
         this.empresaService = empresaService;
         this.demandaService = demandaService;
+        this.configuracionService = configuracionService;
     }
 
     // -------------------------------------------------------------------------
@@ -73,7 +75,6 @@ public class MisDemandasController {
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
-            model.addAttribute("empresa", empresa);
             model.addAttribute("activeDemandas", true);
             List<Demanda> misDemandas = demandaService.obtenerPorEmpresa(empresa);
             model.addAttribute("demandas", misDemandas);
@@ -90,12 +91,18 @@ public class MisDemandasController {
     public String mostrarFormularioNuevaDemanda(Model model, Principal principal) {
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
         if (empresaOpt.isPresent()) {
-            model.addAttribute("empresa", empresaOpt.get());
             model.addAttribute("activeNuevaDemanda", true);
             model.addAttribute("demanda", new Demanda());
+            injectDynamicCategories(model);
             return "crear_solicitud";
         }
         return "redirect:/";
+    }
+
+    private void injectDynamicCategories(Model model) {
+        String catsStr = configuracionService.obtenerValorAuto("listaCategorias");
+        java.util.List<String> categorias = java.util.Arrays.asList(catsStr.split("\\r?\\n"));
+        model.addAttribute("listaCategorias", categorias);
     }
 
     // -------------------------------------------------------------------------
@@ -108,10 +115,9 @@ public class MisDemandasController {
                                       Principal principal) {
 
         if (result.hasErrors()) {
-            empresaService.buscarPorEmail(principal.getName())
-                          .ifPresent(e -> model.addAttribute("empresa", e));
             model.addAttribute("errores", result.getAllErrors());
             model.addAttribute("demanda", demanda);
+            injectDynamicCategories(model);
             return "crear_solicitud";
         }
 
@@ -139,21 +145,26 @@ public class MisDemandasController {
     // -------------------------------------------------------------------------
     // GET /demanda/editar/{id} — Show edit form (ownership check)
     // -------------------------------------------------------------------------
+    private void cargarOpcionesSelect(Model model, Demanda demanda) {
+        String catsStr = configuracionService.obtenerValorAuto("listaCategorias");
+        java.util.List<String> categorias = java.util.Arrays.asList(catsStr.split("\\r?\\n"));
+        
+        List<SelectOption> opcionesCategoria = new ArrayList<>();
+        for(String cat : categorias) {
+            opcionesCategoria.add(new SelectOption(cat, cat, cat.equals(demanda.getCategoriaMaterial())));
+        }
+        model.addAttribute("opcionesCategoria", opcionesCategoria);
+    }
+
+    // -------------------------------------------------------------------------
+    // GET /demanda/editar/{id} — Show edit form (ownership check)
+    // -------------------------------------------------------------------------
     @GetMapping("/demandas/{id}/editar")
     public String mostrarFormularioEditarDemanda(@PathVariable Long id, Model model, Principal principal) {
         Demanda demanda = verificarPropietarioDemanda(id, principal);
-        empresaService.buscarPorEmail(principal.getName())
-                      .ifPresent(e -> model.addAttribute("empresa", e));
         model.addAttribute("demanda", demanda);
 
-        // Dynamic Select Options for category
-        List<SelectOption> opcionesCategoria = new ArrayList<>();
-        opcionesCategoria.add(new SelectOption("Metal", "Metal", "Metal".equals(demanda.getCategoriaMaterial())));
-        opcionesCategoria.add(new SelectOption("Madera", "Madera", "Madera".equals(demanda.getCategoriaMaterial())));
-        opcionesCategoria.add(new SelectOption("Plástico", "Plástico", "Plástico".equals(demanda.getCategoriaMaterial())));
-        opcionesCategoria.add(new SelectOption("Químico", "Químico", "Químico".equals(demanda.getCategoriaMaterial())));
-        opcionesCategoria.add(new SelectOption("Maquinaria", "Maquinaria", "Maquinaria".equals(demanda.getCategoriaMaterial())));
-        model.addAttribute("opcionesCategoria", opcionesCategoria);
+        cargarOpcionesSelect(model, demanda);
 
         return "editar_solicitud";
     }
@@ -172,8 +183,9 @@ public class MisDemandasController {
         Demanda demandaExistente = verificarPropietarioDemanda(id, principal);
 
         if (result.hasErrors()) {
-            empresaService.buscarPorEmail(principal.getName())
-                          .ifPresent(e -> model.addAttribute("empresa", e));
+            
+            cargarOpcionesSelect(model, demandaForm);
+            
             model.addAttribute("errores", result.getAllErrors());
             demandaForm.setId(id);
             return "editar_solicitud";

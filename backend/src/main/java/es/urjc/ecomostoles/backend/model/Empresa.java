@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -46,7 +47,6 @@ public class Empresa {
     @NotBlank(message = "El sector industrial es obligatorio")
     private String sectorIndustrial;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
@@ -57,6 +57,8 @@ public class Empresa {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
+
+    private boolean verificada = true;
 
     // Default constructor
     public Empresa() {
@@ -167,10 +169,23 @@ public class Empresa {
         this.roles = roles;
     }
 
+    public boolean isVerificada() {
+        return verificada;
+    }
+
+    public void setVerificada(boolean verificada) {
+        this.verificada = verificada;
+    }
+
     public String getRol() {
         if (roles != null && !roles.isEmpty()) {
             return roles.get(0);
         }
         return "USER";
+    }
+
+    @Transient
+    public String getInicial() {
+        return (this.nombreComercial != null && !this.nombreComercial.isEmpty()) ? this.nombreComercial.substring(0, 1).toUpperCase() : "?";
     }
 }

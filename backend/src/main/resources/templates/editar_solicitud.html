@@ -43,13 +43,17 @@
                                 <textarea name="descripcion" class="form-control" rows="4" required="">{{demanda.descripcion}}</textarea>
                             </div>
 
-                            <div class="col-md-4">
-                                <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad</label>
-                                <div class="input-group">
-                                    <input type="number" name="cantidad" class="form-control" value="{{demanda.cantidad}}" min="0">
-                                    <span class="input-group-text">kg/uds</span>
-                                </div>
-                            </div>
+                             <div class="col-md-4">
+                                 <label class="form-label text-secondary fw-bold small text-uppercase">Cantidad requerida</label>
+                                 <div class="input-group">
+                                     <input type="number" name="cantidad" class="form-control" value="{{demanda.cantidad}}" min="0">
+                                     <select name="unidad" class="form-select" style="max-width: 120px;" data-selected="{{demanda.unidad}}" required>
+                                         {{#listaUnidades}}
+                                         <option value="{{.}}">{{.}}</option>
+                                         {{/listaUnidades}}
+                                     </select>
+                                 </div>
+                             </div>
                             
                             <div class="col-md-4">
                                 <label class="form-label text-secondary fw-bold small text-uppercase">Presupuesto máximo (€)</label>
@@ -69,4 +73,13 @@
     </div>
 </div>
 
-{{> footer}}
+    <script>
+        // Pre-select values for dynamic lists
+        document.querySelectorAll('select[data-selected]').forEach(select => {
+            const selectedValue = select.getAttribute('data-selected');
+            if (selectedValue) {
+                select.value = selectedValue;
+            }
+        });
+    </script>
+    {{> footer}}

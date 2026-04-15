@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Controlador que sirve imágenes almacenadas como BLOB en la base de datos.
- * Utiliza la capa de servicio para el acceso a datos (Arquitectura MVC Estricta).
+ * Controller that serves images stored as BLOB in the database.
+ * Uses the service layer for data access (Strict MVC Architecture).
  */
 @RestController
 public class ImageController {
@@ -44,7 +44,7 @@ public class ImageController {
     // ── Logo de Empresa ──────────────────────────────────────────────────────
 
     /**
-     * Devuelve el logo de una empresa como respuesta binaria.
+     * Returns a company logo as binary response.
      */
     @GetMapping("/images/empresa/{id}")
     public ResponseEntity<byte[]> servirLogoEmpresa(@PathVariable Long id) {
@@ -58,14 +58,14 @@ public class ImageController {
                     .body(bytes);
         }
 
-        // Si no existe el logo o la empresa, devolvemos imagen por defecto (Robustez)
+        // If the logo or company does not exist, return a default image (Robustness)
         return servirImagenPorDefecto();
     }
 
     // ── Imagen de Oferta ─────────────────────────────────────────────────────
 
     /**
-     * Devuelve la imagen de una oferta como respuesta binaria.
+     * Returns an offer image as binary response.
      */
     @GetMapping("/images/oferta/{id}")
     public ResponseEntity<byte[]> servirImagenOferta(@PathVariable Long id) {
@@ -79,13 +79,13 @@ public class ImageController {
                     .body(bytes);
         }
 
-        // Si no existe la imagen o la oferta, devolvemos imagen por defecto (Robustez)
+        // If the image or offer does not exist, return a default image (Robustness)
         return servirImagenPorDefecto();
     }
 
     /**
-     * Carga y sirve la imagen corporativa por defecto desde el classpath.
-     * Arquitectura 'Bulletproof': previene excepciones no controladas incluso si falla el sistema de archivos.
+     * Loads and serves the default corporate image from the classpath.
+     * 'Bulletproof' Architecture: prevents uncontrolled exceptions even if the file system fails.
      */
     private ResponseEntity<byte[]> servirImagenPorDefecto() {
         try {
@@ -97,10 +97,10 @@ public class ImageController {
                         .body(bytes);
             }
         } catch (Exception e) {
-            // Silenciamos la excepción para evitar un Error 500 y permitimos que el flujo continúe al 404
+            // Silence the exception to avoid a 500 Error and let the flow continue to 404
         }
         
-        // Última línea de defensa: devolvemos 404 para que el navegador/HTML gestione el error (p.ej. con onerror)
+        // Final line of defense: return 404 so the browser/HTML handles the error (e.g., with onerror)
         return ResponseEntity.notFound().build();
     }
 
@@ -110,7 +110,7 @@ public class ImageController {
             InputStream is = new BufferedInputStream(new ByteArrayInputStream(imagenBytes));
             mimeType = URLConnection.guessContentTypeFromStream(is);
         } catch (Exception e) {
-            log.warn("No se pudo detectar MIME type dinámicamente");
+            log.warn("MIME type could not be detected dynamically");
         }
         return (mimeType != null) ? MediaType.parseMediaType(mimeType) : MediaType.IMAGE_JPEG;
     }

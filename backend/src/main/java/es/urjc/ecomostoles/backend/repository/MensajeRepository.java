@@ -9,6 +9,8 @@ import java.util.List;
 public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
     List<Mensaje> findByDestinatario(Empresa destinatario);
 
+    long countByDestinatario(Empresa destinatario);
+
     @Query("SELECT m FROM Mensaje m JOIN FETCH m.remitente JOIN FETCH m.destinatario ORDER BY m.fechaEnvio DESC")
     List<Mensaje> findTop100ByOrderByFechaEnvioDesc();
 }

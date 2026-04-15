@@ -16,6 +16,11 @@ public class ConfiguracionService {
     public static final String DEFAULT_EMAIL    = "soporte@ecomostoles.com";
     public static final String DEFAULT_COMISION = "2.5";
     public static final String DEFAULT_CATEGORIAS = "Residuo Metálico\nResiduo Peligroso\nResiduo Madera\nReciclaje Plástico\nResiduo Electrónico (RAEE)\nResiduo Textil\nExcedentes de Obra";
+    public static final String DEFAULT_PLATFORM_NAME = "EcoMóstoles";
+    public static final String DEFAULT_PLATFORM_CITY = "Móstoles";
+    public static final String DEFAULT_PLATFORM_LOCATION = "Polígono Regordoño";
+    public static final String DEFAULT_LISTA_UNIDADES = "kg\nuds\ntoneladas\nm2\nlitros";
+    public static final String DEFAULT_LISTA_DISPONIBILIDAD = "Inmediata\nEn 1 semana\nConsultar";
 
     public ConfiguracionService(ConfiguracionRepository configuracionRepository) {
         this.configuracionRepository = configuracionRepository;
@@ -45,6 +50,11 @@ public class ConfiguracionService {
             case "emailContacto" -> DEFAULT_EMAIL;
             case "comisionPlataforma" -> DEFAULT_COMISION;
             case "listaCategorias" -> DEFAULT_CATEGORIAS;
+            case "listaUnidades" -> DEFAULT_LISTA_UNIDADES;
+            case "listaDisponibilidades" -> DEFAULT_LISTA_DISPONIBILIDAD;
+            case "platformName" -> DEFAULT_PLATFORM_NAME;
+            case "platformCity" -> DEFAULT_PLATFORM_CITY;
+            case "platformLocation" -> DEFAULT_PLATFORM_LOCATION;
             case "modoMantenimiento" -> "false";
             default -> "";
         };

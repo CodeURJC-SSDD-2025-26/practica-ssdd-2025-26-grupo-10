@@ -49,10 +49,9 @@ public class MensajeController {
         Empresa empresa = empresaService.buscarPorEmail(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
  
-        model.addAttribute("empresa", empresa);
         model.addAttribute("activeMensajes", true);
  
-        // Recupera lista de mensajes donde la empresa actual es la destinataria
+        // Retrieves a list of messages where the current company is the recipient
         List<Mensaje> misMensajes = mensajeService.obtenerPorDestinatario(empresa);
         model.addAttribute("mensajes", misMensajes);
  
@@ -66,32 +65,31 @@ public class MensajeController {
     public String mostrarDetalleMensaje(@PathVariable Long id, Model model, Principal principal) {
         Mensaje mensaje = mensajeService.buscarPorId(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Mensaje no encontrado"));
-
+ 
         Empresa empresa = empresaService.buscarPorEmail(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa no encontrada"));
-
-        // Seguridad: Solo el remitente o el destinatario pueden ver el mensaje
+ 
+        // Security: Only the sender or the recipient can view the message
         boolean esDestinatario = mensaje.getDestinatario().getId().equals(empresa.getId());
         boolean esRemitente = mensaje.getRemitente().getId().equals(empresa.getId());
-
+ 
         if (!esDestinatario && !esRemitente) {
              throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para ver este mensaje");
         }
-
-        // Marcar como leído si el destinatario es el usuario logueado
+ 
+        // Mark as read if the recipient is the logged-in user
         if (esDestinatario && !mensaje.isLeido()) {
             mensaje.setLeido(true);
             mensajeService.guardar(mensaje);
         }
-
+ 
         model.addAttribute("mensaje", mensaje);
-        model.addAttribute("empresa", empresa);
-
+ 
         return "detalle_mensaje";
     }
  
     /**
-     * Envia un mensaje al propietario de una oferta.
+     * Sends a message to the owner of an offer.
      */
     @PostMapping("/mensajes/enviar/{ofertaId}")
     public String enviarMensajeOferta(@PathVariable Long ofertaId, @RequestParam String contenido, Principal principal) {
@@ -107,7 +105,7 @@ public class MensajeController {
  
         return "redirect:/mensajes";
     }
-
+ 
     /**
      * Shows the form to compose a new message.
      */
@@ -118,11 +116,6 @@ public class MensajeController {
         Empresa receptor = empresaService.buscarPorId(receptorId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa receptora no encontrada"));
         
-        if (principal != null) {
-            empresaService.buscarPorEmail(principal.getName())
-                          .ifPresent(empresa -> model.addAttribute("empresa", empresa));
-        }
-
         model.addAttribute("receptor", receptor);
         model.addAttribute("asunto", asunto != null ? asunto : "");
         return "redactar_mensaje";

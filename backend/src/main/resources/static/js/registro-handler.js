@@ -1,6 +1,6 @@
-// registro-handler.js — corregido.
-// Solo mantiene la validación de contraseñas coincidentes.
-// El envío real del formulario lo gestiona Spring Boot (action="/registro" method="POST").
+// registro-handler.js — corrected.
+// Only maintains the matching passwords validation.
+// The actual form submission is handled by Spring Boot (action="/registro" method="POST").
 document.addEventListener("DOMContentLoaded", function () {
     const registerForm = document.querySelector('#registerForm');
     if (registerForm) {
@@ -9,13 +9,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const confirmPassword = document.getElementById('confirmPassword')?.value;
 
             if (password !== confirmPassword) {
-                e.preventDefault(); // Solo bloqueamos si las contraseñas no coinciden
+                e.preventDefault(); // Only block if passwords don't match
                 alert('Las contraseñas no coinciden');
                 return;
             }
 
             this.classList.add('was-validated');
-            // Si las contraseñas coinciden, el formulario se envía normalmente a Spring Boot
+            // If passwords match, the form is submitted normally to Spring Boot
         });
     }
 });

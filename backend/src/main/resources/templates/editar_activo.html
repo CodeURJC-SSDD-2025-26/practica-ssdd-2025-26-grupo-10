@@ -1,116 +1,138 @@
 {{> head}}
+
 <body class="bg-theme-dark">
-{{> header}}
+    {{> header}}
 
-<div class="container-fluid">
-    <div class="row min-vh-100">
-        {{> sidebar}}
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            {{> sidebar}}
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2 text-dark fw-bold">Editar Activo <span class="text-muted fs-6">#REF-{{oferta.id}}</span></h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <a href="/dashboard/mis-ofertas" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-1"></i> Cancelar</a>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2 text-dark fw-bold">Editar Activo <span
+                            class="text-muted fs-6">#REF-{{oferta.id}}</span></h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <a href="/dashboard/mis-ofertas" class="btn btn-sm btn-outline-secondary rounded-pill"><i
+                                class="fas fa-arrow-left me-1"></i> Cancelar</a>
+                    </div>
                 </div>
-            </div>
 
-            <div class="card card-modern border-top-primary">
-                <div class="card-body p-4">
-                    {{#error}}
-                    <div class="alert alert-danger d-flex align-items-center shadow-sm" role="alert">
-                        <i class="fas fa-exclamation-circle me-2 fs-5"></i>
-                        <span>{{error}}</span>
-                    </div>
-                    {{/error}}
-                    {{#errores}}
-                    <div class="alert alert-danger d-flex align-items-center" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <span>{{defaultMessage}}</span>
-                    </div>
-                    {{/errores}}
-                    <form action="/ofertas/{{oferta.id}}/editar" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate="">
-                        {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <label for="titulo" class="form-label text-secondary fw-bold small text-uppercase">Título del Activo <span class="text-danger">*</span></label>
-                                <input type="text" name="titulo" class="form-control" id="titulo" value="{{oferta.titulo}}" required="">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="tipo" class="form-label text-secondary fw-bold small text-uppercase">Tipo <span class="text-danger">*</span></label>
-                                <select name="tipoResiduo" class="form-select" id="tipo" required="">
-                                    {{#opcionesTipo}}
-                                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                                    {{/opcionesTipo}}
-                                </select>
-                            </div>
-
-                            <div class="col-12">
-                                <label for="descripcion" class="form-label text-secondary fw-bold small text-uppercase">Descripción Detallada <span class="text-danger">*</span></label>
-                                <textarea name="descripcion" class="form-control" id="descripcion" rows="4" required="">{{oferta.descripcion}}</textarea>
-                            </div>
-
-                            <div class="col-md-4">
-                                <label for="cantidad" class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <input type="number" name="cantidad" class="form-control" id="cantidad" value="{{oferta.cantidad}}" min="0" required="">
-                                    <select class="form-select" id="unidad" name="unidad" data-selected="{{oferta.unidad}}" required>
-                                        {{#listaUnidades}}
-                                        <option value="{{.}}">{{.}}</option>
-                                        {{/listaUnidades}}
+                <div class="card card-modern border-top-primary">
+                    <div class="card-body p-4">
+                        {{#errores}}
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span>{{defaultMessage}}</span>
+                        </div>
+                        {{/errores}}
+                        <form action="/ofertas/{{oferta.id}}/editar" method="POST" enctype="multipart/form-data"
+                            class="needs-validation" novalidate="">
+                            {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label for="titulo"
+                                        class="form-label text-secondary fw-bold small text-uppercase">Título del Activo
+                                        <span class="text-danger">*</span></label>
+                                    <input type="text" name="titulo" class="form-control" id="titulo"
+                                        value="{{oferta.titulo}}" required="">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="tipo"
+                                        class="form-label text-secondary fw-bold small text-uppercase">Tipo <span
+                                            class="text-danger">*</span></label>
+                                    <select name="tipoResiduo" class="form-select" id="tipo" required="">
+                                        {{#opcionesTipo}}
+                                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                        {{/opcionesTipo}}
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="precio" class="form-label text-secondary fw-bold small text-uppercase">Precio (€)</label>
-                                <input type="number" name="precio" class="form-control" id="precio" value="{{oferta.precio}}" step="0.01" min="0">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="disponibilidad" class="form-label text-secondary fw-bold small text-uppercase">Disponibilidad</label>
-                                <select class="form-select" id="disponibilidad" name="disponibilidad" data-selected="{{oferta.disponibilidad}}">
-                                    {{#listaDisponibilidades}}
-                                    <option value="{{.}}">{{.}}</option>
-                                    {{/listaDisponibilidades}}
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="estado" class="form-label text-secondary fw-bold small text-uppercase">Estado</label>
-                                <select class="form-select" id="estado" name="estado">
-                                    {{#opcionesEstado}}
-                                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                                    {{/opcionesEstado}}
-                                </select>
-                            </div>
 
-                            <div class="col-12">
-                                <label for="imagenFile" class="form-label text-secondary fw-bold small text-uppercase">Fotografía del Activo</label>
-                                <div class="mb-2">
-                                    <small class="text-muted">Imagen actual:</small><br>
-                                    <img src="/images/oferta/{{oferta.id}}" alt="Imagen del activo" class="img-thumbnail rounded object-fit-cover mt-2 mb-3 shadow-sm" style="max-height: 200px;" onerror="this.src='/img/logo.webp';">
+                                <div class="col-12">
+                                    <label for="descripcion"
+                                        class="form-label text-secondary fw-bold small text-uppercase">Descripción
+                                        Detallada <span class="text-danger">*</span></label>
+                                    <textarea name="descripcion" class="form-control" id="descripcion" rows="4"
+                                        required="">{{oferta.descripcion}}</textarea>
                                 </div>
-                                <input class="form-control" type="file" id="imagenFile" name="imagenFile" accept="image/*">
-                                <div class="form-text">Deja vacío para conservar la imagen actual.</div>
-                            </div>
 
-                            <div class="col-12 mt-4 d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary px-4 fw-bold">
-                                    <i class="fas fa-save me-2"></i> Guardar Cambios
-                                </button>
+                                <div class="col-md-4">
+                                    <label for="cantidad"
+                                        class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span
+                                            class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="number" name="cantidad" class="form-control" id="cantidad"
+                                            value="{{oferta.cantidad}}" min="0" required="">
+                                        <select class="form-select" id="unidad" name="unidad"
+                                            data-selected="{{oferta.unidad}}" required>
+                                            {{#listaUnidades}}
+                                            <option value="{{.}}">{{.}}</option>
+                                            {{/listaUnidades}}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="precio"
+                                        class="form-label text-secondary fw-bold small text-uppercase">Precio
+                                        (€)</label>
+                                    <input type="number" name="precio" class="form-control" id="precio"
+                                        value="{{oferta.precio}}" step="0.01" min="0">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="disponibilidad"
+                                        class="form-label text-secondary fw-bold small text-uppercase">Disponibilidad</label>
+                                    <select class="form-select" id="disponibilidad" name="disponibilidad"
+                                        data-selected="{{oferta.disponibilidad}}">
+                                        {{#listaDisponibilidades}}
+                                        <option value="{{.}}">{{.}}</option>
+                                        {{/listaDisponibilidades}}
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="estado"
+                                        class="form-label text-secondary fw-bold small text-uppercase">Estado</label>
+                                    <select class="form-select" id="estado" name="estado">
+                                        {{#opcionesEstado}}
+                                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                        {{/opcionesEstado}}
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="imagenFile"
+                                        class="form-label text-secondary fw-bold small text-uppercase">Fotografía del
+                                        Activo</label>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Imagen actual:</small><br>
+                                        <img src="/images/oferta/{{oferta.id}}" alt="Imagen del activo"
+                                            class="img-thumbnail rounded object-fit-cover mt-2 mb-3 shadow-sm"
+                                            style="max-height: 200px;" onerror="this.src='/img/logo.webp';">
+                                    </div>
+                                    <input class="form-control" type="file" id="imagenFile" name="imagenFile"
+                                        accept="image/*">
+                                    <div class="form-text">Deja vacío para conservar la imagen actual.</div>
+                                </div>
+
+                                <div class="col-12 mt-4 d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary px-4 fw-bold">
+                                        <i class="fas fa-save me-2"></i> Guardar Cambios
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
-</div>
 
-<script>
-    // Pre-select values for dynamic lists
-    document.querySelectorAll('select[data-selected]').forEach(select => {
-        const selectedValue = select.getAttribute('data-selected');
-        if (selectedValue) {
-            select.value = selectedValue;
-        }
-    });
-</script>
-{{> footer}}
+    <script>
+        // Pre-select values for dynamic lists
+        document.querySelectorAll('select[data-selected]').forEach(select => {
+            const selectedValue = select.getAttribute('data-selected');
+            if (selectedValue) {
+                select.value = selectedValue;
+            }
+        });
+    </script>
+    {{> footer}}

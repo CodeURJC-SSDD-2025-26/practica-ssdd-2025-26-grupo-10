@@ -37,6 +37,11 @@ public class MensajeService {
         return mensajeRepository.findByDestinatario(destinatario);
     }
 
+    @Transactional(readOnly = true)
+    public long contarPorDestinatario(Empresa destinatario) {
+        return mensajeRepository.countByDestinatario(destinatario);
+    }
+
     /** Returns the total count of messages. */
     @Transactional(readOnly = true)
     public long contarTodos() {

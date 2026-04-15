@@ -85,6 +85,26 @@ public class RegistroController {
 
             byte[] logoBytes = null;
             if (dto.getLogoFile() != null && !dto.getLogoFile().isEmpty()) {
+                // Enterprise Plus: Security Validation for Assets
+                String contentType = dto.getLogoFile().getContentType();
+                long size = dto.getLogoFile().getSize();
+
+                if (size > 2 * 1024 * 1024) { // 2MB Limit
+                    model.addAttribute("error", true);
+                    model.addAttribute("errorMsg", "El logo es demasiado pesado. El tamaño máximo es de 2MB.");
+                    injectDynamicOptions(model);
+                    return "registro";
+                }
+
+                if (contentType == null || (!contentType.equals("image/jpeg") && 
+                    !contentType.equals("image/png") && 
+                    !contentType.equals("image/webp"))) {
+                    model.addAttribute("error", true);
+                    model.addAttribute("errorMsg", "Formato de imagen no soportado. Usa JPG, PNG o WebP.");
+                    injectDynamicOptions(model);
+                    return "registro";
+                }
+
                 logoBytes = dto.getLogoFile().getBytes();
             }
 

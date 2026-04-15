@@ -48,11 +48,9 @@
                                 <div class="input-group">
                                     <input type="number" name="cantidad" class="form-control" placeholder="Ej. 500" min="0" value="{{#acuerdo.cantidad}}{{acuerdo.cantidad}}{{/acuerdo.cantidad}}" required="">
                                     <select name="unidad" class="form-select" style="max-width: 120px;" required>
-                                        <option value="kg" selected>kg</option>
-                                        <option value="uds">uds</option>
-                                        <option value="ton">toneladas</option>
-                                        <option value="m2">m²</option>
-                                        <option value="L">litros</option>
+                                        {{#listaUnidades}}
+                                        <option value="{{.}}">{{.}}</option>
+                                        {{/listaUnidades}}
                                     </select>
                                 </div>
                             </div>

@@ -46,10 +46,12 @@ public class MisOfertasController {
 
     private final EmpresaService empresaService;
     private final OfertaService ofertaService;
+    private final es.urjc.ecomostoles.backend.service.ConfiguracionService configuracionService;
 
-    public MisOfertasController(EmpresaService empresaService, OfertaService ofertaService) {
+    public MisOfertasController(EmpresaService empresaService, OfertaService ofertaService, es.urjc.ecomostoles.backend.service.ConfiguracionService configuracionService) {
         this.empresaService = empresaService;
         this.ofertaService  = ofertaService;
+        this.configuracionService = configuracionService;
     }
 
     // -------------------------------------------------------------------------
@@ -85,7 +87,6 @@ public class MisOfertasController {
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
-            model.addAttribute("empresa", empresa);
             model.addAttribute("activeOfertas", true);
             List<OfertaResumen> misOfertas = ofertaService.obtenerPorEmpresa(empresa);
             model.addAttribute("ofertas", misOfertas);
@@ -108,12 +109,18 @@ public class MisOfertasController {
     public String mostrarFormularioNuevaOferta(Model model, Principal principal) {
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
         if (empresaOpt.isPresent()) {
-            model.addAttribute("empresa", empresaOpt.get());
             model.addAttribute("activeNuevaOferta", true);
             model.addAttribute("oferta", new Oferta());
+            injectDynamicResidueTypes(model);
             return "crear_activo";
         }
         return "redirect:/";
+    }
+
+    private void injectDynamicResidueTypes(Model model) {
+        String catsStr = configuracionService.obtenerValorAuto("listaCategorias");
+        List<String> categorias = java.util.Arrays.asList(catsStr.split("\\r?\\n"));
+        model.addAttribute("listaCategorias", categorias);
     }
 
     // -------------------------------------------------------------------------
@@ -127,10 +134,9 @@ public class MisOfertasController {
                                      Principal principal) {
 
         if (result.hasErrors()) {
-            Optional<Empresa> empresaOpt = empresaService.buscarPorEmail(principal.getName());
-            empresaOpt.ifPresent(e -> model.addAttribute("empresa", e));
             model.addAttribute("errores", result.getAllErrors());
             model.addAttribute("oferta", oferta);
+            injectDynamicResidueTypes(model);
             return "crear_activo";
         }
 
@@ -167,30 +173,35 @@ public class MisOfertasController {
     // -------------------------------------------------------------------------
     // GET /oferta/editar/{id} — Show edit form (ownership check)
     // -------------------------------------------------------------------------
+    private void cargarOpcionesSelect(Model model, Oferta oferta) {
+        // Dynamic Select Options for status
+        List<SelectOption> opcionesEstado = new ArrayList<>();
+        opcionesEstado.add(new SelectOption("ACTIVA", "ACTIVA", "ACTIVA".equals(oferta.getEstado() != null ? oferta.getEstado().toString() : "")));
+        opcionesEstado.add(new SelectOption("PAUSADA", "PAUSADA", "PAUSADA".equals(oferta.getEstado() != null ? oferta.getEstado().toString() : "")));
+        model.addAttribute("opcionesEstado", opcionesEstado);
+
+        // Inject Dynamic Categories from Settings
+        String catsStr = configuracionService.obtenerValorAuto("listaCategorias");
+        List<String> categorias = java.util.Arrays.asList(catsStr.split("\\r?\\n"));
+        
+        List<SelectOption> opcionesTipo = new ArrayList<>();
+        for(String cat : categorias) {
+            opcionesTipo.add(new SelectOption(cat, cat, cat.equals(oferta.getTipoResiduo())));
+        }
+        model.addAttribute("opcionesTipo", opcionesTipo);
+    }
+
+    // -------------------------------------------------------------------------
+    // GET /oferta/editar/{id} — Show edit form (ownership check)
+    // -------------------------------------------------------------------------
     @GetMapping("/ofertas/{id}/editar")
     public String mostrarFormularioEditarOferta(@PathVariable Long id,
                                                 Model model,
                                                 Principal principal) {
         Oferta oferta = verificarPropietario(id, principal);
-        empresaService.buscarPorEmail(principal.getName())
-                      .ifPresent(e -> model.addAttribute("empresa", e));
         model.addAttribute("oferta", oferta);
 
-        // Dynamic Select Options for residues
-        List<SelectOption> opcionesTipo = new ArrayList<>();
-        opcionesTipo.add(new SelectOption("residuo_metalico", "Residuo: Metal", "residuo_metalico".equals(oferta.getTipoResiduo())));
-        opcionesTipo.add(new SelectOption("residuo_madera", "Residuo: Madera", "residuo_madera".equals(oferta.getTipoResiduo())));
-        opcionesTipo.add(new SelectOption("residuo_plastico", "Residuo: Plástico", "residuo_plastico".equals(oferta.getTipoResiduo())));
-        opcionesTipo.add(new SelectOption("residuo_quimico", "Residuo: Químico", "residuo_quimico".equals(oferta.getTipoResiduo())));
-        opcionesTipo.add(new SelectOption("maquinaria", "Maquinaria", "maquinaria".equals(oferta.getTipoResiduo())));
-        opcionesTipo.add(new SelectOption("espacio", "Espacio", "espacio".equals(oferta.getTipoResiduo())));
-        model.addAttribute("opcionesTipo", opcionesTipo);
-
-        // Dynamic Select Options for status
-        List<SelectOption> opcionesEstado = new ArrayList<>();
-        opcionesEstado.add(new SelectOption("ACTIVA", "ACTIVA", "ACTIVA".equals(oferta.getEstado().toString())));
-        opcionesEstado.add(new SelectOption("PAUSADA", "PAUSADA", "PAUSADA".equals(oferta.getEstado().toString())));
-        model.addAttribute("opcionesEstado", opcionesEstado);
+        cargarOpcionesSelect(model, oferta);
 
         return "editar_activo";
     }
@@ -210,8 +221,9 @@ public class MisOfertasController {
         Oferta oferta = verificarPropietario(id, principal);
 
         if (result.hasErrors()) {
-            empresaService.buscarPorEmail(principal.getName())
-                          .ifPresent(e -> model.addAttribute("empresa", e));
+            
+            cargarOpcionesSelect(model, ofertaForm);
+            
             model.addAttribute("errores", result.getAllErrors());
             model.addAttribute("oferta", ofertaForm);
             ofertaForm.setId(id);

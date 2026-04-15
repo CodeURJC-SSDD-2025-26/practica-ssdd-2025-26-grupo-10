@@ -1,7 +1,5 @@
 {{> head}}
 <body class="bg-theme-dark">
-<!-- Particles Background (Solo en Index) -->
-<div id="particles-body"></div>
 {{> header}}
 
 <main>
@@ -11,7 +9,7 @@
         <div id="particles-hero" class="position-absolute top-0 start-0 w-100 h-100"></div>
         <div class="container position-relative" style="z-index: 10;">
             <h1 class="display-3 fw-bold mb-4 text-white">Convierte tus residuos en recursos</h1>
-            <p class="lead mb-5 col-lg-8 mx-auto text-light">Conectamos empresas del Polígono Regordoño y alrededores para fomentar la economía circular en Móstoles.</p>
+            <p class="lead mb-5 col-lg-8 mx-auto text-light">Conectamos empresas del {{platformLocation}} y alrededores para fomentar la economía circular en {{platformCity}}.</p>
             <div class="d-flex justify-content-center gap-3">
                 <a href="/registro" class="btn btn-success btn-lg px-5 rounded-pill shadow-lg fw-bold">Únete a la Simbiosis</a>
                 <a href="/mercado" class="btn btn-outline-light btn-lg px-5 rounded-pill fw-bold">Explorar Mercado</a>
@@ -60,7 +58,7 @@
                         <i class="fas fa-box-open fs-1 text-muted"></i>
                     </div>
                     <h4 class="fw-bold text-dark">El mercado se está preparando</h4>
-                    <p class="text-muted mx-auto" style="max-width: 500px;">Las ofertas aparecerán aquí en cuanto las empresas del polígono comiencen a publicar sus excedentes.</p>
+                    <p class="text-muted mx-auto" style="max-width: 500px;">Las ofertas aparecerán aquí en cuanto las empresas del área comiencen a publicar sus excedentes.</p>
                     <a href="/registro" class="btn btn-success mt-3 rounded-pill px-4">¡Sé el primero en publicar!</a>
                 </div>
                 {{/ofertasRecientes}}
@@ -90,9 +88,5 @@
 </main>
 
 <script src="/js/hero-vortex.js"></script>
-
-<!-- Particles Logic (Solo en Index) -->
-<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-<script src="/js/particles-init.js"></script>
 
 {{> footer}}

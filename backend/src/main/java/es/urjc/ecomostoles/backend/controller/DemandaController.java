@@ -38,11 +38,6 @@ public class DemandaController {
      */
     @GetMapping("/solicitudes")
     public String mostrarTablonDemandas(Model model, Principal principal) {
-        if (principal != null) {
-            empresaService.buscarPorEmail(principal.getName())
-                          .ifPresent(empresa -> model.addAttribute("empresa", empresa));
-        }
-
         List<Demanda> todasLasDemandas = demandaService.obtenerTodas();
         model.addAttribute("demandas", todasLasDemandas);
         model.addAttribute("navDemandas", true);
@@ -60,11 +55,6 @@ public class DemandaController {
 
         if (demandaOpt.isPresent()) {
             model.addAttribute("demanda", demandaOpt.get());
-
-            if (principal != null) {
-                empresaService.buscarPorEmail(principal.getName())
-                              .ifPresent(empresa -> model.addAttribute("empresa", empresa));
-            }
 
             return "detalle_solicitud";
         }

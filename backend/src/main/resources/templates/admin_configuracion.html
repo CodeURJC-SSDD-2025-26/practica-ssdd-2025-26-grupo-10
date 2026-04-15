@@ -89,15 +89,35 @@
                     </div>
 
                     <div class="col-lg-5">
-                        <!-- Categories -->
-                        <div class="card shadow-sm border-0 border-top border-success border-4 rounded-4 h-100">
+                        <!-- Categories & Dictionary -->
+                        <div class="card shadow-sm border-0 border-top border-success border-4 rounded-4 mb-4">
                             <div class="card-header bg-white border-bottom-0 pt-4 px-4">
                                 <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-tags text-success me-2"></i> Diccionario de Materiales</h5>
                             </div>
                             <div class="card-body p-4">
                                 <label for="listaCategorias" class="form-label fw-bold text-dark small text-uppercase">Tipos de residuos habilitados</label>
-                                <textarea class="form-control bg-light font-monospace" name="listaCategorias" id="listaCategorias" rows="12" style="font-size: 0.9rem;">{{config.listaCategorias}}</textarea>
-                                <p class="text-muted small mt-2"><i class="fas fa-info-circle me-1"></i> Escribe un tipo de residuo por línea. Aparecerán en los desplegables de las empresas.</p>
+                                <textarea class="form-control bg-light font-monospace" name="listaCategorias" id="listaCategorias" rows="6" style="font-size: 0.9rem;">{{config.listaCategorias}}</textarea>
+                                <p class="text-muted small mt-2"><i class="fas fa-info-circle me-1"></i> Uno por línea.</p>
+                            </div>
+                        </div>
+
+                        <!-- Measurement Units -->
+                        <div class="card shadow-sm border-0 border-top border-info border-4 rounded-4 mb-4">
+                            <div class="card-header bg-white border-bottom-0 pt-3 px-4">
+                                <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-weight-hanging text-info me-2"></i> Unidades de Medida</h6>
+                            </div>
+                            <div class="card-body p-4 pt-2">
+                                <textarea class="form-control bg-light font-monospace" name="listaUnidades" id="listaUnidades" rows="4" style="font-size: 0.85rem;">{{config.listaUnidades}}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Availability Terms -->
+                        <div class="card shadow-sm border-0 border-top border-secondary border-4 rounded-4">
+                            <div class="card-header bg-white border-bottom-0 pt-3 px-4">
+                                <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-clock text-secondary me-2"></i> Plazos de Disponibilidad</h6>
+                            </div>
+                            <div class="card-body p-4 pt-2">
+                                <textarea class="form-control bg-light font-monospace" name="listaDisponibilidades" id="listaDisponibilidades" rows="4" style="font-size: 0.85rem;">{{config.listaDisponibilidades}}</textarea>
                             </div>
                         </div>
                     </div>

@@ -34,6 +34,7 @@ public class EmpresaDTO {
     private String rol;
     private Double co2Ahorrado = 0.0;
     private Integer ranking;
+    private boolean verificada;
 
     // Default constructor for Spring binding/Mustache
     public EmpresaDTO() {
@@ -54,6 +55,12 @@ public class EmpresaDTO {
         } else {
             this.rol = "USER";
         }
+        this.verificada = empresa.isVerificada();
+    }
+
+    // UI Helpers
+    public String getInicial() {
+        return (this.nombreComercial != null && !this.nombreComercial.isEmpty()) ? this.nombreComercial.substring(0, 1).toUpperCase() : "?";
     }
 
     // Getters and Setters
@@ -144,5 +151,13 @@ public class EmpresaDTO {
 
     public void setRanking(Integer ranking) {
         this.ranking = ranking;
+    }
+
+    public boolean isVerificada() {
+        return verificada;
+    }
+
+    public void setVerificada(boolean verificada) {
+        this.verificada = verificada;
     }
 }

@@ -40,7 +40,7 @@ public interface OfertaRepository extends JpaRepository<Oferta, Long> {
 
     @Query("SELECT o FROM Oferta o JOIN FETCH o.empresa " +
            "WHERE o.estado = :estado " +
-           "AND (:kw IS NULL OR :kw = '' OR LOWER(o.titulo) LIKE LOWER(CONCAT('%', :kw, '%')) OR LOWER(o.descripcion) LIKE LOWER(CONCAT('%', :kw, '%'))) " +
+           "AND (:kw IS NULL OR :kw = '' OR LOWER(o.titulo) LIKE LOWER(CONCAT('%', :kw, '%')) OR LOWER(CAST(o.descripcion AS string)) LIKE LOWER(CONCAT('%', :kw, '%'))) " +
            "AND (:tipo IS NULL OR :tipo = '' OR o.tipoResiduo = :tipo) " +
            "AND (:poligono IS NULL OR :poligono = '' OR LOWER(o.empresa.direccion) LIKE LOWER(CONCAT('%', :poligono, '%')))")
     List<OfertaResumen> buscarFiltrado(@Param("estado") EstadoOferta estado, @Param("kw") String kw, @Param("tipo") String tipo, @Param("poligono") String poligono);

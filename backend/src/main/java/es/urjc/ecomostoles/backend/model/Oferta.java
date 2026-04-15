@@ -40,7 +40,6 @@ public class Oferta {
      * Detailed description of the offer.
      */
     @NotBlank(message = "La descripción es obligatoria")
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 

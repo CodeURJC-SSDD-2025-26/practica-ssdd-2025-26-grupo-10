@@ -44,7 +44,6 @@ public class PerfilController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso no encontrado"));
 
         EmpresaDTO empresaSegura = new EmpresaDTO(empresa);
-        model.addAttribute("empresa", empresaSegura);
         if (exito) {
             model.addAttribute("exito", true);
         }
@@ -73,7 +72,6 @@ public class PerfilController {
                                 Principal principal) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("empresa", empresaDTO);
             return "perfil_empresa";
         }
 

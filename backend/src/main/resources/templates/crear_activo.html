@@ -46,12 +46,9 @@
                                 <label for="tipo" class="form-label text-secondary fw-bold small text-uppercase">Tipo <span class="text-danger">*</span></label>
                                 <select class="form-select" id="tipo" name="tipoResiduo" required>
                                     <option value="" selected disabled>Seleccionar...</option>
-                                    <option value="residuo_metalico">Residuo Metálico</option>
-                                    <option value="residuo_madera">Residuo de Madera</option>
-                                    <option value="residuo_plastico">Residuo Plástico</option>
-                                    <option value="residuo_quimico">Residuo Químico</option>
-                                    <option value="maquinaria">Alquiler Maquinaria</option>
-                                    <option value="espacio">Alquiler Espacio</option>
+                                    {{#listaCategorias}}
+                                    <option value="{{.}}">{{.}}</option>
+                                    {{/listaCategorias}}
                                 </select>
                             </div>
 

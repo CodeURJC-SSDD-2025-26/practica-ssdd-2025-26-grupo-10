@@ -36,7 +36,7 @@ public class WebController {
         List<OfertaResumen> recientes = ofertaService.obtenerRecientesActivas();
         model.addAttribute("ofertasRecientes", recientes);
         
-        // Inyectamos métricas reales de la base de datos
+        // Injects real metrics from the database
         model.addAttribute("totalEmpresas", empresaService.contarTodas());
         model.addAttribute("totalOfertas",   ofertaService.contarTodas());
         model.addAttribute("totalCo2",       acuerdoService.calcularCO2Ahorrado());
@@ -62,12 +62,12 @@ public class WebController {
 
     @PostMapping("/recuperar-password")
     public String procesarRecuperarPassword(@RequestParam String email, RedirectAttributes redirectAttributes) {
-        // Verificamos si el email existe en la BD antes de "enviar"
+        // Verifies if the email exists in the DB before "sending"
         if (empresaService.buscarPorEmail(email).isPresent()) {
             emailService.enviarEmailRecuperacion(email);
         }
         
-        // Mantenemos el mensaje genérico por seguridad (evitar enumeración de usuarios)
+        // Keep the generic message for security (prevent user enumeration)
         redirectAttributes.addFlashAttribute("mensajeRecuperacion", 
             "Si el correo existe en nuestro sistema, hemos enviado las instrucciones de recuperación.");
         return "redirect:/login";

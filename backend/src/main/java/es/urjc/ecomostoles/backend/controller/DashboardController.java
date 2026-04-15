@@ -38,7 +38,6 @@ public class DashboardController {
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();
             model.addAttribute("activeDashboard", true);
-            model.addAttribute("empresa", empresa);
 
             // Strong Typing: Receiving DTO from Service
             DashboardStatsDTO stats = dashboardService.obtenerEstadisticas(empresa);

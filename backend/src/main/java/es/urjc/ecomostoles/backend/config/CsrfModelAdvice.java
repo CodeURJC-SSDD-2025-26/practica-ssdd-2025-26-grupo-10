@@ -6,26 +6,26 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
- * Inyecta automáticamente el token CSRF de Spring Security en el modelo
- * de TODAS las vistas Mustache bajo el nombre "_csrf".
+ * Automatically injects the Spring Security CSRF token into the model
+ * of ALL Mustache views under the name "_csrf".
  *
- * Sin este advice, {{#_csrf}}...{{/_csrf}} nunca se renderiza porque
- * Mustache no accede directamente a los atributos del HttpServletRequest.
+ * Without this advice, {{#_csrf}}...{{/_csrf}} never renders because
+ * Mustache does not directly access HttpServletRequest attributes.
  *
- * Con él, el bloque {{#_csrf}}<input ... value="{{token}}">{{/_csrf}}
- * funciona en todas las plantillas y es null-safe: si por cualquier razón
- * el token fuera null, el bloque simplemente no se renderiza.
+ * With it, the block {{#_csrf}}<input ... value="{{token}}">{{/_csrf}}
+ * works in all templates and is null-safe: if for any reason
+ * the token is null, the block simply does not render.
  */
 @ControllerAdvice
 public class CsrfModelAdvice {
 
     /**
-     * Añade el objeto CsrfToken al modelo con la clave "_csrf".
-     * Spring Security lo resuelve de forma lazy desde el HttpServletRequest,
-     * por lo que nunca bloquea el hilo si CSRF no está activo.
+     * Adds the CsrfToken object to the model with the "_csrf" key.
+     * Spring Security resolves it lazily from the HttpServletRequest,
+     * so it never blocks the thread if CSRF is not active.
      *
-     * @param request la petición HTTP actual
-     * @return el CsrfToken, o null si CSRF está desactivado (bloque Mustache lo omite)
+     * @param request the current HTTP request
+     * @return the CsrfToken, or null if CSRF is disabled (Mustache block omits it)
      */
     @ModelAttribute("_csrf")
     public CsrfToken csrfToken(HttpServletRequest request) {

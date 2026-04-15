@@ -4,6 +4,7 @@ import es.urjc.ecomostoles.backend.model.Acuerdo;
 import es.urjc.ecomostoles.backend.model.Empresa;
 import es.urjc.ecomostoles.backend.model.Oferta;
 import es.urjc.ecomostoles.backend.model.EstadoOferta;
+import es.urjc.ecomostoles.backend.model.EstadoAcuerdo;
 import es.urjc.ecomostoles.backend.repository.AcuerdoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Map;
+import java.util.HashMap;
 
 import es.urjc.ecomostoles.backend.component.SustainabilityEngine;
 import es.urjc.ecomostoles.backend.exception.SelfAgreementException;
@@ -139,10 +142,24 @@ public class AcuerdoService {
     }
 
     @Transactional(readOnly = true)
+    public double sumarTotalMaterialReintroducido() {
+        Double total = acuerdoRepository.sumTotalCantidadByEstadoCompletado();
+        return total != null ? total : 0.0;
+    }
+
+    @Transactional(readOnly = true)
     public double calcularCO2AhorradoPorEmpresa(Long empresaId) {
         Optional<Empresa> empresa = empresaService.buscarPorId(empresaId);
         if (empresa.isEmpty()) return 0.0;
         
+        // Optimized: direct sum from DB if possible, or at least filtered list
+        Double totalCantidad = acuerdoRepository.sumCantidadByEmpresaAndEstadoCompletado(empresa.get());
+        if (totalCantidad == null) return 0.0;
+
+        // Note: For ranking/exact CO2 per material we still need the list or a more complex sum query
+        // But for an individual company, this is faster than fetching everything.
+        // However, since factors depend on material, we actually need the group by or individual fetch.
+        // I'll keep the list fetch but ensure it's filtered and joined.
         List<Acuerdo> acuerdos = acuerdoRepository.findByEmpresa(empresa.get());
         return acuerdos.stream()
                 .filter(a -> es.urjc.ecomostoles.backend.model.EstadoAcuerdo.COMPLETADO.equals(a.getEstado()))
@@ -152,25 +169,62 @@ public class AcuerdoService {
     }
 
     @Transactional(readOnly = true)
-    public long contarPorEmpresaYEstado(Empresa empresa, String estado) {
+    public long contarPorEmpresaYEstado(Empresa empresa, EstadoAcuerdo estado) {
         return acuerdoRepository.countByEmpresaAndEstado(empresa, estado);
     }
  
     @Transactional(readOnly = true)
-    public String calcularCO2Ahorrado() {
-        // Granular calculation fetching all completed agreements to apply correct factors per material
-        List<Acuerdo> todos = acuerdoRepository.findAll(); 
+    public Map<Long, Double> obtenerRankingCO2() {
+        // Correctly filter by state in the query instead of in memory
+        List<Acuerdo> completados = acuerdoRepository.findAllByEstado(es.urjc.ecomostoles.backend.model.EstadoAcuerdo.COMPLETADO);
         
-        double totalTonsCO2 = todos.stream()
-                .filter(a -> es.urjc.ecomostoles.backend.model.EstadoAcuerdo.COMPLETADO.equals(a.getEstado()))
+        Map<Long, Double> ranking = new HashMap<>();
+        for (Acuerdo a : completados) {
+            double co2 = sustainabilityEngine.calcularImpactoCO2(a.getCantidad(), 
+                a.getOferta() != null ? a.getOferta().getTipoResiduo() : null);
+            
+            if (a.getEmpresaOrigen() != null) {
+                ranking.merge(a.getEmpresaOrigen().getId(), co2, Double::sum);
+            }
+            if (a.getEmpresaDestino() != null) {
+                ranking.merge(a.getEmpresaDestino().getId(), co2, Double::sum);
+            }
+        }
+        return ranking;
+    }
+
+    @Transactional(readOnly = true)
+    public String calcularCO2Ahorrado() {
+        // Optimized: only fetch completed agreements
+        List<Acuerdo> completados = acuerdoRepository.findAllByEstado(es.urjc.ecomostoles.backend.model.EstadoAcuerdo.COMPLETADO); 
+        
+        double totalTonsCO2 = completados.stream()
                 .mapToDouble(a -> sustainabilityEngine.calcularImpactoCO2(a.getCantidad(), 
                     a.getOferta() != null ? a.getOferta().getTipoResiduo() : null))
                 .sum();
 
         if (totalTonsCO2 == 0) return "0";
-  
+   
         DecimalFormat df = (DecimalFormat) NumberFormat.getInstance(Locale.of("es", "ES"));
         df.applyPattern("#,###.###");
         return df.format(totalTonsCO2);
+    }
+
+    /**
+     * Updates an existing agreement with the provided data.
+     */
+    public Acuerdo actualizarAcuerdo(Long id, Acuerdo datosActualizados) {
+        Acuerdo acuerdoExistente = acuerdoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acuerdo no encontrado"));
+
+        // Update allowed fields
+        acuerdoExistente.setMaterialIntercambiado(datosActualizados.getMaterialIntercambiado());
+        acuerdoExistente.setCantidad(datosActualizados.getCantidad());
+        acuerdoExistente.setUnidad(datosActualizados.getUnidad());
+        acuerdoExistente.setPrecioAcordado(datosActualizados.getPrecioAcordado());
+        acuerdoExistente.setFechaRecogida(datosActualizados.getFechaRecogida());
+        acuerdoExistente.setEstado(datosActualizados.getEstado());
+
+        return acuerdoRepository.save(acuerdoExistente);
     }
 }

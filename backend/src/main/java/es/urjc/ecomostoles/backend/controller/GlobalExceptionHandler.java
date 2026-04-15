@@ -27,11 +27,11 @@ public class GlobalExceptionHandler {
         
         // Attempt to redirect back to the form
         String referer = request.getHeader("Referer");
-        if (referer != null && !referer.isEmpty()) {
-            return "redirect:" + referer;
+        if (referer == null || referer.isEmpty()) {
+            referer = "/dashboard"; // Safe fallback
         }
         
-        return "redirect:/dashboard";
+        return "redirect:" + referer;
     }
 
     /**

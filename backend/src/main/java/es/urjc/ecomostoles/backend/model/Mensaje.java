@@ -1,6 +1,7 @@
 package es.urjc.ecomostoles.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity
@@ -10,9 +11,10 @@ public class Mensaje {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El asunto no puede estar vacío")
     private String asunto;
 
-    @Lob
+    @NotBlank(message = "El contenido no puede estar vacío")
     @Column(columnDefinition = "TEXT")
     private String contenido;
 
