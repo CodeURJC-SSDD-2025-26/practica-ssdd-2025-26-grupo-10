@@ -1,117 +1,134 @@
 {{> head}}
-<body class="bg-theme-dark">
-{{> header}}
 
-<main>
-    <!-- 
+<body class="bg-theme-dark">
+    {{> header}}
+
+    <main>
+        <!-- 
         HERO SECTION ARCHITECTURE
         Implements a high-engagement landing canvas with dynamic particle overlays.
         The container uses a min-height of 60vh to establish visual dominance 
         while ensuring accessibility on mobile viewports.
     -->
-    <header class="hero-section text-center py-5 position-relative overflow-hidden" style="min-height: 60vh; display: flex; align-items: center;">
-        <!-- Particles: Hero (Absolute inside Header) -->
-        <div id="particles-hero" class="position-absolute top-0 start-0 w-100 h-100"></div>
-        <div class="container position-relative" style="z-index: 10;">
-            <h1 class="display-3 fw-bold mb-4 text-white">Convierte tus residuos en recursos</h1>
-            <p class="lead mb-5 col-lg-8 mx-auto text-light">Conectamos empresas del {{platformLocation}} y alrededores para fomentar la economía circular en {{platformCity}}.</p>
-            <div class="d-flex justify-content-center gap-3">
-                <a href="/registro" class="btn btn-success btn-lg px-5 rounded-pill shadow-lg fw-bold">Únete a la Simbiosis</a>
-                <a href="/mercado" class="btn btn-outline-light btn-lg px-5 rounded-pill fw-bold">Explorar Mercado</a>
+        <header class="hero-section text-center py-5 position-relative overflow-hidden"
+            style="min-height: 60vh; display: flex; align-items: center;">
+            <!-- Particles: Hero (Absolute inside Header) -->
+            <div id="particles-hero" class="position-absolute top-0 start-0 w-100 h-100"></div>
+            <div class="container position-relative" style="z-index: 10;">
+                <h1 class="display-3 fw-bold mb-4 text-white">Convierte tus residuos en recursos</h1>
+                <p class="lead mb-5 col-lg-8 mx-auto text-light">Conectamos empresas del {{platformLocation}} y
+                    alrededores para fomentar la economía circular en {{platformCity}}.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="/registro" class="btn btn-success btn-lg px-5 rounded-pill shadow-lg fw-bold">Únete a la
+                        Simbiosis</a>
+                    <a href="/mercado" class="btn btn-outline-light btn-lg px-5 rounded-pill fw-bold">Explorar
+                        Mercado</a>
+                </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- 
+        <!-- 
         MARKETPLACE DISCOVERY GRID
         Renders the most recent assets published to the platform.
         Uses a standard 3-column Bootstrap grid (col-md-4) for responsive discovery.
     -->
-    <section id="offers" class="py-5 bg-white">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-end mb-5">
-                <div>
-                    <h2 class="h1 fw-bold text-dark mb-0">Ofertas Recientes</h2>
-                    <p class="text-muted mb-0">Últimos materiales publicados por empresas locales.</p>
+        <section id="offers" class="py-5 bg-white">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-end mb-5">
+                    <div>
+                        <h2 class="h1 fw-bold text-dark mb-0">Ofertas Recientes</h2>
+                        <p class="text-muted mb-0">Últimos materiales publicados por empresas locales.</p>
+                    </div>
+                    <a href="/mercado" class="btn btn-link text-success fw-bold text-decoration-none p-0">Ver todo el
+                        mercado <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
-                <a href="/mercado" class="btn btn-link text-success fw-bold text-decoration-none p-0">Ver todo el mercado <i class="fas fa-arrow-right ms-1"></i></a>
-            </div>
 
-            <div class="row g-4">
-                <!-- 
+                <div class="row g-4">
+                    <!-- 
                     MUSTACHE ITERATION: recentOffers
                     Dynamically generates material cards. Injects a cacheBuster parameter 
                     to ensure fresh image loads post-update.
                 -->
-                {{#recentOffers}}
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm card-hover rounded-4 overflow-hidden">
-                        <div class="position-relative">
-                            <img src="/images/oferta/{{id}}?t={{cacheBuster}}" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{title}}" onerror="this.src='/img/logo.webp';">
-                            <span class="badge bg-success position-absolute top-0 end-0 m-3 shadow-sm px-3 py-2 rounded-pill">{{category}}</span>
-                        </div>
-                        <div class="card-body p-4">
-                            <h5 class="card-title fw-bold text-dark mb-2">{{title}}</h5>
-                            <div class="d-flex align-items-center mb-3">
-                                <img src="/images/empresa/{{company.id}}" class="rounded-circle object-fit-cover me-2" style="width: 24px; height: 24px; border: 1px solid #eee;" onerror="this.src='/img/logo.webp';">
-                                <small class="text-muted">{{company.commercialName}}</small>
+                    {{#recentOffers}}
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm card-hover rounded-4 overflow-hidden">
+                            <div class="position-relative">
+                                <img src="/images/oferta/{{id}}?t={{cacheBuster}}" class="card-img-top"
+                                    style="height:220px;object-fit:cover;" alt="{{title}}"
+                                    onerror="this.src='/img/logo.webp';">
+                                <span
+                                    class="badge bg-success position-absolute top-0 end-0 m-3 shadow-sm px-3 py-2 rounded-pill">{{category}}</span>
                             </div>
-                            <p class="card-text text-secondary line-clamp-2 small mb-3">{{description}}</p>
-                            
-                            <div class="mb-3">
-                                <span class="text-muted small">
-                                    <i class="fas fa-clock text-success me-1"></i> <strong>Disponibilidad:</strong> {{availability}}
-                                </span>
-                            </div>
-                            
-                            <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-                                <span class="h5 fw-bold text-success mb-0">{{quantity}} {{unit}}</span>
-                                <a href="/oferta/{{id}}" class="btn btn-primary btn-sm rounded-pill px-3">Ver Detalles</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {{/recentOffers}}
+                            <div class="card-body p-4">
+                                <h5 class="card-title fw-bold text-dark mb-2">{{title}}</h5>
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="/images/empresa/{{company.id}}"
+                                        class="rounded-circle object-fit-cover me-2"
+                                        style="width: 24px; height: 24px; border: 1px solid #eee;"
+                                        onerror="this.src='/img/logo.webp';">
+                                    <small class="text-muted">{{company.commercialName}}</small>
+                                </div>
+                                <p class="card-text text-secondary line-clamp-2 small mb-3">{{description}}</p>
 
-                <!-- FALLBACK: Empty State when no recent offers are available -->
-                {{^recentOffers}}
-                <div class="col-12 text-center py-5">
-                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 100px; height: 100px;">
-                        <i class="fas fa-box-open fs-1 text-muted"></i>
+                                <div class="mb-3">
+                                    <span class="text-muted small">
+                                        <i class="fas fa-clock text-success me-1"></i> <strong>Disponibilidad:</strong>
+                                        {{availability}}
+                                    </span>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                                    <span class="h5 fw-bold text-success mb-0">{{formattedQuantity}} {{unit}}</span>
+                                    <a href="/oferta/{{id}}" class="btn btn-primary btn-sm rounded-pill px-3">Ver
+                                        Detalles</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h4 class="fw-bold text-dark">El mercado se está preparando</h4>
-                    <p class="text-muted mx-auto" style="max-width: 500px;">Las ofertas aparecerán aquí en cuanto las empresas del área comiencen a publicar sus excedentes.</p>
-                    <a href="/registro" class="btn btn-success mt-3 rounded-pill px-4">¡Sé el primero en publicar!</a>
+                    {{/recentOffers}}
+
+                    <!-- FALLBACK: Empty State when no recent offers are available -->
+                    {{^recentOffers}}
+                    <div class="col-12 text-center py-5">
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4"
+                            style="width: 100px; height: 100px;">
+                            <i class="fas fa-box-open fs-1 text-muted"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark">El mercado se está preparando</h4>
+                        <p class="text-muted mx-auto" style="max-width: 500px;">Las ofertas aparecerán aquí en cuanto
+                            las empresas del área comiencen a publicar sus excedentes.</p>
+                        <a href="/registro" class="btn btn-success mt-3 rounded-pill px-4">¡Sé el primero en
+                            publicar!</a>
+                    </div>
+                    {{/recentOffers}}
                 </div>
-                {{/recentOffers}}
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- 
+        <!-- 
         ANALYTICAL KPIS / SOCIAL PROOF
         Displays platform-wide sustainability indices and growth metrics.
     -->
-    <section class="py-5 bg-light border-top border-bottom">
-        <div class="container py-4">
-            <div class="row g-4 text-center">
-                <div class="col-md-4">
-                    <div class="h1 fw-bold text-success mb-0">+{{totalCompanies}}</div>
-                    <p class="text-muted fw-bold text-uppercase small">Empresas Unidas</p>
-                </div>
-                <div class="col-md-4 border-start border-end">
-                    <div class="h1 fw-bold text-success mb-0">+{{totalOffers}}</div>
-                    <p class="text-muted fw-bold text-uppercase small">Recursos Reciclados</p>
-                </div>
-                <div class="col-md-4">
-                    <div class="h1 fw-bold text-success mb-0">+{{totalCo2}} Tn</div>
-                    <p class="text-muted fw-bold text-uppercase small">CO2 Ahorrado</p>
+        <section class="py-5 bg-light border-top border-bottom">
+            <div class="container py-4">
+                <div class="row g-4 text-center">
+                    <div class="col-md-4">
+                        <div class="h1 fw-bold text-success mb-0">+{{totalCompanies}}</div>
+                        <p class="text-muted fw-bold text-uppercase small">Empresas Unidas</p>
+                    </div>
+                    <div class="col-md-4 border-start border-end">
+                        <div class="h1 fw-bold text-success mb-0">+{{totalOffers}}</div>
+                        <p class="text-muted fw-bold text-uppercase small">Recursos Reciclados</p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="h1 fw-bold text-success mb-0">+{{totalCo2}} Kg</div>
+                        <p class="text-muted fw-bold text-uppercase small">CO2 Ahorrado</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
-</main>
+        </section>
+    </main>
 
-<script src="/js/hero-vortex.js"></script>
+    <script src="/js/hero-vortex.js"></script>
 
-{{> footer}}
+    {{> footer}}

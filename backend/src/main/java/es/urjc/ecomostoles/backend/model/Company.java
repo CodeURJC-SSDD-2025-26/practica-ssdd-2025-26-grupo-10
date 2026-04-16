@@ -37,6 +37,7 @@ public class Company {
     private String commercialName;
 
     @NotBlank(message = "El CIF es obligatorio")
+    @jakarta.validation.constraints.Pattern(regexp = "^[ABCDEFGHJKLMNPQSVW][0-9]{7}[0-9A-J]$" , message = "El formato del CIF no es válido (ej. A12345678)")
     @Column(unique = true)
     private String taxId;
 

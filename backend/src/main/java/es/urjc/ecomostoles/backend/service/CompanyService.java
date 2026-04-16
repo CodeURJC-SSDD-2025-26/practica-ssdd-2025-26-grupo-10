@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Identity Management Service governing the lifecycle of corporate Tenants.
@@ -21,6 +23,8 @@ import java.util.Optional;
 @Service
 @Transactional
 public class CompanyService {
+    
+    private static final Logger log = LoggerFactory.getLogger(CompanyService.class);
 
     private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
@@ -69,12 +73,15 @@ public class CompanyService {
 
     /** Persists a new or updated company. */
     public Company save(Company company) {
-        return companyRepository.save(company);
+        Company saved = companyRepository.save(company);
+        log.info("[Identity] Success -> Persisted company ID: '{}' (Email: {})", saved.getId(), saved.getContactEmail());
+        return saved;
     }
 
     /** Deletes a company by its ID. */
     public void delete(Long id) {
         companyRepository.deleteById(id);
+        log.info("[Identity] Success -> Removed company ID: {} from system.", id);
     }
 
     /** Returns the total count of companies. */
@@ -123,12 +130,18 @@ public class CompanyService {
             throw new IllegalArgumentException("Este email ya está registrado");
         }
 
+        if (companyRepository.findByTaxId(company.getTaxId()).isPresent()) {
+            throw new IllegalArgumentException("El CIF introducido ya pertenece a una empresa registrada");
+        }
+
         company.setPassword(passwordEncoder.encode(rawPassword));
 
         if (logoBytes != null && logoBytes.length > 0) {
             company.setLogo(logoBytes);
         }
 
-        return companyRepository.save(company);
+        Company saved = companyRepository.save(company);
+        log.info("[Identity] Success -> New company registered: '{}' (CIF: {})", saved.getCommercialName(), saved.getTaxId());
+        return saved;
     }
 }

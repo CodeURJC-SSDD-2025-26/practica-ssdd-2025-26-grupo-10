@@ -21,9 +21,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.security.access.prepost.PreAuthorize;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.util.Map;
-import java.util.stream.Collectors;
-import org.springframework.validation.FieldError;
 
 /**
  * Controller orchestrating dynamic profile manipulation.
@@ -92,27 +89,30 @@ public class ProfileController {
             RedirectAttributes redirectAttributes) {
 
         if (logoFile != null && !logoFile.isEmpty()) {
-            log.info("Logo file received: {} ({} bytes)", logoFile.getOriginalFilename(), logoFile.getSize());
+            log.info("[Profile] Success -> Multipart logo received: '{}' ({} bytes)", logoFile.getOriginalFilename(), logoFile.getSize());
         } else {
-            log.info("No logo file provided; maintaining existing image.");
+            log.info("[Profile] INFO -> Profile update request without logo modification.");
         }
 
         Long targetId = companyDTO.getId();
         boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
 
         if (bindingResult.hasErrors()) {
-            log.error("⚠️ Validation errors updating profile: {}", bindingResult.getAllErrors());
+            log.warn("[Profile] Failed -> Validation constraints violated during profile update for ID: {}. Errors: {}", targetId, bindingResult.getFieldErrors().size());
             
-            // Map errors for Mustache consumption in the next request
-            Map<String, String> errors = bindingResult.getFieldErrors().stream()
-                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage, (a, b) -> a));
+            // Map errors as boolean flags for Mustache UI
+            bindingResult.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             
-            redirectAttributes.addFlashAttribute("errors", errors);
-            
+            // Re-populate required model attributes to keep context
+            model.addAttribute("isDashboard", true);
             if (isAdmin && targetId != null) {
-                return "redirect:/perfil/" + targetId;
+                model.addAttribute("isAdminView", true);
+                model.addAttribute("inspectedCompany", companyDTO);
+            } else {
+                model.addAttribute("company", companyDTO);
             }
-            return "redirect:/perfil";
+            
+            return "perfil_empresa";
         }
 
         // Logic: Evaluate authorization clearance dynamically. Admin roles break isolation barriers to assist users.
@@ -134,10 +134,10 @@ public class ProfileController {
 
         if (logoFile != null && !logoFile.isEmpty()) {
             try {
-                log.info("💾 Persistence: Updating logo for company {}: {} bytes", company.getId(), logoFile.getSize());
+                log.info("[Storage] Persistence -> Synchronizing new binary logo for company ID: {} ({} bytes)", company.getId(), logoFile.getSize());
                 company.setLogo(logoFile.getBytes());
             } catch (Exception e) {
-                log.error("⚠️ Error reading the logo", e);
+                log.error("[Storage] ERROR -> IO exception during logo binary synchronization for company ID: {}", company.getId(), e);
             }
         }
 

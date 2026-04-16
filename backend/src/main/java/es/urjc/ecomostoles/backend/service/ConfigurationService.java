@@ -37,7 +37,7 @@ public class ConfigurationService {
 
     @Transactional
     public void saveOrUpdateConfiguration(String key, String value) {
-        log.debug("Persisting configuration -> Key: {}, Value: {}", key, value);
+        log.debug("[Config] Persistence -> Synchronizing key '{}' with value: {}", key, value);
         GlobalConfiguration config = configurationRepository.findByKey(key)
                 .orElse(new GlobalConfiguration(key, value));
         config.setValue(value);

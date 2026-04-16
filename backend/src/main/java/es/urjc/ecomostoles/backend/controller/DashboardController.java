@@ -20,6 +20,8 @@ import es.urjc.ecomostoles.backend.service.CompanyService;
 @Controller
 public class DashboardController {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DashboardController.class);
+
     private final CompanyService companyService;
     private final DashboardService dashboardService;
 
@@ -41,6 +43,7 @@ public class DashboardController {
 
         if (companyOpt.isPresent()) {
             Company company = companyOpt.get();
+            log.info("[Dashboard] Access -> Generating operational metrics for company: '{}'", company.getContactEmail());
             model.addAttribute("activeDashboard", true);
             model.addAttribute("isDashboard", true);
 
@@ -53,8 +56,8 @@ public class DashboardController {
             model.addAttribute("totalDemands", stats.getTotalDemands());
             model.addAttribute("totalActiveAgreements", stats.getActiveAgreements());
             model.addAttribute("chartData", stats.getChartData());
-            model.addAttribute("reintroducedMaterial", String.format(java.util.Locale.US, "%.2f", stats.getReintroducedMaterial()));
-            model.addAttribute("co2Impact", String.format(java.util.Locale.US, "%.2f", stats.getCo2Impact()));
+            model.addAttribute("reintroducedMaterial", stats.getFormattedReintroducedMaterial());
+            model.addAttribute("co2Impact", stats.getFormattedCo2Impact());
 
             // Smart Matching logic
             model.addAttribute("userIsAdmin", stats.isAdmin());

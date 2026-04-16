@@ -1,6 +1,7 @@
 package es.urjc.ecomostoles.backend.dto;
 
 import java.util.List;
+import es.urjc.ecomostoles.backend.utils.NumberFormatter;
 
 /**
  * Analytical payload aggregate for Dashboard monitoring.
@@ -86,12 +87,20 @@ public class DashboardStatsDTO {
         this.reintroducedMaterial = reintroducedMaterial;
     }
 
+    public String getFormattedReintroducedMaterial() {
+        return NumberFormatter.format(this.reintroducedMaterial);
+    }
+
     public double getCo2Impact() {
         return co2Impact;
     }
 
     public void setCo2Impact(double co2Impact) {
         this.co2Impact = co2Impact;
+    }
+
+    public String getFormattedCo2Impact() {
+        return NumberFormatter.format(this.co2Impact);
     }
 
     public List<?> getSmartRecommendations() {

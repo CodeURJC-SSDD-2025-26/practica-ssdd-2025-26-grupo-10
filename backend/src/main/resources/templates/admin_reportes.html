@@ -1,219 +1,242 @@
 {{> head_admin}}
+
 <body class="bg-theme-dark">
-{{> header}}
+    {{> header}}
 
-<div class="container-fluid">
-    <div class="row min-vh-100">
-        <!-- Admin Sidebar -->
-        {{> sidebar_admin}}
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            <!-- Admin Sidebar -->
+            {{> sidebar_admin}}
 
-        <!-- Main Content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent">
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-transparent">
 
-            <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
-                <div>
-                   <h1 class="h2 fw-bold text-dark mb-0"><i class="fas fa-chart-bar text-success me-2"></i>Reportes y Estadísticas</h1>
-                   <p class="text-secondary small">Impacto ambiental y métricas de rendimiento de la red EcoMóstoles.</p>
-                </div>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <a href="/admin/exportar/pdf" class="btn btn-sm btn-outline-success rounded-pill px-4 shadow-sm">
-                        <i class="fas fa-file-pdf me-2"></i>Descargar Informe Completo (PDF)
-                    </a>
-                </div>
-            </header>
+                <header
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                    <div>
+                        <h1 class="h2 fw-bold text-dark mb-0"><i class="fas fa-chart-bar text-success me-2"></i>Reportes
+                            y Estadísticas</h1>
+                        <p class="text-secondary small">Impacto ambiental y métricas de rendimiento de la red
+                            EcoMóstoles.</p>
+                    </div>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <a href="/admin/exportar/pdf"
+                            class="btn btn-sm btn-outline-success rounded-pill px-4 shadow-sm">
+                            <i class="fas fa-file-pdf me-2"></i>Descargar Informe Completo (PDF)
+                        </a>
+                    </div>
+                </header>
 
-            <div class="row g-4 mb-4" id="kpi-containers">
-                <div class="col-md-4">
-                    <div class="card shadow-sm border-0 rounded-4 border-top border-success border-4 h-100">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-success bg-opacity-10 p-3 rounded-circle d-inline-block mb-3">
-                                <i class="fas fa-leaf text-success fa-2x"></i>
+                <div class="row g-4 mb-4" id="kpi-containers">
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 rounded-4 border-top border-success border-4 h-100">
+                            <div class="card-body p-4 text-center">
+                                <div class="bg-success bg-opacity-10 p-3 rounded-circle d-inline-block mb-3">
+                                    <i class="fas fa-leaf text-success fa-2x"></i>
+                                </div>
+                                <h6 class="text-muted fw-bold text-uppercase small mb-2">CO₂ Ahorrado</h6>
+                                <h2 class="fw-bold mb-0 text-dark">{{reportMetrics.co2Saved}} <small
+                                        class="h6 text-muted">{{mainUnit}}</small></h2>
+                                <p class="text-success small fw-bold mt-2"><i class="fas fa-caret-up me-1"></i>Impacto
+                                    positivo</p>
                             </div>
-                            <h6 class="text-muted fw-bold text-uppercase small mb-2">CO₂ Ahorrado</h6>
-                            <h2 class="fw-bold mb-0 text-dark">{{reportMetrics.co2Saved}} <small class="h6 text-muted">{{mainUnit}}</small></h2>
-                            <p class="text-success small fw-bold mt-2"><i class="fas fa-caret-up me-1"></i>Impacto positivo</p>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card shadow-sm border-0 rounded-4 border-top border-primary border-4 h-100">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-block mb-3">
-                                <i class="fas fa-handshake text-primary fa-2x"></i>
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 rounded-4 border-top border-primary border-4 h-100">
+                            <div class="card-body p-4 text-center">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-block mb-3">
+                                    <i class="fas fa-handshake text-primary fa-2x"></i>
+                                </div>
+                                <h6 class="text-muted fw-bold text-uppercase small mb-2">Transacciones</h6>
+                                <h2 class="fw-bold mb-0 text-dark">{{reportMetrics.transactions}}</h2>
+                                <p class="text-primary small fw-bold mt-2"><i class="fas fa-sync me-1"></i>En curso</p>
                             </div>
-                            <h6 class="text-muted fw-bold text-uppercase small mb-2">Transacciones</h6>
-                            <h2 class="fw-bold mb-0 text-dark">{{reportMetrics.transactions}}</h2>
-                            <p class="text-primary small fw-bold mt-2"><i class="fas fa-sync me-1"></i>En curso</p>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card shadow-sm border-0 rounded-4 border-top border-warning border-4 h-100">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-warning bg-opacity-10 p-3 rounded-circle d-inline-block mb-3">
-                                <i class="fas fa-building text-warning fa-2x"></i>
-                            </div>
-                            <h6 class="text-muted fw-bold text-uppercase small mb-2">Empresas Activas</h6>
-                            <h2 class="fw-bold mb-0 text-dark">{{reportMetrics.activeCompanies}}</h2>
-                            <p class="text-warning small fw-bold mt-2"><i class="fas fa-users me-1"></i>Red creciendo</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dynamic Visualization: Global Impact Chart -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card shadow-sm border-0 rounded-4 border-top border-success border-4 h-100">
-                        <div class="card-header bg-white border-bottom-0 pt-4 px-4 pb-0">
-                            <h5 class="fw-bold text-dark mb-0"><i class="fas fa-chart-line text-success me-2"></i>Distribución de Impacto Ambiental</h5>
-                            <p class="text-muted small">Visualización del CO₂ ahorrado por las empresas líderes.</p>
-                        </div>
-                        <div class="card-body p-4">
-                            <div style="height: 300px; position: relative;">
-                                <canvas id="adminChart"></canvas>
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 rounded-4 border-top border-warning border-4 h-100">
+                            <div class="card-body p-4 text-center">
+                                <div class="bg-warning bg-opacity-10 p-3 rounded-circle d-inline-block mb-3">
+                                    <i class="fas fa-building text-warning fa-2x"></i>
+                                </div>
+                                <h6 class="text-muted fw-bold text-uppercase small mb-2">Empresas Activas</h6>
+                                <h2 class="fw-bold mb-0 text-dark">{{reportMetrics.activeCompanies}}</h2>
+                                <p class="text-warning small fw-bold mt-2"><i class="fas fa-users me-1"></i>Red
+                                    creciendo</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Top Companies Table -->
-            <div class="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden">
-                <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="fw-bold text-dark mb-1"><i class="fas fa-trophy text-warning me-2"></i>Top Empresas Recicladoras</h5>
-                            <p class="text-muted small mb-0">Ranking basado en volumen de transacciones y CO₂ evitado</p>
+                <!-- Dynamic Visualization: Global Impact Chart -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card shadow-sm border-0 rounded-4 border-top border-success border-4 h-100">
+                            <div class="card-header bg-white border-bottom-0 pt-4 px-4 pb-0">
+                                <h5 class="fw-bold text-dark mb-0"><i
+                                        class="fas fa-chart-line text-success me-2"></i>Distribución de Impacto
+                                    Ambiental</h5>
+                                <p class="text-muted small">Visualización del CO₂ ahorrado por las empresas líderes.</p>
+                            </div>
+                            <div class="card-body p-4">
+                                <div style="height: 300px; position: relative;">
+                                    <canvas id="adminChart"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light text-secondary small text-uppercase sticky-top" style="top: 0; z-index: 10; background-color: #f8f9fa !important;">
-                                <tr>
-                                    <th class="ps-4 py-3">Puesto</th>
-                                    <th>Empresa</th>
-                                    <th>Email</th>
-                                    <th>Identificación (CIF)</th>
-                                    <th class="text-end pe-4">CO₂ Ahorrado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#topCompanies}}
-                                <tr>
-                                    <td class="ps-4">
-                                        <span class="badge bg-light text-dark rounded-circle border shadow-sm" style="width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;">{{ranking}}</span>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center me-3 border border-success border-opacity-25" style="width: 40px; height: 40px; font-weight: bold;">
-                                                <img src="/images/empresa/{{id}}" alt="" class="rounded-circle object-fit-cover w-100 h-100" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                                <span style="display:none;">{{initial}}</span>
+
+                <!-- Top Companies Table -->
+                <div class="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden">
+                    <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1"><i class="fas fa-trophy text-warning me-2"></i>Top
+                                    Empresas Recicladoras</h5>
+                                <p class="text-muted small mb-0">Ranking basado en volumen de transacciones y CO₂
+                                    evitado</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light text-secondary small text-uppercase sticky-top"
+                                    style="top: 0; z-index: 10; background-color: #f8f9fa !important;">
+                                    <tr>
+                                        <th class="ps-4 py-3">Puesto</th>
+                                        <th>Empresa</th>
+                                        <th>Email</th>
+                                        <th>Identificación (CIF)</th>
+                                        <th class="text-end pe-4">CO₂ Ahorrado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#topCompanies}}
+                                    <tr>
+                                        <td class="ps-4">
+                                            <span class="badge bg-light text-dark rounded-circle border shadow-sm"
+                                                style="width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;">{{ranking}}</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center me-3 border border-success border-opacity-25"
+                                                    style="width: 40px; height: 40px; font-weight: bold;">
+                                                    <img src="/images/empresa/{{id}}" alt=""
+                                                        class="rounded-circle object-fit-cover w-100 h-100"
+                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                                    <span style="display:none;">{{initial}}</span>
+                                                </div>
+                                                <div>
+                                                    <a href="/perfil/{{id}}"
+                                                        class="d-block fw-bold text-dark text-decoration-none text-hover-success">{{commercialName}}</a>
+                                                    <small class="text-muted text-uppercase small">{{sector}}</small>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <a href="/perfil/{{id}}" class="d-block fw-bold text-dark text-decoration-none text-hover-success">{{commercialName}}</a>
-                                                <small class="text-muted text-uppercase small">{{sector}}</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-secondary small">{{contactEmail}}</td>
-                                    <td class="text-secondary fw-bold small">{{taxId}}</td>
-                                    <td class="text-end pe-4">
-                                        <span class="badge bg-success-soft text-success px-3 py-2 rounded-pill fw-bold border border-success border-opacity-10">
-                                            <i class="fas fa-leaf me-1"></i>{{co2Saved}} {{mainUnit}}
-                                        </span>
-                                    </td>
-                                </tr>
-                                {{/topCompanies}}
-                                {{^topCompanies}}
-                                <tr>
-                                    <td colspan="5" class="text-center py-5">
-                                        <div class="mb-2"><i class="fas fa-poll fs-1 opacity-25"></i></div>
-                                        <p class="text-muted mb-0">Aún no hay datos suficientes para generar el ranking.</p>
-                                    </td>
-                                </tr>
-                                {{/topCompanies}}
-                            </tbody>
-                        </table>
+                                        </td>
+                                        <td class="text-secondary small">{{contactEmail}}</td>
+                                        <td class="text-secondary fw-bold small">{{taxId}}</td>
+                                        <td class="text-end pe-4">
+                                            <span
+                                                class="badge bg-success-soft text-success px-3 py-2 rounded-pill fw-bold border border-success border-opacity-10">
+                                                <i class="fas fa-leaf me-1"></i>{{formattedCo2Saved}} {{mainUnit}}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {{/topCompanies}}
+                                    {{^topCompanies}}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">
+                                            <div class="mb-2"><i class="fas fa-poll fs-1 opacity-25"></i></div>
+                                            <p class="text-muted mb-0">Aún no hay datos suficientes para generar el
+                                                ranking.</p>
+                                        </td>
+                                    </tr>
+                                    {{/topCompanies}}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </main>
+            </main>
+        </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const ctx = document.getElementById('adminChart');
-        if (!ctx) return;
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById('adminChart');
+            if (!ctx) return;
 
-        const labels = JSON.parse('{{{chartLabels}}}');
-        const data = JSON.parse('{{{chartData}}}');
+            const labels = JSON.parse('{{{chartLabels}}}');
+            const data = JSON.parse('{{{chartData}}}');
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'CO2 Ahorrado (Tn)',
-                    data: data,
-                    backgroundColor: 'rgba(25, 135, 84, 0.2)',
-                    borderColor: 'rgba(25, 135, 84, 1)',
-                    borderWidth: 2,
-                    borderRadius: 10,
-                    hoverBackgroundColor: 'rgba(25, 135, 84, 0.4)'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    title: {
-                        display: true,
-                        text: 'Top 5 Empresas por CO2 Ahorrado',
-                        font: { size: 16, weight: 'bold' },
-                        color: '#333',
-                        padding: { bottom: 20 }
-                    }
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'CO2 Ahorrado (Kg)',
+                        data: data,
+                        backgroundColor: 'rgba(25, 135, 84, 0.2)',
+                        borderColor: 'rgba(25, 135, 84, 1)',
+                        borderWidth: 2,
+                        borderRadius: 10,
+                        hoverBackgroundColor: 'rgba(25, 135, 84, 0.4)'
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { drawBorder: false },
-                        ticks: {
-                            callback: function(value) { return value + ' Tn'; }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Top 5 Empresas por CO2 Ahorrado',
+                            font: { size: 16, weight: 'bold' },
+                            color: '#333',
+                            padding: { bottom: 20 }
                         }
                     },
-                    x: {
-                        grid: { display: false }
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { drawBorder: false },
+                            ticks: {
+                                callback: function (value) { return value + ' Kg'; }
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
                     }
                 }
-            }
+            });
         });
-    });
-</script>
+    </script>
 
-{{> footer}}
- 
-<style>
-    /* Custom Scrollbar for the Ranking Table */
-    .table-responsive::-webkit-scrollbar {
-        width: 6px;
-    }
-    .table-responsive::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
-    }
-    .table-responsive::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 10px;
-    }
-    .table-responsive::-webkit-scrollbar-thumb:hover {
-        background: #a8a8a8;
-    }
-</style>
+    {{> footer}}
+
+    <style>
+        /* Custom Scrollbar for the Ranking Table */
+        .table-responsive::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>

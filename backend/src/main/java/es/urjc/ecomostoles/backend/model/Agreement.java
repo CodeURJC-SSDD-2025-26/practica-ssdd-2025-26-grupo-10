@@ -13,10 +13,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import es.urjc.ecomostoles.backend.utils.NumberFormatter;
 
 /**
  * Core commercial entity mapping finalized B2B transactions.
@@ -205,10 +204,15 @@ public class Agreement {
     }
 
     public String getFormattedPlatformCommission() {
-        if (this.platformCommission == null)
-            return "0,00 €";
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.of("es", "ES"));
-        return currencyFormat.format(this.platformCommission);
+        return NumberFormatter.formatCurrency(this.platformCommission);
+    }
+
+    public String getFormattedCo2Impact() {
+        return NumberFormatter.format(this.co2Impact);
+    }
+    
+    public String getFormattedQuantity() {
+        return NumberFormatter.format(this.quantity);
     }
 
     public LocalDate getPickupDate() {
@@ -276,10 +280,7 @@ public class Agreement {
     }
 
     public String getFormattedAgreedPrice() {
-        if (this.agreedPrice == null)
-            return "0,00 €";
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.of("es", "ES"));
-        return currencyFormat.format(this.agreedPrice);
+        return NumberFormatter.formatCurrency(this.agreedPrice);
     }
 
     public String getFormattedRegistrationDate() {

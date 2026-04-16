@@ -37,6 +37,8 @@ import es.urjc.ecomostoles.backend.dto.SelectOption;
 @Controller
 public class MyDemandsController {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MyDemandsController.class);
+
     private final CompanyService companyService;
     private final DemandService demandService;
     private final es.urjc.ecomostoles.backend.service.ConfigurationService configurationService;
@@ -71,6 +73,7 @@ public class MyDemandsController {
                 && demand.getCompany().getId().equals(loggedCompany.getId());
 
         if (!isAdmin && !isOwner) {
+            log.warn("[Marketplace] Security -> Unauthorized access attempt to demand ID: {} by user: {}", demandId, principal.getName());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "You do not have permission to modify this demand.");
         }
@@ -177,7 +180,9 @@ public class MyDemandsController {
         if (companyOpt.isPresent()) {
             demand.setCompany(companyOpt.get());
             demand.setPublicationDate(LocalDateTime.now());
+            demand.setStatus(DemandStatus.ACTIVE);
             demandService.save(demand);
+            log.info("[Marketplace] Success -> New demand published by '{}': '{}'", principal.getName(), demand.getTitle());
             redirectAttributes.addFlashAttribute("successMessage", "¡Demanda publicada con éxito!");
             
             // FIX: Redirect based on role to avoid 403
@@ -197,6 +202,7 @@ public class MyDemandsController {
             org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         verifyDemandOwnership(id, principal);
         demandService.delete(id);
+        log.info("[Marketplace] Success -> Demand ID: {} deleted by owner/admin: {}", id, principal.getName());
         
         redirectAttributes.addFlashAttribute("successMessage", "Demanda eliminada con éxito.");
 
@@ -293,6 +299,7 @@ public class MyDemandsController {
         existingDemand.setStatus(demandForm.getStatus());
 
         demandService.save(existingDemand);
+        log.info("[Marketplace] Success -> Demand ID: {} updated by: {}", id, principal.getName());
 
         redirectAttributes.addFlashAttribute("successMessage", "Demanda actualizada con éxito.");
 

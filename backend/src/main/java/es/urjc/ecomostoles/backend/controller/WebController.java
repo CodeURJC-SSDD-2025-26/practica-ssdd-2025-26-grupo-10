@@ -7,6 +7,7 @@ import es.urjc.ecomostoles.backend.dto.OfferSummary;
 import es.urjc.ecomostoles.backend.service.AgreementService;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.service.OfferService;
+import es.urjc.ecomostoles.backend.utils.NumberFormatter;
 import java.util.List;
 import org.springframework.security.core.Authentication;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,7 +48,7 @@ public class WebController {
         // Injects real metrics from the database
         model.addAttribute("totalCompanies", companyService.countAll());
         model.addAttribute("totalOffers", offerService.countAll());
-        model.addAttribute("totalCo2", agreementService.calculateCO2Saved());
+        model.addAttribute("totalCo2", NumberFormatter.format(agreementService.calculateCO2Saved()));
         model.addAttribute("isHome", true);
 
         return "index";

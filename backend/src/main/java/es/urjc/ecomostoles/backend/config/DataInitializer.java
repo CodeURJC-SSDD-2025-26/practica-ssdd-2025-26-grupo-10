@@ -64,16 +64,16 @@ public class DataInitializer implements CommandLineRunner {
         try {
             ClassPathResource res = new ClassPathResource(path);
             if (!res.exists()) {
-                log.warn("⚠️  Image not found: {}", path);
+                log.warn("[Storage] WARN -> Asset not found at path: {}", path);
                 return null;
             }
             try (InputStream is = res.getInputStream()) {
                 byte[] bytes = StreamUtils.copyToByteArray(is);
-                log.info("   📷 '{}' → {} bytes", fileName, bytes.length);
+                log.info("[Storage] INFO -> Asset loaded: '{}' ({} bytes)", fileName, bytes.length);
                 return bytes;
             }
         } catch (IOException e) {
-            log.error("❌ Error reading '{}': {}", path, e.getMessage());
+            log.error("[Storage] ERROR -> Failed to read asset '{}': {}", path, e.getMessage());
             return null;
         }
     }
@@ -123,15 +123,15 @@ public class DataInitializer implements CommandLineRunner {
      */
     @Override
     public void run(String... args) throws Exception {
-        log.info("════════════════════════════════════════════");
-        log.info("  DataInitializer — Practice 2 SSDD");
-        log.info("════════════════════════════════════════════");
+        log.info("--------------------------------------------------");
+        log.info("  SYSTEM INITIALIZATION – EcoMóstoles Platform");
+        log.info("--------------------------------------------------");
 
         // ══════════════════════════════════════════
         // 0. Environmental Impact Factors (Sustainability)
         // ══════════════════════════════════════════
         if (impactFactorRepository.count() == 0) {
-            log.info("🌱 Seeding environmental impact factors...");
+            log.info("[Sustainability] Seeding environmental impact factors...");
             impactFactorRepository.save(new ImpactFactor("METAL_WASTE", 2.0));
             impactFactorRepository.save(new ImpactFactor("HAZARDOUS_WASTE", 5.0));
             impactFactorRepository.save(new ImpactFactor("WOOD_WASTE", 0.8));
@@ -141,7 +141,7 @@ public class DataInitializer implements CommandLineRunner {
             impactFactorRepository.save(new ImpactFactor("CONSTRUCTION_WASTE", 0.7));
             impactFactorRepository.save(new ImpactFactor("PAPER_WASTE", 1.1));
             impactFactorRepository.save(new ImpactFactor("GLASS_WASTE", 1.2));
-            log.info("✅ {} factors created.", impactFactorRepository.count());
+            log.info("[Sustainability] Success -> {} impact factors registered.", impactFactorRepository.count());
         }
 
         // ══════════════════════════════════════════
@@ -158,7 +158,7 @@ public class DataInitializer implements CommandLineRunner {
                 "logo.webp",
                 List.of("ADMIN") // ← ADMIN role
         );
-        log.info("✅ ADMIN created/updated → {} | password: 1234 | roles: {}", admin.getContactEmail(),
+        log.info("[Security] Identity registered: ADMIN -> {} (Roles: {})", admin.getContactEmail(),
                 admin.getRoles());
 
         // ══════════════════════════════════════════
@@ -175,7 +175,7 @@ public class DataInitializer implements CommandLineRunner {
                 "logo.webp",
                 List.of("COMPANY") // ← USER/COMPANY role
         );
-        log.info("✅ Company 1 → {} | roles: {}", company1.getContactEmail(), company1.getRoles());
+        log.info("[Tenant] Identity registered: {} (Roles: {})", company1.getContactEmail(), company1.getRoles());
 
         // ══════════════════════════════════════════
         // 3. Company 2 — EcoSur Reciclajes (USER)
@@ -190,7 +190,7 @@ public class DataInitializer implements CommandLineRunner {
                 "Centro de reciclaje especializado en plásticos y metales no ferrosos.",
                 "logo.webp",
                 List.of("COMPANY"));
-        log.info("✅ Company 2 → {} | roles: {}", company2.getContactEmail(), company2.getRoles());
+        log.info("[Tenant] Identity registered: {} (Roles: {})", company2.getContactEmail(), company2.getRoles());
 
         // ══════════════════════════════════════════
         // 4. Test offers with BLOB images
@@ -210,7 +210,7 @@ public class DataInitializer implements CommandLineRunner {
                     WasteCategory.METAL_WASTE.name(), 120.0, "kg", 4.80, "Esta semana",
                     LocalDateTime.now().minusDays(2), "bobinas-cobre.webp");
 
-            log.info("✅ 2 offers created for Company 1.");
+            log.info("[Marketplace] Success -> 2 offers provisioned for company: {}", company1.getContactEmail());
         } else {
             // Repair empty images if they exist
             offersCompany1.stream()
@@ -218,7 +218,7 @@ public class DataInitializer implements CommandLineRunner {
                     .forEach(o -> {
                         o.setImage(loadImage("virutas.webp"));
                         offerRepository.save(o);
-                        log.info("   🔄 Image repaired in: {}", o.getTitle());
+                        log.info("[Maintenance] Success -> Restored missing image for offer: {}", o.getTitle());
                     });
         }
 
@@ -237,7 +237,7 @@ public class DataInitializer implements CommandLineRunner {
                     WasteCategory.METAL_WASTE.name(), 1200.0, "kg", 0.15, "Inmediata",
                     LocalDateTime.now().minusHours(2), "virutas.webp");
 
-            log.info("✅ 2 offers created for Company 2 (including Smart Matching match).");
+            log.info("[Marketplace] Success -> 2 offers provisioned for company: {}", company2.getContactEmail());
         }
 
         // ══════════════════════════════════════════
@@ -291,18 +291,18 @@ public class DataInitializer implements CommandLineRunner {
                 "Especialistas en el reciclaje de metales no ferrosos.",
                 "logo.webp",
                 List.of("COMPANY"));
-        log.info("✅ Company 3 → {} | roles: {}", company3.getContactEmail(), company3.getRoles());
+        log.info("[Tenant] Identity registered: {} (Roles: {})", company3.getContactEmail(), company3.getRoles());
 
         // ══════════════════════════════════════════
         // 6b. Bulk Company Seeding (Admin Pagination Testing)
         // ══════════════════════════════════════════
         if (companyRepository.count() < 10) {
-            log.info("🏢 Injecting 12 extra companies for Admin pagination testing...");
+            log.info("[Stress-Test] Injecting 12 synthetic company records for pagination audit...");
             for (int i = 1; i <= 12; i++) {
                 upsertCompany(
                         "test_empresa" + i + "@example.com",
                         "Empresa de Prueba " + i,
-                        "Z" + String.format("%08d", i),
+                        "B" + String.format("%08d", i),
                         "Servicios",
                         "Polígono Industrial de Móstoles, Calle " + i,
                         "9100000" + String.format("%02d", i),
@@ -310,7 +310,7 @@ public class DataInitializer implements CommandLineRunner {
                         "logo.webp",
                         List.of("COMPANY"));
             }
-            log.info("✅ 12 additional companies created.");
+            log.info("[Stress-Test] Success -> 12 synthetic records synchronized.");
         }
 
         if (demandRepository.findByCompany(company3).isEmpty()) {
@@ -328,7 +328,7 @@ public class DataInitializer implements CommandLineRunner {
             pacoDemand.setPickupZone("Sector IV — Móstoles");
             pacoDemand.setCompany(company3);
             demandRepository.save(pacoDemand);
-            log.info("✅ Demand created for Company 3 (Paco).");
+            log.info("[Marketplace] Success -> New demand registered for company: {}", company3.getContactEmail());
         }
 
         if (agreementRepository.count() == 0) {
@@ -357,7 +357,7 @@ public class DataInitializer implements CommandLineRunner {
         // 7. Bulk Data Seeding for "Metales del Sur S.L." (Pagination Testing)
         // ══════════════════════════════════════════
         if (offerRepository.countByCompany(company1) < 5) {
-            log.info("📊 Injecting bulk sample data for Metales del Sur S.L. (Pagination testing)...");
+            log.info("[Stress-Test] Injecting bulk offer records for company: Metales del Sur S.L.");
 
             String[] metals = { "Cobre", "Aluminio", "Acero Corten", "Latón", "Plomo", "Zinc", "Retales de Hierro",
                     "Virutas de Bronce" };
@@ -412,14 +412,14 @@ public class DataInitializer implements CommandLineRunner {
                 bulkDemand.setCompany(company1);
                 demandRepository.save(bulkDemand);
             }
-            log.info("✅ 20 bulk records injected for Metales del Sur S.L.");
+            log.info("[Stress-Test] Success -> 20 bulk records provisioned.");
         }
 
         // ══════════════════════════════════════════
         // 8. Bulk Agreement Seeding for "Metales del Sur S.L." (Pagination Testing)
         // ══════════════════════════════════════════
         if (agreementRepository.count() < 10) {
-            log.info("🤝 Injecting 20 bulk agreements for Metales del Sur S.L. (Pagination testing)...");
+            log.info("[Stress-Test] Injecting 20 agreement records for auditing purposes...");
             java.util.Random random = new java.util.Random();
             AgreementStatus[] statuses = { AgreementStatus.PENDING, AgreementStatus.ACCEPTED,
                     AgreementStatus.COMPLETED };
@@ -452,7 +452,7 @@ public class DataInitializer implements CommandLineRunner {
 
                 agreementRepository.save(bulkAgreement);
             }
-            log.info("✅ 20 bulk agreements injected.");
+            log.info("[Stress-Test] Success -> 20 agreement records synchronized.");
         }
 
         log.info("════════════════════════════════════════════");
@@ -460,7 +460,7 @@ public class DataInitializer implements CommandLineRunner {
         // 9. Sample Message Seeding (Mailbox Testing)
         // ══════════════════════════════════════════
         if (messageRepository.count() == 0) {
-            log.info("📧 Seeding sample messages for mailbox UI testing...");
+            log.info("[Mailbox] Injecting sample communications for interface validation...");
 
             // Message 1: EcoSur -> Metales del Sur (Read)
             messageRepository.save(new Message(
@@ -507,15 +507,15 @@ public class DataInitializer implements CommandLineRunner {
                     company3,
                     company1));
 
-            log.info("✅ 5 sample messages injected.");
+            log.info("[Mailbox] Success -> 5 communication threads provisioned.");
         }
 
-        log.info("  Sample credentials (password: 1234 for all):");
-        log.info("  ADMIN  → admin@ecomostoles.es");
-        log.info("  USER 1 → contacto@metalesdelsur.es");
-        log.info("  USER 2 → reciclajes@ecosur.es");
-        log.info("  USER 3 → paco@reciclajes.es");
-        log.info("════════════════════════════════════════════");
+        log.info("--------------------------------------------------");
+        log.info("  BOOTSTRAP COMPLETE – Access Credentials (Pass: 1234):");
+        log.info("  -> Administrator: admin@ecomostoles.es");
+        log.info("  -> Tenant (Metal): contacto@metalesdelsur.es");
+        log.info("  -> Tenant (Recycle): reciclajes@ecosur.es");
+        log.info("--------------------------------------------------");
     }
 
     private void createOffer(Company company, String title, String description,

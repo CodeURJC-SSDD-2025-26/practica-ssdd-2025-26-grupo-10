@@ -3,6 +3,8 @@ package es.urjc.ecomostoles.backend.dto;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -18,6 +20,7 @@ public class RegistrationDTO {
     private String commercialName;
 
     @NotBlank(message = "El CIF es obligatorio")
+    @jakarta.validation.constraints.Pattern(regexp = "^[ABCDEFGHJKLMNPQSVW][0-9]{7}[0-9A-J]$" , message = "El formato del CIF no es válido (ej. A12345678)")
     private String taxId;
 
     @NotBlank(message = "La ubicación es obligatoria")
@@ -37,6 +40,7 @@ public class RegistrationDTO {
     private String contactEmail;
 
     @NotBlank(message = "La contraseña es obligatoria")
+    @Size(min = 4, message = "La contraseña debe tener al menos 4 caracteres")
     private String password;
 
     @NotBlank(message = "Debes confirmar la contraseña")
@@ -45,6 +49,10 @@ public class RegistrationDTO {
     private MultipartFile logoFile;
 
     private String otherAddress;
+    
+    @NotNull(message = "Debes aceptar los términos y condiciones")
+    @AssertTrue(message = "Debes aceptar los términos y condiciones")
+    private Boolean terms;
 
     public RegistrationDTO() {
     }
@@ -144,8 +152,16 @@ public class RegistrationDTO {
     public String getDescription() {
         return description;
     }
-
+    
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getTerms() {
+        return terms;
+    }
+
+    public void setTerms(Boolean terms) {
+        this.terms = terms;
     }
 }

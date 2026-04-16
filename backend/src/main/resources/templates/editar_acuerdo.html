@@ -22,38 +22,35 @@
 
             <div class="card card-modern border-top border-primary border-4 shadow-sm">
                 <div class="card-body p-4">
-                    <form action="/acuerdos/{{id}}/editar" method="POST" class="needs-validation">
+                    <form action="/acuerdos/{{id}}/editar" method="POST" class="needs-validation" novalidate>
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                         
                         <div class="row g-3">
                             <div class="col-12">
-                                <label for="exchangedMaterial" class="form-label text-secondary fw-bold small text-uppercase">Material / Concepto <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control {{#error_exchangedMaterial}}is-invalid{{/error_exchangedMaterial}}" id="exchangedMaterial" name="exchangedMaterial" value="{{exchangedMaterial}}" required>
-                                <div class="invalid-feedback">Por favor, indica el material intercambiado.</div>
+                                <label for="exchangedMaterial" class="form-label text-secondary fw-bold small text-uppercase">Material / Concepto</label>
+                                <input type="text" class="form-control bg-light" id="exchangedMaterial" name="exchangedMaterial" value="{{#exchangedMaterial}}{{exchangedMaterial}}{{/exchangedMaterial}}" readonly>
+                                <div class="form-text">El material del acuerdo no se puede modificar.</div>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="quantity" class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control {{#error_quantity}}is-invalid{{/error_quantity}}" id="quantity" name="quantity" value="{{quantity}}" step="0.01" min="0" required>
-                                <div class="invalid-feedback">La cantidad es obligatoria y debe ser mayor que 0.</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="unit" class="form-label text-secondary fw-bold small text-uppercase">Unidad <span class="text-danger">*</span></label>
-                                <select class="form-select {{#error_unit}}is-invalid{{/error_unit}}" id="unit" name="unit" required>
-                                    {{#unitOptions}}
-                                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                                    {{/unitOptions}}
-                                </select>
-                                <div class="invalid-feedback">Selecciona una unidad de medida.</div>
+                                <label for="quantity" class="form-label text-secondary fw-bold small text-uppercase">Cantidad y Unidad <span class="text-danger">*</span></label>
+                                <div class="input-group has-validation">
+                                    <input type="number" class="form-control {{#error_quantity}}is-invalid{{/error_quantity}}" id="quantity" name="quantity" value="{{#quantity}}{{quantity}}{{/quantity}}" step="0.01" min="0" required>
+                                    <select class="form-select {{#error_unit}}is-invalid{{/error_unit}}" id="unit" name="unit" style="max-width: 120px;" required>
+                                        {{#unitOptions}}
+                                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                        {{/unitOptions}}
+                                    </select>
+                                    <div class="invalid-feedback">Indica una cantidad y unidad válidas.</div>
+                                </div>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="agreedPrice" class="form-label text-secondary fw-bold small text-uppercase">Precio Acordado (EUR) <span class="text-danger">*</span></label>
                                 <div class="input-group has-validation">
-                                    <input type="number" class="form-control {{#error_agreedPrice}}is-invalid{{/error_agreedPrice}}" id="agreedPrice" name="agreedPrice" value="{{agreedPrice}}" step="0.01" min="0" required>
+                                    <input type="number" class="form-control {{#error_agreedPrice}}is-invalid{{/error_agreedPrice}}" id="agreedPrice" name="agreedPrice" value="{{#agreedPrice}}{{agreedPrice}}{{/agreedPrice}}" step="0.01" min="0" required>
                                     <span class="input-group-text">€</span>
-                                    <div class="invalid-feedback">Indica el precio acordado para la transacción.</div>
+                                    <div class="invalid-feedback">Introduce un precio válido.</div>
                                 </div>
                             </div>
 

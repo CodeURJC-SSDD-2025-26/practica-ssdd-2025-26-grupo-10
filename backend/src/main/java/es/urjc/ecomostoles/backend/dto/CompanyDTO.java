@@ -4,6 +4,7 @@ import es.urjc.ecomostoles.backend.model.Company;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import es.urjc.ecomostoles.backend.utils.NumberFormatter;
 
 /**
  * Secure marshaling profile for Company entities.
@@ -29,11 +30,13 @@ public class CompanyDTO {
     @NotBlank(message = "La dirección es obligatoria")
     private String address;
 
+    @NotBlank(message = "El teléfono de contacto es obligatorio")
     private String phone;
 
     @NotBlank(message = "El sector industrial es obligatorio")
     private String industrialSector;
 
+    @NotBlank(message = "La descripción de la empresa es obligatoria")
     @Size(max = 255, message = "La descripción no puede superar los 255 caracteres")
     private String description;
     private String role;
@@ -148,6 +151,10 @@ public class CompanyDTO {
 
     public void setCo2Saved(Double co2Saved) {
         this.co2Saved = co2Saved;
+    }
+
+    public String getFormattedCo2Saved() {
+        return NumberFormatter.format(this.co2Saved);
     }
 
     public Integer getRanking() {

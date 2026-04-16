@@ -113,14 +113,16 @@ public class RegistrationController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("hasErrors", true);
             bindingResult.getFieldErrors()
-                    .forEach(error -> model.addAttribute("error_" + error.getField(), error.getDefaultMessage()));
+                    .forEach(error -> model.addAttribute("error_" + error.getField(), true));
             // Also global errors (like the password mismatch)
             bindingResult.getGlobalErrors()
-                    .forEach(error -> model.addAttribute("error_global", error.getDefaultMessage()));
+                    .forEach(error -> model.addAttribute("error_" + error.getObjectName(), true));
             injectDynamicOptions(model);
+            log.warn("[Registration] Failed -> Validation errors in registration form for: {}", dto.getContactEmail());
             return "registro";
         }
 
+        log.info("[Registration] Processing new tenant application for email: {}", dto.getContactEmail());
         try {
             // Mapping DTO to Entity
             Company newCompany = new Company();
@@ -149,6 +151,7 @@ public class RegistrationController {
                 if (size > 5 * 1024 * 1024) { // 5MB Limit
                     model.addAttribute("error", true);
                     model.addAttribute("errorMessage", "El logo es demasiado pesado. El límite máximo es 5MB.");
+                    model.addAttribute("error_logoFile", true);
                     injectDynamicOptions(model);
                     return "registro";
                 }
@@ -158,6 +161,7 @@ public class RegistrationController {
                         !contentType.equals("image/webp"))) {
                     model.addAttribute("error", true);
                     model.addAttribute("errorMessage", "Formato de imagen no soportado. Usa JPG, PNG o WebP.");
+                    model.addAttribute("error_logoFile", true);
                     injectDynamicOptions(model);
                     return "registro";
                 }
@@ -173,11 +177,13 @@ public class RegistrationController {
             injectDynamicOptions(model);
             return "registro";
         } catch (Exception e) {
-            log.error("⚠️ General error in company registration", e);
+            log.error("[Registration] CRITICAL -> Unexpected error during registration for email: {}", dto.getContactEmail(), e);
             model.addAttribute("error", true);
             injectDynamicOptions(model);
             return "registro";
         }
+
+        log.info("[Registration] Success -> Tenant '{}' ({}) successfully registered and synchronized.", dto.getCommercialName(), dto.getContactEmail());
 
         redirectAttributes.addFlashAttribute("successMessage",
                 "¡Cuenta creada con éxito! Ya puedes acceder con tus credenciales.");

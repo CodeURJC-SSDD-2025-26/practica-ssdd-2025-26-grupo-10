@@ -46,8 +46,7 @@ public class SustainabilityEngine {
         try {
             factor = Double.parseDouble(factorStr);
         } catch (NumberFormatException | NullPointerException e) {
-            log.warn(
-                    "⚠️ CRITICAL CONFIGURATION ERROR: The 'CO2_FACTOR' factor in DB ('{}') is not a valid number. Using safety injected value: {}. Failure: {}",
+            log.warn("[Sustainability] CRITICAL -> Configuration defect: 'CO2_FACTOR' in database ('{}') is invalid. Reverting to safety injected value: {}. Error: {}",
                     factorStr, defaultCo2Factor, e.getMessage());
             factor = defaultCo2Factor;
         }
@@ -61,6 +60,9 @@ public class SustainabilityEngine {
                     .orElse(1.0);
         }
 
-        return materialAmount * factor * materialMultiplier;
+        double result = materialAmount * factor * materialMultiplier;
+        log.info("[Sustainability] Calculation -> Amount: {} | Factor: {} | Multiplier: {} | Result: {} Kg CO2", 
+                 materialAmount, factor, materialMultiplier, result);
+        return result;
     }
 }

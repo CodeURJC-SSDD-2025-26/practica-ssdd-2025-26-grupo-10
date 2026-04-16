@@ -113,9 +113,9 @@
                                             </div>
                                         </td>
                                         <td class="text-secondary small fw-bold">{{company.commercialName}}</td>
-                                        <td class="text-secondary fw-bold">{{quantity}} {{unit}}</td>
+                                        <td class="text-secondary fw-bold">{{formattedQuantity}} {{unit}}</td>
                                         <td><span
-                                                class="badge bg-success rounded-pill px-3">{{status.displayName}}</span>
+                                                class="badge bg-success rounded-pill px-3">{{#status}}{{status.displayName}}{{/status}}{{^status}}Activa{{/status}}</span>
                                         </td>
                                         <td class="text-end pe-4">
                                             <div class="d-flex justify-content-center gap-2">

@@ -33,11 +33,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        log.info("🔍 Attempting to log in user: {}", email);
+        log.debug("[Security] Authentication attempt -> Principal: {}", email);
 
         Company company = companyRepository.findByContactEmail(email)
                 .orElseThrow(() -> {
-                    log.error("❌ User not found in DB: {}", email);
+                    log.warn("[Security] Authentication failed -> Principal not found: {}", email);
                     return new UsernameNotFoundException("Company not found: " + email);
                 });
 
@@ -47,7 +47,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 ? roles.toArray(new String[0])
                 : new String[] { "COMPANY" };
 
-        log.info("✅ Session started: {} | Roles: {}", company.getCommercialName(), List.of(rolesArray));
+        log.info("[Security] Authentication success -> Principal: {} | Roles: {}", company.getContactEmail(), List.of(rolesArray));
 
         return User.builder()
                 .username(company.getContactEmail())

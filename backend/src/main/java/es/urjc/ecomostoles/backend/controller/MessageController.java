@@ -32,6 +32,8 @@ import java.util.Optional;
 @Controller
 public class MessageController {
 
+        private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MessageController.class);
+
         private final CompanyService companyService;
         private final MessageService messageService;
         private final OfferService offerService;
@@ -141,7 +143,8 @@ public class MessageController {
                 String subject = "Re: " + offer.getTitle();
 
                 messageService.sendMessage(subject, content, sender, recipient);
-
+                log.info("[Mailbox] Success -> Message sent from '{}' to '{}' regarding offer ID: {}", sender.getContactEmail(), recipient.getContactEmail(), offerId);
+ 
                 redirectAttributes.addFlashAttribute("successMessage", "Mensaje enviado correctamente a " + recipient.getCommercialName());
 
                 return "redirect:/oferta/" + offerId;
@@ -162,7 +165,8 @@ public class MessageController {
                 String subject = "Interés en la demanda: " + demand.getTitle();
 
                 messageService.sendMessage(subject, content, sender, recipient);
-
+                log.info("[Mailbox] Success -> Message sent from '{}' to '{}' regarding demand ID: {}", sender.getContactEmail(), recipient.getContactEmail(), demandId);
+ 
                 redirectAttributes.addFlashAttribute("successMessage", "Mensaje enviado correctamente a la empresa solicitante.");
 
                 return "redirect:/solicitudes";
@@ -225,10 +229,12 @@ public class MessageController {
                 boolean isSender = message.getSender().getContactEmail().equals(principal.getName());
 
                 if (!isRecipient && !isSender) {
-                        return "redirect:/mensajes?error=forbidden";
+                    log.warn("[Mailbox] Security -> Forbidden deletion attempt for message ID: {} by user: {}", id, principal.getName());
+                    return "redirect:/mensajes?error=forbidden";
                 }
 
                 messageService.delete(id);
+                log.info("[Mailbox] Success -> Message ID: {} removed from system by: {}", id, principal.getName());
                 return "redirect:/mensajes?success=true";
         }
 }

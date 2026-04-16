@@ -21,10 +21,11 @@
                         <h4 class="mt-3 text-dark fw-bold">Alta de Nueva Empresa</h4>
                         <p class="text-secondary">Únete a la mayor red de simbiosis industrial de {{platformCity}}</p>
                     </div>
- 
+
                     <!-- GLOBAL ERROR CHANNEL: Backend validation summaries -->
                     {{#errorMessage}}
-                    <div class="alert alert-danger py-2 small fw-bold text-center border-0 shadow-sm rounded-pill mb-4" role="alert">
+                    <div class="alert alert-danger py-2 small fw-bold text-center border-0 shadow-sm rounded-pill mb-4"
+                        role="alert">
                         <i class="fas fa-exclamation-circle me-2"></i> {{errorMessage}}
                     </div>
                     {{/errorMessage}}
@@ -35,29 +36,30 @@
                         DATA INGESTION FORM
                         Configured as multipart/form-data to support BLOB/binary logo uploads.
                     -->
-                    <form action="/registro" method="POST" enctype="multipart/form-data">
+                    <form action="/registro" method="POST" enctype="multipart/form-data" class="needs-validation"
+                        novalidate>
                         {{#_csrf}}<input type="hidden" name="_csrf" value="{{token}}">{{/_csrf}}
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="commercialName"
-                                    class="form-label fw-bold small text-uppercase text-secondary">Nombre
-                                    Comercial</label>
+                                    class="form-label text-secondary fw-bold small text-uppercase">Nombre
+                                    Comercial <span class="text-danger">*</span></label>
                                 <input type="text" name="commercialName"
                                     class="form-control {{#error_commercialName}}is-invalid{{/error_commercialName}}"
                                     id="commercialName" placeholder="Ej. Metales del Sur S.L."
                                     value="{{#registrationDTO.commercialName}}{{.}}{{/registrationDTO.commercialName}}"
                                     required>
-                                {{#error_commercialName}}<div class="invalid-feedback">{{error_commercialName}}</div>
-                                {{/error_commercialName}}
+                                <div class="invalid-feedback">Por favor, indica un nombre comercial válido.</div>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="taxId" class="form-label fw-bold small text-uppercase text-secondary">CIF /
-                                    NIF</label>
-                                <input type="text" name="taxId" class="form-control {{#error_taxId}}is-invalid{{/error_taxId}}"
-                                    id="taxId" placeholder="B-12345678"
+                                <label for="taxId" class="form-label text-secondary fw-bold small text-uppercase">CIF /
+                                    NIF <span class="text-danger">*</span></label>
+                                <input type="text" name="taxId"
+                                    class="form-control {{#error_taxId}}is-invalid{{/error_taxId}}" id="taxId"
+                                    placeholder="B12345678"
                                     value="{{#registrationDTO.taxId}}{{.}}{{/registrationDTO.taxId}}" required>
-                                {{#error_taxId}}<div class="invalid-feedback">{{error_taxId}}</div>{{/error_taxId}}
+                                <div class="invalid-feedback">Introduce un CIF/NIF válido.</div>
                             </div>
 
                             <!-- 
@@ -67,26 +69,26 @@
                             -->
                             <div class="col-12">
                                 <label for="address"
-                                    class="form-label fw-bold small text-uppercase text-secondary">Dirección /
-                                    Polígono</label>
+                                    class="form-label text-secondary fw-bold small text-uppercase">Dirección /
+                                    Polígono <span class="text-danger">*</span></label>
                                 <select name="address"
                                     class="form-select {{#error_address}}is-invalid{{/error_address}}" id="address"
                                     required>
-                                    <option value="" disabled>Seleccionar ubicación...</option>
+                                    <option value="" selected disabled>Seleccionar ubicación...</option>
                                     {{#areaOptions}}
                                     <option value="{{.}}">{{.}}</option>
                                     {{/areaOptions}}
                                 </select>
+                                <div class="invalid-feedback">Selecciona una ubicación de la lista.</div>
                                 <input type="text" id="otherAddress" name="otherAddress"
-                                    class="form-control d-none mt-2" placeholder="Especifica tu ubicación..." value="{{#registrationDTO.otherAddress}}{{.}}{{/registrationDTO.otherAddress}}">
-                                {{#error_address}}<div class="invalid-feedback">{{error_address}}</div>
-                                {{/error_address}}
+                                    class="form-control d-none mt-2" placeholder="Especifica tu ubicación..."
+                                    value="{{#registrationDTO.otherAddress}}{{.}}{{/registrationDTO.otherAddress}}">
                             </div>
 
                             <div class="col-md-6">
                                 <label for="sector"
-                                    class="form-label fw-bold small text-uppercase text-secondary">Sector
-                                    Industrial</label>
+                                    class="form-label text-secondary fw-bold small text-uppercase">Sector
+                                    Industrial <span class="text-danger">*</span></label>
                                 <select name="sector" class="form-select {{#error_sector}}is-invalid{{/error_sector}}"
                                     id="sector" required>
                                     <option value="" selected disabled>Seleccionar sector...</option>
@@ -94,54 +96,85 @@
                                     <option value="{{name}}">{{displayName}}</option>
                                     {{/sectorOptions}}
                                 </select>
-                                {{#error_sector}}<div class="invalid-feedback">{{error_sector}}</div>{{/error_sector}}
+                                <div class="invalid-feedback">Selecciona el sector industrial de tu empresa.</div>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="email" class="form-label fw-bold small text-uppercase text-secondary">Email de Contacto</label>
-                                <input type="email" name="contactEmail" class="form-control {{#error_contactEmail}}is-invalid{{/error_contactEmail}}" id="email" placeholder="contacto@empresa.com" value="{{#registrationDTO.contactEmail}}{{.}}{{/registrationDTO.contactEmail}}" required>
-                                {{#error_contactEmail}}<div class="invalid-feedback">{{error_contactEmail}}</div>{{/error_contactEmail}}
+                                <label for="email" class="form-label text-secondary fw-bold small text-uppercase">Email
+                                    de Contacto <span class="text-danger">*</span></label>
+                                <input type="email" name="contactEmail"
+                                    class="form-control {{#error_contactEmail}}is-invalid{{/error_contactEmail}}"
+                                    id="email" placeholder="contacto@empresa.com"
+                                    value="{{#registrationDTO.contactEmail}}{{.}}{{/registrationDTO.contactEmail}}"
+                                    required>
+                                <div class="invalid-feedback">Introduce un correo electrónico corporativo válido.</div>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="phone" class="form-label fw-bold small text-uppercase text-secondary">Teléfono de Contacto</label>
-                                <input type="tel" name="phone" class="form-control {{#error_phone}}is-invalid{{/error_phone}}" id="phone" placeholder="Ej. 916 123 456" value="{{#registrationDTO.phone}}{{.}}{{/registrationDTO.phone}}" required>
-                                {{#error_phone}}<div class="invalid-feedback">{{error_phone}}</div>{{/error_phone}}
+                                <label for="phone"
+                                    class="form-label fw-bold small text-uppercase text-secondary">Teléfono de
+                                    Contacto<span class="text-danger">*</span></label>
+                                <input type="tel" name="phone"
+                                    class="form-control {{#error_phone}}is-invalid{{/error_phone}}" id="phone"
+                                    placeholder="Ej. 916 123 456"
+                                    value="{{#registrationDTO.phone}}{{.}}{{/registrationDTO.phone}}" required>
+                                <div class="invalid-feedback">Introduce un número de teléfono de contacto.</div>
                             </div>
 
                             <div class="col-12">
-                                <label for="description" class="form-label fw-bold small text-uppercase text-secondary">Descripción de la Empresa</label>
-                                <textarea name="description" class="form-control {{#error_description}}is-invalid{{/error_description}}" id="description" rows="3" placeholder="Describe brevemente la actividad de tu empresa..." required>{{#registrationDTO.description}}{{.}}{{/registrationDTO.description}}</textarea>
-                                {{#error_description}}<div class="invalid-feedback">{{error_description}}</div>{{/error_description}}
+                                <label for="description"
+                                    class="form-label fw-bold small text-uppercase text-secondary">Descripción de la
+                                    Empresa<span class="text-danger">*</span></label>
+                                <textarea name="description"
+                                    class="form-control {{#error_description}}is-invalid{{/error_description}}"
+                                    id="description" rows="3"
+                                    placeholder="Describe brevemente la actividad de tu empresa..."
+                                    required>{{#registrationDTO.description}}{{.}}{{/registrationDTO.description}}</textarea>
+                                <div class="invalid-feedback">La descripción de la empresa es obligatoria.</div>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="password" class="form-label fw-bold small text-uppercase text-secondary">Contraseña</label>
-                                <input type="password" name="password" class="form-control {{#error_password}}is-invalid{{/error_password}}" id="password" required>
-                                {{#error_password}}<div class="invalid-feedback">{{error_password}}</div>{{/error_password}}
+                                <label for="password"
+                                    class="form-label fw-bold small text-uppercase text-secondary">Contraseña<span
+                                        class="text-danger">*</span></label>
+                                <input type="password" name="password"
+                                    class="form-control {{#error_password}}is-invalid{{/error_password}}" id="password"
+                                    minlength="4" required>
+                                <div class="invalid-feedback">La contraseña debe tener al menos 4 caracteres por
+                                    seguridad.</div>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="confirmPassword" class="form-label fw-bold small text-uppercase text-secondary">Confirmar Contraseña</label>
-                                <input type="password" name="confirmPassword" class="form-control {{#error_confirmPassword}}is-invalid{{/error_confirmPassword}} {{#error_passwordsMatch}}is-invalid{{/error_passwordsMatch}}" id="confirmPassword" required>
-                                {{#error_confirmPassword}}<div class="invalid-feedback">{{error_confirmPassword}}</div>{{/error_confirmPassword}}
-                                {{#error_passwordsMatch}}<div class="invalid-feedback">{{error_passwordsMatch}}</div>{{/error_passwordsMatch}}
+                                <label for="confirmPassword"
+                                    class="form-label fw-bold small text-uppercase text-secondary">Confirmar
+                                    Contraseña<span class="text-danger">*</span></label>
+                                <input type="password" name="confirmPassword"
+                                    class="form-control {{#error_confirmPassword}}is-invalid{{/error_confirmPassword}} {{#error_passwordsMatch}}is-invalid{{/error_passwordsMatch}}"
+                                    id="confirmPassword" required>
+                                <div class="invalid-feedback">Las contraseñas deben coincidir.</div>
                             </div>
 
                             <div class="col-12 mt-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="terms" value="aceptados" id="terms" required>
+                                    <input class="form-check-input {{#error_terms}}is-invalid{{/error_terms}}"
+                                        type="checkbox" name="terms" value="true" id="terms" required>
                                     <label class="form-check-label small text-secondary" for="terms">
-                                        Acepto los <a href="/terminos" class="text-success text-decoration-none">Términos y Condiciones</a> y la Política de Privacidad de EcoMóstoles.
+                                        Acepto los <a href="/terminos"
+                                            class="text-success text-decoration-none">Términos y Condiciones</a> y la
+                                        Política de Privacidad de EcoMóstoles.<span class="text-danger">*</span>
                                     </label>
+                                    <div class="invalid-feedback">Debes aceptar los términos para continuar.</div>
                                 </div>
                             </div>
 
                             <div class="col-12">
                                 <label for="logoFile"
-                                    class="form-label fw-bold small text-uppercase text-secondary">Logo de la Empresa
-                                    <span class="text-muted fw-normal">(Opcional)</span></label>
-                                <input type="file" class="form-control" id="logoFile" name="logoFile" accept="image/*">
+                                    class="form-label text-secondary fw-bold small text-uppercase">Logo de la Empresa
+                                    <span class="text-muted fw-normal text-none">(Opcional)</span></label>
+                                <input type="file" class="form-control {{#error_logoFile}}is-invalid{{/error_logoFile}}"
+                                    id="logoFile" name="logoFile" accept="image/*">
+                                <div class="invalid-feedback">El logo debe ser una imagen válida
+                                    (JPG/PNG/WebP) de menos de 5MB.</div>
                             </div>
 
                             <div class="col-12 d-grid mt-4">
@@ -183,7 +216,7 @@
         });
 
         // Validation de tamaño de archivo (Logo): Prevents 413 Payload Too Large on proxy layers.
-        document.getElementById('logoFile').addEventListener('change', function() {
+        document.getElementById('logoFile').addEventListener('change', function () {
             if (this.files[0] && this.files[0].size > 5 * 1024 * 1024) {
                 alert('El archivo es demasiado grande. El tamaño máximo permitido es de 5MB.');
                 this.value = '';

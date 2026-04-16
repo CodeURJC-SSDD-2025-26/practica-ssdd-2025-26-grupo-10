@@ -23,6 +23,8 @@ import java.util.Optional;
 @Controller
 public class MarketController {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MarketController.class);
+
     private final OfferService offerService;
 
     public MarketController(OfferService offerService) {
@@ -51,6 +53,11 @@ public class MarketController {
 
         Page<OfferSummary> offerPage = offerService.searchFilteredOffers(keyword, wasteCategory, industrialPark,
                 pageable);
+ 
+        log.info("[Market] Discovery -> Executing multifaceted search. Keyword: '{}', Category: '{}', Region: '{}'", 
+                 keyword != null ? keyword : "ALL", 
+                 wasteCategory != null ? wasteCategory : "ALL", 
+                 industrialPark != null ? industrialPark : "ALL");
 
         model.addAttribute("offers", offerPage.getContent());
         model.addAttribute("hasOffers", !offerPage.isEmpty());
@@ -107,6 +114,7 @@ public class MarketController {
         Optional<Offer> offerOpt = offerService.findById(id);
         if (offerOpt.isPresent()) {
             Offer offer = offerOpt.get();
+            log.debug("[Market] Detail -> Resolving granular data for offer ID: '{}'", id);
             model.addAttribute("offer", offer);
 
             // Check if user is the owner to hide contact form and skip visit count

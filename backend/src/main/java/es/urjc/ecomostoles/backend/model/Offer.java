@@ -12,9 +12,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
-import java.text.NumberFormat;
 import java.time.LocalDateTime;
-import java.util.Locale;
+import es.urjc.ecomostoles.backend.utils.NumberFormatter;
 
 /**
  * Primary commercial asset schema governing material provisions.
@@ -215,8 +214,7 @@ public class Offer {
 
     // Format quantity without decimals if it's a whole number
     public String getFormattedQuantity() {
-        java.text.DecimalFormat df = new java.text.DecimalFormat("#.##");
-        return df.format(this.quantity);
+        return NumberFormatter.format(this.quantity);
     }
 
     public String getUnit() {
@@ -241,11 +239,7 @@ public class Offer {
      * @return the formatted price string (e.g., 1.200 € or 1.200,50 €)
      */
     public String getFormattedPrice() {
-        if (this.price == null) {
-            return "0,00 €";
-        }
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.of("es", "ES"));
-        return formatter.format(this.price);
+        return NumberFormatter.formatCurrency(this.price);
     }
 
     public String getAvailability() {

@@ -41,6 +41,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
+import es.urjc.ecomostoles.backend.utils.NumberFormatter;
 
 /**
  * Master controller for all back-office administration workflows.
@@ -55,6 +56,8 @@ import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdminController.class);
 
     private final CompanyService companyService;
     private final OfferService offerService;
@@ -95,8 +98,8 @@ public class AdminController {
         model.addAttribute("totalPending", agreementService.countByStatus(AgreementStatus.PENDING, filter));
         model.addAttribute("totalReported", offerService.countByStatus(OfferStatus.REPORTED));
         model.addAttribute("totalCompleted", agreementService.countByStatus(AgreementStatus.COMPLETED, filter));
-        model.addAttribute("co2Tons", agreementService.calculateCO2Saved());
-        model.addAttribute("totalCommission", agreementService.getTotalCommission());
+        model.addAttribute("co2Tons", NumberFormatter.format(agreementService.calculateCO2Saved()));
+        model.addAttribute("totalCommission", NumberFormatter.formatCurrency(agreementService.getTotalCommission()));
         model.addAttribute("isAdmin", true);
         model.addAttribute("isDashboard", true);
         model.addAttribute("isAdminView", true);
@@ -159,9 +162,11 @@ public class AdminController {
             companiesPage = companyService.searchClientsPaginated(search, pageable);
             model.addAttribute("search", search);
             model.addAttribute("isSearch", true);
+            log.info("[Admin] Directory -> Executing client search for keyword: '{}'", search);
         } else {
             companiesPage = companyService.getClientsPaginated(pageable);
             model.addAttribute("isSearch", false);
+            log.debug("[Admin] Directory -> Loading paginated client directory (Page: {})", pageable.getPageNumber());
         }
 
         // Security: Inject current user for frontend validations
@@ -212,19 +217,24 @@ public class AdminController {
 
             // Safety: Prevent self-deletion or deletion of other admins
             if (target.getRoles().contains("ADMIN")) {
+                log.warn("[Admin] Security -> Blocked attempt by '{}' to delete another admin ID: {}", principal.getName(), id);
                 redirectAttributes.addFlashAttribute("errorMessage",
                         "Operación denegada: No puedes eliminar a un administrador.");
                 return "redirect:/admin/usuarios";
             }
 
             if (principal != null && target.getContactEmail().equals(principal.getName())) {
+                log.warn("[Admin] Security -> Blocked self-deletion attempt for ID: {}", id);
                 redirectAttributes.addFlashAttribute("errorMessage",
                         "Operación denegada: No puedes eliminar tu propia cuenta.");
                 return "redirect:/admin/usuarios";
             }
 
             companyService.delete(id);
+            log.info("[Admin] Success -> Identity ID: {} removed by admin '{}'", id, principal.getName());
             redirectAttributes.addFlashAttribute("successMessage", "Empresa eliminada con éxito.");
+        } else {
+            log.warn("[Admin] Failed -> Attempted to delete non-existing company ID: {}", id);
         }
 
         return "redirect:/admin/usuarios";
@@ -431,6 +441,7 @@ public class AdminController {
      */
     @PostMapping("/ofertas/{id}/eliminar")
     public String deleteOffer(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        log.info("[Admin] Action -> Deleting offer ID: {} via administrative override.", id);
         offerService.delete(id);
         redirectAttributes.addFlashAttribute("successMessage",
                 "La oferta ha sido eliminada correctamente por el administrador.");
@@ -466,6 +477,7 @@ public class AdminController {
 
     @PostMapping("/demandas/eliminar/{id}")
     public String deleteDemandAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        log.info("[Admin] Action -> Deleting demand ID: {} via administrative override.", id);
         demandService.delete(id);
         redirectAttributes.addFlashAttribute("successMessage", "Demanda eliminada con éxito por el administrador.");
         return "redirect:/admin/demandas";
@@ -500,6 +512,7 @@ public class AdminController {
 
     @PostMapping("/acuerdos/eliminar/{id}")
     public String deleteAgreementAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        log.info("[Admin] Action -> Deleting agreement ID: {} via administrative override.", id);
         agreementService.delete(id);
         redirectAttributes.addFlashAttribute("successMessage", "Acuerdo eliminado con éxito por el administrador.");
         return "redirect:/admin/acuerdos";
@@ -567,8 +580,6 @@ public class AdminController {
         return "perfil_empresa";
     }
 
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdminController.class);
-
     /**
      * Saves global platform configuration.
      */
@@ -581,7 +592,7 @@ public class AdminController {
             @RequestParam(required = false) String sectorList,
             RedirectAttributes redirectAttributes) {
 
-        log.info("Configuration save attempt -> Email: {}, Commission: {}%", contactEmail, platformCommission);
+        log.info("[Admin] Configuration -> Saving global platform preferences. Commission: {}%", platformCommission);
 
         // Validation: range 0-100% for business commissions (UX/Integrity)
         if (platformCommission != null && (platformCommission < 0 || platformCommission > 100)) {
@@ -606,6 +617,7 @@ public class AdminController {
      */
     @GetMapping("/exportar/pdf")
     public ResponseEntity<byte[]> exportPdf() {
+        log.info("[Admin] Report -> Generating PDF Export for all companies.");
         byte[] pdf = reportService.generateUsersPdf(companyService.getAll());
 
         return ResponseEntity.ok()

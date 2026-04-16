@@ -11,10 +11,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.time.LocalDateTime;
-import java.util.Locale;
+import es.urjc.ecomostoles.backend.utils.NumberFormatter;
 
 /**
  * Persistent schema detailing material necessities published by Tenants.
@@ -292,11 +290,7 @@ public class Demand {
      * @return the formatted quantity string (e.g., 10 instead of 10.0)
      */
     public String getFormattedQuantity() {
-        if (this.quantity == null) {
-            return "0";
-        }
-        DecimalFormat df = new DecimalFormat("#.##");
-        return df.format(this.quantity);
+        return NumberFormatter.format(this.quantity);
     }
 
     public String getUnit() {
@@ -338,11 +332,7 @@ public class Demand {
      * @return the formatted budget string (e.g., 500,00 €)
      */
     public String getFormattedBudget() {
-        if (this.maxBudget == null) {
-            return "0,00 €";
-        }
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.of("es", "ES"));
-        return formatter.format(this.maxBudget);
+        return NumberFormatter.formatCurrency(this.maxBudget);
     }
 
     public String getPickupZone() {

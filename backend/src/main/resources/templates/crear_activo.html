@@ -82,14 +82,14 @@
                                             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                             {{/unitOptions}}
                                         </select>
-                                        <div class="invalid-feedback">Indica la cantidad y unidad.</div>
+                                        <div class="invalid-feedback">Indica una cantidad y unidad válidas.</div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <label for="price"
                                         class="form-label text-secondary fw-bold small text-uppercase">Precio
-                                        (€)<span class="text-danger">*</span></label>
+                                        (€)</label>
                                     <input type="number" class="form-control {{#error_price}}is-invalid{{/error_price}}"
                                         id="price" name="price" placeholder="Ej. 1500" step="0.01" min="0"
                                         value="{{#offer.price}}{{offer.price}}{{/offer.price}}" required>
@@ -133,7 +133,6 @@
         </div>
     </div>
 
-    <script src="/js/form-validation.js"></script>
     <script>
         document.getElementById('imageFile').addEventListener('change', function () {
             const file = this.files[0];

@@ -14,9 +14,6 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
 import org.springframework.data.domain.Page;
@@ -24,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 
 import es.urjc.ecomostoles.backend.component.SustainabilityEngine;
 import es.urjc.ecomostoles.backend.exception.SelfAgreementException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Business Orchestrator for Commercial Agreements and environmental contracts.
@@ -37,6 +36,8 @@ import es.urjc.ecomostoles.backend.exception.SelfAgreementException;
 @Service
 @Transactional
 public class AgreementService {
+    
+    private static final Logger log = LoggerFactory.getLogger(AgreementService.class);
 
     private final AgreementRepository agreementRepository;
     private final CompanyService companyService;
@@ -100,6 +101,9 @@ public class AgreementService {
                 offerService.save(offer);
             }
             agreementRepository.deleteById(id);
+            log.info("[Agreement] Success -> Removed agreement ID: {} and restored offer status.", id);
+        } else {
+            log.warn("[Agreement] Failed -> Attempted to delete non-existing agreement ID: {}", id);
         }
     }
 
@@ -160,8 +164,11 @@ public class AgreementService {
         }
 
         if (!offer.getCompany().getId().equals(originCompany.getId())) {
+            log.warn("[Agreement] Security -> User '{}' attempted to agreement unauthorized offer ID: {}", userEmail, offerId);
             throw new SelfAgreementException("The selected offer must belong to your company (you are the material owner).");
         }
+        
+        log.info("[Agreement] Processing -> Initiating new contract between '{}' and destination ID: {}", userEmail, destinationCompanyId);
 
         // --- NEW OFFER LIFECYCLE ---
         offer.setStatus(OfferStatus.IN_NEGOTIATION);
@@ -170,6 +177,7 @@ public class AgreementService {
         agreement.setOffer(offer);
         agreement.setExchangedMaterial(offer.getTitle() != null ? offer.getTitle() : "Material Acordado");
         agreement.setRegistrationDate(LocalDateTime.now());
+        agreement.setStatus(AgreementStatus.PENDING);
         agreement.setOriginCompany(originCompany);
 
         // --- CALCULATE CO2 IMPACT ---
@@ -202,6 +210,7 @@ public class AgreementService {
         }
 
         agreementRepository.save(agreement);
+        log.info("[Agreement] Success -> New agreement created for material: '{}' (CO2 Impact: {} Kg)", agreement.getExchangedMaterial(), agreement.getCo2Impact());
     }
 
     @Transactional(readOnly = true)
@@ -258,26 +267,15 @@ public class AgreementService {
     }
 
     @Transactional(readOnly = true)
-    public String calculateCO2Saved() {
+    public Double calculateCO2Saved() {
         Double total = agreementRepository.sumTotalCO2ImpactCompleted();
-
-        if (total == null || total == 0)
-            return "0";
-
-        DecimalFormat df = (DecimalFormat) NumberFormat.getInstance(Locale.of("es", "ES"));
-        df.applyPattern("#,###.###");
-        return df.format(total);
+        return total != null ? total : 0.0;
     }
 
     @Transactional(readOnly = true)
-    public String getTotalCommission() {
+    public Double getTotalCommission() {
         Double total = agreementRepository.sumTotalCommissionCompleted();
-        if (total == null || total == 0)
-            return "0,00";
-
-        DecimalFormat df = (DecimalFormat) NumberFormat.getInstance(Locale.of("es", "ES"));
-        df.applyPattern("#,##0.00");
-        return df.format(total);
+        return total != null ? total : 0.0;
     }
 
     /**
@@ -348,6 +346,8 @@ public class AgreementService {
             existingAgreement.setAgreedPrice(updatedData.getAgreedPrice());
         }
 
-        return agreementRepository.save(existingAgreement);
+        Agreement saved = agreementRepository.save(existingAgreement);
+        log.info("[Agreement] Success -> Updated agreement ID: {} (New Status: {})", id, saved.getStatus());
+        return saved;
     }
 }

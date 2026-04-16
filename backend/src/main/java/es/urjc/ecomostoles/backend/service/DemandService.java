@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Business Manager for material demand lifecycles.
@@ -21,6 +23,8 @@ import java.util.Optional;
 @Service
 @Transactional
 public class DemandService {
+    
+    private static final Logger log = LoggerFactory.getLogger(DemandService.class);
 
     private final DemandRepository demandRepository;
     private final es.urjc.ecomostoles.backend.repository.AgreementRepository agreementRepository;
@@ -117,7 +121,9 @@ public class DemandService {
 
     /** Persists a new or updated demand. */
     public Demand save(Demand demand) {
-        return demandRepository.save(demand);
+        Demand saved = demandRepository.save(demand);
+        log.info("[Marketplace] Success -> Persisted demand ID: '{}' (Title: '{}', Status: {})", saved.getId(), saved.getTitle(), saved.getStatus());
+        return saved;
     }
 
     /**
@@ -131,11 +137,13 @@ public class DemandService {
      */
     public void delete(Long id) {
         if (agreementRepository.countByDemandId(id) > 0) {
+            log.warn("[Marketplace] Denied -> Attempted to delete protected demand ID: {} (Active agreements found)", id);
             throw new org.springframework.web.server.ResponseStatusException(
                     org.springframework.http.HttpStatus.BAD_REQUEST,
                     "Cannot be deleted because it has associated agreements");
         }
         demandRepository.deleteById(id);
+        log.info("[Marketplace] Success -> Removed demand ID: {} from system.", id);
     }
 
     /** Increments the visit counter for a demand. */

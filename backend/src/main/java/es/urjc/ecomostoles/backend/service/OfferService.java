@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Marketplace Facilitator governing material provision lifecycles.
@@ -22,6 +24,8 @@ import java.util.Optional;
 @Service
 @Transactional
 public class OfferService {
+    
+    private static final Logger log = LoggerFactory.getLogger(OfferService.class);
 
     private final OfferRepository offerRepository;
     private final es.urjc.ecomostoles.backend.repository.AgreementRepository agreementRepository;
@@ -99,7 +103,9 @@ public class OfferService {
 
     /** Persists a new or updated offer. */
     public Offer save(Offer offer) {
-        return offerRepository.save(offer);
+        Offer saved = offerRepository.save(offer);
+        log.info("[Marketplace] Success -> Persisted offer ID: '{}' (Title: '{}', Status: {})", saved.getId(), saved.getTitle(), saved.getStatus());
+        return saved;
     }
 
     /**
@@ -114,11 +120,13 @@ public class OfferService {
      */
     public void delete(Long id) {
         if (agreementRepository.countByOfferId(id) > 0) {
+            log.warn("[Marketplace] Denied -> Attempted to delete protected offer ID: {} (Active agreements found)", id);
             throw new org.springframework.web.server.ResponseStatusException(
                     org.springframework.http.HttpStatus.BAD_REQUEST,
                     "Cannot be deleted because it has associated agreements");
         }
         offerRepository.deleteById(id);
+        log.info("[Marketplace] Success -> Removed offer ID: {} from system.", id);
     }
 
     /** Returns the total count of offers. */

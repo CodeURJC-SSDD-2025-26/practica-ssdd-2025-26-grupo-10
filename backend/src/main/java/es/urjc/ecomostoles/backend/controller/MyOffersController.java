@@ -81,6 +81,7 @@ public class MyOffersController {
                 && offer.getCompany().getId().equals(loggedCompany.getId());
 
         if (!isAdmin && !isOwner) {
+            log.warn("[Marketplace] Security -> Unauthorized access attempt to offer ID: {} by user: {}", offerId, principal.getName());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "You do not have permission to modify this offer.");
         }
@@ -187,7 +188,7 @@ public class MyOffersController {
             if (contentType == null || !contentType.startsWith("image/")) {
                 model.addAttribute("errorMessage",
                         "Error: El archivo seleccionado no es una imagen válida (JPG, PNG, WEBP).");
-                        model.addAttribute("error_imageFile", true);
+                model.addAttribute("error_imageFile", true);
                 imageError = true;
             }
         }
@@ -222,6 +223,7 @@ public class MyOffersController {
             }
 
             offerService.save(offer);
+            log.info("[Marketplace] Success -> New offer published by '{}': '{}'", principal.getName(), offer.getTitle());
             redirectAttributes.addFlashAttribute("successMessage", "¡Oferta publicada con éxito!");
             return "redirect:/dashboard/mis-ofertas";
         }
@@ -242,6 +244,7 @@ public class MyOffersController {
         }
 
         offerService.delete(id);
+        log.info("[Marketplace] Success -> Offer ID: {} deleted by owner/admin: {}", id, principal.getName());
         redirectAttributes.addFlashAttribute("successMessage", "Oferta eliminada correctamente.");
 
         // FIX: Redirect based on role to avoid 403
@@ -360,6 +363,7 @@ public class MyOffersController {
         }
 
         offerService.save(offer);
+        log.info("[Marketplace] Success -> Offer ID: {} updated by: {}", id, principal.getName());
         redirectAttributes.addFlashAttribute("successMessage", "Cambios guardados correctamente.");
 
         // FIX: Redirect based on role to avoid 403

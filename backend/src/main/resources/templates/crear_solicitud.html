@@ -73,8 +73,8 @@
                                             <option value="{{.}}">{{.}}</option>
                                             {{/unitList}}
                                         </select>
+                                        <div class="invalid-feedback">Indica una cantidad y unidad válidas.</div>
                                     </div>
-                                    <div class="invalid-feedback">Indica la cantidad y unidad requeridas.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label text-secondary fw-bold small text-uppercase">Urgencia <span
@@ -89,23 +89,30 @@
                                     <div class="invalid-feedback">Indica la urgencia de tu solicitud.</div>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label text-secondary fw-bold small text-uppercase">Presupuesto máx (€) <span class="text-danger">*</span></label>
+                                    <label class="form-label text-secondary fw-bold small text-uppercase">Presupuesto
+                                        máx (€) <span class="text-danger">*</span></label>
                                     <input type="number" name="maxBudget"
                                         class="form-control {{#error_maxBudget}}is-invalid{{/error_maxBudget}}"
                                         placeholder="Ej. 2000" step="0.01" min="0"
                                         value="{{#demand.maxBudget}}{{demand.maxBudget}}{{/demand.maxBudget}}" required>
-                                    <div class="invalid-feedback">Introduce el presupuesto máximo previsto.</div>
+                                    <div class="invalid-feedback">Introduce un presupuesto máximo válido.</div>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label text-secondary fw-bold small text-uppercase">Zona de Recogida <span class="text-danger">*</span></label>
-                                    <input type="text" name="pickupZone" class="form-control {{#error_pickupZone}}is-invalid{{/error_pickupZone}}" 
-                                        placeholder="Ej. Polígono Industrial Norte, Móstoles" value="{{#demand.pickupZone}}{{demand.pickupZone}}{{/demand.pickupZone}}" required>
+                                    <label class="form-label text-secondary fw-bold small text-uppercase">Zona de
+                                        Recogida <span class="text-danger">*</span></label>
+                                    <input type="text" name="pickupZone"
+                                        class="form-control {{#error_pickupZone}}is-invalid{{/error_pickupZone}}"
+                                        placeholder="Ej. Polígono Industrial Norte, Móstoles"
+                                        value="{{#demand.pickupZone}}{{demand.pickupZone}}{{/demand.pickupZone}}"
+                                        required>
                                     <div class="invalid-feedback">Indica dónde se recogería el material.</div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label text-secondary fw-bold small text-uppercase">Vigencia <span class="text-danger">*</span></label>
-                                    <select name="validity" class="form-select {{#error_validity}}is-invalid{{/error_validity}}" required>
+                                    <label class="form-label text-secondary fw-bold small text-uppercase">Vigencia <span
+                                            class="text-danger">*</span></label>
+                                    <select name="validity"
+                                        class="form-select {{#error_validity}}is-invalid{{/error_validity}}" required>
                                         <option value="" selected disabled>Seleccionar días...</option>
                                         {{#validityOptions}}
                                         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>

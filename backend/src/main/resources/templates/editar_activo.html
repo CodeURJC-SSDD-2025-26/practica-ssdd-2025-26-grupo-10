@@ -62,7 +62,7 @@
 
                                 <div class="col-md-4">
                                     <label for="quantity"
-                                        class="form-label text-secondary fw-bold small text-uppercase">Cantidad <span
+                                        class="form-label text-secondary fw-bold small text-uppercase">Cantidad y Unidad <span
                                             class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <input type="number" name="quantity"
@@ -71,12 +71,11 @@
                                         <select class="form-select {{#error_unit}}is-invalid{{/error_unit}}" id="unit"
                                             name="unit" required>
                                             {{#unitOptions}}
-                                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}
-                                            </option>
+                                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                             {{/unitOptions}}
                                         </select>
+                                        <div class="invalid-feedback">Indica una cantidad y unidad válidas.</div>
                                     </div>
-                                    <div class="invalid-feedback">Indica una cantidad y unidad válidas.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="price"

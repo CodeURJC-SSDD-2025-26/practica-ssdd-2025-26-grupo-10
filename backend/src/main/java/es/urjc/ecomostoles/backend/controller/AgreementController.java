@@ -155,12 +155,12 @@ public class AgreementController {
         Company loggedCompany = companyOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
         if (result.hasErrors() || offerId == null || destinationCompanyId == null) {
-            log.warn("Validation error when registering agreement: {} errors", result.getErrorCount());
-            result.getAllErrors().forEach(err -> log.debug("  - {}", err.getDefaultMessage()));
+            log.warn("[Agreement] WARN -> Validation failure during contract registration ({} errors detected for tenant: {})", result.getErrorCount(), principal.getName());
+            result.getAllErrors().forEach(err -> log.debug("[Agreement] DEBUG -> Constraint violation: {}", err.getDefaultMessage()));
             if (offerId == null)
-                log.warn("  - Missing offerId");
+                log.warn("[Agreement] WARN -> Missing critical parameter: offerId");
             if (destinationCompanyId == null)
-                log.warn("  - Missing destinationCompanyId");
+                log.warn("[Agreement] WARN -> Missing critical parameter: destinationCompanyId");
 
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             if (offerId == null)
@@ -180,14 +180,17 @@ public class AgreementController {
         }
 
         try {
+            log.info("[Agreement] Processing contract registration requested by tenant: {}", principal.getName());
             agreementService.registerNewAgreement(agreement, principal.getName(), offerId, destinationCompanyId);
+            log.info("[Agreement] Success -> New contract synchronized for tenant: {}", principal.getName());
             redirectAttributes.addFlashAttribute("successMessage",
                     "¡Acuerdo registrado con éxito! El material ha sido reservado.");
         } catch (SelfAgreementException e) {
+            log.warn("[Agreement] WARN -> Self-contracting policy violation for tenant: {}", principal.getName());
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/acuerdo/nuevo";
         } catch (Exception e) {
-            log.error("Unexpected error saving agreement", e);
+            log.error("[Agreement] CRITICAL -> Unexpected database exception during contract synchronization for tenant: {}", principal.getName(), e);
             redirectAttributes.addFlashAttribute("errorMessage", "Error interno al procesar el acuerdo.");
             return "redirect:/acuerdo/nuevo";
         }
@@ -307,7 +310,9 @@ public class AgreementController {
             return "redirect:/acuerdos";
         }
 
+        log.info("[Agreement] Processing contract cancellation for Agreement ID: {} by tenant: {}", id, principal.getName());
         agreementService.delete(id);
+        log.info("[Agreement] Success -> Contract #{} successfully deleted from production schema.", id);
         redirectAttributes.addFlashAttribute("successMessage", "Acuerdo cancelado correctamente.");
 
         // Redirect based on role to avoid 403
