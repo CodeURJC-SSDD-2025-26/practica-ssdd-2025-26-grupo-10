@@ -180,12 +180,14 @@ public class MyOffersController {
         boolean imageError = false;
         if (imageFile == null || imageFile.isEmpty()) {
             model.addAttribute("errorMessage", "Error: Es obligatorio subir una imagen para publicar la oferta.");
+            model.addAttribute("error_imageFile", true);
             imageError = true;
         } else {
             String contentType = imageFile.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
                 model.addAttribute("errorMessage",
                         "Error: El archivo seleccionado no es una imagen válida (JPG, PNG, WEBP).");
+                        model.addAttribute("error_imageFile", true);
                 imageError = true;
             }
         }

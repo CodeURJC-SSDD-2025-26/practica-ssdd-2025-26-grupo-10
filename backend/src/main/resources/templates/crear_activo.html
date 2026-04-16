@@ -82,14 +82,14 @@
                                             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
                                             {{/unitOptions}}
                                         </select>
+                                        <div class="invalid-feedback">Indica la cantidad y unidad.</div>
                                     </div>
-                                    <div class="invalid-feedback">Indica la cantidad y unidad.</div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <label for="price"
                                         class="form-label text-secondary fw-bold small text-uppercase">Precio
-                                        (€)</label>
+                                        (€)<span class="text-danger">*</span></label>
                                     <input type="number" class="form-control {{#error_price}}is-invalid{{/error_price}}"
                                         id="price" name="price" placeholder="Ej. 1500" step="0.01" min="0"
                                         value="{{#offer.price}}{{offer.price}}{{/offer.price}}" required>
@@ -113,11 +113,11 @@
                                     <label for="imageFile"
                                         class="form-label text-secondary fw-bold small text-uppercase">Fotografía del
                                         Activo <span class="text-danger">*</span></label>
-                                    <input class="form-control" type="file" id="imageFile" name="imageFile"
+                                    <input class="form-control {{#error_imageFile}}is-invalid{{/error_imageFile}}" type="file" id="imageFile" name="imageFile"
                                         accept="image/png, image/jpeg, image/webp" required>
-                                    <div class="form-text">Formatos aceptados: JPG, PNG, WEBP. Máx 5 MB.</div>
                                     <div class="invalid-feedback">La imagen es obligatoria para publicar una oferta.
                                     </div>
+                                    <div class="form-text">Formatos aceptados: JPG, PNG, WEBP. Máx 5 MB.</div>
                                 </div>
 
                                 <div class="col-12 mt-4 d-flex justify-content-end">

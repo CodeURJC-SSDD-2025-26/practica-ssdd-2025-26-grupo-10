@@ -62,6 +62,7 @@ public class Offer {
     /**
      * Unit of measurement for the quantity (e.g., kg, ton).
      */
+    @NotBlank(message = "La unidad es obligatoria")
     private String unit;
 
     /**
@@ -74,6 +75,7 @@ public class Offer {
     /**
      * Availability status or details.
      */
+    @NotBlank(message = "La disponibilidad es obligatoria")
     private String availability;
 
     /**
