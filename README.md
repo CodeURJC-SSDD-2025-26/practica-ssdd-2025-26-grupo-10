@@ -108,7 +108,7 @@ El recorrido de las flechas verdes define las rutas de mayor seguridad, reservad
 
 ### **Capturas de Pantalla y Descripción de Páginas**
 
-####**1. Página Principal (index.html)**
+#### **1. Página Principal (index.html)**
 
 ![Página Principal](imagenes_paginas/index.html.png)
 
@@ -350,7 +350,197 @@ Solo si ha cambiado.
 
 #### **Capturas de Pantalla Actualizadas**
 
-Solo si han cambiado.
+#### **1. Página Principal (index.html)**
+
+![Página Principal](backend/src/main/resources/static/pages_images/index.png)
+
+> Esta vista representa la página de inicio de la plataforma EcoMóstoles, diseñada para actuar como una pasarela interactiva que conecta empresas locales para fomentar la economía circular. Utiliza el motor de plantillas Mustache para renderizar dinámicamente una sección "Hero" con animaciones de partículas, un escaparate con las ofertas de materiales más recientes publicadas por las empresas y un panel estadístico que muestra el impacto real del sistema en términos de participación, recursos recuperados y ahorro de emisiones de CO2. Estructuralmente, se apoya en fragmentos reutilizables para la cabecera, el pie de página y los metas, empleando clases de Bootstrap 5 para garantizar un diseño profesional, moderno y totalmente adaptativo.
+
+#### **2. Acceso de Usuarios (login.html)**
+
+![Acceso de Usuarios](backend/src/main/resources/static/pages_images/login.png)
+
+> Interfaz de autenticación centralizada que actúa como puerta de entrada segura para las empresas registradas en la plataforma. Presenta un diseño minimalista y enfocado, utilizando una tarjeta central con sombras suaves y bordes redondeados que contiene un formulario de inicio de sesión compatible con Spring Security y protección CSRF. La vista está optimizada para proporcionar feedback inmediato al usuario mediante alertas visuales que gestionan estados de error, confirmaciones de registro o actualizaciones de credenciales, manteniendo la coherencia visual del proyecto y facilitando la navegación hacia el registro de nuevas cuentas o el retorno a la página principal.
+
+#### **3. Registro de Instituciones (registro.html)**
+
+![Registro de Instituciones](backend/src/main/resources/static/pages_images/registro.png)
+
+> Interfaz diseñada para la gestión del alta de nueva empresa en la red de simbiosis de EcoMóstoles, permitiendo capturar datos comerciales, ubicación en polígonos y logotipos corporativos. Integra validaciones avanzadas del backend para asegurar la integridad de la información y un sistema dinámico de selección de direcciones. Su diseño profesional facilita una incorporación de usuarios fluida y segura, manteniendo la estética moderna del proyecto.
+
+#### **4. Marco Legal y Normativo (terminos.html)**
+
+![Marco Legal y Normativo](backend/src/main/resources/static/pages_images/terminos.png)
+
+> Espacio dedicado a detallar los Términos y Condiciones que regulan el uso de la plataforma EcoMóstoles y la aceptación de sus políticas. Define las responsabilidades de intermediación, las obligaciones legales de las empresas usuarias en materia de residuos y la naturaleza de los acuerdos comerciales generados. Presenta un diseño limpio y optimizado para la lectura, garantizando que el marco legal del proyecto sea accesible y transparente para todos los participantes de la red industrial.
+
+#### **5. Protección de Datos (privacidad.html)**
+
+![Protección de Datos](backend/src/main/resources/static/pages_images/privacidad.png)
+
+> Documento informativo que detalla el Aviso Legal y Privacidad aplicado a la gestión de datos sensibles de las empresas participantes. Describe los protocolos de recopilación de información corporativa, el uso de datos para el cálculo del impacto medioambiental y los derechos de acceso y rectificación de los usuarios. La vista mantiene la armonía visual del proyecto, ofreciendo una presentación estructurada que asegura el cumplimiento normativo y refuerza la confianza en el tratamiento de la información dentro del ecosistema industrial.
+
+#### **6. Panel de Control de Empresas (dashboard.html)**
+
+![Panel de Control de Empresas](backend/src/main/resources/static/pages_images/dashboard.png)
+
+> Centro neurálgico para usuarios autenticados donde se gestiona la actividad dentro de la red EcoMóstoles. Incluye un sistema de indicadores clave (KPIs) para monitorizar el balance circular, los acuerdos activos y el ahorro de CO2, junto con gráficos dinámicos que visualizan la actividad de la empresa. Integra un motor de sugerencias inteligentes para conectar excedentes con necesidades y ofrece herramientas directas para la publicación de nuevos activos industriales, consolidando toda la inteligencia operativa en una interfaz moderna y eficiente.
+
+#### **7. Gestión de Identidad Corporativa (perfil_empresa.html)**
+
+![Gestión de Identidad Corporativa](backend/src/main/resources/static/pages_images/perfil_empresa.png)
+
+> Panel dedicado a la gestión y actualización del perfil de empresa, permitiendo administrar la identidad pública de la entidad en la plataforma. Ofrece herramientas para la carga de logotipos personalizados, edición de datos de contacto y descripción de la actividad industrial, contando además con una modalidad de inspección para administradores. Su diseño modular garantiza que la información corporativa se mantenga veraz y actualizada, facilitando la transparencia y la conexión efectiva entre los miembros de la red de simbiosis industrial.
+
+#### **8. Catálogo de Mercado Industrial (mercado.html)**
+
+![Catálogo de Mercado Industrial](backend/src/main/resources/static/pages_images/mercado.png)
+
+> Centro de descubrimiento de activos que alberga el catálogo completo de residuos industriales disponibles para el intercambio en la red EcoMóstoles. Organiza las ofertas en una cuadrícula interactiva con detalles sobre la disponibilidad, cantidad y procedencia de cada material, integrando un sistema de paginación para facilitar la navegación por grandes volúmenes de datos. Esta vista actúa como el núcleo comercial del proyecto, permitiendo a las empresas explorar recursos infrautilizados y establecer conexiones estratégicas para fomentar la economía circular de forma eficiente.
+
+#### **9. Análisis Detallado de Residuos (detalle_activo.html)**
+
+![Análisis Detallado de Residuos](backend/src/main/resources/static/pages_images/detalle_activo.png)
+
+> Vista exhaustiva que presenta toda la información técnica y comercial de un activo específico publicado en el mercado. Permite visualizar imágenes en alta resolución del material, consultar métricas de precio y disponibilidad, y conocer el perfil de la empresa proveedora de forma inmediata. La página integra un canal de mensajería segura B2B para facilitar la negociación directa entre interesados y el propietario, además de herramientas para compartir el recurso y una lógica de control que diferencia las opciones de edición para los propietarios frente a las acciones de contacto para los potenciales compradores.
+
+#### **10. Tablón de Necesidades Industriales (solicitudes.html)**
+
+![Tablón de Necesidades Industriales](backend/src/main/resources/static/pages_images/solicitudes.png)
+
+> Espacio colaborativo que centraliza las peticiones de materiales y activos que las empresas de la red necesitan adquirir para sus procesos. Permite a los usuarios explorar las demandas activas, conocer los requerimientos específicos de otras entidades y responder a ellas para establecer acuerdos de simbiosis. La vista utiliza un sistema de tarjetas estructurado con paginación integrada, facilitando la identificación rápida de oportunidades de suministro y promoviendo una economía circular inversa donde la oferta se adapta a las necesidades reales de la comunidad industrial.
+
+#### **11. Análisis de Necesidades (detalle_solicitud.html)**
+
+![Análisis de Necesidades](backend/src/main/resources/static/pages_images/detalle_solicitud.png)
+
+> Vista pormenorizada de una solicitud de material específica, diseñada para que los proveedores potenciales comprendan los requisitos exactos de una empresa solicitante. Expone datos críticos como el presupuesto estimado, la urgencia de la petición, la zona de recogida preferida y el plazo de vigencia, permitiendo además el envío de propuestas directas a través de un canal de mensajería verificado. Su estructura visual prioriza la claridad de los términos de la demanda, facilitando que las empresas con excedentes adecuados puedan responder de manera ágil y profesional a las necesidades de la comunidad.
+
+#### **12. Gestión de Inventario Circular (mis_activos.html)**
+
+![Gestión de Inventario Circular](backend/src/main/resources/static/pages_images/mis_activos.png)
+
+> Panel de administración personalizado para la gestión integral de los residuos y materiales que la empresa ha publicado en la plataforma. Ofrece un resumen analítico de métricas clave, incluyendo el estado de las publicaciones (activas, pausadas o en negociación) y el alcance de las mismas mediante un contador de visitas totales. La interfaz permite monitorizar el ciclo de vida de cada activo, facilitando acciones rápidas de edición, eliminación o supervisión histórica, lo que asegura que el inventario de la empresa se mantenga optimizado y alineado con los objetivos de simbiosis industrial de la red.
+
+#### **13. Generación de Ofertas (crear_activo.html)**
+
+![Generación de Ofertas](backend/src/main/resources/static/pages_images/crear_activo.png)
+
+> Interfaz operativa diseñada para capturar y procesar el alta de nueva oferta de materiales industriales en el mercado de EcoMóstoles. El formulario integra campos validados para la descripción técnica, cuantificación en diversas unidades de medida, fijación de precios y niveles de disponibilidad, exigiendo además la carga de una imagen obligatoria para asegurar la transparencia del activo. Esta herramienta es fundamental para la alimentación del catálogo de simbiosis, permitiendo a las empresas transformar sus residuos en recursos visibles y listos para ser negociados por otros miembros de la red.
+
+#### **14. Modificación de Recursos (editar_activo.html)**
+
+![Modificación de Recursos](backend/src/main/resources/static/pages_images/editar_activo.png)
+
+> Interfaz de gestión diseñada para la actualización de los parámetros técnicos y comerciales de una oferta existente en la plataforma. Permite modificar aspectos críticos como el título, la categoría de residuo, la cantidad disponible y el precio, incorporando además un selector para cambiar el estado operativo del activo. La vista facilita la optimización continua de los anuncios mediante la previsualización de la imagen actual y la opción de sustituirla, asegurando que la información presentada en el mercado sea siempre precisa y refleje fielmente el estado real de los excedentes industriales.
+
+#### **15. Gestión de Requerimientos (mis_demandas.html)**
+
+![Gestión de Requerimientos](backend/src/main/resources/static/pages_images/mis_demandas.png)
+
+> Panel de control personalizado para la supervisión y administración de las peticiones de material que la empresa ha lanzado a la comunidad industrial. Permite monitorizar el estado de cada solicitud (activa, pausada o finalizada), controlar los presupuestos asignados y visualizar el impacto de las demandas mediante un contador de visitas y días de vigencia restantes. La interfaz centraliza las herramientas de edición y eliminación, proporcionando una visión clara de las necesidades de abastecimiento de la corporación y facilitando la gestión de los recursos requeridos para sus procesos productivos dentro de la red.
+
+#### **16. Generación de Requerimientos (crear_solicitud.html)**
+
+![Generación de Requerimientos](backend/src/main/resources/static/pages_images/crear_solicitud.png)
+
+> Interfaz operativa diseñada para capturar y procesar el alta de nuevas demandas de materiales dentro del ecosistema de EcoMóstoles. El formulario permite especificar detalladamente la naturaleza del recurso buscado, definiendo parámetros críticos como la cantidad, el presupuesto máximo disponible, el nivel de urgencia y la zona de recogida preferida. Esta herramienta facilita que las empresas comuniquen sus necesidades de abastecimiento de forma estructurada, permitiendo que el sistema conecte estas peticiones con potenciales proveedores y dinamice el intercambio de recursos bajo el modelo de economía circular.
+
+#### **17. Actualización de Peticiones (editar_solicitud.html)**
+
+![Actualización de Peticiones](backend/src/main/resources/static/pages_images/editar_solicitud.png)
+
+> Interfaz de gestión orientada a la modificación y refinamiento de las solicitudes de materiales previamente publicadas en la red. Permite ajustar parámetros operativos como la cantidad requerida, el presupuesto máximo y la zona de recogida, además de ofrecer la capacidad de actualizar el estado de vigencia y la urgencia de la petición. Esta vista asegura que las peticiones de abastecimiento de las empresas se mantengan alineadas con sus necesidades productivas reales, facilitando una intermediación precisa y eficiente dentro del tablero de demandas de la plataforma.
+
+#### **18. Centro de Comunicaciones B2B (mensajes.html)**
+
+![Centro de Comunicaciones B2B](backend/src/main/resources/static/pages_images/mensajes.png)
+
+> Hub centralizado de mensajería que facilita la comunicación directa y segura entre las empresas participantes de la red EcoMóstoles. Implementa un diseño de panel dividido que organiza las conversaciones en bandejas de entrada y salida, permitiendo supervisar hilos sobre ofertas y demandas específicas. La vista incluye indicadores de mensajes nuevos y un historial detallado de interacciones, actuando como el motor de negociación del proyecto donde se concretan los acuerdos de intercambio y se resuelven dudas técnicas sobre los subproductos industriales.
+
+#### **19. Interfaz de Lectura B2B (detalle_mensaje.html)**
+
+![Interfaz de Lectura B2B](backend/src/main/resources/static/pages_images/detalle_mensaje.png)
+
+> Vista especializada diseñada para la lectura y gestión individual de las comunicaciones corporativas dentro de la red. Presenta el contenido del mensaje en un entorno limpio y tipográficamente optimizado, facilitando la identificación inmediata del remitente mediante avatares visuales y metadatos de envío. La interfaz permite realizar acciones directas como la redacción de respuestas preconfiguradas o la eliminación de hilos, asegurando un flujo de trabajo ágil para las empresas que negocian acuerdos de simbiosis y manteniendo un registro ordenado de las interacciones estratégicas en su buzón.
+
+#### **20. Emisión de Propuestas (redactar_mensaje.html)**
+
+![Emisión de Propuestas](backend/src/main/resources/static/pages_images/redactar_mensaje.png)
+
+> Interfaz de composición dirigida a formalizar el contacto inicial o la respuesta entre empresas dentro del ecosistema de EcoMóstoles. El formulario está optimizado para capturar el asunto y el contenido detallado de la propuesta, manteniendo el destinatario vinculado de forma segura para evitar errores en la comunicación. Esta vista es clave para el inicio de cualquier negociación de simbiosis, ofreciendo un entorno profesional y protegido donde las corporaciones pueden intercambiar información técnica y comercial relevante para concretar el aprovechamiento de subproductos industriales.
+
+#### **21. Seguimiento de Transacciones (mis_acuerdos.html)**
+
+![Seguimiento de Transacciones](backend/src/main/resources/static/pages_images/mis_acuerdos.png)
+
+> Panel de control administrativo diseñado para centralizar la gestión de todos los acuerdos de intercambio industrial formalizados por la empresa. Permite realizar un seguimiento exhaustivo de los estados de recogida, las empresas colaboradoras implicadas y los términos económicos acordados, integrando además métricas rápidas sobre acuerdos pendientes y completados. Esta herramienta actúa como el libro de registro operativo de la corporación dentro de la red EcoMóstoles, facilitando la auditoría de transacciones passadas y la coordinación logística de las activas para asegurar el éxito en la reintroducción de materiales en el ciclo productivo.
+
+#### **22. Formalización Comercial (crear_acuerdo.html)**
+
+![Formalización Comercial](backend/src/main/resources/static/pages_images/crear_acuerdo.png)
+
+> Interfaz transaccional diseñada para el registro oficial de los términos pactados entre dos empresas tras una negociación de materiales. Permite vincular una oferta existente con la entidad receptora, especificando la cantidad final del recurso, el precio acordado y la fecha prevista para la logística de recogida. Esta vista es esencial para consolidar la confianza en la red de simbiosis industrial, ya que permite documentar los hitos económicos y operativos de cada intercambio, sirviendo como base para el seguimiento de compromisos y la construcción del historial de sostenibilidad de los participantes.
+
+#### **23. Auditoría de Intercambios (detalle_acuerdo.html)**
+
+![Auditoría de Intercambios](backend/src/main/resources/static/pages_images/detalle_acuerdo.png)
+
+> Vista consolidada que ofrece un desglose técnico y administrativo de un acuerdo de simbiosis industrial ya formalizado. Centraliza la información crítica del intercambio, incluyendo la trazabilidad del material, los términos económicos y la logística de recogida, presentando de forma paralela los perfiles de la empresa de origen y de destino. Esta página constituye el documento digital de referencia para ambas partes, permitiendo además la generación y descarga de albaranes en formato PDF, lo que asegura que cada movimiento de recursos dentro de la red EcoMóstoles cuente con un respaldo documental claro para fines de cumplimiento y auditoría medioambiental.
+
+#### **24. Rectificación Contractual (editar_acuerdo.html)**
+
+![Rectificación Contractual](backend/src/main/resources/static/pages_images/editar_acuerdo.png)
+
+> Vista técnica que permite la modificación de los términos y condiciones de un acuerdo industrial ya registrado en la plataforma. La interfaz habilita el ajuste de campos dinámicos como la cantidad final de material, el precio pactado, la fecha de recogida y el estado operativo de la transacción, manteniendo el concepto del material como un campo de solo lectura para preservar la coherencia del acuerdo original. Esta herramienta es fundamental para adaptar los intercambios a cambios imprevistos en la logística o en los requerimientos de las empresas, garantizando que el registro digital sea un reflejo fiel de la realidad de la operación comercial en todo momento.
+
+#### **25. Supervisión Centralizada (admin_panel.html)**
+
+![Supervisión Centralizada](backend/src/main/resources/static/pages_images/admin_panel.png)
+
+> Centro de mando administrativo diseñado para proporcionar una visión global y en tiempo real del estado operativo de EcoMóstoles. El panel integra indicadores clave de rendimiento (KPIs) que monitorizan el volumen de usuarios, la actividad del mercado y los ingresos acumulados por comisiones, complementados con gráficos interactivos que visualizan la eficacia en la resolución de acuerdos. Esta interfaz permite a los administradores supervisar la salud de la infraestructura y auditar el rendimiento del ecosistema, facilitando la toma de decisiones estratégicas para optimizar el flujo de materiales y la estabilidad financiera de la red.
+
+#### **26. Administración de la Comunidad (admin_usuarios.html)**
+
+![Administración de la Comunidad](backend/src/main/resources/static/pages_images/admin_usuarios.png)
+
+> Herramienta de control centralizada para la supervisión y mantenimiento de la base de datos de empresas que integran la plataforma. Permite a los administradores buscar perfiles específicos mediante filtros de identificación fiscal o contacto, facilitando la auditoría de la integridad de los datos corporativos. La vista ofrece funcionalidades de edición y eliminación jerárquica, asegurando que solo las entidades activas y legítimas operen en la red, mientras protege las cuentas de nivel administrativo con un sistema de inmunidad, garantizando así un entorno de colaboración estrictamente verificado y profesional.
+
+#### **27. Supervisión de Inventario (admin_ofertas.html)**
+
+![Supervisión de Inventario](backend/src/main/resources/static/pages_images/admin_ofertas.png)
+
+> Panel de control administrativo para la supervisión global de todos los materiales y residuos publicados en el mercado de EcoMóstoles. Incluye herramientas avanzadas de filtrado por estado y un resumen estadístico del volumen de activos, permitiendo a los administradores monitorizar la fluidez de las ofertas y garantizar la calidad del catálogo industrial. La interfaz facilita la intervención directa sobre las publicaciones mediante acciones de inspección, edición o eliminación, actuando como el filtro de calidad que asegura que los recursos disponibles cumplan con los estándares de la plataforma y las normativas de intercambio de subproductos.
+
+#### **28. Supervisión de Requerimientos (admin_demandas.html)**
+
+![Supervisión de Requerimientos](backend/src/main/resources/static/pages_images/admin_demandas.png)
+
+> Panel de control administrativo para la supervisión global de las solicitudes de materiales publicadas por las empresas en la red de EcoMóstoles. Incluye un resumen estadístico de la demanda total segmentada por estados operativos, permitiendo a los administradores identificar tendencias de necesidad en el mercado industrial. La interfaz proporciona herramientas de inspección, edición y eliminación de requerimientos, garantizando que el tablón de demandas se mantenga actualizado, libre de duplicados y alineado con los objetivos de abastecimiento circular y profesionalismo que promueve la plataforma.
+
+#### **29. Auditoría de Transacciones (admin_acuerdos.html)**
+
+![Auditoría de Transacciones](backend/src/main/resources/static/pages_images/admin_acuerdos.png)
+
+> Registro maestro administrativo que centraliza el historial global de transacciones y contratos comerciales formalizados en EcoMóstoles. Esta vista permite a los administradores supervisar la relación entre compradores y vendedores de excedentes industriales, monitorizando las cantidades intercambiadas y el beneficio generado para la plataforma a través de comisiones. Actúa como un libro de auditoría en tiempo real que garantiza la trazabilidad económica y operativa del ecosistema, ofreciendo herramientas para inspeccionar los detalles pormenorizados de cada colaboración y asegurar el cumplimiento de las condiciones pactadas por las empresas participantes.
+
+#### **30. Analítica de Sostenibilidad (admin_reportes.html)**
+
+![Analítica de Sostenibilidad](backend/src/main/resources/static/pages_images/admin_reportes.png)
+
+> Módulo analítico avanzado diseñado para la visualización y exportación del impacto ambiental colectivo generado por la red EcoMóstoles. Centraliza métricas críticas de sostenibilidad, como el ahorro total de CO₂ y el volumen de transacciones circulares, presentando estos datos mediante gráficos dinámicos que identifican a las empresas líderes en el ranking de reciclaje. Esta herramienta permite a los administradores generar informes ejecutivos en PDF para auditorías externas y toma de decisiones estratégicas, proporcionando una base cuantitativa para validar el éxito del modelo de simbiosis industrial y su contribución real a la reducción de la huella de carbono en la zona.
+
+#### **31. Gobernanza del Sistema (admin_configuracion.html)**
+
+![Gobernanza del Sistema](backend/src/main/resources/static/pages_images/admin_configuracion.png)
+
+> Interfaz de administración avanzada diseñada para la gestión de los parámetros globales y las reglas de negocio que rigen el comportamiento de EcoMóstoles. Permite a los administradores ajustar el margen de comisión aplicado a las transacciones, configurar el correo de soporte corporativo y mantener actualizados los diccionarios maestros del sistema, como las categorías de residuos, unidades de medida y sectores industriales habilitados. Esta vista es vital para la escalabilidad del proyecto, ya que proporciona un control total sobre las taxonomías y variables críticas de la plataforma sin necesidad de intervenciones técnicas, asegurando que el ecosistema pueda adaptarse dinámicamente a las nuevas necesidades de la economía circular.
+
+#### **32. Gestión de Excepciones (custom_error.html)**
+
+![Gestión de Excepciones](backend/src/main/resources/static/pages_images/custom_error.png)
+
+> Vista unificada diseñada para gestionar y comunicar de manera amigable cualquier incidencia técnica o restricción de acceso dentro de la plataforma. Presenta información diagnóstica clara, incluyendo el código de estado y un mensaje explicativo personalizado, integrando además canales de soporte para la resolución de conflictos. Su arquitectura inteligente detecta el rol del usuario para ofrecer rutas de navegación contextuales de retorno, ya sea hacia el panel de administración, el dashboard operativo o la interfaz de inicio de sesión, asegurando que la experiencia del usuario se mantenga fluida y profesional incluso ante situaciones de error inesperadas.
 
 ### **Instrucciones de Ejecución**
 
@@ -395,7 +585,7 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 
 ### **Participación de Miembros en la Práctica 2**
 
-#### **Alumno 1 - [Nombre Completo]**
+#### **Alumno 1 - Guillermo Domínguez Galindo**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
@@ -409,7 +599,7 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 
 ---
 
-#### **Alumno 2 - [Nombre Completo]**
+#### **Alumno 2 - Daniel Nieto Díaz**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
@@ -423,7 +613,7 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 
 ---
 
-#### **Alumno 3 - [Nombre Completo]**
+#### **Alumno 3 - Alberto Sastre Zorrilla**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
@@ -437,7 +627,7 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 
 ---
 
-#### **Alumno 4 - [Nombre Completo]**
+#### **Alumno 4 - Javier de la Casa Muñoz**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
