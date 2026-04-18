@@ -513,8 +513,9 @@ public class DataInitializer implements CommandLineRunner {
         log.info("--------------------------------------------------");
         log.info("  BOOTSTRAP COMPLETE – Access Credentials (Pass: 1234):");
         log.info("  -> Administrator: admin@ecomostoles.es");
-        log.info("  -> Tenant (Metal): contacto@metalesdelsur.es");
-        log.info("  -> Tenant (Recycle): reciclajes@ecosur.es");
+        log.info("  -> Metales del Sur: contacto@metalesdelsur.es");
+        log.info("  -> EcoSur Reciclajes: reciclajes@ecosur.es");
+        log.info("  -> Reciclajes Paco: paco@reciclajes.es");
         log.info("--------------------------------------------------");
     }
 
