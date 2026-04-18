@@ -566,7 +566,7 @@ Solo si ha cambiado.
 
 2. **Configurar la Base de Datos (MySQL)**
 
-   La aplicación requiere un esquema llamado `ecomostoles`. Ejecuta lo siguiente en tu cliente MySQL:
+   La aplicación requiere un esquema llamado `ecomostoles`. Ejecuta lo siguiente en tu cliente MySQL (por ejemplo, desde MySQL Workbench):
    ```sql
    CREATE DATABASE ecomostoles;
    ```
@@ -585,6 +585,11 @@ Solo si ha cambiado.
    ```bash
    cd backend
    ```
+
+   > **Nota:** Si tu contraseña de MySQL no es `root` (o está vacía), ejecútalo en tu terminal antes de continuar:
+   > - **Linux / macOS:** `export DB_PASSWORD=tu_contraseña`
+   > - **Windows (CMD):** `set DB_PASSWORD=tu_contraseña`
+   > - **Windows (PowerShell):** `$env:DB_PASSWORD="tu_contraseña"`
 
    **Opción A — Maven desde terminal (Recomendado):**
    Si tienes Maven instalado globalmente:
@@ -610,7 +615,7 @@ Solo si ha cambiado.
    La aplicación se sirve exclusivamente por **HTTPS**. Abre en tu navegador:
     [https://localhost:8443](https://localhost:8443)
 
-   > [!WARNING]  
+   > ⚠️ **ADVERTENCIA** 
    > El certificado es autofirmado. El navegador mostrará una advertencia de seguridad; por favor, acepta la excepción para continuar.
 
 ---
@@ -624,7 +629,7 @@ Solo si ha cambiado.
 | **Empresa (EcoSur)** | `reciclajes@ecosur.es` | `1234` |
 | **Empresa (Paco)** | `paco@reciclajes.es` | `1234` |
 
-> [!TIP]
+> 💡 **TIP** 
 > **Metales del Sur S.L.** es la cuenta con mayor volumen de datos para testear la plataforma. Las otras dos cuentas de empresa son ideales para probar el sistema de **Smart Matching** por sectores y la mensajería interna.
 
 ### **Diagrama de Entidades de Base de Datos**
@@ -635,9 +640,9 @@ Diagrama mostrando las entidades, sus campos y relaciones:
 
 > Descripción del Modelo de Datos:
 > 
-> "El diagrama representa el modelo físico de la plataforma, articulado en torno a la entidad central company (Empresa). Se detallan las 5 entidades de negocio principales: offer (Activos ofertados), demand (Necesidades de material), agreement (Acuerdos comerciales), message (Comunicaciones B2B) e impact_factor (Métricas de impacto ambiental).
+> El diagrama representa el modelo físico de la plataforma, articulado en torno a la entidad central company (Empresa). Se detallan las 5 entidades de negocio principales: offer (Activos ofertados), demand (Necesidades de material), agreement (Acuerdos comerciales), message (Comunicaciones B2B) e impact_factor (Métricas de impacto ambiental).
 > 
-> El modelo utiliza relaciones 1:N para vincular a las empresas con sus publicaciones y mensajes. Destaca la entidad agreement, que actúa como nexo transaccional vinculando mediante Claves Foráneas (FK) tanto a la empresa origen como a la destino, junto con la oferta o demanda que originó el intercambio. Finalmente, se incluye la tabla técnica company_roles, que gestiona de forma normalizada el Control de Acceso Basado en Roles (RBAC) del sistema."
+> El modelo utiliza relaciones 1:N para vincular a las empresas con sus publicaciones y mensajes. Destaca la entidad agreement, que actúa como nexo transaccional vinculando mediante Claves Foráneas (FK) tanto a la empresa origen como a la destino, junto con la oferta o demanda que originó el intercambio. Finalmente, se incluye la tabla técnica company_roles, que gestiona de forma normalizada el Control de Acceso Basado en Roles (RBAC) del sistema.
 
 ### **Diagrama de Clases y Templates**
 
