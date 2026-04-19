@@ -567,12 +567,13 @@ Solo si ha cambiado.
 2. **Configurar la Base de Datos (MySQL)**
 
    La aplicación requiere un esquema llamado `ecomostoles`. Ejecuta lo siguiente en tu cliente MySQL (por ejemplo, desde MySQL Workbench):
+
    ```sql
    CREATE DATABASE ecomostoles;
    ```
 
 3. **Configurar Variables de Entorno**
-   
+
    Es recomendable configurar las siguientes variables de entorno para asegurar la conectividad y seguridad:
    | Variable | Descripción | Valor por defecto |
    | :------- | :---------- | :---------------- |
@@ -580,40 +581,46 @@ Solo si ha cambiado.
    | `KEYSTORE_PASSWORD` | Contraseña del keystore SSL | `123456` |
 
 4. **Compilar y ejecutar la aplicación**
-   
+
    Asegúrate de estar en la carpeta donde se encuentra el código fuente del servidor:
+
    ```bash
    cd backend
    ```
 
    > **Nota:** Si tu contraseña de MySQL no es `root` (o está vacía), ejecútalo en tu terminal antes de continuar:
+   >
    > - **Linux / macOS:** `export DB_PASSWORD=tu_contraseña`
    > - **Windows (CMD):** `set DB_PASSWORD=tu_contraseña`
    > - **Windows (PowerShell):** `$env:DB_PASSWORD="tu_contraseña"`
 
    **Opción A — Maven desde terminal (Recomendado):**
    Si tienes Maven instalado globalmente:
+
    ```bash
    mvn clean compile spring-boot:run
    ```
+
    Si **no** tienes Maven instalado, usa el **wrapper** incluido en el proyecto (Windows):
+
    ```bash
    .\mvnw clean compile spring-boot:run
    ```
-   *(En Linux/macOS usa `./mvnw`)*
+
+   _(En Linux/macOS usa `./mvnw`)_
 
    **Opción B — Desde el IDE (IntelliJ / VS Code / Eclipse):**
-   
+
    Ejecutar directamente la clase principal `es.urjc.ecomostoles.backend.BackendApplication`. Asegúrate de que el directorio de trabajo (working directory) sea la carpeta `backend`.
 
    **Opción C — Extensión Spring Boot Dashboard de VS Code:**
-   
+
    Con la extensión instalada, aparecerá el proyecto en el panel lateral. Asegúrate de configurar la carpeta `backend` como el directorio de ejecución y pulsa el botón ▶ junto al proyecto para iniciarlo.
 
 5. **Acceso a la aplicación**
 
    La aplicación se sirve exclusivamente por **HTTPS**. Abre en tu navegador:
-    [https://localhost:8443](https://localhost:8443)
+   [https://localhost:8443](https://localhost:8443)
 
    > ⚠️ **ADVERTENCIA :**
    > El certificado es autofirmado. El navegador mostrará una advertencia de seguridad; por favor, acepta la excepción para continuar.
@@ -622,12 +629,12 @@ Solo si ha cambiado.
 
 #### **Credenciales de prueba**
 
-| Perfil | Usuario | Contraseña |
-| :----- | :------ | :--------- |
-| **Administrador** | `admin@ecomostoles.es` | `1234` |
-| **Empresa (Metales del Sur)** | `contacto@metalesdelsur.es` | `1234` |
-| **Empresa (EcoSur)** | `reciclajes@ecosur.es` | `1234` |
-| **Empresa (Paco)** | `paco@reciclajes.es` | `1234` |
+| Perfil                        | Usuario                     | Contraseña |
+| :---------------------------- | :-------------------------- | :--------- |
+| **Administrador**             | `admin@ecomostoles.es`      | `1234`     |
+| **Empresa (Metales del Sur)** | `contacto@metalesdelsur.es` | `1234`     |
+| **Empresa (EcoSur)**          | `reciclajes@ecosur.es`      | `1234`     |
+| **Empresa (Paco)**            | `paco@reciclajes.es`        | `1234`     |
 
 > 💡 **TIP :**
 > **Metales del Sur S.L.** es la cuenta con mayor volumen de datos para testear la plataforma. Las otras dos cuentas de empresa son ideales para probar el sistema de **Smart Matching** por sectores y la mensajería interna.
@@ -639,9 +646,9 @@ Diagrama mostrando las entidades, sus campos y relaciones:
 ![Diagrama Entidad-Relación](backend/src/main/resources/static/pages_images/entity_diagram.png)
 
 > Descripción del Modelo de Datos:
-> 
+>
 > El diagrama representa el modelo físico de la plataforma, articulado en torno a la entidad central company (Empresa). Se detallan las 5 entidades de negocio principales: offer (Activos ofertados), demand (Necesidades de material), agreement (Acuerdos comerciales), message (Comunicaciones B2B) e impact_factor (Métricas de impacto ambiental).
-> 
+>
 > El modelo utiliza relaciones 1:N para vincular a las empresas con sus publicaciones y mensajes. Destaca la entidad agreement, que actúa como nexo transaccional vinculando mediante Claves Foráneas (FK) tanto a la empresa origen como a la destino, junto con la oferta o demanda que originó el intercambio. Finalmente, se incluye la tabla técnica company_roles, que gestiona de forma normalizada el Control de Acceso Basado en Roles (RBAC) del sistema.
 
 ### **Diagrama de Clases y Templates**
@@ -651,10 +658,11 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 ![Diagrama de Clases](backend/src/main/resources/static/pages_images/diagramatemplates.drawio.png)
 
 > El proyecto sigue una arquitectura **multicapa (N-Tier)** basada en Spring Boot, diseñada para garantizar la escalabilidad y el desacoplamiento de responsabilidades.
-> * **Vistas y Controladores:** Se utiliza el patrón **MVC**. Los controladores actúan como adaptadores, gestionando la navegación y coordinando la comunicación entre las vistas dinámicas (`.html` con Mustache) y la capa de negocio.
-> * **Capa de Negocio (Servicios):** Centraliza la lógica de la aplicación. Se han implementado servicios especializados y motores de cálculo (como el `SustainabilityEngine`) que interactúan entre sí para procesar reglas complejas.
-> * **Modelo de Dominio y Persistencia:** Las entidades reflejan un modelo robusto con **relaciones bidireccionales** y gestión de ciclo de vida mediante **composición** (borrado en cascada). La persistencia se realiza a través de repositorios que abstraen el acceso a datos.
-> * **Guía Visual:** El diagrama utiliza un código de colores por módulos para facilitar la trazabilidad completa desde la interfaz de usuario hasta el servicio correspondiente.
+>
+> - **Vistas y Controladores:** Se utiliza el patrón **MVC**. Los controladores actúan como adaptadores, gestionando la navegación y coordinando la comunicación entre las vistas dinámicas (`.html` con Mustache) y la capa de negocio.
+> - **Capa de Negocio (Servicios):** Centraliza la lógica de la aplicación. Se han implementado servicios especializados y motores de cálculo (como el `SustainabilityEngine`) que interactúan entre sí para procesar reglas complejas.
+> - **Modelo de Dominio y Persistencia:** Las entidades reflejan un modelo robusto con **relaciones bidireccionales** y gestión de ciclo de vida mediante **composición** (borrado en cascada). La persistencia se realiza a través de repositorios que abstraen el acceso a datos.
+> - **Guía Visual:** El diagrama utiliza un código de colores por módulos para facilitar la trazabilidad completa desde la interfaz de usuario hasta el servicio correspondiente.
 
 ### **Participación de Miembros en la Práctica 2**
 
@@ -666,13 +674,13 @@ En cuanto a la gestión de usuarios y controladores, lideré la implementación 
 
 Finalmente, en el frontend, llevé a cabo una refactorización exhaustiva de las plantillas HTML para integrar contenido dinámico, soporte de paginación y desplegables modulares mediante SelectOption DTO. También mejoré la robustez del sistema refactorizando la lógica de los cálculos de sostenibilidad y optimizando la respuesta ante errores, logrando así una navegación más estable.
 
-| Nº  |               Commits                |           Files           |
-| :-: | :----------------------------------: | :-----------------------: |
-|  1  | [Add JPA and H2 dependencies; implement DatabaseInitializer for sample data](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/83e680a60b168c2684d3c7befa77f4591a1798f1) | [DatabaseInitializer.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/83e680a60b168c2684d3c7befa77f4591a1798f1/backend/src/main/java/es/urjc/ecomostoles/backend/service/DatabaseInitializer.java) |
-|  2  | [Refactor HTML templates for improved structure and dynamic content](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/6c23b416f89edc4e7fa8cd2056182bfc25dfecec) | [AcuerdoController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/6c23b416f89edc4e7fa8cd2056182bfc25dfecec/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AcuerdoController.java) |
-|  3  | [Refactor HTML templates for improved structure and styling](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/b066b35f5b6bd0ec760ca3a69b1e48ec2a0d463b) | [AcuerdoController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/b066b35f5b6bd0ec760ca3a69b1e48ec2a0d463b/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AcuerdoController.java) |
-|  4  | [feat: Implement user registration with validation; add RegistroDTO for data transfer, enhance error handling in registration form, and update templates for dynamic data binding.](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/d4d3d5ebed3182cfa8ac838bd26cbdf01137b832) | [RegistroDTO](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/d4d3d5ebed3182cfa8ac838bd26cbdf01137b832/backend/src/main/java/es/urjc/ecomostoles/backend/dto/RegistroDTO.java) |
-|  5  | [feat: Enhance templates with new fields and pagination support](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/02c072c346525495d9b647393b7b8fd01e1dd0ef) | [DataInitializer.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/02c072c346525495d9b647393b7b8fd01e1dd0ef/backend/src/main/java/es/urjc/ecomostoles/backend/config/DataInitializer.java) |
+| Nº  |                                                                                                                                                   Commits                                                                                                                                                    |                                                                                                                Files                                                                                                                 |
+| :-: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|  1  |                                                    [Add JPA and H2 dependencies; implement DatabaseInitializer for sample data](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/83e680a60b168c2684d3c7befa77f4591a1798f1)                                                     | [DatabaseInitializer.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/83e680a60b168c2684d3c7befa77f4591a1798f1/backend/src/main/java/es/urjc/ecomostoles/backend/service/DatabaseInitializer.java) |
+|  2  |                                                        [Refactor HTML templates for improved structure and dynamic content](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/6c23b416f89edc4e7fa8cd2056182bfc25dfecec)                                                         | [AcuerdoController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/6c23b416f89edc4e7fa8cd2056182bfc25dfecec/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AcuerdoController.java)  |
+|  3  |                                                            [Refactor HTML templates for improved structure and styling](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/b066b35f5b6bd0ec760ca3a69b1e48ec2a0d463b)                                                             | [AcuerdoController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/b066b35f5b6bd0ec760ca3a69b1e48ec2a0d463b/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AcuerdoController.java)  |
+|  4  | [feat: Implement user registration with validation; add RegistroDTO for data transfer, enhance error handling in registration form, and update templates for dynamic data binding.](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/d4d3d5ebed3182cfa8ac838bd26cbdf01137b832) |             [RegistroDTO](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/d4d3d5ebed3182cfa8ac838bd26cbdf01137b832/backend/src/main/java/es/urjc/ecomostoles/backend/dto/RegistroDTO.java)              |
+|  5  |                                                          [feat: Enhance templates with new fields and pagination support](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/02c072c346525495d9b647393b7b8fd01e1dd0ef)                                                           |     [DataInitializer.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/02c072c346525495d9b647393b7b8fd01e1dd0ef/backend/src/main/java/es/urjc/ecomostoles/backend/config/DataInitializer.java)      |
 
 ---
 
@@ -696,27 +704,29 @@ Durante el desarrollo de la Práctica 2, mi responsabilidad principal se centró
 
 Además, gestioné la integridad de las transacciones mediante la prevención de auto-acuerdos y el control de estados de las entidades. En el ámbito de la administración, implementé el panel de gestión de usuarios, permitiendo al rol administrador listar, editar y eliminar perfiles. También integré la tecnología extra de generación de informes, desarrollando un servicio capaz de exportar datos críticos de la aplicación a formato PDF. Finalmente, aseguré la robustez del código mediante una refactorización integral, moviendo la lógica de los controladores a servicios especializados para garantizar una arquitectura limpia y escalable.
 
-| Nº  |               Commits                |           Files           |
-| :-: | :----------------------------------: | :-----------------------: |
-|  1  | [Implement Sustainability Engine for environmental impact calculations; update services and controllers to utilize centralized CO2 impact metrics, enhance message deletion functionality, and improve template structures for better user experience.](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/98e2e5cb85e003e5efc6291ea9f4e7ab1a5f6878) | [AcuerdoService.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/98e2e5cb85e003e5efc6291ea9f4e7ab1a5f6878/backend/src/main/java/es/urjc/ecomostoles/backend/service/AcuerdoService.java) |
-|  2  | [Enhance Admin functionalities with user management and reporting features; add user deletion and editing, improve dashboard metrics, and implement report generation service for PDF and CSV exports.](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/7d389d07df9d99f9a9cacf4b2f5126dd0828fd30) | [AdminController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/7d389d07df9d99f9a9cacf4b2f5126dd0828fd30/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AdminController.java) |
-|  3  | [Implement PDF export functionality and enhance message composition features](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/2144f03a3449d4b1effa96b15a16d5d3903ca5e7) | [AdminController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/2144f03a3449d4b1effa96b15a16d5d3903ca5e7/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AdminController.java) |
-|  4  | [Implement self-agreement prevention, enhance dynamic select options, and improve user experience across various templates and controllers](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/b649e0b612742a04bebc8d50899584f3523c914c) | [AcuerdoService.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/b649e0b612742a04bebc8d50899584f3523c914c/backend/src/main/java/es/urjc/ecomostoles/backend/service/AcuerdoService.java) |
-|  5  | [Refactor controllers and services for improved logic and structure](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/546120a0feaaffb03c894054823a1d15c7428785) | [AcuerdoService.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/546120a0feaaffb03c894054823a1d15c7428785/backend/src/main/java/es/urjc/ecomostoles/backend/service/AcuerdoService.java) |
+| Nº  |                                                                                                                                                                                     Commits                                                                                                                                                                                      |                                                                                                              Files                                                                                                              |
+| :-: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|  1  | [Implement Sustainability Engine for environmental impact calculations; update services and controllers to utilize centralized CO2 impact metrics, enhance message deletion functionality, and improve template structures for better user experience.](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/98e2e5cb85e003e5efc6291ea9f4e7ab1a5f6878) |   [AcuerdoService.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/98e2e5cb85e003e5efc6291ea9f4e7ab1a5f6878/backend/src/main/java/es/urjc/ecomostoles/backend/service/AcuerdoService.java)    |
+|  2  |                         [Enhance Admin functionalities with user management and reporting features; add user deletion and editing, improve dashboard metrics, and implement report generation service for PDF and CSV exports.](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/7d389d07df9d99f9a9cacf4b2f5126dd0828fd30)                         | [AdminController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/7d389d07df9d99f9a9cacf4b2f5126dd0828fd30/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AdminController.java) |
+|  3  |                                                                                      [Implement PDF export functionality and enhance message composition features](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/2144f03a3449d4b1effa96b15a16d5d3903ca5e7)                                                                                      | [AdminController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/2144f03a3449d4b1effa96b15a16d5d3903ca5e7/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AdminController.java) |
+|  4  |                                                       [Implement self-agreement prevention, enhance dynamic select options, and improve user experience across various templates and controllers](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/b649e0b612742a04bebc8d50899584f3523c914c)                                                       |   [AcuerdoService.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/b649e0b612742a04bebc8d50899584f3523c914c/backend/src/main/java/es/urjc/ecomostoles/backend/service/AcuerdoService.java)    |
+|  5  |                                                                                          [Refactor controllers and services for improved logic and structure](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/546120a0feaaffb03c894054823a1d15c7428785)                                                                                           |   [AcuerdoService.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/546120a0feaaffb03c894054823a1d15c7428785/backend/src/main/java/es/urjc/ecomostoles/backend/service/AcuerdoService.java)    |
 
 ---
 
 #### **Alumno 4 - Javier de la Casa Muñoz**
 
-[Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
+[Durante esta etapa, mi responsabilidad se centró en la implementación de la lógica de negocio avanzada y el desarrollo del módulo de sostenibilidad. Lideré el diseño de un sistema para calcular el impacto ambiental basado en factores dinámicos y tipos de materiales, cumpliendo con los requisitos de funcionalidad compleja. Además, robustecí la arquitectura mediante el uso de Enums para la gestión de estados y un Global Controller Advice para centralizar la lógica de notificaciones, asegurando una comunicación fluida entre el backend y las vistas de ofertas y demandas.
 
-| Nº  |               Commits                |           Files           |
-| :-: | :----------------------------------: | :-----------------------: |
-|  1  | [Descripción commit 1](URL_commit_1) | [Archivo1](URL_archivo_1) |
-|  2  | [Descripción commit 2](URL_commit_2) | [Archivo2](URL_archivo_2) |
-|  3  | [Descripción commit 3](URL_commit_3) | [Archivo3](URL_archivo_3) |
-|  4  | [Descripción commit 4](URL_commit_4) | [Archivo4](URL_archivo_4) |
-|  5  | [Descripción commit 5](URL_commit_5) | [Archivo5](URL_archivo_5) |
+Asimismo, gestioné la optimización del frontend y la administración del sistema. Implementé los controladores de Mercado y Demanda para garantizar una visualización dinámica de datos, y realicé una refactorización integral de las plantillas HTML para eliminar valores estáticos. Este trabajo incluyó la mejora de las funcionalidades de administración y la configuración global de la plataforma, logrando una arquitectura más limpia, escalable y adaptada a las necesidades del usuario final.]
+
+| Nº  |                                                                                                                                                         Commits                                                                                                                                                         |                                                                                                               Files                                                                                                                |
+| :-: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|  1  | [Add DemandaController and update Demanda and Oferta models with formatted quantity and price methods; modify mercado.html and solicitudes.html to display formatted values and enhance layout.](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/tree/631adf712d48dc36b41684bb1c6ec102a34853d4) | [DemandaControler.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/631adf712d48dc36b41684bb1c6ec102a34853d4/backend/src/main/java/es/urjc/ecomostoles/backend/controller/DemandaController.java) |
+|  2  |                           [Implement global controller advice for message count, refactor offer and demand states to enums, and enhance message handling in templates](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/tree/827ef4cf6212c6c882c2f98cdd0558f71e31c291)                           |    [DataInitializer.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/827ef4cf6212c6c882c2f98cdd0558f71e31c291/backend/src/main/java/es/urjc/ecomostoles/backend/config/DataInitializer.java)     |
+|  3  |                                                                 [Enhance admin functionalities and add configuration management](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/tree/a90af835e6b25a68bf22f8b9d570725a1bd92890)                                                                 |  [AdminController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/a90af835e6b25a68bf22f8b9d570725a1bd92890/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AdminController.java)   |
+|  4  |                                                                  [Refactor templates to use dynamic platform name and location](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/tree/0cbb23ed4ad0ea9c4ea0e7bfc0cb81b0975f2ca8)                                                                  |    [CsrfModelAdvice.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/0cbb23ed4ad0ea9c4ea0e7bfc0cb81b0975f2ca8/backend/src/main/java/es/urjc/ecomostoles/backend/config/CsrfModelAdvice.java)     |
+|  5  |                                                       [Refactor template variables for consistency and clarity across multiple HTML files](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/tree/c8afe10b4187c9ade48d75c2c9325922a9d721a7)                                                       |  [AdminController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/c8afe10b4187c9ade48d75c2c9325922a9d721a7/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AdminController.java)   |
 
 ---
 
