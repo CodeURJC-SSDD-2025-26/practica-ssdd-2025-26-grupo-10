@@ -660,15 +660,19 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 
 #### **Alumno 1 - Guillermo Domínguez Galindo**
 
-[Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
+En esta Práctica 2, mi responsabilidad abarcó la configuración inicial del backend y la mejora integral de la interfaz de usuario. A nivel de arquitectura, configuré la persistencia de datos integrando JPA y H2, y desarrollé el DatabaseInitializer para cargar datos de prueba en el sistema.
+
+En cuanto a la gestión de usuarios y controladores, lideré la implementación del sistema de registro con validación de formularios y manejo de errores. Para ello, utilicé patrones DTO como RegistroDTO para asegurar la transferencia de datos. Además, implementé la recuperación de contraseñas y desarrollé la funcionalidad base para la creación y visualización detallada de ofertas.
+
+Finalmente, en el frontend, llevé a cabo una refactorización exhaustiva de las plantillas HTML para integrar contenido dinámico, soporte de paginación y desplegables modulares mediante SelectOption DTO. También mejoré la robustez del sistema refactorizando la lógica de los cálculos de sostenibilidad y optimizando la respuesta ante errores, logrando así una navegación más estable.
 
 | Nº  |               Commits                |           Files           |
 | :-: | :----------------------------------: | :-----------------------: |
-|  1  | [Descripción commit 1](URL_commit_1) | [Archivo1](URL_archivo_1) |
-|  2  | [Descripción commit 2](URL_commit_2) | [Archivo2](URL_archivo_2) |
-|  3  | [Descripción commit 3](URL_commit_3) | [Archivo3](URL_archivo_3) |
-|  4  | [Descripción commit 4](URL_commit_4) | [Archivo4](URL_archivo_4) |
-|  5  | [Descripción commit 5](URL_commit_5) | [Archivo5](URL_archivo_5) |
+|  1  | [Add JPA and H2 dependencies; implement DatabaseInitializer for sample data](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/83e680a60b168c2684d3c7befa77f4591a1798f1) | [DatabaseInitializer.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/83e680a60b168c2684d3c7befa77f4591a1798f1/backend/src/main/java/es/urjc/ecomostoles/backend/service/DatabaseInitializer.java) |
+|  2  | [Refactor HTML templates for improved structure and dynamic content](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/6c23b416f89edc4e7fa8cd2056182bfc25dfecec) | [AcuerdoController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/6c23b416f89edc4e7fa8cd2056182bfc25dfecec/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AcuerdoController.java) |
+|  3  | [Refactor HTML templates for improved structure and styling](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/b066b35f5b6bd0ec760ca3a69b1e48ec2a0d463b) | [AcuerdoController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/b066b35f5b6bd0ec760ca3a69b1e48ec2a0d463b/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AcuerdoController.java) |
+|  4  | [feat: Implement user registration with validation; add RegistroDTO for data transfer, enhance error handling in registration form, and update templates for dynamic data binding.](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/d4d3d5ebed3182cfa8ac838bd26cbdf01137b832) | [RegistroDTO](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/d4d3d5ebed3182cfa8ac838bd26cbdf01137b832/backend/src/main/java/es/urjc/ecomostoles/backend/dto/RegistroDTO.java) |
+|  5  | [feat: Enhance templates with new fields and pagination support](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/02c072c346525495d9b647393b7b8fd01e1dd0ef) | [DataInitializer.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/02c072c346525495d9b647393b7b8fd01e1dd0ef/backend/src/main/java/es/urjc/ecomostoles/backend/config/DataInitializer.java) |
 
 ---
 
