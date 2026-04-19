@@ -688,15 +688,17 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 
 #### **Alumno 3 - Alberto Sastre Zorrilla**
 
-[Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
+Durante el desarrollo de la Práctica 2, mi responsabilidad principal se centró en la implementación de la lógica de negocio compleja y la administración avanzada del sistema. Lideré el diseño y desarrollo del Sustainability Engine, un algoritmo diseñado para calcular el impacto ambiental (huella de CO2) basado en las transacciones entre ofertas y demandas, cumpliendo así con el requisito de "Algoritmo o Consulta Avanzada" de la rúbrica.
+
+Además, gestioné la integridad de las transacciones mediante la prevención de auto-acuerdos y el control de estados de las entidades. En el ámbito de la administración, implementé el panel de gestión de usuarios, permitiendo al rol administrador listar, editar y eliminar perfiles. También integré la tecnología extra de generación de informes, desarrollando un servicio capaz de exportar datos críticos de la aplicación a formato PDF. Finalmente, aseguré la robustez del código mediante una refactorización integral, moviendo la lógica de los controladores a servicios especializados para garantizar una arquitectura limpia y escalable.
 
 | Nº  |               Commits                |           Files           |
 | :-: | :----------------------------------: | :-----------------------: |
-|  1  | [Descripción commit 1](URL_commit_1) | [Archivo1](URL_archivo_1) |
-|  2  | [Descripción commit 2](URL_commit_2) | [Archivo2](URL_archivo_2) |
-|  3  | [Descripción commit 3](URL_commit_3) | [Archivo3](URL_archivo_3) |
-|  4  | [Descripción commit 4](URL_commit_4) | [Archivo4](URL_archivo_4) |
-|  5  | [Descripción commit 5](URL_commit_5) | [Archivo5](URL_archivo_5) |
+|  1  | [Implement Sustainability Engine for environmental impact calculations; update services and controllers to utilize centralized CO2 impact metrics, enhance message deletion functionality, and improve template structures for better user experience.](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/98e2e5cb85e003e5efc6291ea9f4e7ab1a5f6878) | [AcuerdoService.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/98e2e5cb85e003e5efc6291ea9f4e7ab1a5f6878/backend/src/main/java/es/urjc/ecomostoles/backend/service/AcuerdoService.java) |
+|  2  | [Enhance Admin functionalities with user management and reporting features; add user deletion and editing, improve dashboard metrics, and implement report generation service for PDF and CSV exports.](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/7d389d07df9d99f9a9cacf4b2f5126dd0828fd30) | [AdminController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/7d389d07df9d99f9a9cacf4b2f5126dd0828fd30/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AdminController.java) |
+|  3  | [Implement PDF export functionality and enhance message composition features](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/2144f03a3449d4b1effa96b15a16d5d3903ca5e7) | [AdminController.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/2144f03a3449d4b1effa96b15a16d5d3903ca5e7/backend/src/main/java/es/urjc/ecomostoles/backend/controller/AdminController.java) |
+|  4  | [Implement self-agreement prevention, enhance dynamic select options, and improve user experience across various templates and controllers](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/b649e0b612742a04bebc8d50899584f3523c914c) | [AcuerdoService.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/b649e0b612742a04bebc8d50899584f3523c914c/backend/src/main/java/es/urjc/ecomostoles/backend/service/AcuerdoService.java) |
+|  5  | [Refactor controllers and services for improved logic and structure](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/546120a0feaaffb03c894054823a1d15c7428785) | [AcuerdoService.java](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/546120a0feaaffb03c894054823a1d15c7428785/backend/src/main/java/es/urjc/ecomostoles/backend/service/AcuerdoService.java) |
 
 ---
 
