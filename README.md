@@ -615,7 +615,7 @@ Solo si ha cambiado.
    La aplicación se sirve exclusivamente por **HTTPS**. Abre en tu navegador:
     [https://localhost:8443](https://localhost:8443)
 
-   > ⚠️ **ADVERTENCIA** 
+   > ⚠️ **ADVERTENCIA :**
    > El certificado es autofirmado. El navegador mostrará una advertencia de seguridad; por favor, acepta la excepción para continuar.
 
 ---
@@ -629,7 +629,7 @@ Solo si ha cambiado.
 | **Empresa (EcoSur)** | `reciclajes@ecosur.es` | `1234` |
 | **Empresa (Paco)** | `paco@reciclajes.es` | `1234` |
 
-> 💡 **TIP** 
+> 💡 **TIP :**
 > **Metales del Sur S.L.** es la cuenta con mayor volumen de datos para testear la plataforma. Las otras dos cuentas de empresa son ideales para probar el sistema de **Smart Matching** por sectores y la mensajería interna.
 
 ### **Diagrama de Entidades de Base de Datos**
@@ -648,9 +648,13 @@ Diagrama mostrando las entidades, sus campos y relaciones:
 
 Diagrama de clases de la aplicación con diferenciación por colores o secciones:
 
-![Diagrama de Clases](images/classes-diagram.png)
+![Diagrama de Clases](backend/src/main/resources/static/pages_images/diagramatemplates.drawio.png)
 
-> [Descripción opcional del diagrama y relaciones principales]
+> El proyecto sigue una arquitectura **multicapa (N-Tier)** basada en Spring Boot, diseñada para garantizar la escalabilidad y el desacoplamiento de responsabilidades.
+> * **Vistas y Controladores:** Se utiliza el patrón **MVC**. Los controladores actúan como adaptadores, gestionando la navegación y coordinando la comunicación entre las vistas dinámicas (`.html` con Mustache) y la capa de negocio.
+> * **Capa de Negocio (Servicios):** Centraliza la lógica de la aplicación. Se han implementado servicios especializados y motores de cálculo (como el `SustainabilityEngine`) que interactúan entre sí para procesar reglas complejas.
+> * **Modelo de Dominio y Persistencia:** Las entidades reflejan un modelo robusto con **relaciones bidireccionales** y gestión de ciclo de vida mediante **composición** (borrado en cascada). La persistencia se realiza a través de repositorios que abstraen el acceso a datos.
+> * **Guía Visual:** El diagrama utiliza un código de colores por módulos para facilitar la trazabilidad completa desde la interfaz de usuario hasta el servicio correspondiente.
 
 ### **Participación de Miembros en la Práctica 2**
 
