@@ -346,7 +346,7 @@ El recorrido de las flechas verdes define las rutas de mayor seguridad, reservad
 
 #### **Diagrama de Navegación**
 
-Solo si ha cambiado.
+![Diagrama de Navegación ](backend/src/main/resources/static/pages_images/navigation_diagram.png)
 
 #### **Capturas de Pantalla Actualizadas**
 
