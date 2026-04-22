@@ -687,7 +687,7 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 
 En esta Práctica 2, mi responsabilidad abarcó la configuración inicial del backend y la mejora integral de la interfaz de usuario. A nivel de arquitectura, configuré la persistencia de datos integrando JPA y H2, y desarrollé el DatabaseInitializer para cargar datos de prueba en el sistema.
 
-En cuanto a la gestión de usuarios y controladores, lideré la implementación del sistema de registro con validación de formularios y manejo de errores. Para ello, utilicé patrones DTO como RegistroDTO para asegurar la transferencia de datos. Además, implementé la recuperación de contraseñas y desarrollé la funcionalidad base para la creación y visualización detallada de ofertas.
+En cuanto a la gestión de usuarios y controladores, lideré la implementación del sistema de registro con validación de formularios y manejo de errores. Para ello, utilicé patrones DTO como RegistroDTO para asegurar la transferencia de datos. Además, implementé y desarrollé la funcionalidad base para la creación y visualización detallada de ofertas.
 
 Finalmente, en el frontend, llevé a cabo una refactorización exhaustiva de las plantillas HTML para integrar contenido dinámico, soporte de paginación y desplegables modulares mediante SelectOption DTO. También mejoré la robustez del sistema refactorizando la lógica de los cálculos de sostenibilidad y optimizando la respuesta ante errores, logrando así una navegación más estable.
 
