@@ -4,6 +4,9 @@ import es.urjc.ecomostoles.backend.model.DemandStatus;
 import es.urjc.ecomostoles.backend.model.Demand;
 import es.urjc.ecomostoles.backend.model.Company;
 import es.urjc.ecomostoles.backend.service.DemandService;
+import es.urjc.ecomostoles.backend.mapper.DemandMapper;
+import java.util.stream.Collectors;
+import es.urjc.ecomostoles.backend.dto.DemandDTO;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
 import jakarta.validation.Valid;
@@ -41,10 +44,12 @@ public class MyDemandsController {
 
     private final CompanyService companyService;
     private final DemandService demandService;
+    private final DemandMapper demandMapper;
     private final es.urjc.ecomostoles.backend.service.ConfigurationService configurationService;
 
     public MyDemandsController(CompanyService companyService, DemandService demandService,
-            es.urjc.ecomostoles.backend.service.ConfigurationService configurationService) {
+            es.urjc.ecomostoles.backend.service.ConfigurationService configurationService, DemandMapper demandMapper) {
+        this.demandMapper = demandMapper;
         this.companyService = companyService;
         this.demandService = demandService;
         this.configurationService = configurationService;
@@ -98,7 +103,7 @@ public class MyDemandsController {
             model.addAttribute("isDashboard", true);
 
             Page<Demand> demandsPage = demandService.getByCompanyPaginated(company, pageable);
-            model.addAttribute("demands", demandsPage.getContent());
+            model.addAttribute("demands", demandsPage.getContent().stream().map(demandMapper::toDto).collect(Collectors.toList()));
             model.addAttribute("hasDemands", !demandsPage.isEmpty());
 
             // Pagination metadata
@@ -134,7 +139,7 @@ public class MyDemandsController {
         if (companyOpt.isPresent()) {
             model.addAttribute("activeNewDemand", true);
             model.addAttribute("isDashboard", true);
-            model.addAttribute("demand", new Demand());
+            model.addAttribute("demand", demandMapper.toDto(new Demand()));
             injectDynamicOptions(model);
             return "crear_solicitud";
         }
@@ -171,7 +176,7 @@ public class MyDemandsController {
         if (result.hasErrors()) {
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             model.addAttribute("errors", result.getAllErrors());
-            model.addAttribute("demand", demand);
+            model.addAttribute("demand", demandMapper.toDto(demand));
             injectDynamicOptions(model);
             return "crear_solicitud";
         }
@@ -239,7 +244,7 @@ public class MyDemandsController {
     @GetMapping("/demandas/{id}/editar")
     public String showEditDemandForm(@PathVariable Long id, Model model, Principal principal) {
         Demand demand = verifyDemandOwnership(id, principal);
-        model.addAttribute("demand", demand);
+        model.addAttribute("demand", demandMapper.toDto(demand));
         model.addAttribute("isDashboard", true);
 
         loadSelectOptions(model, demand);
@@ -275,7 +280,7 @@ public class MyDemandsController {
             loadSelectOptions(model, demandForm);
 
             model.addAttribute("errors", result.getAllErrors());
-            model.addAttribute("demand", demandForm); // FIX: Add missing model attribute
+            model.addAttribute("demand", demandMapper.toDto(demandForm)); // FIX: Add missing model attribute
             demandForm.setId(id);
             
             // SECURITY: Ensure sidebar knows user role on validation fail

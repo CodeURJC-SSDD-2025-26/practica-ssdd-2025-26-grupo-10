@@ -7,6 +7,8 @@ import es.urjc.ecomostoles.backend.dto.OfferSummary;
 import es.urjc.ecomostoles.backend.service.AgreementService;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.service.OfferService;
+import es.urjc.ecomostoles.backend.mapper.AgreementMapper;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,15 +49,18 @@ public class AgreementController {
     private final CompanyService companyService;
     private final OfferService offerService;
     private final es.urjc.ecomostoles.backend.service.ConfigurationService configurationService;
+    private final AgreementMapper agreementMapper;
 
     public AgreementController(AgreementService agreementService,
             CompanyService companyService,
             OfferService offerService,
-            es.urjc.ecomostoles.backend.service.ConfigurationService configurationService) {
+            es.urjc.ecomostoles.backend.service.ConfigurationService configurationService,
+            AgreementMapper agreementMapper) {
         this.agreementService = agreementService;
         this.companyService = companyService;
         this.offerService = offerService;
         this.configurationService = configurationService;
+        this.agreementMapper = agreementMapper;
     }
 
     /**
@@ -110,7 +115,7 @@ public class AgreementController {
             model.addAttribute("activeAgreements", true);
             model.addAttribute("isDashboard", true);
             List<Agreement> myAgreements = agreementService.getByCompany(company);
-            model.addAttribute("agreements", myAgreements);
+            model.addAttribute("agreements", myAgreements.stream().map(agreementMapper::toDto).collect(Collectors.toList()));
 
             // Dynamic KPI counts for status section
             model.addAttribute("totalCompleted",
@@ -215,7 +220,7 @@ public class AgreementController {
             return "redirect:/acuerdos?error=forbidden";
         }
 
-        model.addAttribute("agreement", agreement);
+        model.addAttribute("agreement", agreementMapper.toDto(agreement));
         model.addAttribute("isDashboard", true);
         model.addAttribute("isAdminView", isAdminView);
         model.addAttribute("supportEmail", configurationService.getAutoValue("contactEmail"));
@@ -238,7 +243,7 @@ public class AgreementController {
             return "redirect:/acuerdos?error=forbidden";
         }
 
-        model.addAttribute("agreement", agreement);
+        model.addAttribute("agreement", agreementMapper.toDto(agreement));
         model.addAttribute("isDashboard", true);
 
         // Centralized utility for form options (DRY)
@@ -257,7 +262,7 @@ public class AgreementController {
             BindingResult result, Model model, Principal principal) {
         if (result.hasErrors()) {
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
-            model.addAttribute("agreement", updatedAgreement);
+            model.addAttribute("agreement", agreementMapper.toDto(updatedAgreement));
             updatedAgreement.setId(id);
             // Repopulate dynamic options (DRY with showEditForm)
             model.addAttribute("unitOptions",

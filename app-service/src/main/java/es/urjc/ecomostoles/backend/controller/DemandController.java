@@ -2,6 +2,8 @@ package es.urjc.ecomostoles.backend.controller;
 
 import es.urjc.ecomostoles.backend.model.Demand;
 import es.urjc.ecomostoles.backend.service.DemandService;
+import es.urjc.ecomostoles.backend.mapper.DemandMapper;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +33,11 @@ import java.util.Optional;
 public class DemandController {
 
     private final DemandService demandService;
+    private final DemandMapper demandMapper;
 
-    public DemandController(DemandService demandService) {
+    public DemandController(DemandService demandService, DemandMapper demandMapper) {
         this.demandService = demandService;
+        this.demandMapper = demandMapper;
     }
 
     /**
@@ -53,7 +57,7 @@ public class DemandController {
         Page<Demand> demandPage = demandService
                 .getByStatusPaginated(es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE, pageable);
 
-        model.addAttribute("demands", demandPage.getContent());
+        model.addAttribute("demands", demandPage.getContent().stream().map(demandMapper::toDto).collect(Collectors.toList()));
         model.addAttribute("hasDemands", !demandPage.isEmpty());
 
         // Pagination metadata
@@ -96,7 +100,7 @@ public class DemandController {
 
         if (demandOpt.isPresent()) {
             Demand demand = demandOpt.get();
-            model.addAttribute("demand", demand);
+            model.addAttribute("demand", demandMapper.toDto(demand));
 
             boolean isOwner = false;
             if (principal != null) {

@@ -3,6 +3,8 @@ package es.urjc.ecomostoles.backend.service;
 import es.urjc.ecomostoles.backend.dto.DashboardStatsDTO;
 import es.urjc.ecomostoles.backend.model.Company;
 import org.springframework.stereotype.Service;
+import es.urjc.ecomostoles.backend.mapper.OfferMapper;
+import java.util.stream.Collectors;
 import java.util.List;
 
 /**
@@ -19,13 +21,16 @@ public class DashboardService {
     private final OfferService offerService;
     private final DemandService demandService;
     private final AgreementService agreementService;
+    private final OfferMapper offerMapper;
 
     public DashboardService(OfferService offerService,
             DemandService demandService,
-            AgreementService agreementService) {
+            AgreementService agreementService,
+            OfferMapper offerMapper) {
         this.offerService = offerService;
         this.demandService = demandService;
         this.agreementService = agreementService;
+        this.offerMapper = offerMapper;
     }
 
     /**
@@ -74,7 +79,9 @@ public class DashboardService {
             stats.setCo2Impact(agreementService.calculateCO2SavedByCompany(company.getId()));
 
             // Smart Matching
-            List<?> recommendedOffers = demandService.getSmartRecommendations(company);
+            List<?> recommendedOffers = demandService.getSmartRecommendations(company).stream()
+                    .map(offerMapper::toDto)
+                    .collect(Collectors.toList());
             stats.setSmartRecommendations(recommendedOffers);
             stats.setHasRecommendations(!recommendedOffers.isEmpty());
 

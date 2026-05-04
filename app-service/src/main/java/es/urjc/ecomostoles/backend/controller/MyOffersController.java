@@ -7,6 +7,9 @@ import es.urjc.ecomostoles.backend.model.Offer;
 import es.urjc.ecomostoles.backend.dto.OfferSummary;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.service.OfferService;
+import es.urjc.ecomostoles.backend.mapper.OfferMapper;
+import java.util.stream.Collectors;
+import es.urjc.ecomostoles.backend.dto.OfferDTO;
 import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -49,10 +52,12 @@ public class MyOffersController {
 
     private final CompanyService companyService;
     private final OfferService offerService;
+    private final OfferMapper offerMapper;
     private final es.urjc.ecomostoles.backend.service.ConfigurationService configurationService;
 
     public MyOffersController(CompanyService companyService, OfferService offerService,
-            es.urjc.ecomostoles.backend.service.ConfigurationService configurationService) {
+            es.urjc.ecomostoles.backend.service.ConfigurationService configurationService, OfferMapper offerMapper) {
+        this.offerMapper = offerMapper;
         this.companyService = companyService;
         this.offerService = offerService;
         this.configurationService = configurationService;
@@ -142,7 +147,7 @@ public class MyOffersController {
         if (companyOpt.isPresent()) {
             model.addAttribute("activeNewOffer", true);
             model.addAttribute("isDashboard", true);
-            model.addAttribute("offer", new Offer());
+            model.addAttribute("offer", offerMapper.toDto(new Offer()));
             injectDynamicOptions(model);
             return "crear_activo";
         }
@@ -196,7 +201,7 @@ public class MyOffersController {
         if (result.hasErrors() || imageError) {
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             model.addAttribute("errors", result.getAllErrors());
-            model.addAttribute("offer", offer); // Ensure attribute name matches template
+            model.addAttribute("offer", offerMapper.toDto(offer)); // Ensure attribute name matches template
             loadSelectOptions(model, offer); // Fix: use loadSelectOptions instead of injectDynamicOptions
             
             // SECURITY: Ensure sidebar knows user role on validation fail
@@ -289,7 +294,7 @@ public class MyOffersController {
             return "redirect:/dashboard/mis-ofertas";
         }
 
-        model.addAttribute("offer", offer);
+        model.addAttribute("offer", offerMapper.toDto(offer));
         model.addAttribute("isDashboard", true);
 
         loadSelectOptions(model, offer);
@@ -334,7 +339,7 @@ public class MyOffersController {
             result.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
             loadSelectOptions(model, offerForm);
             model.addAttribute("errors", result.getAllErrors());
-            model.addAttribute("offer", offerForm); // Ensure attribute name matches template 'offer'
+            model.addAttribute("offer", offerMapper.toDto(offerForm)); // Ensure attribute name matches template 'offer'
             offerForm.setId(id);
             
             // SECURITY: Ensure sidebar knows user role on validation fail

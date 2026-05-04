@@ -3,6 +3,8 @@ package es.urjc.ecomostoles.backend.controller;
 import es.urjc.ecomostoles.backend.model.Offer;
 import es.urjc.ecomostoles.backend.dto.OfferSummary;
 import es.urjc.ecomostoles.backend.service.OfferService;
+import es.urjc.ecomostoles.backend.mapper.OfferMapper;
+import es.urjc.ecomostoles.backend.dto.OfferDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +28,10 @@ public class MarketController {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MarketController.class);
 
     private final OfferService offerService;
+    private final OfferMapper offerMapper;
 
-    public MarketController(OfferService offerService) {
+    public MarketController(OfferService offerService, OfferMapper offerMapper) {
+        this.offerMapper = offerMapper;
         this.offerService = offerService;
     }
 
@@ -115,7 +119,7 @@ public class MarketController {
         if (offerOpt.isPresent()) {
             Offer offer = offerOpt.get();
             log.debug("[Market] Detail -> Resolving granular data for offer ID: '{}'", id);
-            model.addAttribute("offer", offer);
+            model.addAttribute("offer", offerMapper.toDto(offer));
 
             // Check if user is the owner to hide contact form and skip visit count
             boolean isOwner = false;

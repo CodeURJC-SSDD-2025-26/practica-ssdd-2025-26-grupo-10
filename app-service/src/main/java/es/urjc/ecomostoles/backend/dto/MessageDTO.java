@@ -12,6 +12,11 @@ public record MessageDTO(
         CompanyDTO sender,
         CompanyDTO recipient
 ) {
+    public String getFormattedSendDate() {
+        if (this.sendDate == null)
+            return "Fecha no disponible";
+        return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(this.sendDate);
+    }
     public MessageDTO(Message message) {
         this(
                 message.getId(),

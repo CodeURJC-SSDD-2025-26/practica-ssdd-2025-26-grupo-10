@@ -2,6 +2,7 @@ package es.urjc.ecomostoles.backend.controller;
 
 import es.urjc.ecomostoles.backend.model.Company;
 import es.urjc.ecomostoles.backend.service.CompanyService;
+import es.urjc.ecomostoles.backend.mapper.CompanyMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,9 +35,11 @@ public class RegistrationController {
     private static final Logger log = LoggerFactory.getLogger(RegistrationController.class);
 
     private final CompanyService companyService;
+    private final CompanyMapper companyMapper;
     private final ConfigurationService configurationService;
 
-    public RegistrationController(CompanyService companyService, ConfigurationService configurationService) {
+    public RegistrationController(CompanyService companyService, ConfigurationService configurationService, CompanyMapper companyMapper) {
+        this.companyMapper = companyMapper;
         this.companyService = companyService;
         this.configurationService = configurationService;
     }

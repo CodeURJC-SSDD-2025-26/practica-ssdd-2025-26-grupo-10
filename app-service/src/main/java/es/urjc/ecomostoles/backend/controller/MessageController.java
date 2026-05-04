@@ -7,6 +7,8 @@ import es.urjc.ecomostoles.backend.model.Offer;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.service.DemandService;
 import es.urjc.ecomostoles.backend.service.MessageService;
+import es.urjc.ecomostoles.backend.mapper.MessageMapper;
+import java.util.stream.Collectors;
 import es.urjc.ecomostoles.backend.service.OfferService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,13 +38,15 @@ public class MessageController {
 
         private final CompanyService companyService;
         private final MessageService messageService;
+    private final MessageMapper messageMapper;
         private final OfferService offerService;
         private final DemandService demandService;
 
         public MessageController(CompanyService companyService,
                         MessageService messageService,
                         OfferService offerService,
-                        DemandService demandService) {
+                        DemandService demandService, MessageMapper messageMapper) {
+        this.messageMapper = messageMapper;
                 this.companyService = companyService;
                 this.messageService = messageService;
                 this.offerService = offerService;
@@ -113,7 +117,7 @@ public class MessageController {
                         messageService.save(message);
                 }
 
-                model.addAttribute("message", message);
+                model.addAttribute("message", messageMapper.toDto(message));
                 model.addAttribute("isReceived", isRecipient);
                 model.addAttribute("isDashboard", true);
 

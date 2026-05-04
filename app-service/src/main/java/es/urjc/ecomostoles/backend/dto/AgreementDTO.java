@@ -11,7 +11,7 @@ public record AgreementDTO(
         String unit,
         Double agreedPrice,
         LocalDate pickupDate,
-        String status,
+        es.urjc.ecomostoles.backend.model.AgreementStatus status,
         String notes,
         LocalDateTime registrationDate,
         CompanyDTO originCompany,
@@ -21,6 +21,25 @@ public record AgreementDTO(
         Double platformCommission,
         Double co2Impact
 ) {
+    public String getFormattedAgreedPrice() {
+        return es.urjc.ecomostoles.backend.utils.NumberFormatter.formatCurrency(this.agreedPrice);
+    }
+    public String getFormattedPlatformCommission() {
+        return es.urjc.ecomostoles.backend.utils.NumberFormatter.formatCurrency(this.platformCommission);
+    }
+    public String getFormattedCo2Impact() {
+        return es.urjc.ecomostoles.backend.utils.NumberFormatter.format(this.co2Impact);
+    }
+    public String getFormattedQuantity() {
+        return es.urjc.ecomostoles.backend.utils.NumberFormatter.format(this.quantity);
+    }
+    public String getFormattedRegistrationDate() {
+        if (this.registrationDate == null) return "Fecha no disponible";
+        return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(this.registrationDate);
+    }
+    public boolean isDeletable() {
+        return !es.urjc.ecomostoles.backend.model.AgreementStatus.COMPLETED.equals(this.status);
+    }
     public AgreementDTO(Agreement agreement) {
         this(
                 agreement.getId(),
@@ -29,7 +48,7 @@ public record AgreementDTO(
                 agreement.getUnit(),
                 agreement.getAgreedPrice(),
                 agreement.getPickupDate(),
-                agreement.getStatus() != null ? agreement.getStatus().name() : null,
+                agreement.getStatus(),
                 agreement.getNotes(),
                 agreement.getRegistrationDate(),
                 agreement.getOriginCompany() != null ? new CompanyDTO(agreement.getOriginCompany()) : null,

@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import es.urjc.ecomostoles.backend.model.Company;
 import es.urjc.ecomostoles.backend.dto.CompanyDTO;
 import es.urjc.ecomostoles.backend.service.CompanyService;
+import es.urjc.ecomostoles.backend.mapper.CompanyMapper;
+import es.urjc.ecomostoles.backend.dto.CompanyDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.validation.Valid;
@@ -35,8 +37,10 @@ public class ProfileController {
     private static final Logger log = LoggerFactory.getLogger(ProfileController.class);
 
     private final CompanyService companyService;
+    private final CompanyMapper companyMapper;
 
-    public ProfileController(CompanyService companyService) {
+    public ProfileController(CompanyService companyService, CompanyMapper companyMapper) {
+        this.companyMapper = companyMapper;
         this.companyService = companyService;
     }
 

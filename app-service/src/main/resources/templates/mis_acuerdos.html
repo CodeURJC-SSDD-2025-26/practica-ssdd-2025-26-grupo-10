@@ -59,7 +59,7 @@
                                     <td class="ps-4"><span class="fw-bold text-dark">#ACU-{{id}}</span></td>
                                     <td class="text-secondary">{{#pickupDate}}{{pickupDate}}{{/pickupDate}}{{^pickupDate}}&mdash;{{/pickupDate}}</td>
                                     <td><span class="fw-bold text-dark">{{#destinationCompany}}{{commercialName}}{{/destinationCompany}}{{^destinationCompany}}Sin empresa{{/destinationCompany}}</span></td>
-                                    <td class="text-secondary">{{#offer}}{{title}}{{/offer}}{{^offer}}{{exchangedMaterial}}{{/offer}}</td>
+                                    <td class="text-secondary">{{#offerId}}Oferta #{{offerId}}{{/offerId}}{{^offerId}}{{exchangedMaterial}}{{/offerId}}</td>
                                     <td class="fw-bold text-success">{{#agreedPrice}}{{formattedAgreedPrice}}{{/agreedPrice}}{{^agreedPrice}}&mdash;{{/agreedPrice}}</td>
                                     <td><span class="badge bg-primary rounded-pill">{{#status}}{{status.displayName}}{{/status}}{{^status}}Sin estado{{/status}}</span></td>
                                     <td class="text-end pe-4">
