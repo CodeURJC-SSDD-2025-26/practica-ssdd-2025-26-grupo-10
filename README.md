@@ -346,7 +346,7 @@ El recorrido de las flechas verdes define las rutas de mayor seguridad, reservad
 
 #### **Diagrama de Navegación**
 
-![Diagrama de Navegación ](backend/src/main/resources/static/pages_images/navigation_diagram.png)
+![Diagrama de Navegación ](app-service/src/main/resources/static/pages_images/navigation_diagram.png)
 
 ##### 🗺️ Arquitectura de Navegación y Control de Accesos
 
@@ -369,193 +369,193 @@ Rutas de máxima seguridad restringidas al rol de Administrador. Conectan direct
 
 #### **1. Página Principal (index.html)**
 
-![Página Principal](backend/src/main/resources/static/pages_images/index.png)
+![Página Principal](app-service/src/main/resources/static/pages_images/index.png)
 
 > Esta es la página de inicio pública de EcoMóstoles, diseñada para ser la primera toma de contacto de las empresas con la plataforma. Cuenta con una cabecera visual y muestra directamente las ofertas más recientes del mercado, junto con un panel de estadísticas reales sobre el impacto ambiental (como el ahorro acumulado de CO2). A nivel de desarrollo, emplea plantillas Mustache para reutilizar componentes comunes —como la cabecera y el pie de página— y utiliza el framework Bootstrap 5 para garantizar que el diseño sea totalmente responsive y adaptable a dispositivos móviles.
 
 #### **2. Acceso de Usuarios (login.html)**
 
-![Acceso de Usuarios](backend/src/main/resources/static/pages_images/login.png)
+![Acceso de Usuarios](app-service/src/main/resources/static/pages_images/login.png)
 
 > Pantalla de autenticación para las empresas registradas. Se ha optado por un diseño limpio y centrado que facilita el acceso sin distracciones. El formulario está integrado directamente con Spring Security y cuenta con protección nativa contra ataques CSRF, garantizando un inicio de sesión seguro. Además, incluye un sistema de notificaciones dinámicas que informa al usuario mediante alertas visuales si hay algún error en las credenciales o si viene de completar su registro con éxito.
 
 #### **3. Registro de Instituciones (registro.html)**
 
-![Registro de Instituciones](backend/src/main/resources/static/pages_images/registro.png)
+![Registro de Instituciones](app-service/src/main/resources/static/pages_images/registro.png)
 
 > Formulario de alta para las nuevas empresas que deseen unirse a la plataforma. Solicita la información corporativa básica e incluye funcionalidades dinámicas mediante JavaScript, como el despliegue de campos de texto adicionales al seleccionar ciertas opciones de ubicación. También incorpora validación en el navegador para evitar la subida de logotipos excesivamente pesados. Si el servidor detecta algún error en los datos, la vista recarga el formulario manteniendo la información ya introducida y marcando visualmente qué campos deben corregirse.
 
 #### **4. Marco Legal y Normativo (terminos.html)**
 
-![Marco Legal y Normativo](backend/src/main/resources/static/pages_images/terminos.png)
+![Marco Legal y Normativo](app-service/src/main/resources/static/pages_images/terminos.png)
 
 > Sección informativa dedicada a los Términos y Condiciones de uso. Este documento establece las normas operativas de la red, aclarando el papel de EcoMóstoles como plataforma intermediaria y definiendo las responsabilidades de las empresas respecto a la gestión de sus propios residuos. Dado el carácter formal del texto, el diseño se ha estructurado utilizando márgenes amplios y una jerarquía clara para facilitar su lectura y comprensión por parte de los usuarios.
 
 #### **5. Protección de Datos (privacidad.html)**
 
-![Protección de Datos](backend/src/main/resources/static/pages_images/privacidad.png)
+![Protección de Datos](app-service/src/main/resources/static/pages_images/privacidad.png)
 
 > Esta vista recoge la política de privacidad y el aviso legal de la plataforma. Explica de forma transparente cómo se recopila y gestiona la información de las empresas, especialmente los datos utilizados para calcular las métricas de impacto ambiental. Al igual que la página de términos y condiciones, presenta el contenido legal con una estructura clara y un diseño ordenado, asegurando que los usuarios conozcan sus derechos sobre la información que comparten en el sistema.
 
 #### **6. Panel de Control de Empresas (dashboard.html)**
 
-![Panel de Control de Empresas](backend/src/main/resources/static/pages_images/dashboard.png)
+![Panel de Control de Empresas](app-service/src/main/resources/static/pages_images/dashboard.png)
 
 > Es el panel principal o área privada de cada empresa una vez inicia sesión. Desde aquí, el usuario puede ver de un vistazo un resumen de su actividad mediante indicadores (KPIs) y gráficos, como los acuerdos que tiene en curso o el CO2 acumulado que ha conseguido ahorrar. Además, la vista muestra sugerencias automáticas para conectar sus necesidades con los excedentes de otras empresas (Smart Matching) y ofrece accesos rápidos para publicar nuevas ofertas de materiales.
 
 #### **7. Gestión de Identidad Corporativa (perfil_empresa.html)**
 
-![Gestión de Identidad Corporativa](backend/src/main/resources/static/pages_images/perfil_empresa.png)
+![Gestión de Identidad Corporativa](app-service/src/main/resources/static/pages_images/perfil_empresa.png)
 
 > Sección donde cada empresa puede visualizar y editar sus datos corporativos públicos, como su descripción, la información de contacto o el logotipo. Esta pantalla está diseñada para que la actualización de la información sea rápida e intuitiva. Además, la vista está programada para adaptarse según el rol, permitiendo que un Administrador pueda inspeccionar estos perfiles en modo lectura si necesita revisar o verificar los datos introducidos.
 
 #### **8. Catálogo de Mercado Industrial (mercado.html)**
 
-![Catálogo de Mercado Industrial](backend/src/main/resources/static/pages_images/mercado.png)
+![Catálogo de Mercado Industrial](app-service/src/main/resources/static/pages_images/mercado.png)
 
 > Esta es la página principal de intercambio de la plataforma. Muestra un tablón general con todos los residuos y materiales que las empresas han publicado. Para facilitar la consulta, las ofertas se organizan en tarjetas visuales que muestran datos clave como la cantidad, la categoría y la disponibilidad. Además, incluye un sistema de paginación gestionado desde el backend con Spring Data para asegurar que la navegación sea rápida y fluida independientemente de la cantidad de anuncios publicados.
 
 #### **9. Detalle de Oferta (detalle_activo.html)**
 
-![Detalle de Oferta](backend/src/main/resources/static/pages_images/detalle_activo.png)
+![Detalle de Oferta](app-service/src/main/resources/static/pages_images/detalle_activo.png)
 
 > Esta es la ficha completa de un material concreto que se ha publicado en el mercado. Aquí es donde una empresa interesada puede ver la foto real del residuo, el precio, las cantidades y quién lo vende. Lo más interesante de esta vista a nivel técnico es la lógica de roles que hemos programado en la plantilla: si el usuario que entra es el dueño del anuncio, el sistema le muestra los botones para editarlo o borrarlo; pero si es otra empresa distinta, la vista cambia y le ofrece un botón directo para abrir un chat de mensajería B2B y empezar a negociar.
 
 #### **10. Tablón de Demandas (solicitudes.html)**
 
-![Tablón de Demandas](backend/src/main/resources/static/pages_images/solicitudes.png)
+![Tablón de Demandas](app-service/src/main/resources/static/pages_images/solicitudes.png)
 
 > Si el mercado principal es para ofrecer materiales, este tablón sirve exactamente para lo contrario: es el espacio donde las empresas publican lo que necesitan comprar o conseguir. Está estructurado mediante tarjetas visuales, reutilizando componentes de diseño para mantener la coherencia, y cuenta con su propia paginación independiente. Esta sección es clave en el proyecto porque permite lo que llamamos "economía circular inversa": en lugar de buscar qué sobra en la red, las empresas pueden buscar directamente quién necesita lo que a ellos les sobra.
 
 #### **11. Detalle de Demanda (detalle_solicitud.html)**
 
-![Detalle de Demanda](backend/src/main/resources/static/pages_images/detalle_solicitud.png)
+![Detalle de Demanda](app-service/src/main/resources/static/pages_images/detalle_solicitud.png)
 
 > Es la vista ampliada de una petición del tablón de demandas. A diferencia de las ofertas (donde importa el stock y la foto), aquí la interfaz se adapta para mostrar datos diferentes y muy específicos: el presupuesto máximo que la empresa está dispuesta a pagar, su nivel de urgencia, la zona preferida para la recogida y la fecha de caducidad del anuncio. Como en el resto de la plataforma, incluye el botón de contacto rápido para que un proveedor pueda iniciar la conversación y cerrar el trato al instante.
 
 #### **12. Panel de Mis Publicaciones (mis_activos.html)**
 
-![Panel de Mis Publicaciones](backend/src/main/resources/static/pages_images/mis_activos.png)
+![Panel de Mis Publicaciones](app-service/src/main/resources/static/pages_images/mis_activos.png)
 
 > Esta pantalla funciona como el inventario privado de cada empresa. A diferencia del mercado general, aquí el usuario solo ve los materiales que él mismo ha subido a la plataforma. Para darle un toque más profesional, hemos incluido un bloque superior con métricas propias del usuario, como el número total de visitas que han recibido sus anuncios o cuántos tiene activos en ese momento. Desde aquí, la empresa tiene el control total sobre su CRUD: puede editar textos, actualizar fotos o eliminar un anuncio cuando ya ha gestionado el residuo.
 
 #### **13. Generación de Oferta (crear_activo.html)**
 
-![Generación de Oferta](backend/src/main/resources/static/pages_images/crear_activo.png)
+![Generación de Oferta](app-service/src/main/resources/static/pages_images/crear_activo.png)
 
 > Es el formulario de creación (el Create del CRUD) para publicar un nuevo residuo en el mercado. A nivel técnico, la vista incluye validaciones en el lado del cliente y del servidor para asegurar que los datos introducidos (como el precio, la cantidad o la categoría) tienen un formato correcto. Además, el formulario exige subir de manera obligatoria una imagen representativa del material, procesándola en el backend para garantizar que el tablón público mantenga siempre un aspecto visual profesional y atractivo.
 
 #### **14. Edición de Oferta (editar_activo.html)**
 
-![Edición de Oferta](backend/src/main/resources/static/pages_images/editar_activo.png)
+![Edición de Oferta](app-service/src/main/resources/static/pages_images/editar_activo.png)
 
 > Esta es la vista de actualización (el Update del CRUD) para las ofertas que la empresa ya tiene publicadas. Permite al usuario modificar cualquier parámetro del anuncio, como ajustar el precio, corregir el título o cambiar el estado del residuo a "Pausado" si temporalmente no está disponible. A nivel de usabilidad, la pantalla recupera y muestra la imagen que ya estaba guardada en la base de datos, permitiendo al usuario mantenerla o sustituirla por una nueva sin perder el resto de la información.
 
 #### **15. Panel de Mis Demandas (mis_demandas.html)**
 
-![Panel de Mis Demandas](backend/src/main/resources/static/pages_images/mis_demandas.png)
+![Panel de Mis Demandas](app-service/src/main/resources/static/pages_images/mis_demandas.png)
 
 > Esta pantalla es el equivalente al panel de "Mis Publicaciones", pero enfocado exclusivamente en las peticiones de compra de la empresa. La interfaz proporciona un listado privado con las demandas activas, incorporando indicadores útiles generados desde el backend, como los días que le quedan de vigencia al anuncio o el número de visitas recibidas. Desde aquí, el usuario centraliza la gestión de sus necesidades, teniendo acceso directo a la edición o eliminación de sus registros si ya ha cerrado un acuerdo con un proveedor.
 
 #### **16. Generación de Demanda (crear_solicitud.html)**
 
-![Generación de Demanda](backend/src/main/resources/static/pages_images/crear_solicitud.png)
+![Generación de Demanda](app-service/src/main/resources/static/pages_images/crear_solicitud.png)
 
 > Formulario diseñado para dar de alta una nueva necesidad o demanda en la plataforma. A diferencia de la creación de ofertas, esta interfaz está adaptada específicamente para recoger los datos clave de una petición de abastecimiento: qué material exacto se busca, el presupuesto máximo asignado y el nivel de urgencia. Todos los campos están mapeados directamente con el modelo de datos en Spring Boot, lo que permite alimentar automáticamente tanto el tablón público de demandas como el algoritmo interno de sugerencias (Smart Matching).
 
 #### **17. Edición de Peticiones (editar_solicitud.html)**
 
-![Edición de Peticiones](backend/src/main/resources/static/pages_images/editar_solicitud.png)
+![Edición de Peticiones](app-service/src/main/resources/static/pages_images/editar_solicitud.png)
 
 > Vista de actualización para las demandas de materiales. Aquí la empresa puede modificar los detalles de una petición que ya está en el tablón (por ejemplo, si necesita subir el presupuesto máximo para atraer a más proveedores o cambiar el nivel de urgencia). Esta funcionalidad completa el ciclo CRUD de las demandas y permite que la información de la base de datos se mantenga viva y actualizada sin obligar al usuario a borrar y crear registros nuevos continuamente.
 
 #### **18. Bandeja de Mensajería (mensajes.html)**
 
-![Bandeja de Mensajería](backend/src/main/resources/static/pages_images/mensajes.png)
+![Bandeja de Mensajería](app-service/src/main/resources/static/pages_images/mensajes.png)
 
 > Es la bandeja principal del sistema de mensajería interna. Se ha diseñado con una interfaz muy similar a un cliente de correo corporativo clásico, organizando las conversaciones en pestañas de mensajes recibidos y enviados. A nivel interno, este módulo gestiona las relaciones entre las entidades de la base de datos y cuenta con un sistema de estados booleanos para marcar visualmente en la plantilla qué mensajes están pendientes de leer. Es el espacio clave donde la plataforma pasa de ser un simple catálogo a un entorno real de negociación.
 
 #### **19. Lectura de Mensaje (detalle_mensaje.html)**
 
-![Lectura de Mensaje](backend/src/main/resources/static/pages_images/detalle_mensaje.png)
+![Lectura de Mensaje](app-service/src/main/resources/static/pages_images/detalle_mensaje.png)
 
 > Pantalla de lectura de un mensaje específico. Muestra de forma clara quién es el remitente (cargando dinámicamente su avatar y datos de la base de datos) junto a los metadatos de envío y el contenido de la conversación. Desde esta vista, la interfaz ofrece acciones rápidas que interactúan directamente con los controladores del backend: permite eliminar el mensaje para limpiar la bandeja o hacer clic en "Responder" para continuar la negociación de forma ágil y en el mismo hilo.
 
 #### **20. Redacción de Mensajes (redactar_mensaje.html)**
 
-![Redacción de Mensajes](backend/src/main/resources/static/pages_images/redactar_mensaje.png)
+![Redacción de Mensajes](app-service/src/main/resources/static/pages_images/redactar_mensaje.png)
 
 > Formulario diseñado para la creación y envío de nuevas comunicaciones B2B. Un detalle técnico importante de esta interfaz es que el destinatario del mensaje viene inyectado de forma segura desde el controlador de Spring Boot (se le pasa a la plantilla y queda fijado). Esto evita que el formulario pueda ser manipulado desde el cliente para enviar spam a otras empresas. Es una vista directa, con validación de campos obligatorios, pensada exclusivamente para agilizar el contacto comercial.
 
 #### **21. Historial de Acuerdos (mis_acuerdos.html)**
 
-![Historial de Acuerdos](backend/src/main/resources/static/pages_images/mis_acuerdos.png)
+![Historial de Acuerdos](app-service/src/main/resources/static/pages_images/mis_acuerdos.png)
 
 > Panel que sirve como registro histórico y activo de las transacciones de cada empresa. Muestra de forma estructurada los acuerdos en curso y los ya completados, permitiendo a los usuarios hacer un seguimiento logístico y económico de sus intercambios. Desde el punto de vista del desarrollo, esta vista es interesante porque consolida y cruza datos de múltiples tablas relacionales (ofertas, demandas y perfiles de empresa) para ofrecer métricas rápidas sobre el éxito de las operaciones del usuario en la plataforma.
 
 #### **22. Registro de Nuevo Acuerdo (crear_acuerdo.html)**
 
-![Registro de Nuevo Acuerdo](backend/src/main/resources/static/pages_images/crear_acuerdo.png)
+![Registro de Nuevo Acuerdo](app-service/src/main/resources/static/pages_images/crear_acuerdo.png)
 
 > Formulario donde se formaliza un pacto entre dos empresas tras una negociación exitosa en la mensajería. Aquí se vincula la oferta original con la empresa compradora y se registran los datos definitivos de la transacción (cantidad final, precio cerrado y fecha acordada de recogida). Esta pantalla es un punto crítico del sistema, ya que es la acción que desencadena el cálculo algorítmico del impacto medioambiental (CO2 ahorrado) y actualiza las estadísticas globales de la aplicación.
 
 #### **23. Detalle y Albarán del Acuerdo (detalle_acuerdo.html)**
 
-![Detalle y Albarán del Acuerdo](backend/src/main/resources/static/pages_images/detalle_acuerdo.png)
+![Detalle y Albarán del Acuerdo](app-service/src/main/resources/static/pages_images/detalle_acuerdo.png)
 
 > Ficha completa de un acuerdo ya cerrado en el sistema. Presenta de forma clara y paralela los datos de la empresa de origen y la de destino, junto con las condiciones logísticas del intercambio. Un aspecto técnico a destacar en esta vista es la integración de una funcionalidad para la generación de documentos: permite a los usuarios descargar un albarán resumen en formato PDF, proporcionando un respaldo documental válido y descargable para la gestión interna de ambas entidades.
 
 #### **24. Edición de Acuerdos (editar_acuerdo.html)**
 
-![Edición de Acuerdos](backend/src/main/resources/static/pages_images/editar_acuerdo.png)
+![Edición de Acuerdos](app-service/src/main/resources/static/pages_images/editar_acuerdo.png)
 
 > Interfaz destinada a la actualización de los parámetros de un acuerdo en curso. En la lógica de negocio de la simbiosis industrial, es habitual que detalles como la fecha de recogida logística o las cantidades finales varíen a última hora. Este formulario permite ajustar esos datos o cambiar el estado del acuerdo a "Completado". A nivel de seguridad en el frontend y backend, atributos clave como el material original se mantienen bloqueados (solo lectura) para evitar alteraciones que corrompan la integridad de la base de datos.
 
 #### **25. Panel General de Administración (admin_panel.html)**
 
-![Panel General de Administración](backend/src/main/resources/static/pages_images/admin_panel.png)
+![Panel General de Administración](app-service/src/main/resources/static/pages_images/admin_panel.png)
 
 > El tablero de control principal, restringido exclusivamente a los usuarios autenticados con el rol de Administrador (ROLE_ADMIN). En lugar de mostrar datos individuales, aquí el servidor ejecuta consultas agregadas para representar métricas de toda la plataforma en tiempo real: total de usuarios registrados, volumen de acuerdos procesados y un cálculo de las comisiones generadas para la plataforma. Es la vista general para auditar el rendimiento y uso real de EcoMóstoles.
 
 #### **26. Gestión de Usuarios y Roles (admin_usuarios.html)**
 
-![Gestión de Usuarios y Roles](backend/src/main/resources/static/pages_images/admin_usuarios.png)
+![Gestión de Usuarios y Roles](app-service/src/main/resources/static/pages_images/admin_usuarios.png)
 
 > Tabla de control donde el administrador gestiona la comunidad. Permite visualizar, editar o eliminar cualquier cuenta corporativa registrada. Para manejar el listado eficientemente, la vista implementa paginación mediante Spring Data. Un detalle técnico fundamental programado en esta sección es la capa de "inmunidad" del administrador: la lógica de las plantillas y del controlador bloquean cualquier intento de borrar la cuenta maestra, previniendo así un autoborrado accidental que dejaría la plataforma sin administración.
 
 #### **27. Gestión Global de Ofertas (admin_ofertas.html)**
 
-![Gestión Global de Ofertas](backend/src/main/resources/static/pages_images/admin_ofertas.png)
+![Gestión Global de Ofertas](app-service/src/main/resources/static/pages_images/admin_ofertas.png)
 
 > Panel exclusivo para administradores que permite auditar todas las ofertas publicadas en la plataforma. Desde aquí, el administrador puede aplicar filtros por estado y revisar el catálogo completo para moderar el contenido. Si detecta un anuncio que incumple las normativas de la red o contiene información errónea, tiene permisos de alto nivel para editarlo o eliminarlo directamente, actuando como un filtro de calidad sobre el mercado B2B y garantizando la integridad del catálogo.
 
 #### **28. Gestión Global de Demandas (admin_demandas.html)**
 
-![Gestión Global de Demandas](backend/src/main/resources/static/pages_images/admin_demandas.png)
+![Gestión Global de Demandas](app-service/src/main/resources/static/pages_images/admin_demandas.png)
 
 > Equivalente al panel anterior, pero enfocado en las peticiones de compra o abastecimiento de las empresas. Esta vista centraliza todas las demandas de la plataforma, proporcionando al administrador herramientas de moderación directa (inspección, edición y borrado). Su función técnica es vital para el mantenimiento de la base de datos, permitiendo limpiar registros duplicados, solicitudes caducadas o peticiones que no se ajusten a la dinámica de economía circular de la aplicación.
 
 #### **29. Auditoría de Acuerdos (admin_acuerdos.html)**
 
-![Auditoría de Acuerdos](backend/src/main/resources/static/pages_images/admin_acuerdos.png)
+![Auditoría de Acuerdos](app-service/src/main/resources/static/pages_images/admin_acuerdos.png)
 
 > Registro histórico y en tiempo real de todas las transacciones formalizadas en EcoMóstoles. Esta vista permite al administrador monitorizar la trazabilidad completa de los acuerdos entre empresas y supervisar las comisiones generadas para la plataforma. A nivel de base de datos, esta pantalla muestra un cruce complejo de información que actúa como libro de auditoría, garantizando que el flujo económico y logístico de los materiales quede registrado y sea transparente.
 
 #### **30. Reportes y Sostenibilidad (admin_reportes.html)**
 
-![Reportes y Sostenibilidad](backend/src/main/resources/static/pages_images/admin_reportes.png)
+![Reportes y Sostenibilidad](app-service/src/main/resources/static/pages_images/admin_reportes.png)
 
 > Módulo analítico donde se consolida el impacto medioambiental del proyecto. El servidor procesa los datos de los acuerdos completados para calcular el ahorro total de CO2 y el volumen de materiales reutilizados, representándolos en gráficos interactivos y un ranking de las empresas más activas. Además, la vista integra una biblioteca de generación de documentos que permite al administrador exportar informes ejecutivos en formato PDF, ideales para justificar el éxito de la plataforma en auditorías o presentaciones.
 
 #### **31. Configuración del Sistema (admin_configuracion.html)**
 
-![Configuración del Sistema](backend/src/main/resources/static/pages_images/admin_configuracion.png)
+![Configuración del Sistema](app-service/src/main/resources/static/pages_images/admin_configuracion.png)
 
 > Interfaz avanzada para gestionar los parámetros globales y reglas de negocio. En lugar de tener las variables hardcodeadas (escritas fijas en el código), el administrador puede modificar desde aquí el porcentaje de comisión de la plataforma o actualizar las listas maestras de la base de datos (categorías de residuos, unidades y sectores industriales). Esta aproximación arquitectónica hace que el proyecto sea altamente escalable, permitiendo adaptar la web a nuevas necesidades sin tocar el código fuente ni reiniciar el servidor.
 
 #### **32. Gestión Personalizada de Errores (custom_error.html)**
 
-![Gestión Personalizada de Errores](backend/src/main/resources/static/pages_images/custom_error.png)
+![Gestión Personalizada de Errores](app-service/src/main/resources/static/pages_images/custom_error.png)
 
 > Plantilla unificada para la captura de excepciones HTTP (como errores 404 de página no encontrada o 403 de acceso denegado). En lugar de mostrar la traza de error genérica de Tomcat, se intercepta el fallo y se presenta una pantalla amigable. El detalle técnico más destacado es que utiliza el contexto de Spring Security para detectar el rol del usuario en el momento del fallo, ofreciéndole dinámicamente una ruta de retorno segura y contextual (hacia el panel de empresa, el de administración o la página de inicio).
 
@@ -602,7 +602,7 @@ Rutas de máxima seguridad restringidas al rol de Administrador. Conectan direct
    Asegúrate de estar en la carpeta donde se encuentra el código fuente del servidor:
 
    ```bash
-   cd backend
+   cd app-service
    ```
 
    > **Nota:** Si tu contraseña de MySQL no es `root` (o está vacía), ejecútalo en tu terminal antes de continuar:
@@ -628,11 +628,11 @@ Rutas de máxima seguridad restringidas al rol de Administrador. Conectan direct
 
    **Opción B — Desde el IDE (IntelliJ / VS Code / Eclipse):**
 
-   Ejecutar directamente la clase principal `es.urjc.ecomostoles.backend.BackendApplication`. Asegúrate de que el directorio de trabajo (working directory) sea la carpeta `backend`.
+   Ejecutar directamente la clase principal `es.urjc.ecomostoles.backend.BackendApplication`. Asegúrate de que el directorio de trabajo (working directory) sea la carpeta `app-service`.
 
    **Opción C — Extensión Spring Boot Dashboard de VS Code:**
 
-   Con la extensión instalada, aparecerá el proyecto en el panel lateral. Asegúrate de configurar la carpeta `backend` como el directorio de ejecución y pulsa el botón ▶ junto al proyecto para iniciarlo.
+   Con la extensión instalada, aparecerá el proyecto en el panel lateral. Asegúrate de configurar la carpeta `app-service` como el directorio de ejecución y pulsa el botón ▶ junto al proyecto para iniciarlo.
 
 5. **Acceso a la aplicación**
 
@@ -660,7 +660,7 @@ Rutas de máxima seguridad restringidas al rol de Administrador. Conectan direct
 
 Diagrama mostrando las entidades, sus campos y relaciones:
 
-![Diagrama Entidad-Relación](backend/src/main/resources/static/pages_images/entity_diagram.png)
+![Diagrama Entidad-Relación](app-service/src/main/resources/static/pages_images/entity_diagram.png)
 
 > Descripción del Modelo de Datos:
 >
@@ -672,7 +672,7 @@ Diagrama mostrando las entidades, sus campos y relaciones:
 
 Diagrama de clases de la aplicación con diferenciación por colores o secciones:
 
-![Diagrama de Clases](backend/src/main/resources/static/pages_images/diagramatemplates.drawio.png)
+![Diagrama de Clases](app-service/src/main/resources/static/pages_images/diagramatemplates.drawio.png)
 
 > El proyecto sigue una arquitectura **multicapa (N-Tier)** basada en Spring Boot, diseñada para garantizar la escalabilidad y el desacoplamiento de responsabilidades.
 >
