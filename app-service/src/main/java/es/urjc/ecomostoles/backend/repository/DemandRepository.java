@@ -56,4 +56,8 @@ public interface DemandRepository extends JpaRepository<Demand, Long> {
 
     @Query("SELECT d FROM Demand d JOIN FETCH d.company ORDER BY d.publicationDate DESC LIMIT 50")
     List<Demand> findTop50ByOrderByPublicationDateDesc();
+
+    @Query("SELECT d FROM Demand d JOIN FETCH d.company WHERE d.status = :status AND " +
+           "(:keyword IS NULL OR LOWER(d.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(d.description) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    Page<Demand> searchFiltered(@Param("status") DemandStatus status, @Param("keyword") String keyword, Pageable pageable);
 }

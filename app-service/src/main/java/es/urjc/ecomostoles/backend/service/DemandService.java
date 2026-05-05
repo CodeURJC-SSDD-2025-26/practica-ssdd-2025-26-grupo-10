@@ -165,4 +165,10 @@ public class DemandService {
     public long countByStatus(es.urjc.ecomostoles.backend.model.DemandStatus status) {
         return demandRepository.countByStatus(status);
     }
+
+    /** Returns paginated demands matching the keyword, filtered by status */
+    @Transactional(readOnly = true)
+    public Page<Demand> searchFilteredDemands(String keyword, es.urjc.ecomostoles.backend.model.DemandStatus status, Pageable pageable) {
+        return demandRepository.searchFiltered(status, keyword, pageable);
+    }
 }
