@@ -57,6 +57,8 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
         @Query("SELECT o FROM Offer o JOIN FETCH o.company ORDER BY o.publicationDate DESC LIMIT 50")
         <T> List<T> findTop50ByOrderByPublicationDateDesc(Class<T> type);
 
+        List<Offer> findByWasteCategoryAndStatus(String wasteCategory, OfferStatus status);
+
         /**
          * Core marketplace multi-criteria search execution. 
          * Implements optional filtering for keywords, material taxonomy, and geographic 
