@@ -18,7 +18,7 @@ public interface OfferSummary {
 
     String getDescription();
 
-    String getWasteType();
+    String getWasteCategory();
 
     @org.springframework.beans.factory.annotation.Value("#{target.formattedWasteType}")
     String getFormattedWasteType();

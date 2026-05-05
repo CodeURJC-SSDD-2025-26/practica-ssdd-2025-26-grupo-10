@@ -114,6 +114,27 @@ public class GlobalRestControllerAdvice {
                 ));
     }
 
+    // ── 401 — Authentication failure ───────────────────────────────────────────────
+
+    /**
+     * Handles AuthenticationException, raised when login credentials (like passwords) are incorrect.
+     */
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ApiErrorDTO> handleAuthentication(
+            org.springframework.security.core.AuthenticationException ex, HttpServletRequest request) {
+
+        log.warn("[REST API] 401 UNAUTHORIZED — path: '{}', reason: '{}'",
+                request.getRequestURI(), ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ApiErrorDTO.of(
+                        request.getRequestURI(),
+                        "Credenciales incorrectas",
+                        HttpStatus.UNAUTHORIZED.value()
+                ));
+    }
+
     // ── 500 — Unexpected server error (fallback) ───────────────────────────────
 
     /**
