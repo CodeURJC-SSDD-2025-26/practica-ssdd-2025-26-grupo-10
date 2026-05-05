@@ -1,104 +1,51 @@
 package es.urjc.ecomostoles.backend.service;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
 import es.urjc.ecomostoles.backend.dto.OfferSummary;
 import es.urjc.ecomostoles.backend.model.Company;
 import org.springframework.stereotype.Service;
 
-import java.awt.Color;
-import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
- * Document Generation Factory for Administrative Intelligence.
- * 
- * Orchestrates the programmatic construction of structured data exports (PDF and CSV). 
- * Implements in-memory streaming via ByteArrayOutputStream to ensure high performance 
- * and avoid localized file-system persistence overhead during concurrent request 
- * processing.
+ * Report generation service for administrative data exports.
+ *
+ * PDF generation has been fully migrated to utility-service and is no longer
+ * a responsibility of this class. This service now exclusively handles
+ * lightweight text-based exports (CSV) that do not require an external library.
+ *
+ * If you need to add new report types (Excel, JSON exports, etc.), add them
+ * here and keep PDF-specific work in utility-service.
  */
 @Service
 public class ReportService {
 
     /**
-     * Generates a PDF report containing a table of registered companies.
-     * 
-     * @param companies List of companies to include.
-     * @return Byte array of the generated PDF.
+     * Generates a CSV report of registered companies.
+     *
+     * @param companies list of companies to include.
+     * @return UTF-8 encoded byte array of the CSV content.
      */
-    public byte[] generateUsersPdf(List<Company> companies) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Document document = new Document(PageSize.A4);
-        PdfWriter.getInstance(document, out);
-
-        document.open();
-
-        // Title
-        Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-        fontTitle.setSize(18);
-        fontTitle.setColor(new Color(25, 135, 84)); // EcoMostoles Green
-
-        Paragraph p = new Paragraph("Reporte Administrativo: EcoMostoles", fontTitle);
-        p.setAlignment(Paragraph.ALIGN_CENTER);
-        document.add(p);
-
-        document.add(new Paragraph(" ")); // Spacer
-
-        // Table
-        PdfPTable table = new PdfPTable(4);
-        table.setWidthPercentage(100f);
-        try {
-            table.setWidths(new float[] { 1.5f, 3.5f, 3.5f, 2.0f });
-        } catch (Exception ignored) {
-        }
-        table.setSpacingBefore(10);
-
-        writeTableHeader(table);
+    public byte[] generateUsersCsv(List<Company> companies) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ID;Nombre Comercial;Email;Rol\n");
 
         for (Company comp : companies) {
-            table.addCell(String.valueOf(comp.getId()));
-            table.addCell(comp.getCommercialName());
-            table.addCell(comp.getContactEmail());
-            table.addCell(comp.getRole());
+            sb.append(String.format("%d;\"%s\";\"%s\";\"%s\"\n",
+                    comp.getId(),
+                    comp.getCommercialName(),
+                    comp.getContactEmail(),
+                    comp.getRole()));
         }
 
-        document.add(table);
-        document.close();
-
-        return out.toByteArray();
-    }
-
-    private void writeTableHeader(PdfPTable table) {
-        PdfPCell cell = new PdfPCell();
-        cell.setBackgroundColor(new Color(25, 135, 84));
-        cell.setPadding(5);
-
-        Font font = FontFactory.getFont(FontFactory.HELVETICA);
-        font.setColor(Color.WHITE);
-
-        cell.setPhrase(new com.lowagie.text.Phrase("ID", font));
-        table.addCell(cell);
-        cell.setPhrase(new com.lowagie.text.Phrase("Nombre", font));
-        table.addCell(cell);
-        cell.setPhrase(new com.lowagie.text.Phrase("Email", font));
-        table.addCell(cell);
-        cell.setPhrase(new com.lowagie.text.Phrase("Rol", font));
-        table.addCell(cell);
+        return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     /**
      * Generates a CSV report of offers.
-     * 
-     * @param offers List of offer summaries.
-     * @return Byte array of the generated CSV (UTF-8).
+     *
+     * @param offers list of offer summaries.
+     * @return UTF-8 encoded byte array of the CSV content.
      */
     public byte[] generateOffersCsv(List<OfferSummary> offers) {
         StringBuilder sb = new StringBuilder();

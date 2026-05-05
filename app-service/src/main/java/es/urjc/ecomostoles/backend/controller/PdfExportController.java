@@ -1,16 +1,12 @@
 package es.urjc.ecomostoles.backend.controller;
 
-import com.lowagie.text.*;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.pdf.draw.LineSeparator;
-import es.urjc.ecomostoles.backend.model.Agreement;
-import es.urjc.ecomostoles.backend.model.Company;
+import es.urjc.ecomostoles.backend.dto.AgreementDTO;
+import es.urjc.ecomostoles.backend.mapper.AgreementMapper;
 import es.urjc.ecomostoles.backend.service.AgreementService;
 import es.urjc.ecomostoles.backend.service.CompanyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,185 +14,155 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import java.time.format.DateTimeFormatter;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.awt.Color;
-import java.io.ByteArrayOutputStream;
 import java.security.Principal;
-import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import java.util.Map;
 
 /**
- * Reporting controller managing dynamic generation of binary PDF artifacts.
- * 
- * Utilizes the iText runtime framework to render compliant document structures directly from 
- * database entities. Streamlines reporting overheads bypassing intermediary files via in-memory 
- * byte array streams (ByteArrayOutputStream). Enforces tight data-leakage boundaries before compilation.
+ * PDF export controller — delegates PDF generation to utility-service via HTTP.
+ *
+ * <p>This controller is the integration boundary between app-service and the
+ * utility-service microservice. All OpenPDF logic has been removed from this
+ * service; the only responsibility here is:
+ * <ol>
+ *   <li>Authenticate and authorise the requesting company (IDOR protection).</li>
+ *   <li>Project the {@link AgreementDTO} onto the JSON payload expected by
+ *       {@code POST /api/v1/pdf/generate-agreement}.</li>
+ *   <li>Relay the PDF byte[] returned by utility-service to the browser with
+ *       the correct {@code Content-Type} and {@code Content-Disposition} headers.</li>
+ * </ol>
+ *
+ * <p>The utility-service base URL is externalised to {@code application.properties}
+ * via {@code utility.service.url} so it can be overridden per environment
+ * (dev → localhost:8081, prod → internal DNS name).</p>
  */
 @Controller
 public class PdfExportController {
 
-    private final AgreementService agreementService;
-    private final CompanyService companyService;
+    private static final Logger log = LoggerFactory.getLogger(PdfExportController.class);
 
-    public PdfExportController(AgreementService agreementService, CompanyService companyService) {
+    // ── Date formatter matching the format expected by AgreementReportRequest ──
+    private static final DateTimeFormatter PDF_DATE_FMT =
+            DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy, HH:mm", Locale.of("es", "ES"));
+
+    private final AgreementService agreementService;
+    private final CompanyService   companyService;
+    private final AgreementMapper  agreementMapper;
+
+    /**
+     * Base URL of the utility-service, injected from application.properties.
+     * Default: {@code http://localhost:8081} for local development.
+     */
+    @Value("${utility.service.url:http://localhost:8081}")
+    private String utilityServiceUrl;
+
+    public PdfExportController(AgreementService agreementService,
+                               CompanyService companyService,
+                               AgreementMapper agreementMapper) {
         this.agreementService = agreementService;
-        this.companyService = companyService;
+        this.companyService   = companyService;
+        this.agreementMapper  = agreementMapper;
     }
 
     /**
-     * Executes dynamic PDF construction for an individual completed agreement.
-     * 
-     * Checks data boundaries to ensure the accessor physically partook in the negotiation, 
-     * preventing lateral leakage of transaction price metrics.
-     * 
-     * @param id key routing to the specific materialized agreement.
-     * @param principal security node resolving the requester's organizational map.
-     * @return binary HTTP packet wrapping the PDF byte stream under attachment disposition.
+     * Triggers PDF generation for a single agreement and streams the result to
+     * the browser as an attachment download.
+     *
+     * <p>Access is restricted to parties directly involved in the agreement
+     * (origin or destination company) or platform ADMIN accounts.</p>
+     *
+     * @param id        the agreement's primary key.
+     * @param principal the authenticated Spring Security principal (email).
+     * @return {@code 200 OK} with {@code application/pdf} binary body,
+     *         or an appropriate HTTP error status on failure.
      */
     @GetMapping("/acuerdo/{id}/pdf")
-    public ResponseEntity<byte[]> generateAgreementPdf(@PathVariable Long id, Principal principal) {
+    public ResponseEntity<byte[]> generateAgreementPdf(
+            @PathVariable Long id, Principal principal) {
+
+        // ── 1. Auth guard ───────────────────────────────────────────────
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Agreement agreement = agreementService.findById(id)
-                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Resource not found"));
+        var agreement = agreementService.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Agreement not found: " + id));
 
-        String userEmail = principal.getName();
-        Company loggedCompany = companyService.findByEmail(userEmail)
-                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED));
+        var loggedCompany = companyService.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
-        boolean isAdmin = loggedCompany.getRoles() != null && loggedCompany.getRoles().contains("ADMIN");
+        boolean isAdmin = loggedCompany.getRoles() != null
+                && loggedCompany.getRoles().contains("ADMIN");
         boolean isOwner = (agreement.getOriginCompany() != null
-                && agreement.getOriginCompany().getContactEmail().equals(userEmail)) ||
-                (agreement.getDestinationCompany() != null
-                        && agreement.getDestinationCompany().getContactEmail().equals(userEmail));
+                && agreement.getOriginCompany().getContactEmail().equals(principal.getName()))
+                || (agreement.getDestinationCompany() != null
+                && agreement.getDestinationCompany().getContactEmail().equals(principal.getName()));
 
         if (!isAdmin && !isOwner) {
-            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "You do not have permission to access this resource");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "You do not have permission to export this agreement");
         }
 
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            Document document = new Document(PageSize.A4, 36, 36, 54, 36);
-            PdfWriter.getInstance(document, baos);
-            document.open();
+        // ── 2. Project AgreementDTO → JSON payload for utility-service ──
+        AgreementDTO dto = agreementMapper.toDto(agreement);
 
-            // --- Colors and Fonts ---
-            Color corporateGreen = new Color(46, 125, 50);
-            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, Color.WHITE);
-            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, corporateGreen);
-            Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10, Color.BLACK);
-            Font footerFont = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, Color.GRAY);
+        // Build the exact field map that AgreementReportRequest expects.
+        // Using a plain Map<String, Object> avoids introducing a utility-service
+        // compile dependency in app-service — the JSON contract is the interface.
+        Map<String, Object> requestBody = Map.ofEntries(
+                Map.entry("agreementId",            dto.id()),
+                Map.entry("status",                 dto.status() != null ? dto.status().getDisplayName() : "N/A"),
+                Map.entry("originCompanyName",      dto.originCompany()      != null ? dto.originCompany().getCommercialName()      : "N/A"),
+                Map.entry("destinationCompanyName", dto.destinationCompany() != null ? dto.destinationCompany().getCommercialName() : "N/A"),
+                Map.entry("exchangedMaterial",      dto.exchangedMaterial() != null ? dto.exchangedMaterial() : "N/A"),
+                Map.entry("quantity",               dto.quantity()           != null ? dto.quantity()           : 0.0),
+                Map.entry("unit",                   dto.unit()               != null ? dto.unit()               : ""),
+                Map.entry("agreedPrice",            dto.agreedPrice()        != null ? dto.agreedPrice()        : 0.0),
+                Map.entry("platformCommission",     dto.platformCommission() != null ? dto.platformCommission() : 0.0),
+                Map.entry("co2Impact",              dto.co2Impact()          != null ? dto.co2Impact()          : 0.0),
+                Map.entry("pickupDate",             dto.pickupDate()         != null ? dto.pickupDate().toString() : ""),
+                Map.entry("registrationDate",       dto.getFormattedRegistrationDate()),
+                Map.entry("notes",                  dto.notes()              != null ? dto.notes()              : "")
+        );
 
-            // --- Header Section ---
-            PdfPTable headerTable = new PdfPTable(2);
-            headerTable.setWidthPercentage(100);
-            headerTable.setWidths(new float[]{4f, 1.2f});
+        // ── 3. Call utility-service with RestClient ─────────────────────
+        log.info("[PDF] Delegating PDF generation for agreement #{} to utility-service", id);
 
-            // Title with background
-            PdfPCell titleCell = new PdfPCell(new Phrase("RESGUARDO DE ACUERDO OFICIAL", titleFont));
-            titleCell.setBackgroundColor(corporateGreen);
-            titleCell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            titleCell.setPadding(12f);
-            titleCell.setBorder(Rectangle.NO_BORDER);
-            headerTable.addCell(titleCell);
+        try {
+            byte[] pdfBytes = RestClient.create(utilityServiceUrl)
+                    .post()
+                    .uri("/api/v1/pdf/generate-agreement")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_PDF)
+                    .body(requestBody)
+                    .retrieve()
+                    .body(byte[].class);
 
-            // Logo cell
-            PdfPCell logoCell = new PdfPCell();
-            logoCell.setBorder(Rectangle.NO_BORDER);
-            logoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            if (agreement.getOriginCompany() != null && agreement.getOriginCompany().getLogo() != null) {
-                try {
-                    Image logo = Image.getInstance(agreement.getOriginCompany().getLogo());
-                    logo.scaleToFit(50, 50);
-                    logoCell.setImage(logo);
-                } catch (Exception ignored) {}
+            if (pdfBytes == null || pdfBytes.length == 0) {
+                log.error("[PDF] utility-service returned empty body for agreement #{}", id);
+                return ResponseEntity.status(HttpStatus.BAD_GATEWAY).build();
             }
-            headerTable.addCell(logoCell);
-            document.add(headerTable);
 
-            document.add(new Paragraph("\n"));
+            log.info("[PDF] Received {} bytes from utility-service for agreement #{}", pdfBytes.length, id);
 
-            // --- Detail Table ---
-            PdfPTable table = new PdfPTable(2);
-            table.setWidthPercentage(100);
-            table.setSpacingBefore(10f);
-            table.setSpacingAfter(20f);
-            table.setWidths(new float[] { 1.8f, 3.2f });
-
-            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(java.util.Locale.of("es", "ES"));
-            String formattedPrice = currencyFormat.format(agreement.getAgreedPrice());
-
-            addProfessionalCell(table, "ID del Acuerdo", agreement.getId().toString(), headerFont, normalFont);
-            addProfessionalCell(table, "Producto / Material", agreement.getExchangedMaterial(), headerFont, normalFont);
-            addProfessionalCell(table, "Cantidad Pactada",
-                    agreement.getQuantity() + " " + (agreement.getUnit() != null ? agreement.getUnit() : "uds"),
-                    headerFont, normalFont);
-            addProfessionalCell(table, "Importe Acordado", formattedPrice, headerFont, normalFont);
-
-            String originName = agreement.getOriginCompany() != null ? agreement.getOriginCompany().getCommercialName()
-                    : "No disponible";
-            String destName = agreement.getDestinationCompany() != null
-                    ? agreement.getDestinationCompany().getCommercialName()
-                    : "No disponible";
-
-            addProfessionalCell(table, "Empresa Proveedora", originName, headerFont, normalFont);
-            addProfessionalCell(table, "Empresa Receptora", destName, headerFont, normalFont);
-            
-            // Spanish translation from Enum displayName
-            addProfessionalCell(table, "Estado del Acuerdo", agreement.getStatus().getDisplayName(), headerFont, normalFont);
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy, HH:mm", java.util.Locale.of("es", "ES"));
-            String formattedDate = agreement.getRegistrationDate() != null
-                    ? agreement.getRegistrationDate().format(formatter)
-                    : "Fecha no disponible";
-            addProfessionalCell(table, "Fecha de Emisión", formattedDate, headerFont, normalFont);
-
-            document.add(table);
-
-            // --- Footer ---
-            LineSeparator ls = new LineSeparator();
-            ls.setLineColor(new Color(210, 210, 210));
-            document.add(new Chunk(ls));
-            
-            Paragraph footer = new Paragraph(
-                    "Este documento es un comprobante automático generado por la plataforma EcoMóstoles.\n" +
-                    "Fomentando la economía circular y la simbiosis industrial.",
-                    footerFont);
-            footer.setAlignment(Element.ALIGN_CENTER);
-            footer.setSpacingBefore(15f);
-            document.add(footer);
-
-            document.close();
-
+            // ── 4. Forward PDF to browser with correct headers ──────────
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("filename", "albaran_acuerdo_" + id + ".pdf");
-            return new ResponseEntity<>(baos.toByteArray(), headers, HttpStatus.OK);
+            headers.setContentDispositionFormData("attachment",
+                    "albaran_acuerdo_" + id + ".pdf");
+            headers.setContentLength(pdfBytes.length);
 
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+
+        } catch (RestClientException ex) {
+            log.error("[PDF] utility-service call failed for agreement #{}: {}", id, ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         }
-    }
-
-    private void addProfessionalCell(PdfPTable table, String label, String value, Font labelFont, Font valueFont) {
-        PdfPCell labelCell = new PdfPCell(new Phrase(label.toUpperCase(), labelFont));
-        labelCell.setBorder(Rectangle.BOTTOM);
-        labelCell.setBorderColor(new Color(230, 230, 230));
-        labelCell.setPaddingTop(10f);
-        labelCell.setPaddingBottom(10f);
-        labelCell.setPaddingLeft(5f);
-        table.addCell(labelCell);
-
-        PdfPCell valueCell = new PdfPCell(new Phrase(value != null ? value : "N/A", valueFont));
-        valueCell.setBorder(Rectangle.BOTTOM);
-        valueCell.setBorderColor(new Color(230, 230, 230));
-        valueCell.setPaddingTop(10f);
-        valueCell.setPaddingBottom(10f);
-        table.addCell(valueCell);
     }
 }

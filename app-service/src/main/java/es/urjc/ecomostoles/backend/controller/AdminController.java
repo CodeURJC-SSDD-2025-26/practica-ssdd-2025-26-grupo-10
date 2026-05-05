@@ -613,17 +613,19 @@ public class AdminController {
     }
 
     /**
-     * Exports a PDF report of registered companies.
+     * Exports registered companies as a CSV file.
+     * Note: PDF generation for agreements has been migrated to utility-service.
+     * This endpoint now returns CSV, which requires no external library.
      */
     @GetMapping("/exportar/pdf")
     public ResponseEntity<byte[]> exportPdf() {
-        log.info("[Admin] Report -> Generating PDF Export for all companies.");
-        byte[] pdf = reportService.generateUsersPdf(companyService.getAll());
+        log.info("[Admin] Report -> Generating CSV Export for all companies.");
+        byte[] csv = reportService.generateUsersCsv(companyService.getAll());
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte_usuarios.pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(pdf);
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte_usuarios.csv")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(csv);
     }
 
     /**
