@@ -171,11 +171,15 @@ public class AgreementRestController {
         Agreement agreement = agreementService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Agreement not found with id: " + id));
 
-        // IDOR Protection: Verify that the principal is part of the agreement
+        // IDOR Protection: Verify that the principal is part of the agreement OR an ADMIN
         boolean isOrigin = agreement.getOriginCompany() != null && agreement.getOriginCompany().getContactEmail().equals(principal.getName());
         boolean isDestination = agreement.getDestinationCompany() != null && agreement.getDestinationCompany().getContactEmail().equals(principal.getName());
+        
+        boolean isAdmin = principal != null && org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-        if (principal == null || (!isOrigin && !isDestination)) {
+        if (principal == null || (!isOrigin && !isDestination && !isAdmin)) {
             log.warn("[SECURITY] IDOR attempt blocked: User {} tried to update agreement {}", 
                     principal != null ? principal.getName() : "anonymous", id);
             throw new org.springframework.web.server.ResponseStatusException(
@@ -205,11 +209,15 @@ public class AgreementRestController {
         Agreement agreement = agreementService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Agreement not found with id: " + id));
 
-        // IDOR Protection: Verify that the principal is part of the agreement
+        // IDOR Protection: Verify that the principal is part of the agreement OR an ADMIN
         boolean isOrigin = agreement.getOriginCompany() != null && agreement.getOriginCompany().getContactEmail().equals(principal.getName());
         boolean isDestination = agreement.getDestinationCompany() != null && agreement.getDestinationCompany().getContactEmail().equals(principal.getName());
 
-        if (principal == null || (!isOrigin && !isDestination)) {
+        boolean isAdmin = principal != null && org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (principal == null || (!isOrigin && !isDestination && !isAdmin)) {
             log.warn("[SECURITY] IDOR attempt blocked: User {} tried to update status for agreement {}", 
                     principal != null ? principal.getName() : "anonymous", id);
             throw new org.springframework.web.server.ResponseStatusException(
@@ -238,11 +246,15 @@ public class AgreementRestController {
         Agreement agreement = agreementService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Agreement not found with id: " + id));
 
-        // IDOR Protection: Verify that the principal is part of the agreement (origin or destination)
+        // IDOR Protection: Verify that the principal is part of the agreement (origin or destination) OR an ADMIN
         boolean isOrigin = agreement.getOriginCompany() != null && agreement.getOriginCompany().getContactEmail().equals(principal.getName());
         boolean isDestination = agreement.getDestinationCompany() != null && agreement.getDestinationCompany().getContactEmail().equals(principal.getName());
 
-        if (principal == null || (!isOrigin && !isDestination)) {
+        boolean isAdmin = principal != null && org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (principal == null || (!isOrigin && !isDestination && !isAdmin)) {
             log.warn("[SECURITY] Unauthorized attempt to delete agreement ID: {} by user: {}", id, principal != null ? principal.getName() : "anonymous");
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to delete this agreement");
         }

@@ -79,17 +79,27 @@ public class CompanyRestController {
     })
     @GetMapping
     public ResponseEntity<?> getAllCompanies(
+            @RequestParam(required = false) String search,
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size) {
 
-        log.debug("[API] GET /api/v1/companies — Requested Page: {}, Size: {}", page, size);
+        log.debug("[API] GET /api/v1/companies — Search: {}, Requested Page: {}, Size: {}", search, page, size);
 
         // Case 1: No pagination parameters -> Return flat JSON Array
         if (page == null || size == null) {
-            java.util.List<CompanyDTO> list = companyService.findAllList()
-                    .stream()
-                    .map(companyMapper::toDto)
-                    .toList();
+            java.util.List<CompanyDTO> list;
+            if (search != null && !search.isBlank()) {
+                list = companyService.searchClientsPaginated(search, org.springframework.data.domain.Pageable.unpaged())
+                        .getContent()
+                        .stream()
+                        .map(companyMapper::toDto)
+                        .toList();
+            } else {
+                list = companyService.findAllList()
+                        .stream()
+                        .map(companyMapper::toDto)
+                        .toList();
+            }
             return ResponseEntity.ok(list);
         }
 
@@ -97,9 +107,14 @@ public class CompanyRestController {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
                 page, size, Sort.by("id").ascending());
 
-        Page<CompanyDTO> resultPage = companyService
-                .findAllPaginated(pageable)
-                .map(companyMapper::toDto);
+        Page<CompanyDTO> resultPage;
+        if (search != null && !search.isBlank()) {
+            resultPage = companyService.searchClientsPaginated(search, pageable)
+                    .map(companyMapper::toDto);
+        } else {
+            resultPage = companyService.findAllPaginated(pageable)
+                    .map(companyMapper::toDto);
+        }
 
         return ResponseEntity.ok(resultPage);
     }
@@ -189,8 +204,12 @@ public class CompanyRestController {
         Company existing = companyService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Company not found with id: " + id));
 
-        // IDOR Protection: Verify that the authenticated user is the owner of this company profile
-        if (principal == null || !existing.getContactEmail().equals(principal.getName())) {
+        // IDOR Protection: Verify that the authenticated user is the owner of this company profile OR an ADMIN
+        boolean isAdmin = principal != null && org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (principal == null || (!existing.getContactEmail().equals(principal.getName()) && !isAdmin)) {
             log.warn("[SECURITY] IDOR attempt blocked: User {} tried to update company profile {}", 
                     principal != null ? principal.getName() : "anonymous", id);
             throw new org.springframework.web.server.ResponseStatusException(

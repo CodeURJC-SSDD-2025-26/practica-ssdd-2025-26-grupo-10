@@ -252,8 +252,12 @@ public class OfferRestController {
         Offer existing = offerService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Offer not found with id: " + id));
 
-        // Ownership check (IDOR protection)
-        if (!existing.getCompany().getContactEmail().equals(principal.getName())) {
+        // Ownership check (IDOR protection) OR ADMIN override
+        boolean isAdmin = principal != null && org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!existing.getCompany().getContactEmail().equals(principal.getName()) && !isAdmin) {
             log.warn("[SECURITY] IDOR attempt blocked: User {} tried to update offer {} owned by {}", 
                     principal.getName(), id, existing.getCompany().getContactEmail());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to modify this offer");
@@ -310,8 +314,12 @@ public class OfferRestController {
         Offer offer = offerService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Offer not found with id: " + id));
 
-        // Ownership check (IDOR protection)
-        if (!offer.getCompany().getContactEmail().equals(principal.getName())) {
+        // Ownership check (IDOR protection) OR ADMIN override
+        boolean isAdmin = principal != null && org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!offer.getCompany().getContactEmail().equals(principal.getName()) && !isAdmin) {
             log.warn("[SECURITY] IDOR attempt blocked: User {} tried to delete offer {} owned by {}", 
                     principal.getName(), id, offer.getCompany().getContactEmail());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete this offer");

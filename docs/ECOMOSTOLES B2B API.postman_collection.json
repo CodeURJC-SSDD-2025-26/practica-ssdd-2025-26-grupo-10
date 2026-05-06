@@ -69,13 +69,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login",
+              "raw": "{{baseUrl}}/tokens",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "auth",
-                "login"
+                "tokens"
               ]
             }
           },
@@ -99,13 +98,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/register",
+              "raw": "{{baseUrl}}/registrations",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "auth",
-                "register"
+                "registrations"
               ]
             }
           },
@@ -598,13 +596,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/sustainability/calculate-impact?quantity=500&category=METAL_WASTE",
+              "raw": "{{baseUrl}}/sustainability/impacts?quantity=500&category=METAL_WASTE",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "sustainability",
-                "calculate-impact"
+                "impacts"
               ],
               "query": [
                 {
@@ -875,6 +873,198 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Buscar Empresas (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/companies?search=metales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "companies"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "metales"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Estadísticas Detalladas (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/charts/admin-stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "charts",
+                "admin-stats"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Configuración Global (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"platformCommission\": \"5.5\",\r\n  \"contactEmail\": \"info@ecomostoles.es\",\r\n  \"platformName\": \"ECOMOSTOLES B2B (Modificado)\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/configurations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "configurations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Exportar Empresas CSV (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reports/companies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports",
+                "companies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Exportar Ofertas CSV (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reports/offers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports",
+                "offers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Ranking de Impacto CO2 (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reports/ranking",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports",
+                "ranking"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Oferta Ajena - Admin Override (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/offers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "offers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Acuerdo Ajeno - Admin Override (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/agreements/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "agreements",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Empresa (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/companies/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "companies",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Configuración Global (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/configurations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "configurations"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -918,13 +1108,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/register",
+              "raw": "{{baseUrl}}/registrations",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "auth",
-                "register"
+                "registrations"
               ]
             }
           },

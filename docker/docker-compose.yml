@@ -10,7 +10,7 @@ services:
       MYSQL_USER: ecomostoles_user
       MYSQL_PASSWORD: securepass
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
@@ -45,7 +45,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ecomostoles_user
       SPRING_DATASOURCE_PASSWORD: securepass
       UTILITY_SERVICE_URL: http://utility-service:8080
-      KEYSTORE_PASSWORD: "securepass"
+      KEYSTORE_PASSWORD: "ecomostolespass"
     depends_on:
       db:
         condition: service_healthy

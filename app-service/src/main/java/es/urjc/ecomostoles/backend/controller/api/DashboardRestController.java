@@ -29,11 +29,13 @@ public class DashboardRestController {
     private final OfferService offerService;
     private final DemandService demandService;
     private final AgreementService agreementService;
+    private final es.urjc.ecomostoles.backend.service.CompanyService companyService;
 
-    public DashboardRestController(OfferService offerService, DemandService demandService, AgreementService agreementService) {
+    public DashboardRestController(OfferService offerService, DemandService demandService, AgreementService agreementService, es.urjc.ecomostoles.backend.service.CompanyService companyService) {
         this.offerService = offerService;
         this.demandService = demandService;
         this.agreementService = agreementService;
+        this.companyService = companyService;
     }
 
     @Operation(summary = "Get global impact statistics", description = "Returns structured chart data arrays for platform-wide distributions.")
@@ -54,5 +56,24 @@ public class DashboardRestController {
         ChartDataDTO chartDataDTO = new ChartDataDTO(labels, data);
 
         return ResponseEntity.ok(chartDataDTO);
+    }
+
+    @Operation(summary = "Get administrative platform statistics", description = "Returns all platform-wide KPIs for the administrative dashboard.")
+    @ApiResponse(responseCode = "200", description = "Admin stats fetched successfully",
+            content = @Content(schema = @Schema(implementation = es.urjc.ecomostoles.backend.dto.AdminDashboardStatsDTO.class)))
+    @GetMapping("/admin-stats")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<es.urjc.ecomostoles.backend.dto.AdminDashboardStatsDTO> getAdminStats() {
+        return ResponseEntity.ok(new es.urjc.ecomostoles.backend.dto.AdminDashboardStatsDTO(
+            companyService.countAll(),
+            offerService.countAll(),
+            demandService.countAll(),
+            agreementService.countAll(),
+            agreementService.countByStatus(es.urjc.ecomostoles.backend.model.AgreementStatus.PENDING, null),
+            offerService.countByStatus(es.urjc.ecomostoles.backend.model.OfferStatus.REPORTED),
+            agreementService.countByStatus(es.urjc.ecomostoles.backend.model.AgreementStatus.COMPLETED, null),
+            es.urjc.ecomostoles.backend.utils.NumberFormatter.format(agreementService.calculateCO2Saved()),
+            es.urjc.ecomostoles.backend.utils.NumberFormatter.formatCurrency(agreementService.getTotalCommission())
+        ));
     }
 }

@@ -227,8 +227,12 @@ public class DemandRestController {
         Demand existing = demandService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Demand not found with id: " + id));
 
-        // Ownership check (IDOR protection)
-        if (!existing.getCompany().getContactEmail().equals(principal.getName())) {
+        // Ownership check (IDOR protection) OR ADMIN override
+        boolean isAdmin = principal != null && org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!existing.getCompany().getContactEmail().equals(principal.getName()) && !isAdmin) {
             log.warn("[SECURITY] IDOR attempt blocked: User {} tried to update demand {} owned by {}", 
                     principal.getName(), id, existing.getCompany().getContactEmail());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to modify this demand");
@@ -286,8 +290,12 @@ public class DemandRestController {
         Demand demand = demandService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Demand not found with id: " + id));
 
-        // Ownership check (IDOR protection)
-        if (!demand.getCompany().getContactEmail().equals(principal.getName())) {
+        // Ownership check (IDOR protection) OR ADMIN override
+        boolean isAdmin = principal != null && org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!demand.getCompany().getContactEmail().equals(principal.getName()) && !isAdmin) {
             log.warn("[SECURITY] IDOR attempt blocked: User {} tried to delete demand {} owned by {}", 
                     principal.getName(), id, demand.getCompany().getContactEmail());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete this demand");
