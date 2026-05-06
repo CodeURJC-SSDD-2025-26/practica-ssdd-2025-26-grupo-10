@@ -3,11 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>API Documentation - EcoMóstoles</title>
+    <title>API Documentation - Utility Service</title>
     <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
-    <style>
-        body { margin: 0; padding: 0; }
-    </style>
+    <style>body { margin: 0; padding: 0; }</style>
 </head>
 <body>
     <div id="swagger-ui"></div>
@@ -15,13 +13,10 @@
     <script>
         window.onload = () => {
             window.ui = SwaggerUIBundle({
-                url: './api-docs.yaml', /* ¡Importante! Ruta relativa al YAML */
+                url: './api-docs.yaml',
                 dom_id: '#swagger-ui',
                 deepLinking: true,
-                presets: [
-                    SwaggerUIBundle.presets.apis,
-                    SwaggerUIBundle.SwaggerUIStandalonePreset
-                ],
+                presets: [ SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset ],
             });
         };
     </script>

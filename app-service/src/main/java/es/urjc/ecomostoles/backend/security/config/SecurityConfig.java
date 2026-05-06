@@ -101,7 +101,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/", "/index.html", "/login", "/registro",
                                                                 "/recuperar_password", "/privacidad", "/terminos",
                                                                 "/error", "/css/**", "/js/**", "/img/**", "/images/**",
-                                                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
+                                                                "/v3/api-docs/**", "/v3/api-docs**", "/swagger-ui/**", "/swagger-ui.html",
                                                                 "/actuator/**")
                                                 .permitAll()
                                                 // RBAC: Explicitly protect the entire /admin path
