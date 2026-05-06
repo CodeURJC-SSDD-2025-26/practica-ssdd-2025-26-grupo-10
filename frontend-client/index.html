@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMóstoles - Cliente B2B Seguro</title>
+    <style>
+        body { 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            padding: 2rem; 
+            background: #f8fafc; 
+            color: #334155;
+        }
+        .card { 
+            background: white; 
+            padding: 2.5rem; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); 
+            max-width: 450px; 
+            margin: 2rem auto; 
+        }
+        h2 { margin-top: 0; color: #0f172a; }
+        .form-group { margin-bottom: 1.5rem; }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #cbd5e1; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input:focus { border-color: #3b82f6; outline: none; }
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background: #10b981; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer; 
+            transition: background 0.2s;
+        }
+        button:hover { background: #059669; }
+        .btn-danger { background: #ef4444; margin-top: 1.5rem; }
+        .btn-danger:hover { background: #dc2626; }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 1.5rem; 
+        }
+        th, td { 
+            padding: 12px; 
+            border-bottom: 1px solid #e2e8f0; 
+            text-align: left; 
+        }
+        th { background: #f8fafc; font-weight: 600; }
+        .error { color: #ef4444; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <!-- Login Interface -->
+    <div id="login-container" class="card">
+        <h2>Acceso Plataforma B2B</h2>
+        <div id="error-message" class="error"></div>
+        <form id="login-form">
+            <div class="form-group">
+                <input type="email" id="email" placeholder="Email (ej. contacto@metalesdelsur.es)" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Contraseña" required>
+            </div>
+            <button type="submit">Iniciar Sesión Segura</button>
+        </form>
+    </div>
+
+    <!-- Protected Dashboard Interface -->
+    <div id="dashboard-container" class="card" style="display:none; max-width: 600px;">
+        <h2>Dashboard Analítico B2B</h2>
+        <p style="color: #64748b; font-size: 0.95rem;">Datos recuperados de forma segura utilizando JSON Web Tokens.</p>
+        
+        <div id="dashboard-content">
+            <p>Cargando datos protegidos...</p>
+        </div>
+        
+        <button class="btn-danger" onclick="logout()">Cerrar Sesión (Borrar Token)</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
