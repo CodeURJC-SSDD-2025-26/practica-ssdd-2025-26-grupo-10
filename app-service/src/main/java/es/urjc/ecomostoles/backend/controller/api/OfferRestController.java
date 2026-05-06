@@ -25,8 +25,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * REST API controller for the Offer resource — full CRUD.
@@ -83,7 +86,7 @@ public class OfferRestController {
             @Parameter(
                     description = "Optional free-text keyword to search by title or description " +
                                   "(returns only ACTIVE offers when provided)",
-                    example     = "plastico"
+                    example     = "plastic"
             )
             @RequestParam(required = false) String keyword,
 
@@ -228,12 +231,20 @@ public class OfferRestController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "New offer values (company, visits and publicationDate are ignored)",
                     required    = true)
-            @Valid @RequestBody OfferDTO offerDTO) {
+            @Valid @RequestBody OfferDTO offerDTO,
+            Principal principal) {
 
         log.info("[API] PUT /api/v1/offers/{} -- updating fields", id);
 
         Offer existing = offerService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Offer not found with id: " + id));
+
+        // Ownership check (IDOR protection)
+        if (!existing.getCompany().getContactEmail().equals(principal.getName())) {
+            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to update offer {} owned by {}", 
+                    principal.getName(), id, existing.getCompany().getContactEmail());
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to modify this offer");
+        }
 
         // Apply only editable fields; preserve audit/ownership data
         existing.setTitle(offerDTO.title());
@@ -277,13 +288,21 @@ public class OfferRestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOffer(
             @Parameter(description = "Database primary key of the offer to delete", example = "1")
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            Principal principal) {
 
         log.info("[API] DELETE /api/v1/offers/{}", id);
 
-        // Existence check -- prevents a misleading 204 on a non-existent resource
-        offerService.findById(id)
+        // Existence and ownership check -- prevents unauthorized deletion or misleading 204
+        Offer offer = offerService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Offer not found with id: " + id));
+
+        // Ownership check (IDOR protection)
+        if (!offer.getCompany().getContactEmail().equals(principal.getName())) {
+            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to delete offer {} owned by {}", 
+                    principal.getName(), id, offer.getCompany().getContactEmail());
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete this offer");
+        }
 
         offerService.delete(id);
         log.info("[API] DELETE /api/v1/offers/{} -- offer removed", id);

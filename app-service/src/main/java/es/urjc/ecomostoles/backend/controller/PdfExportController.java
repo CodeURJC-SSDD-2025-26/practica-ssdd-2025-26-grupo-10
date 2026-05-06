@@ -32,7 +32,7 @@ import java.util.Map;
  * <ol>
  *   <li>Authenticate and authorise the requesting company (IDOR protection).</li>
  *   <li>Project the {@link AgreementDTO} onto the JSON payload expected by
- *       {@code POST /api/v1/pdf/generate-agreement}.</li>
+ *       {@code POST /api/v1/pdfs/certificate}.</li>
  *   <li>Relay the PDF byte[] returned by utility-service to the browser with
  *       the correct {@code Content-Type} and {@code Content-Disposition} headers.</li>
  * </ol>
@@ -137,7 +137,7 @@ public class PdfExportController {
         try {
             byte[] pdfBytes = RestClient.create(utilityServiceUrl)
                     .post()
-                    .uri("/api/v1/pdf/generate-agreement")
+                    .uri("/api/v1/pdfs/certificate")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_PDF)
                     .body(requestBody)

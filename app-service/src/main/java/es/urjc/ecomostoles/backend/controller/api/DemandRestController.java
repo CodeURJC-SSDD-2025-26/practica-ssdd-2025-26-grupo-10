@@ -24,7 +24,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.NoSuchElementException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * REST API controller for the Demand resource — full CRUD.
@@ -68,7 +71,7 @@ public class DemandRestController {
             @Parameter(
                     description = "Optional free-text keyword to search by title or description " +
                             "(returns only ACTIVE demands when provided)",
-                    example = "madera"
+                    example = "wood"
             )
             @RequestParam(required = false) String keyword,
 
@@ -201,12 +204,20 @@ public class DemandRestController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "New demand values (company, visits and publicationDate are ignored)",
                     required = true)
-            @Valid @RequestBody DemandDTO demandDTO) {
+            @Valid @RequestBody DemandDTO demandDTO,
+            Principal principal) {
 
         log.info("[API] PUT /api/v1/demands/{} -- updating fields", id);
 
         Demand existing = demandService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Demand not found with id: " + id));
+
+        // Ownership check (IDOR protection)
+        if (!existing.getCompany().getContactEmail().equals(principal.getName())) {
+            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to update demand {} owned by {}", 
+                    principal.getName(), id, existing.getCompany().getContactEmail());
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to modify this demand");
+        }
 
         // Apply only editable fields; preserve audit/ownership data
         existing.setTitle(demandDTO.title());
@@ -251,13 +262,21 @@ public class DemandRestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDemand(
             @Parameter(description = "Database primary key of the demand to delete", example = "1")
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            Principal principal) {
 
         log.info("[API] DELETE /api/v1/demands/{}", id);
 
-        // Existence check -- prevents a misleading 204 on a non-existent resource
-        demandService.findById(id)
+        // Existence and ownership check -- prevents unauthorized deletion or misleading 204
+        Demand demand = demandService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Demand not found with id: " + id));
+
+        // Ownership check (IDOR protection)
+        if (!demand.getCompany().getContactEmail().equals(principal.getName())) {
+            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to delete demand {} owned by {}", 
+                    principal.getName(), id, demand.getCompany().getContactEmail());
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete this demand");
+        }
 
         // The demandService.delete(id) handles throwing a ResponseStatusException (400)
         // if there are existing agreements associated with this demand.

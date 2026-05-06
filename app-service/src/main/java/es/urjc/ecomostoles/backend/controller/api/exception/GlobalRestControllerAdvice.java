@@ -158,7 +158,7 @@ public class GlobalRestControllerAdvice {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiErrorDTO.of(
                         request.getRequestURI(),
-                        "An unexpected internal error occurred. Please contact support.",
+                        "Se ha producido un error interno inesperado. Por favor, contacte con el soporte técnico",
                         HttpStatus.INTERNAL_SERVER_ERROR.value()
                 ));
     }

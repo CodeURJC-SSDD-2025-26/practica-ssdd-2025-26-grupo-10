@@ -25,7 +25,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.NoSuchElementException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * REST API controller for the Agreement resource.
@@ -157,11 +160,20 @@ public class AgreementRestController {
             @ApiResponse(responseCode = "404", description = "Agreement not found")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAgreement(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAgreement(@PathVariable Long id, Principal principal) {
         log.info("[API] DELETE /api/v1/agreements/{}", id);
 
         Agreement agreement = agreementService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Agreement not found with id: " + id));
+
+        // IDOR Protection: Verify that the principal is part of the agreement (origin or destination)
+        boolean isOrigin = agreement.getOriginCompany() != null && agreement.getOriginCompany().getContactEmail().equals(principal.getName());
+        boolean isDestination = agreement.getDestinationCompany() != null && agreement.getDestinationCompany().getContactEmail().equals(principal.getName());
+
+        if (principal == null || (!isOrigin && !isDestination)) {
+            log.warn("[SECURITY] Unauthorized attempt to delete agreement ID: {} by user: {}", id, principal != null ? principal.getName() : "anonymous");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to delete this agreement");
+        }
 
         // Refuse deletion if COMPLETED (business rule)
         if (AgreementStatus.COMPLETED.equals(agreement.getStatus())) {

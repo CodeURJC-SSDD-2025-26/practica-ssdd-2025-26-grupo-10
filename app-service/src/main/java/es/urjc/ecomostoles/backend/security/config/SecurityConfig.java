@@ -1,8 +1,8 @@
 package es.urjc.ecomostoles.backend.security.config;
-
 import es.urjc.ecomostoles.backend.security.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,12 +11,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-/**
- * Modern Security Posture enforcing stateless JWT-based interactions.
- * 
- * Replaces the legacy Session-based SecurityConfig. Maps route authorizations, 
- * disables CSRF for API requests, and injects the custom JWT filter before standard filters.
- */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -29,43 +23,53 @@ public class SecurityConfig {
         this.authenticationProvider = authenticationProvider;
     }
 
+    // --- 1. REST API CONFIGURATION (STATELESS + JWT) ---
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(1) // Highest priority: Catches REST requests first
+    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Enable CORS using the corsConfigurationSource bean
+            .securityMatcher("/api/**") // This chain ONLY affects the API
             .cors(org.springframework.security.config.Customizer.withDefaults())
-            // Since we use JWT (Stateless), CSRF protection is not needed
             .csrf(AbstractHttpConfigurer::disable)
-            
-            // Route-level Authorization Matrix
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // 1. Whitelist authentication & API documentation
-                .requestMatchers("/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                
-                // 2. Whitelist static assets and traditional web endpoints (transition phase)
-                .requestMatchers("/", "/css/**", "/js/**", "/img/**", "/images/**").permitAll()
-                
-                // 3. Strictly require valid JWT for any business API endpoints
-                .requestMatchers("/api/v1/**").authenticated()
-                
-                // 4. Default policy for other routes (permitting for MVC compatibility during migration)
-                .anyRequest().permitAll()
+                .requestMatchers("/api/v1/auth/**").permitAll()
+                .anyRequest().authenticated()
             )
-            
-            // Enforce Stateless Architecture (No HttpSession)
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            
-            // Register Data Access Provider
             .authenticationProvider(authenticationProvider)
-            
-            // Insert custom JWT Interceptor
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    // --- 2. TRADITIONAL WEB CONFIGURATION (STATEFUL + FORM LOGIN) ---
+    @Bean
+    @Order(2) // Secondary priority: Catches normal web traffic
+    public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -> auth
+                // Allow public access to static resources, login, registration, and Swagger
+                .requestMatchers("/", "/login", "/registro", "/css/**", "/js/**", "/img/**", "/images/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                // All other web pages require being logged in
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")               // Our custom HTML template
+                .loginProcessingUrl("/login")      // The URL where the HTML performs the POST
+                .defaultSuccessUrl("/", true)      // Where to go on success
+                .failureUrl("/login?error=true")   // Where to go on failure
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .permitAll()
+            );
+
+        return http.build();
+    }
+
+    // --- CORS CONFIGURATION FOR THE API FRONTEND ---
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();

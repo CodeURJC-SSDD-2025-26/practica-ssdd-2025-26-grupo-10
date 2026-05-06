@@ -18,12 +18,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.springframework.http.HttpStatus;
 
 /**
  * REST API controller for the Message resource.
@@ -128,11 +131,17 @@ public class MessageRestController {
             @ApiResponse(responseCode = "404", description = "Message not found")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteMessage(@PathVariable Long id, Principal principal) {
         log.info("[API] DELETE /api/v1/messages/{}", id);
 
-        messageService.findById(id)
+        Message message = messageService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Message not found with id: " + id));
+
+        // IDOR Protection: Verify that the principal is the sender of the message
+        if (principal == null || !message.getSender().getContactEmail().equals(principal.getName())) {
+            log.warn("[SECURITY] Unauthorized attempt to delete message ID: {} by user: {}", id, principal != null ? principal.getName() : "anonymous");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to delete this message");
+        }
 
         messageService.delete(id);
         return ResponseEntity.noContent().build();
