@@ -14,15 +14,23 @@ import java.time.LocalDate;
  * the mapping self-documenting.
  */
 public record AgreementReportRequest(
-
         // ── Identity ───────────────────────────────────────────────────────
         Long    agreementId,
         String  status,
 
-        // ── Parties ────────────────────────────────────────────────────────
+        // ── Parties (Detailed) ─────────────────────────────────────────────
         String  originCompanyName,
+        String  originCompanyTaxId,
+        String  originCompanyAddress,
+        String  originCompanyPhone,
+        String  originCompanySector,
+        byte[]  originCompanyLogo,
+
         String  destinationCompanyName,
-        byte[]  originCompanyLogo,        // optional, nullable — used for PDF header logo
+        String  destinationCompanyTaxId,
+        String  destinationCompanyAddress,
+        String  destinationCompanyPhone,
+        String  destinationCompanySector,
 
         // ── Material ───────────────────────────────────────────────────────
         String  exchangedMaterial,
@@ -31,15 +39,18 @@ public record AgreementReportRequest(
 
         // ── Financials ─────────────────────────────────────────────────────
         Double  agreedPrice,
-        Double  platformCommission,       // optional, may be null
+        Double  platformCommission,
 
         // ── Sustainability ─────────────────────────────────────────────────
         Double  co2Impact,
 
         // ── Dates ──────────────────────────────────────────────────────────
         LocalDate pickupDate,
-        String    registrationDate,       // pre-formatted string (dd/MM/yyyy HH:mm)
+        String    registrationDate,
 
         // ── Notes ──────────────────────────────────────────────────────────
-        String  notes                     // optional, may be null
+        String  notes,
+
+        // ── Brand Assets ───────────────────────────────────────────────────
+        byte[]  platformSeal              // Official platform seal/stamp
 ) {}

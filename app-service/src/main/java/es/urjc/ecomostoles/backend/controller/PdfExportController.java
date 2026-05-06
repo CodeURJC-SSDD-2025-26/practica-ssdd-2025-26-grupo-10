@@ -46,7 +46,6 @@ import java.util.Map;
  * </p>
  */
 @RestController
-@RequestMapping("/api/v1/agreements")
 public class PdfExportController {
 
         private static final Logger log = LoggerFactory.getLogger(PdfExportController.class);
@@ -88,7 +87,7 @@ public class PdfExportController {
          * @return {@code 200 OK} with {@code application/pdf} binary body,
          *         or an appropriate HTTP error status on failure.
          */
-        @GetMapping("/{id}/pdf")
+        @GetMapping({ "/api/v1/agreements/{id}/pdf", "/api/v1/agreements/{id}/certificate", "/acuerdo/{id}/pdf" })
         public ResponseEntity<byte[]> generateAgreementPdf(
                         @PathVariable Long id, Principal principal) {
 
@@ -123,27 +122,57 @@ public class PdfExportController {
                 // Build the exact field map that AgreementReportRequest expects.
                 // Using a plain Map<String, Object> avoids introducing a utility-service
                 // compile dependency in app-service — the JSON contract is the interface.
-                Map<String, Object> requestBody = Map.ofEntries(
-                                Map.entry("agreementId", dto.id()),
-                                Map.entry("status", dto.status() != null ? dto.status().getDisplayName() : "N/A"),
-                                Map.entry("originCompanyName",
-                                                dto.originCompany() != null ? dto.originCompany().getCommercialName()
-                                                                : "N/A"),
-                                Map.entry("destinationCompanyName",
-                                                dto.destinationCompany() != null
-                                                                ? dto.destinationCompany().getCommercialName()
-                                                                : "N/A"),
-                                Map.entry("exchangedMaterial",
-                                                dto.exchangedMaterial() != null ? dto.exchangedMaterial() : "N/A"),
-                                Map.entry("quantity", dto.quantity() != null ? dto.quantity() : 0.0),
-                                Map.entry("unit", dto.unit() != null ? dto.unit() : ""),
-                                Map.entry("agreedPrice", dto.agreedPrice() != null ? dto.agreedPrice() : 0.0),
-                                Map.entry("platformCommission",
-                                                dto.platformCommission() != null ? dto.platformCommission() : 0.0),
-                                Map.entry("co2Impact", dto.co2Impact() != null ? dto.co2Impact() : 0.0),
-                                Map.entry("pickupDate", dto.pickupDate() != null ? dto.pickupDate().toString() : ""),
-                                Map.entry("registrationDate", dto.getFormattedRegistrationDate()),
-                                Map.entry("notes", dto.notes() != null ? dto.notes() : ""));
+                                Map<String, Object> requestBody = new java.util.HashMap<>(Map.ofEntries(
+                                                Map.entry("agreementId", dto.id()),
+                                                Map.entry("status", dto.status() != null ? dto.status().getDisplayName() : "N/A"),
+
+                                                // Origin Company Details
+                                                Map.entry("originCompanyName",
+                                                                dto.originCompany() != null ? dto.originCompany().getCommercialName() : "N/A"),
+                                                Map.entry("originCompanyTaxId",
+                                                                dto.originCompany() != null ? dto.originCompany().getTaxId() : "N/A"),
+                                                Map.entry("originCompanyAddress",
+                                                                dto.originCompany() != null ? dto.originCompany().getAddress() : "N/A"),
+                                                Map.entry("originCompanyPhone",
+                                                                dto.originCompany() != null ? dto.originCompany().getPhone() : "N/A"),
+                                                Map.entry("originCompanySector",
+                                                                dto.originCompany() != null ? dto.originCompany().getIndustrialSector()
+                                                                                : "N/A"),
+
+                                                // Destination Company Details
+                                                Map.entry("destinationCompanyName",
+                                                                dto.destinationCompany() != null ? dto.destinationCompany().getCommercialName()
+                                                                                : "N/A"),
+                                                Map.entry("destinationCompanyTaxId",
+                                                                dto.destinationCompany() != null ? dto.destinationCompany().getTaxId() : "N/A"),
+                                                Map.entry("destinationCompanyAddress",
+                                                                dto.destinationCompany() != null ? dto.destinationCompany().getAddress() : "N/A"),
+                                                Map.entry("destinationCompanyPhone",
+                                                                dto.destinationCompany() != null ? dto.destinationCompany().getPhone() : "N/A"),
+                                                Map.entry("destinationCompanySector",
+                                                                dto.destinationCompany() != null
+                                                                                ? dto.destinationCompany().getIndustrialSector()
+                                                                                : "N/A"),
+
+                                                Map.entry("exchangedMaterial",
+                                                                dto.exchangedMaterial() != null ? dto.exchangedMaterial() : "N/A"),
+                                                Map.entry("quantity", dto.quantity() != null ? dto.quantity() : 0.0),
+                                                Map.entry("unit", dto.unit() != null ? dto.unit() : ""),
+                                                Map.entry("agreedPrice", dto.agreedPrice() != null ? dto.agreedPrice() : 0.0),
+                                                Map.entry("platformCommission",
+                                                                dto.platformCommission() != null ? dto.platformCommission() : 0.0),
+                                                Map.entry("co2Impact", dto.co2Impact() != null ? dto.co2Impact() : 0.0),
+                                                Map.entry("pickupDate", dto.pickupDate() != null ? dto.pickupDate().toString() : ""),
+                                                Map.entry("registrationDate", dto.getFormattedRegistrationDate()),
+                                                Map.entry("notes", dto.notes() != null ? dto.notes() : "")));
+
+                                // Load platform seal from resources
+                                try {
+                                        byte[] sealBytes = getClass().getResourceAsStream("/static/img/seal.png").readAllBytes();
+                                        requestBody.put("platformSeal", sealBytes);
+                                } catch (Exception e) {
+                                        log.warn("[PDF] Could not load platform seal image");
+                                }
 
                 // ── 3. Call utility-service with RestClient ─────────────────────
                 log.info("[PDF] Delegating PDF generation for agreement #{} to utility-service", id);

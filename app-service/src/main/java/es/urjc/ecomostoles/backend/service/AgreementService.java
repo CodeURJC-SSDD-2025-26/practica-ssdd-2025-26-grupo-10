@@ -317,7 +317,7 @@ public class AgreementService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agreement not found"));
 
         // SYNC OFFER STATUS BASED ON AGREEMENT STATE CHANGE
-        if (existingAgreement.getOffer() != null && !updatedData.getStatus().equals(existingAgreement.getStatus())) {
+        if (existingAgreement.getOffer() != null && updatedData.getStatus() != null && !updatedData.getStatus().equals(existingAgreement.getStatus())) {
             Offer offer = existingAgreement.getOffer();
             
             if (AgreementStatus.COMPLETED.equals(updatedData.getStatus())) {

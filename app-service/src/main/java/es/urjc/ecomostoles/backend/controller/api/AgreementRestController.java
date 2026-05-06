@@ -248,6 +248,9 @@ public class AgreementRestController {
                 }
 
                 String statusStr = statusMap.get("status");
+                if (statusStr == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing 'status' field in request body");
+                }
                 AgreementStatus newStatus;
                 try {
                         newStatus = AgreementStatus.valueOf(statusStr.toUpperCase());

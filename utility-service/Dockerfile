@@ -8,7 +8,7 @@ COPY .mvn .mvn
 COPY pom.xml .
 
 # Dar permisos de ejecución al wrapper (necesario en alpine/linux) y descargar dependencias
-RUN chmod +x mvnw && ./mvnw dependency:go-offline
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw && ./mvnw dependency:go-offline
 
 # Copiar el código fuente y construir el JAR sin ejecutar tests
 COPY src src

@@ -79,7 +79,14 @@ public class SecurityConfig {
                                             response.getWriter().write("{\"error\": \"Forbidden\", \"message\": \"Access denied: You do not have the required ADMIN role for this administrative operation.\"}");
                                         }))
                                 .authenticationProvider(authenticationProvider)
-                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                                .headers(headers -> headers
+                                                .httpStrictTransportSecurity(hsts -> hsts
+                                                                .includeSubDomains(true)
+                                                                .preload(true)
+                                                                .maxAgeInSeconds(31536000))
+                                                .contentSecurityPolicy(csp -> csp
+                                                                .policyDirectives("upgrade-insecure-requests")));
 
                 return http.build();
         }
@@ -91,10 +98,9 @@ public class SecurityConfig {
                 http
                                 // CRITICAL: CSRF protection remains ENABLED (default) for all web traffic
                                 .authorizeHttpRequests(auth -> auth
-                                                // Allow public access to static resources, login, registration, and
-                                                // Swagger
-                                                .requestMatchers("/", "/login", "/registro", "/css/**", "/js/**",
-                                                                "/img/**", "/images/**",
+                                                .requestMatchers("/", "/index.html", "/login", "/registro",
+                                                                "/recuperar_password", "/privacidad", "/terminos",
+                                                                "/error", "/css/**", "/js/**", "/img/**", "/images/**",
                                                                 "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
                                                                 "/actuator/**")
                                                 .permitAll()
@@ -112,7 +118,14 @@ public class SecurityConfig {
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
                                                 .logoutSuccessUrl("/")
-                                                .permitAll());
+                                                .permitAll())
+                                .headers(headers -> headers
+                                                .httpStrictTransportSecurity(hsts -> hsts
+                                                                .includeSubDomains(true)
+                                                                .preload(true)
+                                                                .maxAgeInSeconds(31536000))
+                                                .contentSecurityPolicy(csp -> csp
+                                                                .policyDirectives("upgrade-insecure-requests")));
 
                 return http.build();
         }
