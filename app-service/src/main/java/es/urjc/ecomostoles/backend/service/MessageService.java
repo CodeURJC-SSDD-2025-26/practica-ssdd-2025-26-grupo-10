@@ -6,6 +6,8 @@ import es.urjc.ecomostoles.backend.repository.MessageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +32,16 @@ public class MessageService {
     @Transactional(readOnly = true)
     public List<Message> getAll() {
         return messageRepository.findTop100ByOrderBySendDateDesc();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Message> getByCompanyPaginated(Company company, Pageable pageable) {
+        return messageRepository.findByCompanyPaginated(company, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Message> getAllPaginated(Pageable pageable) {
+        return messageRepository.findAllPaginated(pageable);
     }
 
     /** Returns all messages received by a specific company. */

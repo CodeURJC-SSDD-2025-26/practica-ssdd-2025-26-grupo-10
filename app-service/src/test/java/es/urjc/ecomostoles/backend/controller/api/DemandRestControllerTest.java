@@ -77,7 +77,7 @@ class DemandRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 2: Demand CRUD - Crear demanda válida (201)")
+    @DisplayName("Phase 2: Demand CRUD - Create valid demand (201)")
     void shouldCreateDemandSuccessfully() throws Exception {
         DemandDTO request = new DemandDTO(
                 null, "Busco Chatarra", "METAL_WASTE", "Chatarra",
@@ -93,7 +93,7 @@ class DemandRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL)
-    @DisplayName("Fase 2: Demand CRUD - Listado paginado (200)")
+    @DisplayName("Phase 2: Demand CRUD - Paginated listing (200)")
     void shouldListDemandsPaginated() throws Exception {
         mockMvc.perform(get("/api/v1/demands?page=0&size=5"))
                 .andExpect(status().isOk());
@@ -101,7 +101,7 @@ class DemandRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 2: Demand Validation - Presupuesto negativo (400)")
+    @DisplayName("Phase 2: Demand Validation - Negative budget (400)")
     void shouldReturn400WhenBudgetIsNegative() throws Exception {
         DemandDTO invalidRequest = new DemandDTO(
                 null, "Error Budget", "PLASTIC_WASTE", "Error",

@@ -33,7 +33,7 @@ class PublicRestControllerTest {
     private DemandService demandService;
 
     @Test
-    @DisplayName("Fase 4: Public Access - Listar ofertas de forma anónima (200 OK)")
+    @DisplayName("Phase 4: Public Access - List offers anonymously (200 OK)")
     void shouldListPublicOffersAnonymously() throws Exception {
         when(offerService.getAllPaginated(any())).thenReturn(Page.empty());
 
@@ -43,7 +43,7 @@ class PublicRestControllerTest {
     }
 
     @Test
-    @DisplayName("Fase 4: Public Access - Listar demandas de forma anónima (200 OK)")
+    @DisplayName("Phase 4: Public Access - List demands anonymously (200 OK)")
     void shouldListPublicDemandsAnonymously() throws Exception {
         when(demandService.getAllPaginated(any())).thenReturn(Page.empty());
 

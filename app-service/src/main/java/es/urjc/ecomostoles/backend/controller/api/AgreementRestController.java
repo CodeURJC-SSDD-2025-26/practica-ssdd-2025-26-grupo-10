@@ -147,10 +147,25 @@ public class AgreementRestController {
     @PutMapping("/{id}")
     public ResponseEntity<AgreementDTO> updateAgreement(
             @PathVariable Long id,
-            @Valid @RequestBody AgreementDTO agreementDTO) {
+            @Valid @RequestBody AgreementDTO agreementDTO,
+            Principal principal) {
         
         log.info("[API] PUT /api/v1/agreements/{}", id);
         
+        Agreement agreement = agreementService.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Agreement not found with id: " + id));
+
+        // IDOR Protection: Verify that the principal is part of the agreement
+        boolean isOrigin = agreement.getOriginCompany() != null && agreement.getOriginCompany().getContactEmail().equals(principal.getName());
+        boolean isDestination = agreement.getDestinationCompany() != null && agreement.getDestinationCompany().getContactEmail().equals(principal.getName());
+
+        if (principal == null || (!isOrigin && !isDestination)) {
+            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to update agreement {}", 
+                    principal != null ? principal.getName() : "anonymous", id);
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "You are not authorized to modify this agreement");
+        }
+
         // Delegating entirely to the updateAgreement method in the service which handles side-effects
         Agreement updatedData = agreementMapper.toEntity(agreementDTO);
         Agreement updated = agreementService.updateAgreement(id, updatedData);
@@ -166,14 +181,27 @@ public class AgreementRestController {
     @PutMapping("/{id}/status")
     public ResponseEntity<AgreementDTO> updateAgreementStatus(
             @PathVariable Long id,
-            @RequestBody java.util.Map<String, String> statusMap) {
+            @RequestBody java.util.Map<String, String> statusMap,
+            Principal principal) {
         
         log.info("[API] PUT /api/v1/agreements/{}/status", id);
-        String statusStr = statusMap.get("status");
-        AgreementStatus newStatus = AgreementStatus.valueOf(statusStr);
-        
+
         Agreement agreement = agreementService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Agreement not found with id: " + id));
+
+        // IDOR Protection: Verify that the principal is part of the agreement
+        boolean isOrigin = agreement.getOriginCompany() != null && agreement.getOriginCompany().getContactEmail().equals(principal.getName());
+        boolean isDestination = agreement.getDestinationCompany() != null && agreement.getDestinationCompany().getContactEmail().equals(principal.getName());
+
+        if (principal == null || (!isOrigin && !isDestination)) {
+            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to update status for agreement {}", 
+                    principal != null ? principal.getName() : "anonymous", id);
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "You are not authorized to modify this agreement status");
+        }
+
+        String statusStr = statusMap.get("status");
+        AgreementStatus newStatus = AgreementStatus.valueOf(statusStr);
         
         agreement.setStatus(newStatus);
         Agreement updated = agreementService.updateAgreement(id, agreement);

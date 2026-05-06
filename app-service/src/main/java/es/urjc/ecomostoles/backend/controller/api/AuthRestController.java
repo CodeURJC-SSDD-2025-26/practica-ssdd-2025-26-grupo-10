@@ -14,14 +14,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
+
 /**
- * Public REST API controller for Identity Management.
- *
- * <p>Base path: {@code /api/v1/auth}</p>
+ * REST API controller for Security and Identity resources.
+ * 
+ * <p>Follows a verb-free architectural design by treating authentication
+ * and registration as the creation of 'Token' and 'Registration' resources.</p>
  */
 @RestController
-@RequestMapping("/api/v1/auth")
-@Tag(name = "Authentication", description = "Endpoints for user registration and JWT token issuance")
+@RequestMapping("/api/v1")
+@Tag(name = "Security", description = "Endpoints for identity management and JWT issuance")
 public class AuthRestController {
 
     private final AuthService authService;
@@ -30,16 +33,22 @@ public class AuthRestController {
         this.authService = authService;
     }
 
-    @Operation(summary = "Register a new company", description = "Creates a new company record and returns a valid JWT token for immediate access.")
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(
-            @Valid @RequestBody RegisterRequest request
-    ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
+    @Operation(summary = "Create a new registration", description = "Registers a new company and returns a valid JWT token.")
+    @PostMapping("/registrations")
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+        AuthResponse response = authService.register(request);
+        
+        URI location = org.springframework.web.servlet.support.ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/api/v1/companies/{id}")
+                .buildAndExpand(response.companyId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
     }
 
-    @Operation(summary = "Authenticate and get token", description = "Validates credentials against the database and returns a JWT token for accessing secured API endpoints.")
-    @PostMapping("/login")
+    @Operation(summary = "Create an access token", description = "Authenticates credentials and issues a new JWT token resource.")
+    @PostMapping("/tokens")
     public ResponseEntity<AuthResponse> authenticate(
             @Valid @RequestBody AuthRequest request
     ) {

@@ -49,7 +49,7 @@ class AgreementRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 3: Agreement Lifecycle - Aceptar acuerdo (200 OK)")
+    @DisplayName("Phase 3: Agreement Lifecycle - Accept agreement (200 OK)")
     void shouldAcceptAgreement() throws Exception {
         Agreement agreement = new Agreement();
         agreement.setId(1L);
@@ -68,7 +68,7 @@ class AgreementRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 3: Agreement Lifecycle - Error de negocio (404 Not Found)")
+    @DisplayName("Phase 3: Agreement Lifecycle - Business error (404 Not Found)")
     void shouldReturn404WhenAgreementNotFound() throws Exception {
         when(agreementService.findById(anyLong())).thenThrow(new NoSuchElementException("Acuerdo no encontrado"));
 

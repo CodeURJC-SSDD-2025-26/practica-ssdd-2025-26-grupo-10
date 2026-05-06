@@ -36,7 +36,7 @@ class MatchingRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 3: Smart Matching - Obtener sugerencias para una demanda (200 OK)")
+    @DisplayName("Phase 3: Smart Matching - Get suggestions for a demand (200 OK)")
     void shouldGetBestMatchesForDemand() throws Exception {
         // Mock a simple result list
         MatchResultDTO mockResult = new MatchResultDTO(null, 95.0, "Alta compatibilidad");

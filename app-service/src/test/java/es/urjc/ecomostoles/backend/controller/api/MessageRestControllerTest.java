@@ -52,7 +52,7 @@ class MessageRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 3: Messaging - Enviar un mensaje (201 Created)")
+    @DisplayName("Phase 3: Messaging - Send a message (201 Created)")
     void shouldSendMessage() throws Exception {
         // Mock companies
         Company sender = new Company();

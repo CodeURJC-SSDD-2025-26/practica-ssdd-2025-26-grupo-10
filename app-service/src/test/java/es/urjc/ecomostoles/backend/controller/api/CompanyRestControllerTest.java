@@ -75,7 +75,7 @@ class CompanyRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 2: Company - Obtener perfil por ID (200)")
+    @DisplayName("Phase 2: Company - Get profile by ID (200)")
     void shouldGetCompanyById() throws Exception {
         Company mockCompany = buildTestCompany();
         when(companyService.findById(anyLong())).thenReturn(Optional.of(mockCompany));
@@ -88,7 +88,7 @@ class CompanyRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 2: Company - Actualizar perfil con DTO Completo (200)")
+    @DisplayName("Phase 2: Company - Update profile with complete DTO (200)")
     void shouldUpdateCompanyProfile() throws Exception {
         // Stub: find returns the existing entity, save returns the updated one
         Company existing = buildTestCompany();

@@ -32,11 +32,11 @@ class SustainabilityRestControllerTest {
 
     @Test
     @WithMockUser(username = "test@company.com", roles = {"COMPANY"})
-    @DisplayName("Fase 4: Sustainability Engine - Calcular impacto de CO2 (200 OK)")
+    @DisplayName("Phase 4: Sustainability Engine - Calculate CO2 impact (200 OK)")
     void shouldCalculateCo2Impact() throws Exception {
         when(sustainabilityEngine.calculateCo2Impact(anyDouble(), anyString())).thenReturn(150.5);
 
-        mockMvc.perform(get("/api/v1/sustainability/calculate-impact")
+        mockMvc.perform(get("/api/v1/sustainability/impacts")
                         .param("quantity", "500")
                         .param("category", "METAL_WASTE"))
                 .andDo(MockMvcResultHandlers.print())

@@ -1,6 +1,6 @@
 package es.urjc.ecomostoles.backend.component;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ import es.urjc.ecomostoles.backend.model.ImpactFactor;
  * dynamically from the database. This avoids business logic leakage across services
  * and adheres to the DRY principle.
  */
-@Component
+@Service
 public class SustainabilityEngine {
 
     private static final Logger log = LoggerFactory.getLogger(SustainabilityEngine.class);

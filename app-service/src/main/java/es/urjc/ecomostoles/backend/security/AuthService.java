@@ -27,15 +27,13 @@ import java.util.List;
 @Service
 public class AuthService {
 
-    private final CompanyRepository companyRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final es.urjc.ecomostoles.backend.service.CompanyService companyService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthService(CompanyRepository companyRepository, PasswordEncoder passwordEncoder,
+    public AuthService(es.urjc.ecomostoles.backend.service.CompanyService companyService,
                        JwtService jwtService, AuthenticationManager authenticationManager) {
-        this.companyRepository = companyRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.companyService = companyService;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
     }
@@ -44,28 +42,18 @@ public class AuthService {
      * Provisions a new Company tenant and generates an immediate access token.
      */
     public AuthResponse register(RegisterRequest request) {
-        if (companyRepository.findByContactEmail(request.contactEmail()).isPresent()) {
-            throw new UserAlreadyExistsException("El email ya está en uso");
-        }
-
-        if (companyRepository.findByTaxId(request.taxId()).isPresent()) {
-            throw new UserAlreadyExistsException("El CIF introducido ya pertenece a una empresa registrada");
-        }
-
+        // Shared logic: Delegate company creation to CompanyService
         Company company = new Company();
         company.setCommercialName(request.commercialName());
         company.setTaxId(request.taxId());
         company.setContactEmail(request.contactEmail());
-        // Enforce cryptographic hashing before DB persistence
-        company.setPassword(passwordEncoder.encode(request.password()));
         company.setAddress(request.address());
         company.setPhone(request.phone());
         company.setIndustrialSector(request.industrialSector());
         company.setDescription(request.description());
-        // Default role for new business registrants
         company.setRoles(List.of("COMPANY"));
 
-        companyRepository.save(company);
+        companyService.registerNewCompany(company, request.password(), null);
 
         // Build UserDetails to generate the token
         UserDetails userDetails = User.builder()
@@ -75,7 +63,7 @@ public class AuthService {
                 .build();
 
         String jwtToken = jwtService.generateToken(userDetails);
-        return new AuthResponse(jwtToken);
+        return new AuthResponse(jwtToken, company.getId());
     }
 
     /**
@@ -91,7 +79,7 @@ public class AuthService {
         );
 
         // 2. Fetch the authenticated entity
-        Company company = companyRepository.findByContactEmail(request.email())
+        Company company = companyService.findByEmail(request.email())
                 .orElseThrow();
 
         // 3. Extract roles
@@ -109,6 +97,6 @@ public class AuthService {
 
         // 5. Issue cryptographic token
         String jwtToken = jwtService.generateToken(userDetails);
-        return new AuthResponse(jwtToken);
+        return new AuthResponse(jwtToken, company.getId());
     }
 }

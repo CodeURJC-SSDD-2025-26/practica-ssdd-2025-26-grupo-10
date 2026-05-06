@@ -67,7 +67,7 @@ class AuthRestControllerTest {
     // ── HAPPY PATH: REGISTRATION ──────────────────────────────────────────
 
     @Test
-    @DisplayName("Fase 1: Happy Path - Registro de nueva empresa (201 Created)")
+    @DisplayName("Phase 1: Happy Path - Register new company (201 Created)")
     void shouldRegisterNewCompanySuccessfully() throws Exception {
         RegisterRequest request = new RegisterRequest(
                 "QA Test Corp",
@@ -91,7 +91,7 @@ class AuthRestControllerTest {
     // ── HAPPY PATH: LOGIN ─────────────────────────────────────────────────
 
     @Test
-    @DisplayName("Fase 1: Happy Path - Login con credenciales válidas (200 OK)")
+    @DisplayName("Phase 1: Happy Path - Login with valid credentials (200 OK)")
     void shouldLoginSuccessfully() throws Exception {
         // Authenticate with the credentials set up in @BeforeEach
         AuthRequest loginReq = new AuthRequest("login@test.com", "secretPass");
@@ -107,7 +107,7 @@ class AuthRestControllerTest {
     // ── ERROR HANDLING: BAD CREDENTIALS ───────────────────────────────────
 
     @Test
-    @DisplayName("Fase 1: Security - Login con contraseña incorrecta (401 Unauthorized)")
+    @DisplayName("Phase 1: Security - Login with incorrect password (401 Unauthorized)")
     void shouldReturn401WhenPasswordIsIncorrect() throws Exception {
         // Try to login with the correct email but WRONG password
         AuthRequest loginReq = new AuthRequest("login@test.com", "wrongPassword");
@@ -123,7 +123,7 @@ class AuthRestControllerTest {
     // ── ADVICE VALIDATION: BAD REQUEST ───────────────────────────────────
 
     @Test
-    @DisplayName("Fase 1: Advice - Registro con DTO inválido (400 Bad Request)")
+    @DisplayName("Phase 1: Advice - Register with invalid DTO (400 Bad Request)")
     void shouldReturn400WhenEmailIsInvalid() throws Exception {
         // Invalid request: Empty name and invalid CIF format
         RegisterRequest invalidRequest = new RegisterRequest(

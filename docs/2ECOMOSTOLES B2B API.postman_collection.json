@@ -1,0 +1,1232 @@
+{
+  "info": {
+    "_postman_id": "41514374-463f-440f-973e-076172c802df",
+    "name": "ECOMOSTOLES B2B API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54441970",
+    "_collection_link": "https://go.postman.co/collection/54441970-41514374-463f-440f-973e-076172c802df?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01. Autenticación (Auth)",
+      "item": [
+        {
+          "name": "Login B2B (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Validar que el login ha sido exitoso (HTTP 200 OK)\r",
+                  "pm.test(\"Login OK: Status 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "// Extraer el JSON del cuerpo de la respuesta\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "// Validar que el servidor nos devuelve el atributo 'token'\r",
+                  "pm.test(\"Response contiene JWT\", function () {\r",
+                  "    pm.expect(jsonData).to.have.property(\"token\");\r",
+                  "});\r",
+                  "\r",
+                  "// Guardar automáticamente el token en las variables de la colección\r",
+                  "if (jsonData.token) {\r",
+                  "    pm.collectionVariables.set(\"token\", jsonData.token);\r",
+                  "    console.log(\"El token JWT se ha guardado correctamente.\");\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"contacto@metalesdelsur.es\",\r\n    \"password\": \"1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tokens",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tokens"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registro de Empresa (Public)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"contactEmail\": \"nuevaempresa@reciclajes.es\",\r\n  \"password\": \"securepass\",\r\n  \"commercialName\": \"Nueva Empresa Reciclajes S.L.\",\r\n  \"taxId\": \"B99887766\",\r\n  \"industrialSector\": \"Plásticos\",\r\n  \"address\": \"Polígono Industrial Sur\",\r\n  \"phone\": \"916000111\",\r\n  \"description\": \"Planta de reciclaje de polímeros.\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/registrations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "registrations"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02. Marketplace",
+      "item": [
+        {
+          "name": "Listar Ofertas - Array Plano (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/offers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "offers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Ofertas - Paginado (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/offers?page=0&size=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "offers"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Ofertas por Keyword (Company)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 con resultados\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "    var json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/offers?keyword=cobre",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "offers"
+              ],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "cobre"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Detalle de Oferta (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/offers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "offers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Demandas - Array Plano (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/demands",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "demands"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Demandas - Paginado (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/demands?page=0&size=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "demands"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Demandas por Keyword (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/demands?keyword=plastico",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "demands"
+              ],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "plastico",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Detalle de Demanda (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/demands/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "demands",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03. Operaciones B2B",
+      "item": [
+        {
+          "name": "Crear Oferta (Company)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Bobinas de Cobre Industrial\",\r\n  \"description\": \"Cobre de alta pureza recuperado de motores eléctricos.\",\r\n  \"wasteCategory\": \"METAL_WASTE\",\r\n  \"quantity\": 500.0,\r\n  \"unit\": \"kg\",\r\n  \"price\": 4.50,\r\n  \"availability\": \"Inmediata\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/offers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "offers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Oferta - Owner Only (Company)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Bobinas de Cobre Industrial (Revisado)\",\r\n  \"description\": \"Cobre de alta pureza recuperado de motores eléctricos. Precio ajustado.\",\r\n  \"wasteCategory\": \"METAL_WASTE\",\r\n  \"quantity\": 450.0,\r\n  \"unit\": \"kg\",\r\n  \"price\": 4.20,\r\n  \"availability\": \"En 3 días\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/offers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "offers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Oferta - Owner Only (Company)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/offers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "offers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Demanda (Company)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Buscamos Plástico PET\",\r\n  \"description\": \"Requerimos botellas PET trituradas para extrusión.\",\r\n  \"wasteCategory\": \"PLASTIC_WASTE\",\r\n  \"quantity\": 1000.0,\r\n  \"unit\": \"kg\",\r\n  \"maxBudget\": 0.50,\r\n  \"urgency\": \"Alta\",\r\n  \"validity\": \"30\",\r\n  \"pickupZone\": \"Móstoles Norte\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/demands",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "demands"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Demanda - Owner Only (Company)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Buscamos Plástico PET Urgente\",\r\n  \"description\": \"Requerimos botellas PET trituradas para extrusión. Urge.\",\r\n  \"wasteCategory\": \"PLASTIC_WASTE\",\r\n  \"quantity\": 1500.0,\r\n  \"unit\": \"kg\",\r\n  \"maxBudget\": 0.60,\r\n  \"urgency\": \"Muy Alta\",\r\n  \"validity\": \"15\",\r\n  \"pickupZone\": \"Móstoles Norte\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/demands/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "demands",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Demanda - Owner Only (Company)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/demands/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "demands",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Acuerdos - Array Plano (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/agreements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "agreements"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Detalle de Acuerdo (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/agreements/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "agreements",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Proponer Nuevo Acuerdo (Company)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"offerId\": 5,\r\n  \"quantity\": 100.0,\r\n  \"unit\": \"kg\",\r\n  \"agreedPrice\": 450.0,\r\n  \"pickupDate\": \"2026-06-15\",\r\n  \"notes\": \"Propuesta enviada desde Postman\",\r\n  \"destinationCompany\": {\r\n    \"id\": 4\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/agreements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "agreements"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar Estado Acuerdo (Company/Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"status\": \"ACCEPTED\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/agreements/1/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "agreements",
+                "1",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Acuerdo - Solo Partes Implicadas (Company)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Acuerdo eliminado o protegido: 204 o 403\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([204, 403]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/agreements/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "agreements",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Exportar PDF de Acuerdo - Utility Service (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/agreements/1/pdf",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "agreements",
+                "1",
+                "pdf"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calcular Impacto CO2 (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sustainability/impacts?quantity=500&category=METAL_WASTE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sustainability",
+                "impacts"
+              ],
+              "query": [
+                {
+                  "key": "quantity",
+                  "value": "500"
+                },
+                {
+                  "key": "category",
+                  "value": "METAL_WASTE"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Coincidencias para Demanda (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/matches/demands/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "matches",
+                "demands",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Todos los Mensajes (Company)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 y es array\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "    pm.expect(pm.response.json()).to.be.an(\"array\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "messages"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Mensaje por ID (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/messages/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "messages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enviar Mensaje (Company)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Mensaje creado: Status 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"subject\": \"Consulta sobre tu oferta de cobre\",\r\n  \"body\": \"Buenos días, me interesa la oferta. ¿Podemos hablar?\",\r\n  \"sender\": { \"id\": 2 },\r\n  \"recipient\": { \"id\": 3 }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "messages"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Mensaje - Solo Remitente (Company)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Mensaje eliminado: Status 204\", function () {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/messages/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "messages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04. Administración",
+      "item": [
+        {
+          "name": "Listar Empresas - Array Plano (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/companies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "companies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Empresas - Paginado (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/companies?page=0&size=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "companies"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Perfil de Empresa (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/companies/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "companies",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Perfil Empresa (Company)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 2,\r\n  \"commercialName\": \"Metales del Sur Renovado\",\r\n  \"contactEmail\": \"contacto@metalesdelsur.es\",\r\n  \"taxId\": \"A28123456\",\r\n  \"address\": \"Calle Industrial 99\",\r\n  \"phone\": \"916000222\",\r\n  \"industrialSector\": \"Metales\",\r\n  \"description\": \"Empresa actualizada desde Postman.\",\r\n  \"password\": \"1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/companies/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "companies",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Datos de Impacto (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/charts/impact",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "charts",
+                "impact"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05. Seguridad & Sad Paths",
+      "item": [
+        {
+          "name": "Registro Duplicado → 400 Bad Request (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Error 400 por email duplicado\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Mensaje de error presente\", function () {\r",
+                  "    var json = pm.response.json();\r",
+                  "    pm.expect(json).to.have.property(\"error\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"contactEmail\": \"admin@ecomostoles.es\",\r\n    \"password\": \"cualquier_pass\",\r\n    \"commercialName\": \"Empresa Duplicada\",\r\n    \"taxId\": \"X99999999\",\r\n    \"industrialSector\": \"Test\",\r\n    \"address\": \"Calle Test 1\",\r\n    \"phone\": \"600000000\",\r\n    \"description\": \"Este email ya existe en el sistema\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/registrations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "registrations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Modificar Oferta Ajena → 403 Forbidden (Company)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"IDOR bloqueado: Status 403 o 404\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([403, 404]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Intento de IDOR\",\r\n    \"description\": \"Modificando oferta que no me pertenece\",\r\n    \"quantity\": 1.0,\r\n    \"unit\": \"kg\",\r\n    \"price\": 1.0,\r\n    \"availability\": \"Inmediata\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/offers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "offers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Oferta Sin Token → 401 Unauthorized (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Acceso denegado sin token: 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Oferta sin autenticar\",\r\n    \"description\": \"No debería funcionar\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/offers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "offers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Recurso Inexistente → 404 Not Found (Company)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Recurso no encontrado: Status 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/offers/99999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "offers",
+                "99999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Acuerdo Ajeno → 403 Forbidden (Company)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"IDOR en acuerdo bloqueado: 403 o 404\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([403, 404]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/agreements/99999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "agreements",
+                "99999"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06. Imágenes y Archivos (Images)",
+      "item": [
+        {
+          "name": "Obtener Imagen de Oferta (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/images/offers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "images",
+                "offers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Subir Imagen a Oferta (Company)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "imageFile",
+                  "type": "file",
+                  "uuid": "ca64e3ec-ff03-4b64-a39d-ac8ee794bb7f",
+                  "src": "/C:/Users/nieto/Pictures/Screenshots/Captura de pantalla 2025-11-05 155619.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/images/offers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "images",
+                "offers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Logo de Empresa (Company)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/images/companies/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "images",
+                "companies",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Subir Logo de Empresa (Company)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "imageFile",
+                  "type": "file",
+                  "uuid": "59e5521e-3c83-4b4a-bc7a-d32b762ea054",
+                  "src": "/C:/Users/nieto/Pictures/Screenshots/Captura de pantalla 2025-11-05 155619.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/images/companies/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "images",
+                "companies",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}

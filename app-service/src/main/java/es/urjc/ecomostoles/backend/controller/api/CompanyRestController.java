@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.NoSuchElementException;
 
 /**
@@ -179,13 +180,22 @@ public class CompanyRestController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Fields to update (only public-safe fields are applied)",
                     required = true)
-            @Valid @RequestBody CompanyDTO updateForm) {
+            @Valid @RequestBody CompanyDTO updateForm,
+            Principal principal) {
 
         log.info("[API] PUT /api/v1/companies/{} — updating fields: commercialName='{}', email='{}'",
                 id, updateForm.getCommercialName(), updateForm.getContactEmail());
 
         Company existing = companyService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Company not found with id: " + id));
+
+        // IDOR Protection: Verify that the authenticated user is the owner of this company profile
+        if (principal == null || !existing.getContactEmail().equals(principal.getName())) {
+            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to update company profile {}", 
+                    principal != null ? principal.getName() : "anonymous", id);
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "You are not authorized to update this company profile");
+        }
 
         // Apply only the fields exposed in CompanyDTO — never touch password/logo/roles
         existing.setCommercialName(updateForm.getCommercialName());

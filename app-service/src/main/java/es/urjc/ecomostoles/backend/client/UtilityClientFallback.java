@@ -10,8 +10,8 @@ public class UtilityClientFallback implements UtilityClient {
 
     @Override
     public ResponseEntity<byte[]> generateCertificate(AgreementDTO agreement) {
-        // Fallback: Si utility-service cae o responde con lentitud, 
-        // evitamos el fallo en cascada devolviendo una respuesta controlada.
+        // Fallback: If utility-service is down or slow, 
+        // prevent cascading failure by returning a controlled response.
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new byte[0]);
     }
 }

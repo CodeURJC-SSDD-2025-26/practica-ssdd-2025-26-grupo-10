@@ -78,7 +78,7 @@ class OfferRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 2: Offer CRUD - Crear oferta válida (201)")
+    @DisplayName("Phase 2: Offer CRUD - Create valid offer (201)")
     void shouldCreateOfferSuccessfully() throws Exception {
         OfferDTO request = new OfferDTO(
                 null, "Lote de Palets", "Palets de madera en buen estado",
@@ -94,7 +94,7 @@ class OfferRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL)
-    @DisplayName("Fase 2: Offer CRUD - Listado paginado (200)")
+    @DisplayName("Phase 2: Offer CRUD - Paginated listing (200)")
     void shouldListOffersPaginated() throws Exception {
         mockMvc.perform(get("/api/v1/offers?page=0&size=5"))
                 .andExpect(status().isOk());
@@ -102,7 +102,7 @@ class OfferRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 2: Offer Validation - Título vacío (400)")
+    @DisplayName("Phase 2: Offer Validation - Empty title (400)")
     void shouldReturn400WhenTitleIsEmpty() throws Exception {
         OfferDTO invalidRequest = new OfferDTO(
                 null, "", "Palets",
@@ -118,7 +118,7 @@ class OfferRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 2: Offer Validation - Precio negativo (400)")
+    @DisplayName("Phase 2: Offer Validation - Negative price (400)")
     void shouldReturn400WhenPriceIsNegative() throws Exception {
         OfferDTO invalidRequest = new OfferDTO(
                 null, "Oferta", "Desc",

@@ -31,12 +31,12 @@ class GlobalConfigurationRestControllerTest {
 
     @Test
     @WithMockUser(username = "test@company.com", roles = {"COMPANY"})
-    @DisplayName("Fase 4: Global Config - Obtener configuración del sistema (200 OK)")
+    @DisplayName("Phase 4: Global Config - Get system configuration (200 OK)")
     void shouldGetGlobalConfiguration() throws Exception {
-        // Stub comodín como fallback: evita NPE en Map.of() si alguna clave devuelve null
+        // Wildcard stub as fallback: prevents NPE in Map.of() if any key returns null
         when(configurationService.getAutoValue(anyString())).thenReturn("default-value");
 
-        // Stubs específicos — sobreescriben el comodín para las claves que nos importan
+        // Specific stubs — override the wildcard for the keys we care about
         when(configurationService.getAutoValue("platformName")).thenReturn("EcoMóstoles Test");
         when(configurationService.getAutoValue("contactEmail")).thenReturn("test@ecomostoles.com");
         when(configurationService.getAutoValue("platformCity")).thenReturn("Móstoles");

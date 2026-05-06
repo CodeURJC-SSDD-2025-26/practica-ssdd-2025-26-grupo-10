@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.data.domain.Page;
 
 import java.net.URI;
 import java.security.Principal;
@@ -57,12 +58,48 @@ public class MessageRestController {
             @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<List<MessageDTO>> getAllMessages() {
+    public ResponseEntity<?> getAllMessages(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            Principal principal) {
         log.debug("[API] GET /api/v1/messages");
-        List<MessageDTO> messages = messageService.getAll().stream()
-                .map(messageMapper::toDto)
-                .toList();
-        return ResponseEntity.ok(messages);
+
+        // Plain list logic (no parameters)
+        if (page == null || size == null) {
+            List<Message> allMessages;
+            if (principal == null) {
+                allMessages = List.of();
+            } else {
+                Company userCompany = companyService.findByEmail(principal.getName())
+                        .orElseThrow(() -> new NoSuchElementException("Authenticated user company not found"));
+
+                // Only return messages where the user is sender OR recipient
+                allMessages = messageService.getAll().stream()
+                        .filter(m -> (m.getSender() != null && m.getSender().getId().equals(userCompany.getId())) ||
+                                     (m.getRecipient() != null && m.getRecipient().getId().equals(userCompany.getId())))
+                        .toList();
+            }
+
+            List<MessageDTO> messages = allMessages.stream()
+                    .map(messageMapper::toDto)
+                    .toList();
+            return ResponseEntity.ok(messages);
+        }
+
+        // Pagination logic
+        org.springframework.data.domain.Pageable pageable = 
+            org.springframework.data.domain.PageRequest.of(page, size);
+
+        Page<MessageDTO> resultPage;
+        if (principal == null) {
+            resultPage = messageService.getAllPaginated(pageable).map(messageMapper::toDto);
+        } else {
+            Company userCompany = companyService.findByEmail(principal.getName())
+                    .orElseThrow(() -> new NoSuchElementException("Authenticated user company not found"));
+            resultPage = messageService.getByCompanyPaginated(userCompany, pageable).map(messageMapper::toDto);
+        }
+
+        return ResponseEntity.ok(resultPage);
     }
 
     @Operation(summary = "Get message by ID", description = "Retrieves the detail of a single message.")
@@ -73,10 +110,20 @@ public class MessageRestController {
             @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<MessageDTO> getMessageById(@PathVariable Long id) {
+    public ResponseEntity<MessageDTO> getMessageById(@PathVariable Long id, Principal principal) {
         log.debug("[API] GET /api/v1/messages/{}", id);
         Message message = messageService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Message not found with id: " + id));
+
+        // IDOR Protection: Verify that the principal is part of the message
+        boolean isSender = message.getSender() != null && message.getSender().getContactEmail().equals(principal.getName());
+        boolean isRecipient = message.getRecipient() != null && message.getRecipient().getContactEmail().equals(principal.getName());
+
+        if (principal == null || (!isSender && !isRecipient)) {
+            log.warn("[SECURITY] Unauthorized attempt to read message ID: {} by user: {}", id, principal != null ? principal.getName() : "anonymous");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to view this message");
+        }
+
         return ResponseEntity.ok(messageMapper.toDto(message));
     }
 
@@ -88,19 +135,15 @@ public class MessageRestController {
             @ApiResponse(responseCode = "404", description = "Sender or Recipient not found", content = @Content)
     })
     @PostMapping
-    public ResponseEntity<MessageDTO> sendMessage(@Valid @RequestBody MessageDTO messageDTO) {
+    public ResponseEntity<MessageDTO> sendMessage(@Valid @RequestBody MessageDTO messageDTO, Principal principal) {
         log.info("[API] POST /api/v1/messages -- sending message: '{}'", messageDTO.subject());
 
-        // Get Sender and Recipient companies
-        Long senderId = (messageDTO.sender() != null) ? messageDTO.sender().getId() : null;
+        // Enforce sender identity from Principal (Impersonation protection)
+        Company sender = companyService.findByEmail(principal.getName())
+                .orElseThrow(() -> new NoSuchElementException("Authenticated sender company not found: " + principal.getName()));
+
+        // Get Recipient company from DTO
         Long recipientId = (messageDTO.recipient() != null) ? messageDTO.recipient().getId() : null;
-
-        Company sender = null;
-        if (senderId != null) {
-            sender = companyService.findById(senderId)
-                    .orElseThrow(() -> new NoSuchElementException("Sender company not found with id: " + senderId));
-        }
-
         Company recipient = null;
         if (recipientId != null) {
             recipient = companyService.findById(recipientId)

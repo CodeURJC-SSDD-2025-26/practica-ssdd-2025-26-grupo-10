@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -13,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -40,6 +42,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/public/**").permitAll()
                 .requestMatchers("/api/v1/config/**").permitAll()
+                // Explicitly protect admin operations in the API
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/companies/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider)
@@ -56,6 +60,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Allow public access to static resources, login, registration, and Swagger
                 .requestMatchers("/", "/login", "/registro", "/css/**", "/js/**", "/img/**", "/images/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                // Explicitly protect the entire /admin path
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 // All other web pages require being logged in
                 .anyRequest().authenticated()
             )

@@ -43,7 +43,7 @@ class ImageRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 2: Image - Subir logo de empresa (Mocked Service 204)")
+    @DisplayName("Phase 2: Image - Upload company logo (Mocked Service 204)")
     void shouldUploadCompanyLogo() throws Exception {
         // Mock the company retrieval and save to avoid any DB/Disk 500 errors
         Company mockCompany = new Company();
@@ -68,7 +68,7 @@ class ImageRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 2: Image - Descargar logo inexistente (404)")
+    @DisplayName("Phase 2: Image - Download non-existent logo (404)")
     void shouldReturn404WhenLogoNotFound() throws Exception {
         Company mockCompany = new Company();
         mockCompany.setId(1L);
