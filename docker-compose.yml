@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: ecomostoles-db
+    environment:
+      MYSQL_DATABASE: ecomostoles
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: ecomostoles_user
+      MYSQL_PASSWORD: securepass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  utility-service:
+    build: ./utility-service
+    container_name: utility-service
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
+
+  app-service:
+    build: ./app-service
+    container_name: app-service
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/ecomostoles?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: ecomostoles_user
+      SPRING_DATASOURCE_PASSWORD: securepass
+      UTILITY_SERVICE_URL: http://utility-service:8080
+    depends_on:
+      db:
+        condition: service_healthy
+      utility-service:
+        condition: service_started
+    restart: unless-stopped
