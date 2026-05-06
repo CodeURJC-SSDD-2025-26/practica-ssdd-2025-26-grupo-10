@@ -11,9 +11,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,7 +42,8 @@ import java.util.Map;
  * via {@code utility.service.url} so it can be overridden per environment
  * (dev → localhost:8081, prod → internal DNS name).</p>
  */
-@Controller
+@RestController
+@RequestMapping("/api/v1/agreements")
 public class PdfExportController {
 
     private static final Logger log = LoggerFactory.getLogger(PdfExportController.class);
@@ -81,7 +83,7 @@ public class PdfExportController {
      * @return {@code 200 OK} with {@code application/pdf} binary body,
      *         or an appropriate HTTP error status on failure.
      */
-    @GetMapping("/acuerdo/{id}/pdf")
+    @GetMapping("/{id}/pdf")
     public ResponseEntity<byte[]> generateAgreementPdf(
             @PathVariable Long id, Principal principal) {
 
