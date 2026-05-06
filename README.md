@@ -847,17 +847,21 @@ Diagrama actualizado incluyendo los @RestController y su relación con los @Serv
 
 ### **Participación de Miembros en la Práctica 3**
 
-#### **Alumno 1 - [Nombre Completo]**
+#### **Alumno 1 - [Guillermo Domínguez Galindo]**
 
-[Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
+[En esta Práctica 3, mi trabajo se ha centrado en construir una base sólida, segura y escalable para el proyecto, desarrollando la estructura principal de la API para gestionar los datos y creando un algoritmo inteligente para emparejar oferta y demanda.
+
+Para llevarlo a cabo, he configurado todo el sistema para que funcione ágilmente y sea fácil de desplegar mediante contenedores Docker, aplicando al mismo tiempo auditorías y medidas de seguridad para proteger la información frente a vulnerabilidades.
+
+Además, me he apoyado en la automatización para generar la documentación técnica, he utilizado herramientas para que los datos internos fluyan de forma eficiente, y he blindado el trabajo con un conjunto completo de pruebas que garantizan que todas las piezas del sistema encajan y funcionan a la perfección de principio a fin.]
 
 | Nº  |               Commits                |           Files           |
 | :-: | :----------------------------------: | :-----------------------: |
-|  1  | [Descripción commit 1](URL_commit_1) | [Archivo1](URL_archivo_1) |
-|  2  | [Descripción commit 2](URL_commit_2) | [Archivo2](URL_archivo_2) |
-|  3  | [Descripción commit 3](URL_commit_3) | [Archivo3](URL_archivo_3) |
-|  4  | [Descripción commit 4](URL_commit_4) | [Archivo4](URL_archivo_4) |
-|  5  | [Descripción commit 5](URL_commit_5) | [Archivo5](URL_archivo_5) |
+|  1  | [Add MapStruct mappers for Agreement, Company, Demand, Message, and Offer entities](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/1bb401daca885b37537352058a36f8459bb434cf) | [AgreementMapper](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/1bb401daca885b37537352058a36f8459bb434cf/app-service/src/main/java/es/urjc/ecomostoles/backend/mapper/AgreementMapper.java) |
+|  2  | [Implement heuristic matchmaking algorithm for Demand-Offer pairing and implement DashboardRestController for analytics data export](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/9a867d036dec79be675f2cabcf13dcf5b2ff07e3) | [DashboardRestController](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/9a867d036dec79be675f2cabcf13dcf5b2ff07e3/app-service/src/main/java/es/urjc/ecomostoles/backend/controller/api/DashboardRestController.java) |
+|  3  | [Add fully automated Postman collection, export static OpenAPI in yaml, and fix Spring Cloud compatibility](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/f94327dd5affaec7e35ff9946561a5570cf548ae) | [SustainabilityRestController](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/f94327dd5affaec7e35ff9946561a5570cf548ae/app-service/src/main/java/es/urjc/ecomostoles/backend/controller/api/SustainabilityRestController.java) |
+|  4  | [implement REST API infrastructure including security configuration, CRUD controllers, services, and DTO mappings and Test: Complete integration suite successfully completed (Phases 1-4)](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/fdad1215b1770bd2036686919528c8d44871a109) | [CompanyRestController](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/fdad1215b1770bd2036686919528c8d44871a109/app-service/src/main/java/es/urjc/ecomostoles/backend/controller/api/CompanyRestController.java) |
+|  5  | [In-depth infrastructure audit, REST controllers, security (IDOR/CSRF) and tests](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/d233bfb28b7a1b2bc4fedae5d8e2167c2b20cdca) | [AgreementRestController](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/blob/d233bfb28b7a1b2bc4fedae5d8e2167c2b20cdca/app-service/src/main/java/es/urjc/ecomostoles/backend/controller/api/AgreementRestController.java) |
 
 ---
 
