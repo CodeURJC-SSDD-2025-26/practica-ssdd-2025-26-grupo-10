@@ -1,17 +1,36 @@
 package es.urjc.ecomostoles.backend.dto;
 
 import es.urjc.ecomostoles.backend.model.Demand;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
 public record DemandDTO(
         Long id,
+        
+        @NotBlank(message = "El título es obligatorio")
         String title,
+        
+        @NotBlank(message = "Debes seleccionar un tipo de residuo")
         String wasteCategory,
+        
+        @NotBlank(message = "La descripción es obligatoria")
         String description,
+        
+        @NotNull(message = "La cantidad es obligatoria")
+        @PositiveOrZero(message = "La cantidad no puede ser negativa")
         Double quantity,
+        
+        @NotBlank(message = "La unidad es obligatoria")
         String unit,
+        
         String urgency,
+        
+        @NotNull(message = "El presupuesto es obligatorio")
+        @PositiveOrZero(message = "El presupuesto no puede ser negativo")
         Double maxBudget,
+        
         String pickupZone,
         String validity,
         es.urjc.ecomostoles.backend.model.DemandStatus status,

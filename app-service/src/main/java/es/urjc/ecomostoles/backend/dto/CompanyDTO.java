@@ -39,6 +39,7 @@ public class CompanyDTO {
     @NotBlank(message = "La descripción de la empresa es obligatoria")
     @Size(max = 255, message = "La descripción no puede superar los 255 caracteres")
     private String description;
+    private String password;
     private String role;
     private Double co2Saved = 0.0;
     private Integer ranking;
@@ -135,6 +136,14 @@ public class CompanyDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getRole() {

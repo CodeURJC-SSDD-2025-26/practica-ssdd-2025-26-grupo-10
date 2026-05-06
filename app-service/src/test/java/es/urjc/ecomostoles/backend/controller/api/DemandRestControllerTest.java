@@ -1,9 +1,9 @@
 package es.urjc.ecomostoles.backend.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.urjc.ecomostoles.backend.dto.OfferDTO;
+import es.urjc.ecomostoles.backend.dto.DemandDTO;
 import es.urjc.ecomostoles.backend.model.Company;
-import es.urjc.ecomostoles.backend.model.OfferStatus;
+import es.urjc.ecomostoles.backend.model.DemandStatus;
 import es.urjc.ecomostoles.backend.repository.AgreementRepository;
 import es.urjc.ecomostoles.backend.repository.CompanyRepository;
 import es.urjc.ecomostoles.backend.repository.DemandRepository;
@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
-class OfferRestControllerTest {
+class DemandRestControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,15 +43,15 @@ class OfferRestControllerTest {
     private CompanyRepository companyRepository;
 
     @Autowired
-    private OfferRepository offerRepository;
+    private DemandRepository demandRepository;
 
     @Autowired
-    private DemandRepository demandRepository;
+    private OfferRepository offerRepository;
 
     @Autowired
     private AgreementRepository agreementRepository;
 
-    private static final String TEST_EMAIL = "offer_owner@test.com";
+    private static final String TEST_EMAIL = "demand_owner@test.com";
 
     @BeforeEach
     void setUp() {
@@ -60,15 +60,14 @@ class OfferRestControllerTest {
         demandRepository.deleteAll();
         companyRepository.deleteAll();
 
-        // Guaranteed unique and valid TaxID
-        String validTaxId = "A" + String.format("%08d", new Random().nextInt(100000000));
-        
+        String validTaxId = "B" + String.format("%08d", new Random().nextInt(100000000));
+
         Company owner = new Company();
-        owner.setCommercialName("Offer Owner Corp");
+        owner.setCommercialName("Demand Owner Corp");
         owner.setTaxId(validTaxId);
         owner.setContactEmail(TEST_EMAIL);
         owner.setPassword("password");
-        owner.setAddress("Calle Test 123");
+        owner.setAddress("Calle Demand 1");
         owner.setPhone("123");
         owner.setIndustrialSector("Industry");
         owner.setDescription("Desc");
@@ -78,15 +77,15 @@ class OfferRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 2: Offer CRUD - Crear oferta válida (201)")
-    void shouldCreateOfferSuccessfully() throws Exception {
-        OfferDTO request = new OfferDTO(
-                null, "Lote de Palets", "Palets de madera en buen estado",
-                "WOOD_WASTE", 50.0, "uds", 100.0, "Inmediata",
-                OfferStatus.ACTIVE, null, 0, null
+    @DisplayName("Fase 2: Demand CRUD - Crear demanda válida (201)")
+    void shouldCreateDemandSuccessfully() throws Exception {
+        DemandDTO request = new DemandDTO(
+                null, "Busco Chatarra", "METAL_WASTE", "Chatarra",
+                200.0, "kg", "Alta", 500.0, "Móstoles", "30",
+                DemandStatus.ACTIVE, null, null, null, 0, null
         );
 
-        mockMvc.perform(post("/api/v1/offers")
+        mockMvc.perform(post("/api/v1/demands")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
@@ -94,39 +93,23 @@ class OfferRestControllerTest {
 
     @Test
     @WithMockUser(username = TEST_EMAIL)
-    @DisplayName("Fase 2: Offer CRUD - Listado paginado (200)")
-    void shouldListOffersPaginated() throws Exception {
-        mockMvc.perform(get("/api/v1/offers?page=0&size=5"))
+    @DisplayName("Fase 2: Demand CRUD - Listado paginado (200)")
+    void shouldListDemandsPaginated() throws Exception {
+        mockMvc.perform(get("/api/v1/demands?page=0&size=5"))
                 .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 2: Offer Validation - Título vacío (400)")
-    void shouldReturn400WhenTitleIsEmpty() throws Exception {
-        OfferDTO invalidRequest = new OfferDTO(
-                null, "", "Palets",
-                "WOOD_WASTE", 10.0, "kg", 5.0, "Hoy",
-                OfferStatus.ACTIVE, null, 0, null
+    @DisplayName("Fase 2: Demand Validation - Presupuesto negativo (400)")
+    void shouldReturn400WhenBudgetIsNegative() throws Exception {
+        DemandDTO invalidRequest = new DemandDTO(
+                null, "Error Budget", "PLASTIC_WASTE", "Error",
+                1.0, "kg", "Baja", -10.0, "Madrid", "15",
+                DemandStatus.ACTIVE, null, null, null, 0, null
         );
 
-        mockMvc.perform(post("/api/v1/offers")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidRequest)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
-    @DisplayName("Fase 2: Offer Validation - Precio negativo (400)")
-    void shouldReturn400WhenPriceIsNegative() throws Exception {
-        OfferDTO invalidRequest = new OfferDTO(
-                null, "Oferta", "Desc",
-                "METAL_WASTE", 10.0, "kg", -1.0, "Mañana",
-                OfferStatus.ACTIVE, null, 0, null
-        );
-
-        mockMvc.perform(post("/api/v1/offers")
+        mockMvc.perform(post("/api/v1/demands")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
