@@ -55,10 +55,12 @@ public class OfferRestController {
 
     private final OfferService offerService;
     private final OfferMapper  offerMapper;
+    private final es.urjc.ecomostoles.backend.service.CompanyService companyService;
 
-    public OfferRestController(OfferService offerService, OfferMapper offerMapper) {
+    public OfferRestController(OfferService offerService, OfferMapper offerMapper, es.urjc.ecomostoles.backend.service.CompanyService companyService) {
         this.offerService = offerService;
         this.offerMapper  = offerMapper;
+        this.companyService = companyService;
     }
 
     // -------------------------------------------------------------------------
@@ -175,6 +177,13 @@ public class OfferRestController {
                 offerDTO.status() != null
                         ? offerDTO.status()
                         : es.urjc.ecomostoles.backend.model.OfferStatus.ACTIVE);
+
+        // Assign company from the authenticated user (JWT)
+        String userEmail = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        es.urjc.ecomostoles.backend.model.Company company = companyService.findByEmail(userEmail)
+                .orElseThrow(() -> new java.util.NoSuchElementException("Authenticated company not found: " + userEmail));
+        
+        newOffer.setCompany(company);
 
         Offer saved = offerService.save(newOffer);
         log.info("[API] POST /api/v1/offers -- saved with ID: {}", saved.getId());

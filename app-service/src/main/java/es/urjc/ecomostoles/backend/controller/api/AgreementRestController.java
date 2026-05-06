@@ -91,8 +91,8 @@ public class AgreementRestController {
 
         Agreement agreement = agreementMapper.toEntity(agreementDTO);
         
-        // Use a harcoded user email for Phase 3 (will be extracted from JWT in Phase 4)
-        String userEmail = "contacto@metalesdelsur.es";
+        // Extract user email from JWT security context
+        String userEmail = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
         Long destinationCompanyId = (agreementDTO.destinationCompany() != null) ? agreementDTO.destinationCompany().getId() : null;
 
         agreementService.registerNewAgreement(agreement, userEmail, agreementDTO.offerId(), destinationCompanyId);
@@ -123,6 +123,29 @@ public class AgreementRestController {
         // Delegating entirely to the updateAgreement method in the service which handles side-effects
         Agreement updatedData = agreementMapper.toEntity(agreementDTO);
         Agreement updated = agreementService.updateAgreement(id, updatedData);
+        
+        return ResponseEntity.ok(agreementMapper.toDto(updated));
+    }
+
+    @Operation(summary = "Update agreement status", description = "Updates only the status of an existing agreement.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Status updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Agreement not found")
+    })
+    @PutMapping("/{id}/status")
+    public ResponseEntity<AgreementDTO> updateAgreementStatus(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, String> statusMap) {
+        
+        log.info("[API] PUT /api/v1/agreements/{}/status", id);
+        String statusStr = statusMap.get("status");
+        AgreementStatus newStatus = AgreementStatus.valueOf(statusStr);
+        
+        Agreement agreement = agreementService.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Agreement not found with id: " + id));
+        
+        agreement.setStatus(newStatus);
+        Agreement updated = agreementService.updateAgreement(id, agreement);
         
         return ResponseEntity.ok(agreementMapper.toDto(updated));
     }

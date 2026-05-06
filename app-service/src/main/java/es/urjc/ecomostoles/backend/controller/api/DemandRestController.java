@@ -40,10 +40,12 @@ public class DemandRestController {
 
     private final DemandService demandService;
     private final DemandMapper demandMapper;
+    private final es.urjc.ecomostoles.backend.service.CompanyService companyService;
 
-    public DemandRestController(DemandService demandService, DemandMapper demandMapper) {
+    public DemandRestController(DemandService demandService, DemandMapper demandMapper, es.urjc.ecomostoles.backend.service.CompanyService companyService) {
         this.demandService = demandService;
         this.demandMapper = demandMapper;
+        this.companyService = companyService;
     }
 
     // -------------------------------------------------------------------------
@@ -152,6 +154,13 @@ public class DemandRestController {
 
         // createdAt, publicationDate, and expiryDate are automatically handled 
         // by the @PrePersist lifecycle hook in Demand entity.
+
+        // Assign company from the authenticated user (JWT)
+        String userEmail = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        es.urjc.ecomostoles.backend.model.Company company = companyService.findByEmail(userEmail)
+                .orElseThrow(() -> new java.util.NoSuchElementException("Authenticated company not found: " + userEmail));
+        
+        newDemand.setCompany(company);
 
         Demand saved = demandService.save(newDemand);
         log.info("[API] POST /api/v1/demands -- saved with ID: {}", saved.getId());

@@ -179,6 +179,14 @@ public class AgreementService {
         agreement.setRegistrationDate(LocalDateTime.now());
         agreement.setStatus(AgreementStatus.PENDING);
         agreement.setOriginCompany(originCompany);
+        
+        // --- TRANSIENT DEMAND FIX ---
+        // If the mapper created a Demand object with only an ID, Hibernate will throw 
+        // a TransientObjectException. We ensure it's null unless we explicitly support 
+        // Demand-based agreements in this flow later.
+        agreement.setDemand(null);
+        // -----------------------------
+
 
         // --- CALCULATE CO2 IMPACT ---
         double co2 = sustainabilityEngine.calculateCo2Impact(agreement.getQuantity(),
