@@ -70,43 +70,56 @@ public class OfferRestController {
     // GET /api/v1/offers
     // -------------------------------------------------------------------------
 
+    /**
+     * Returns a list of offers with dynamic response format.
+     *
+     * <p>If 'page' and 'size' are omitted, it returns a direct JSON array (List).
+     * If they are provided, it returns a paginated JSON object (Page).</p>
+     *
+     * @param keyword Optional keyword filter.
+     * @param page Optional page index.
+     * @param size Optional page size.
+     * @return a {@link java.util.List} or {@link org.springframework.data.domain.Page} of {@link OfferSummary}.
+     */
     @Operation(
-            summary     = "List offers (paginated, optional keyword filter)",
-            description = "Returns a paginated list of material exchange offers. " +
-                          "Provide `keyword` to filter by title or description (ACTIVE offers only). " +
-                          "Omit `keyword` to retrieve all offers across all statuses."
+            summary     = "List offers (Dynamic format)",
+            description = "Returns all offers as a direct array if no params provided, or a paginated object if page/size are set."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Page of offers returned successfully",
-                    content = @Content(schema = @Schema(implementation = OfferSummary.class))),
+            @ApiResponse(responseCode = "200", description = "Offers returned successfully"),
             @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<Page<OfferSummary>> getAllOffers(
-            @Parameter(
-                    description = "Optional free-text keyword to search by title or description " +
-                                  "(returns only ACTIVE offers when provided)",
-                    example     = "plastic"
-            )
+    public ResponseEntity<?> getAllOffers(
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
 
-            @ParameterObject
-            @PageableDefault(size = 12, sort = "publicationDate", direction = Sort.Direction.DESC)
-            Pageable pageable) {
+        log.debug("[API] GET /api/v1/offers — Keyword: {}, Page: {}, Size: {}", keyword, page, size);
 
-        Page<OfferSummary> page;
-
-        if (keyword != null && !keyword.isBlank()) {
-            log.debug("[API] GET /api/v1/offers -- keyword search: '{}', page: {}",
-                    keyword, pageable.getPageNumber());
-            page = offerService.searchFilteredOffers(keyword, null, null, pageable);
-        } else {
-            log.debug("[API] GET /api/v1/offers -- full listing, page: {}",
-                    pageable.getPageNumber());
-            page = offerService.getAllPaginated(pageable);
+        // Case 1: No pagination -> Return flat JSON Array
+        if (page == null || size == null) {
+            java.util.List<OfferSummary> list;
+            if (keyword != null && !keyword.isBlank()) {
+                list = offerService.searchFilteredOffers(keyword, null, null, org.springframework.data.domain.Pageable.unpaged()).getContent();
+            } else {
+                list = offerService.findAllList();
+            }
+            return ResponseEntity.ok(list);
         }
 
-        return ResponseEntity.ok(page);
+        // Case 2: Pagination requested -> Return Spring Page Object
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
+                page, size, Sort.by("publicationDate").descending());
+
+        Page<OfferSummary> resultPage;
+        if (keyword != null && !keyword.isBlank()) {
+            resultPage = offerService.searchFilteredOffers(keyword, null, null, pageable);
+        } else {
+            resultPage = offerService.getAllPaginated(pageable);
+        }
+
+        return ResponseEntity.ok(resultPage);
     }
 
     // -------------------------------------------------------------------------

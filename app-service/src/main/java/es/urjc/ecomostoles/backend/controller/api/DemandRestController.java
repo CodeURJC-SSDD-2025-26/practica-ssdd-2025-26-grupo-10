@@ -55,43 +55,58 @@ public class DemandRestController {
     // GET /api/v1/demands
     // -------------------------------------------------------------------------
 
+    /**
+     * Returns a list of demands with dynamic response format.
+     *
+     * <p>If 'page' and 'size' are omitted, it returns a direct JSON array (List).
+     * If they are provided, it returns a paginated JSON object (Page).</p>
+     *
+     * @param keyword Optional keyword filter.
+     * @param page Optional page index.
+     * @param size Optional page size.
+     * @return a {@link java.util.List} or {@link org.springframework.data.domain.Page} of {@link DemandDTO}.
+     */
     @Operation(
-            summary = "List demands (paginated, optional keyword filter)",
-            description = "Returns a paginated list of material exchange demands. " +
-                    "Provide `keyword` to filter by title or description (ACTIVE demands only). " +
-                    "Omit `keyword` to retrieve all demands across all statuses."
+            summary     = "List demands (Dynamic format)",
+            description = "Returns all demands as a direct array if no params provided, or a paginated object if page/size are set."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Page of demands returned successfully",
-                    content = @Content(schema = @Schema(implementation = DemandDTO.class))),
+            @ApiResponse(responseCode = "200", description = "Demands returned successfully"),
             @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<Page<DemandDTO>> getAllDemands(
-            @Parameter(
-                    description = "Optional free-text keyword to search by title or description " +
-                            "(returns only ACTIVE demands when provided)",
-                    example = "wood"
-            )
+    public ResponseEntity<?> getAllDemands(
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
 
-            @ParameterObject
-            @PageableDefault(size = 12, sort = "publicationDate", direction = Sort.Direction.DESC)
-            Pageable pageable) {
+        log.debug("[API] GET /api/v1/demands — Keyword: {}, Page: {}, Size: {}", keyword, page, size);
 
-        Page<Demand> page;
-
-        if (keyword != null && !keyword.isBlank()) {
-            log.debug("[API] GET /api/v1/demands -- keyword search: '{}', page: {}",
-                    keyword, pageable.getPageNumber());
-            page = demandService.searchFilteredDemands(keyword, es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE, pageable);
-        } else {
-            log.debug("[API] GET /api/v1/demands -- full listing, page: {}",
-                    pageable.getPageNumber());
-            page = demandService.getAllPaginated(pageable);
+        // Case 1: No pagination -> Return flat JSON Array
+        if (page == null || size == null) {
+            java.util.List<DemandDTO> list;
+            if (keyword != null && !keyword.isBlank()) {
+                list = demandService.searchFilteredDemands(keyword, es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE, org.springframework.data.domain.Pageable.unpaged())
+                        .getContent()
+                        .stream().map(demandMapper::toDto).toList();
+            } else {
+                list = demandService.findAllList().stream().map(demandMapper::toDto).toList();
+            }
+            return ResponseEntity.ok(list);
         }
 
-        return ResponseEntity.ok(page.map(demandMapper::toDto));
+        // Case 2: Pagination requested -> Return Spring Page Object
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
+                page, size, Sort.by("publicationDate").descending());
+
+        Page<DemandDTO> resultPage;
+        if (keyword != null && !keyword.isBlank()) {
+            resultPage = demandService.searchFilteredDemands(keyword, es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE, pageable).map(demandMapper::toDto);
+        } else {
+            resultPage = demandService.getAllPaginated(pageable).map(demandMapper::toDto);
+        }
+
+        return ResponseEntity.ok(resultPage);
     }
 
     // -------------------------------------------------------------------------

@@ -41,6 +41,12 @@ public class DemandService {
         return demandRepository.findTop50ByOrderByPublicationDateDesc();
     }
 
+    /** Returns all demands in the system as a simple list (Not paginated). */
+    @Transactional(readOnly = true)
+    public List<Demand> findAllList() {
+        return demandRepository.findAll();
+    }
+
     /** Returns all demands in the system with pagination. */
     @Transactional(readOnly = true)
     public Page<Demand> getAllPaginated(Pageable pageable) {

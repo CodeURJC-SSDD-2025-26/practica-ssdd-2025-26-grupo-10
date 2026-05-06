@@ -1,5 +1,7 @@
 package es.urjc.ecomostoles.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import es.urjc.ecomostoles.backend.model.Company;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -39,6 +41,8 @@ public class CompanyDTO {
     @NotBlank(message = "La descripción de la empresa es obligatoria")
     @Size(max = 255, message = "La descripción no puede superar los 255 caracteres")
     private String description;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String role;
     private Double co2Saved = 0.0;

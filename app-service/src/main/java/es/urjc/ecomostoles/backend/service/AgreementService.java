@@ -63,6 +63,11 @@ public class AgreementService {
     }
 
     @Transactional(readOnly = true)
+    public List<Agreement> findAllList() {
+        return agreementRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
     public Page<Agreement> getAllPaginated(Pageable pageable) {
         return agreementRepository.findAllPaginated(pageable);
     }

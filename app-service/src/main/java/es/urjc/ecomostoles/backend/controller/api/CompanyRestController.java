@@ -59,38 +59,48 @@ public class CompanyRestController {
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Returns a paginated list of all registered companies.
+     * Returns a list of companies with dynamic response format.
      *
-     * <p>Pagination defaults: page 0, size 10, sorted by {@code id} descending.
-     * Override via query params: {@code ?page=1&size=20&sort=commercialName,asc}</p>
+     * <p>If 'page' and 'size' are omitted, it returns a direct JSON array (List).
+     * If they are provided, it returns a paginated JSON object (Page).</p>
      *
-     * @param pageable Spring-resolved pagination and sorting parameters.
-     * @return a {@link Page} of {@link CompanyDTO} — never contains raw entities.
+     * @param page Optional page index.
+     * @param size Optional page size.
+     * @return a {@link java.util.List} or {@link org.springframework.data.domain.Page} of {@link CompanyDTO}.
      */
     @Operation(
-            summary     = "List all companies (paginated)",
-            description = "Returns a paginated, sorted list of all registered companies. " +
-                          "Sensitive fields (password, logo bytes, roles) are excluded from the response."
+            summary     = "List companies (Dynamic format)",
+            description = "Returns all companies as a direct array if no params provided, or a paginated object if page/size are set."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Page of companies returned successfully",
-                    content = @Content(schema = @Schema(implementation = CompanyDTO.class))),
+            @ApiResponse(responseCode = "200", description = "Companies returned successfully"),
             @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<Page<CompanyDTO>> getAllCompanies(
-            @ParameterObject
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
-            Pageable pageable) {
+    public ResponseEntity<?> getAllCompanies(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
 
-        log.debug("[API] GET /api/v1/companies — page: {}, size: {}",
-                pageable.getPageNumber(), pageable.getPageSize());
+        log.debug("[API] GET /api/v1/companies — Requested Page: {}, Size: {}", page, size);
 
-        Page<CompanyDTO> page = companyService
-                .getClientsPaginated(pageable)          // returns Page<Company>
-                .map(companyMapper::toDto);             // strict DTO projection
+        // Case 1: No pagination parameters -> Return flat JSON Array
+        if (page == null || size == null) {
+            java.util.List<CompanyDTO> list = companyService.findAllList()
+                    .stream()
+                    .map(companyMapper::toDto)
+                    .toList();
+            return ResponseEntity.ok(list);
+        }
 
-        return ResponseEntity.ok(page);
+        // Case 2: Pagination requested -> Return Spring Page Object
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
+                page, size, Sort.by("id").ascending());
+
+        Page<CompanyDTO> resultPage = companyService
+                .findAllPaginated(pageable)
+                .map(companyMapper::toDto);
+
+        return ResponseEntity.ok(resultPage);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

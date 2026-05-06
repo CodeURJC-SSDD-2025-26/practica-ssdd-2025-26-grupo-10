@@ -6,6 +6,7 @@ import es.urjc.ecomostoles.backend.security.dto.AuthRequest;
 import es.urjc.ecomostoles.backend.security.dto.AuthResponse;
 import es.urjc.ecomostoles.backend.security.dto.RegisterRequest;
 import es.urjc.ecomostoles.backend.security.jwt.JwtService;
+import es.urjc.ecomostoles.backend.controller.api.exception.UserAlreadyExistsException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
@@ -44,7 +45,11 @@ public class AuthService {
      */
     public AuthResponse register(RegisterRequest request) {
         if (companyRepository.findByContactEmail(request.contactEmail()).isPresent()) {
-            throw new IllegalArgumentException("El email ya está en uso");
+            throw new UserAlreadyExistsException("El email ya está en uso");
+        }
+
+        if (companyRepository.findByTaxId(request.taxId()).isPresent()) {
+            throw new UserAlreadyExistsException("El CIF introducido ya pertenece a una empresa registrada");
         }
 
         Company company = new Company();

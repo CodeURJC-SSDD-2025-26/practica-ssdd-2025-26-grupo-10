@@ -60,6 +60,26 @@ public class GlobalRestControllerAdvice {
                 .body(ApiErrorDTO.of(request.getRequestURI(), "Constraint violation — " + details, HttpStatus.BAD_REQUEST.value()));
     }
 
+    /**
+     * Handles registration conflicts (Duplicate Email/CIF)
+     */
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorDTO> handleUserAlreadyExists(UserAlreadyExistsException ex, HttpServletRequest request) {
+        log.warn("[REST API] 400 BAD REQUEST (Conflict) — path: '{}', reason: '{}'", request.getRequestURI(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiErrorDTO.of(request.getRequestURI(), ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
+    }
+
+    /**
+     * Handles low-level database integrity conflicts (Unique constraints)
+     */
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ApiErrorDTO> handleDataIntegrity(org.springframework.dao.DataIntegrityViolationException ex, HttpServletRequest request) {
+        log.warn("[REST API] 400 BAD REQUEST (Integrity) — path: '{}', reason: '{}'", request.getRequestURI(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiErrorDTO.of(request.getRequestURI(), "El email o CIF ya están registrados en el sistema", HttpStatus.BAD_REQUEST.value()));
+    }
+
     @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
     public ResponseEntity<ApiErrorDTO> handleAuthentication(org.springframework.security.core.AuthenticationException ex, HttpServletRequest request) {
         log.warn("[REST API] 401 UNAUTHORIZED — path: '{}', reason: '{}'", request.getRequestURI(), ex.getMessage());

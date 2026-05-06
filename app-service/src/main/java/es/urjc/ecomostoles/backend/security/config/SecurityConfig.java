@@ -17,10 +17,14 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final es.urjc.ecomostoles.backend.security.handler.CustomAuthenticationSuccessHandler successHandler;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, AuthenticationProvider authenticationProvider) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, 
+                          AuthenticationProvider authenticationProvider,
+                          es.urjc.ecomostoles.backend.security.handler.CustomAuthenticationSuccessHandler successHandler) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.authenticationProvider = authenticationProvider;
+        this.successHandler = successHandler;
     }
 
     // --- 1. REST API CONFIGURATION (STATELESS + JWT) ---
@@ -34,6 +38,8 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/api/v1/public/**").permitAll()
+                .requestMatchers("/api/v1/config/**").permitAll()
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider)
@@ -56,7 +62,7 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/login")               // Our custom HTML template
                 .loginProcessingUrl("/login")      // The URL where the HTML performs the POST
-                .defaultSuccessUrl("/", true)      // Where to go on success
+                .successHandler(successHandler)    // Dynamic redirection based on role
                 .failureUrl("/login?error=true")   // Where to go on failure
                 .permitAll()
             )

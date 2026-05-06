@@ -42,6 +42,12 @@ public class OfferService {
         return offerRepository.findTop50ByOrderByPublicationDateDesc(OfferSummary.class);
     }
 
+    /** Returns all offers in the system as a simple list (Not paginated). */
+    @Transactional(readOnly = true)
+    public List<OfferSummary> findAllList() {
+        return offerRepository.findAllProjectedBy(Pageable.unpaged(), OfferSummary.class).getContent();
+    }
+
     /** Returns all offers in the system with pagination (Projected). */
     @Transactional(readOnly = true)
     public Page<OfferSummary> getAllPaginated(Pageable pageable) {

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.Optional;
+import es.urjc.ecomostoles.backend.controller.api.exception.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,11 +41,24 @@ public class CompanyService {
         return companyRepository.findTop50ByOrderByIdDesc();
     }
 
-    /** Returns a page of companies for administrative management. */
+    /** Returns all companies as a simple list (Not paginated, sorted by ID ASC). */
+    @Transactional(readOnly = true)
+    public List<Company> findAllList() {
+        return companyRepository.findAll(org.springframework.data.domain.Sort.by("id").ascending());
+    }
+
+    /** Returns all companies in the system with pagination (Sorted by ID ASC). */
+    @Transactional(readOnly = true)
+    public Page<Company> findAllPaginated(org.springframework.data.domain.Pageable pageable) {
+        // Force ID ascending sort if not provided, or just use as is if passed from controller
+        return companyRepository.findAll(pageable);
+    }
+
+    /** Returns a page of companies for administrative management (Backward compatibility). */
     @Transactional(readOnly = true)
     public Page<Company> getCompaniesPaginated(int page, int size) {
         return companyRepository
-                .findAll(PageRequest.of(page, size, org.springframework.data.domain.Sort.by("id").descending()));
+                .findAll(PageRequest.of(page, size, org.springframework.data.domain.Sort.by("id").ascending()));
     }
 
     /** Returns a page of companies EXCLUDING administrators. */
@@ -127,11 +141,11 @@ public class CompanyService {
      */
     public Company registerNewCompany(Company company, String rawPassword, byte[] logoBytes) {
         if (companyRepository.findByContactEmail(company.getContactEmail()).isPresent()) {
-            throw new IllegalArgumentException("Este email ya está registrado");
+            throw new UserAlreadyExistsException("Este email ya está registrado");
         }
 
         if (companyRepository.findByTaxId(company.getTaxId()).isPresent()) {
-            throw new IllegalArgumentException("El CIF introducido ya pertenece a una empresa registrada");
+            throw new UserAlreadyExistsException("El CIF introducido ya pertenece a una empresa registrada");
         }
 
         company.setPassword(passwordEncoder.encode(rawPassword));
