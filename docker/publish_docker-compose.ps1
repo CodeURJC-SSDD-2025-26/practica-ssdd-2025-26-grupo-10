@@ -1,5 +1,5 @@
 # Script to publish the OCI Artifact (Docker Compose)
-$DOCKER_USER = "nietodiazdaniel"
+$DOCKER_USER = if ($env:DOCKER_USER) { $env:DOCKER_USER } else { "nietodiazdaniel" }
 
 Write-Host "--- Publishing Docker Compose as OCI Artifact ---" -ForegroundColor Cyan
 

@@ -84,7 +84,7 @@ public class GlobalRestControllerAdvice {
     public ResponseEntity<ApiErrorDTO> handleAuthentication(org.springframework.security.core.AuthenticationException ex, HttpServletRequest request) {
         log.warn("[REST API] 401 UNAUTHORIZED — path: '{}', reason: '{}'", request.getRequestURI(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiErrorDTO.of(request.getRequestURI(), "Invalid credentials", HttpStatus.UNAUTHORIZED.value()));
+                .body(ApiErrorDTO.of(request.getRequestURI(), "Credenciales incorrectas", HttpStatus.UNAUTHORIZED.value()));
     }
 
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)

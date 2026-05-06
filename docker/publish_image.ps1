@@ -1,5 +1,5 @@
 # Script to push images to DockerHub
-$DOCKER_USER = "nietodiazdaniel"
+$DOCKER_USER = if ($env:DOCKER_USER) { $env:DOCKER_USER } else { "nietodiazdaniel" }
 Write-Host "--- Publishing app-service to DockerHub ---" -ForegroundColor Cyan
 docker push "$DOCKER_USER/app-service:latest"
 

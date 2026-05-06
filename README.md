@@ -779,85 +779,113 @@ Diagrama actualizado incluyendo los @RestController y su relación con los @Serv
 
 ### **Instrucciones de Ejecución con Docker**
 
-#### **Requisitos previos:**
+Esta sección describe cómo poner en marcha la aplicación empaquetada utilizando las imágenes oficiales publicadas en DockerHub.
 
-- Docker instalado (versión 20.10 o superior)
-- Docker Compose instalado (versión 2.0 o superior)
+#### **Requisitos previos**
+- **Docker** 20.10 o superior.
+- **Docker Compose** 2.0 o superior.
 
-#### **Pasos para ejecutar con docker-compose:**
+#### **Variables de Entorno**
+Aunque el sistema cuenta con valores por defecto para ejecución local, se pueden configurar las siguientes variables para personalizar el despliegue:
 
-1. **Clonar el repositorio** (si no lo has hecho ya):
+| Variable | Descripción | Valor por defecto |
+| :--- | :--- | :--- |
+| `DOCKER_USER` | Usuario de DockerHub para las imágenes | `nietodiazdaniel` |
+| `KEYSTORE_PASSWORD` | Contraseña del certificado SSL | `ecomostolespass` |
+| `DB_PASSWORD` | Contraseña del usuario de la base de datos | `securepass` |
 
+> 💡 **Nota:** Puedes cambiar el usuario de DockerHub de forma global ejecutando `$env:DOCKER_USER = "otro_usuario"` en tu terminal antes de lanzar los comandos.
+
+#### **Ecosistema de Servicios**
+El archivo `docker-compose.yml` orquesta tres contenedores coordinados:
+
+| Servicio | Imagen | Puerto | Descripción |
+| :--- | :--- | :--- | :--- |
+| **db** | `mysql:8.0` | `3307` | Base de Datos MySQL |
+| **utility-service** | `nietodiazdaniel/utility-service:latest` | `8080` | Microservicio de generación de PDFs |
+| **app-service** | `nietodiazdaniel/app-service:latest` | `8443` | Aplicación principal (Web + REST API) |
+
+#### **Pasos para la ejecución**
+
+1. **Obtener el archivo de configuración**:
    ```bash
-   git clone https://github.com/[usuario]/[repositorio].git
-   cd [repositorio]
+   curl -L -O https://raw.githubusercontent.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/main/docker/docker-compose.yml
    ```
 
-2. **AQUÍ LOS SIGUIENTES PASOS**:
-
-### **Construcción de la Imagen Docker**
-
-#### **Requisitos:**
-
-- Docker instalado en el sistema
-
-#### **Pasos para construir y publicar la imagen:**
-
-1. **Navegar al directorio de Docker**:
-
+2. **Iniciar la plataforma**:
    ```bash
-   cd docker
+   docker compose up -d
    ```
 
-2. **AQUÍ LOS SIGUIENTES PASOS**
+3. **Acceso a la aplicación**:
+   Una vez los servicios estén levantados (puedes verificar con `docker compose ps`), accede a:
+   👉 **[https://localhost:8443](https://localhost:8443)**
 
-### **Despliegue en Máquina Virtual**
+---
 
-#### **Requisitos:**
+### **Documentación para Construcción y Publicación**
 
-- Acceso a la máquina virtual (SSH)
-- Clave privada para autenticación
-- Conexión a la red correspondiente o VPN configurada
+Todos los scripts de automatización se encuentran en la carpeta `docker/`. Es necesario ejecutarlos desde dicho directorio.
 
-#### **Pasos para desplegar:**
+#### **Requisitos de Desarrollo**
+- Docker Desktop en ejecución.
+- Sesión iniciada en DockerHub (`docker login`).
+- (En Windows) Política de ejecución: `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`.
 
-1. **Conectar a la máquina virtual**:
+#### **1. Construcción de Imágenes Docker**
+El proceso utiliza *Multi-Stage Builds*, por lo que **no es necesario tener Maven instalado** en el host.
 
-   ```bash
-   ssh -i [ruta/a/clave.key] [usuario]@[IP-o-dominio-VM]
-   ```
+```powershell
+cd docker
+.\create_image.ps1
+```
+Este script genera localmente las imágenes:
+- `nietodiazdaniel/app-service:latest`
+- `nietodiazdaniel/utility-service:latest`
 
-   Ejemplo:
+#### **2. Publicación de Imágenes en DockerHub**
+Para subir las versiones recién construidas al registro público:
 
-   ```bash
-   ssh -i ssh-keys/app.key vmuser@10.100.139.XXX
-   ```
+```powershell
+.\publish_image.ps1
+```
 
-2. **AQUÍ LOS SIGUIENTES PASOS**:
+#### **3. Publicación del OCI Artifact (Docker Compose)**
+Siguiendo los requisitos avanzados de la práctica, el archivo de orquestación se publica como un artefacto OCI:
 
-### **URL de la Aplicación Desplegada**
+```powershell
+.\publish_docker-compose.ps1
+```
 
-🌐 **URL de acceso**: `https://[nombre-app].etsii.urjc.es:8443`
+---
 
 #### **Credenciales de Usuarios de Ejemplo**
+La base de datos se inicializa automáticamente con estos usuarios (Password: `1234`):
 
-| Rol                | Usuario | Contraseña |
-| :----------------- | :------ | :--------- |
-| Administrador      | admin   | admin123   |
-| Usuario Registrado | user1   | user123    |
-| Usuario Registrado | user2   | user123    |
+| Perfil / Rol | Empresa | Email (Usuario) |
+| :--- | :--- | :--- |
+| **Administrador** | Administrador del Sistema | `admin@ecomostoles.es` |
+| **Registrado** | Metales del Sur S.L. | `contacto@metalesdelsur.es` |
+| **Registrado** | EcoSur Reciclajes S.A. | `reciclajes@ecosur.es` |
+| **Registrado** | Reciclajes Paco S.L. | `paco@reciclajes.es` |
 
-### **OTRA DOCUMENTACIÓN ADICIONAL REQUERIDA EN LA PRÁCTICA**
+---
+
+### **Verificación de la API (Postman)**
+1. **Logs**: `docker logs app-service -f` para ver el arranque.
+2. **Postman**: Importar colección, fijar `baseUrl` a `https://localhost:8443/api/v1` y desactivar *SSL verification*.
+3. **Limpieza**: `docker compose down` para detener el entorno.
+
 
 ### **Participación de Miembros en la Práctica 3**
 
-#### **Alumno 1 - [Guillermo Domínguez Galindo]**
+#### **Alumno 1 - Guillermo Domínguez Galindo**
 
-[En esta Práctica 3, mi trabajo se ha centrado en construir una base sólida, segura y escalable para el proyecto, desarrollando la estructura principal de la API para gestionar los datos y creando un algoritmo inteligente para emparejar oferta y demanda.
+En esta Práctica 3, mi trabajo se ha centrado en construir una base sólida, segura y escalable para el proyecto, desarrollando la estructura principal de la API para gestionar los datos y creando un algoritmo inteligente para emparejar oferta y demanda.
 
 Para llevarlo a cabo, he configurado todo el sistema para que funcione ágilmente y sea fácil de desplegar mediante contenedores Docker, aplicando al mismo tiempo auditorías y medidas de seguridad para proteger la información frente a vulnerabilidades.
 
-Además, me he apoyado en la automatización para generar la documentación técnica, he utilizado herramientas para que los datos internos fluyan de forma eficiente, y he blindado el trabajo con un conjunto completo de pruebas que garantizan que todas las piezas del sistema encajan y funcionan a la perfección de principio a fin.]
+Además, me he apoyado en la automatización para generar la documentación técnica, he utilizado herramientas para que los datos internos fluyan de forma eficiente, y he blindado el trabajo con un conjunto completo de pruebas que garantizan que todas las piezas del sistema encajan y funcionan a la perfección de principio a fin.
 
 | Nº  |                                                                                                                                                       Commits                                                                                                                                                        |                                                                                                                            Files                                                                                                                             |
 | :-: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
