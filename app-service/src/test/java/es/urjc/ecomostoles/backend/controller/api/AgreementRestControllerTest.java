@@ -51,13 +51,18 @@ class AgreementRestControllerTest {
     @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
     @DisplayName("Phase 3: Agreement Lifecycle - Accept agreement (200 OK)")
     void shouldAcceptAgreement() throws Exception {
+        // Create a company that matches the TEST_EMAIL to pass IDOR checks
+        es.urjc.ecomostoles.backend.model.Company owner = new es.urjc.ecomostoles.backend.model.Company();
+        owner.setContactEmail(TEST_EMAIL);
+
         Agreement agreement = new Agreement();
         agreement.setId(1L);
         agreement.setStatus(AgreementStatus.PENDING);
+        agreement.setOriginCompany(owner); // Set owner for IDOR check
 
         when(agreementService.findById(anyLong())).thenReturn(Optional.of(agreement));
         when(agreementService.updateAgreement(anyLong(), any(Agreement.class))).thenReturn(agreement);
-        when(agreementMapper.toDto(any(Agreement.class))).thenReturn(null); // Return value not strictly checked for 200
+        when(agreementMapper.toDto(any(Agreement.class))).thenReturn(new AgreementDTO(agreement));
 
         mockMvc.perform(put("/api/v1/agreements/1/status")
                         .contentType(MediaType.APPLICATION_JSON)

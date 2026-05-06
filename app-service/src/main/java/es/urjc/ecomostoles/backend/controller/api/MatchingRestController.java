@@ -27,17 +27,33 @@ import java.util.List;
 public class MatchingRestController {
 
     private final MatchingService matchingService;
+    private final es.urjc.ecomostoles.backend.service.DemandService demandService;
 
-    public MatchingRestController(MatchingService matchingService) {
+    public MatchingRestController(MatchingService matchingService, es.urjc.ecomostoles.backend.service.DemandService demandService) {
         this.matchingService = matchingService;
+        this.demandService = demandService;
     }
 
     @Operation(summary = "Find optimal matches for a demand", description = "Executes the heuristics engine to calculate compatibility scores between a specific demand and the active market supply, returning the top 5 results sorted by score.")
     @ApiResponse(responseCode = "200", description = "Match results successfully calculated",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = MatchResultDTO.class))))
     @GetMapping("/demands/{demandId}")
-    public ResponseEntity<List<MatchResultDTO>> getBestMatches(@PathVariable Long demandId) {
+    public ResponseEntity<List<MatchResultDTO>> getBestMatches(@PathVariable Long demandId, java.security.Principal principal) {
         
+        // IDOR Protection: Verify that the principal is the owner of the demand or an ADMIN
+        es.urjc.ecomostoles.backend.model.Demand demand = demandService.findById(demandId)
+                .orElseThrow(() -> new java.util.NoSuchElementException("Demand not found"));
+
+        boolean isOwner = demand.getCompany() != null && demand.getCompany().getContactEmail().equals(principal.getName());
+        boolean isAdmin = org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isOwner && !isAdmin) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "You are not authorized to view matches for this demand");
+        }
+
         List<MatchResultDTO> matches = matchingService.findBestMatchesForDemand(demandId);
         
         return ResponseEntity.ok(matches);

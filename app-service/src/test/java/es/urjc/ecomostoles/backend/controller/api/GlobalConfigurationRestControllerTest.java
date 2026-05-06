@@ -41,7 +41,7 @@ class GlobalConfigurationRestControllerTest {
         when(configurationService.getAutoValue("contactEmail")).thenReturn("test@ecomostoles.com");
         when(configurationService.getAutoValue("platformCity")).thenReturn("Móstoles");
 
-        mockMvc.perform(get("/api/v1/config"))
+        mockMvc.perform(get("/api/v1/configurations"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.platformName").value("EcoMóstoles Test"));

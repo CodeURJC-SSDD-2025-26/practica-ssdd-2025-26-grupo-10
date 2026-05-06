@@ -80,7 +80,7 @@ class AuthRestControllerTest {
                 "Empresa para pruebas de automatización"
         );
 
-        mockMvc.perform(post("/api/v1/auth/register")
+        mockMvc.perform(post("/api/v1/registrations")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated()) // Verify 201 Created
@@ -96,7 +96,7 @@ class AuthRestControllerTest {
         // Authenticate with the credentials set up in @BeforeEach
         AuthRequest loginReq = new AuthRequest("login@test.com", "secretPass");
 
-        mockMvc.perform(post("/api/v1/auth/login")
+        mockMvc.perform(post("/api/v1/tokens")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginReq)))
                 .andExpect(status().isOk()) // Verify 200 OK
@@ -112,7 +112,7 @@ class AuthRestControllerTest {
         // Try to login with the correct email but WRONG password
         AuthRequest loginReq = new AuthRequest("login@test.com", "wrongPassword");
 
-        mockMvc.perform(post("/api/v1/auth/login")
+        mockMvc.perform(post("/api/v1/tokens")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginReq)))
                 .andExpect(status().isUnauthorized()) // Verify 401 Unauthorized
@@ -135,7 +135,7 @@ class AuthRestControllerTest {
                 null, null, null
         );
 
-        mockMvc.perform(post("/api/v1/auth/register")
+        mockMvc.perform(post("/api/v1/registrations")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest()) // Verify 400 Bad Request

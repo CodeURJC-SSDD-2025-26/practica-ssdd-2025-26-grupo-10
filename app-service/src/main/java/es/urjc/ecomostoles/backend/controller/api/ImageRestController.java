@@ -114,7 +114,8 @@ public class ImageRestController {
             @Parameter(description = "ID of the offer", example = "1")
             @PathVariable Long id,
             @Parameter(description = "Image file to upload")
-            @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
+            @RequestParam("imageFile") MultipartFile imageFile,
+            java.security.Principal principal) throws IOException {
         
         log.info("[API] POST /api/v1/images/offers/{}", id);
 
@@ -124,6 +125,19 @@ public class ImageRestController {
 
         Offer offer = offerService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Offer not found with id: " + id));
+
+        // IDOR Protection: Verify ownership or ADMIN role
+        boolean isOwner = offer.getCompany() != null && offer.getCompany().getContactEmail().equals(principal.getName());
+        boolean isAdmin = org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isOwner && !isAdmin) {
+            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to upload image for offer {} owned by {}", 
+                    principal.getName(), id, offer.getCompany() != null ? offer.getCompany().getContactEmail() : "N/A");
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "You do not have permission to upload images for this offer");
+        }
 
         offer.setImage(imageFile.getBytes());
         offerService.save(offer);
@@ -147,7 +161,8 @@ public class ImageRestController {
             @Parameter(description = "ID of the company", example = "1")
             @PathVariable Long id,
             @Parameter(description = "Logo file to upload")
-            @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
+            @RequestParam("imageFile") MultipartFile imageFile,
+            java.security.Principal principal) throws IOException {
         
         log.info("[API] POST /api/v1/images/companies/{}", id);
 
@@ -157,6 +172,19 @@ public class ImageRestController {
 
         Company company = companyService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Company not found with id: " + id));
+
+        // IDOR Protection: Verify ownership or ADMIN role
+        boolean isOwner = company.getContactEmail().equals(principal.getName());
+        boolean isAdmin = org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isOwner && !isAdmin) {
+            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to upload logo for company {}", 
+                    principal.getName(), id);
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "You do not have permission to update this company logo");
+        }
 
         company.setLogo(imageFile.getBytes());
         companyService.save(company);

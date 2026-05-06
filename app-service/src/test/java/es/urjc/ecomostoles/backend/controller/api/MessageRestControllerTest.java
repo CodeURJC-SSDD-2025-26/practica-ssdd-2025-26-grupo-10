@@ -62,6 +62,7 @@ class MessageRestControllerTest {
 
         when(companyService.findById(1L)).thenReturn(Optional.of(sender));
         when(companyService.findById(2L)).thenReturn(Optional.of(recipient));
+        when(companyService.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(sender)); // Added for IDOR/Impersonation check
 
         // Mock message mapping and saving
         Message mockMessage = new Message();

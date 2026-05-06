@@ -103,10 +103,26 @@ public class AgreementRestController {
             @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<AgreementDTO> getAgreementById(@PathVariable Long id) {
+    public ResponseEntity<AgreementDTO> getAgreementById(@PathVariable Long id, Principal principal) {
         log.debug("[API] GET /api/v1/agreements/{}", id);
         Agreement agreement = agreementService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Agreement not found with id: " + id));
+
+        // IDOR Protection: Verify that the principal is part of the agreement or an ADMIN
+        boolean isOrigin = agreement.getOriginCompany() != null && agreement.getOriginCompany().getContactEmail().equals(principal.getName());
+        boolean isDestination = agreement.getDestinationCompany() != null && agreement.getDestinationCompany().getContactEmail().equals(principal.getName());
+        
+        // Check if the user has the ADMIN role
+        boolean isAdmin = org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (principal == null || (!isOrigin && !isDestination && !isAdmin)) {
+            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to view agreement {}", 
+                    principal != null ? principal.getName() : "anonymous", id);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to view this agreement");
+        }
+
         return ResponseEntity.ok(agreementMapper.toDto(agreement));
     }
 
