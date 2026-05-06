@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/public/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/configurations/**", "/api/v1/config/**").permitAll() // Public system info (GET only)
                         // RBAC: Explicitly protect admin-only management operations in the API
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/companies").hasRole("ADMIN")
                         .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/companies/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/reports/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")

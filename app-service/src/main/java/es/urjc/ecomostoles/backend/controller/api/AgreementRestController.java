@@ -51,42 +51,27 @@ public class AgreementRestController {
     }
 
     /**
-     * Returns a list of agreements with dynamic response format.
+     * Returns a paginated list of agreements.
      *
-     * <p>If 'page' and 'size' are omitted, it returns a direct JSON array (List).
-     * If they are provided, it returns a paginated JSON object (Page).</p>
+     * <p>Always returns a paginated JSON object (Page) to ensure consistency
+     * with the web application requirements.</p>
      *
-     * @param page Optional page index.
-     * @param size Optional page size.
-     * @return a {@link java.util.List} or {@link org.springframework.data.domain.Page} of {@link AgreementDTO}.
+     * @param pageable Pagination and sorting metadata.
+     * @return a {@link org.springframework.data.domain.Page} of {@link AgreementDTO}.
      */
     @Operation(
-            summary     = "List agreements (Dynamic format)",
-            description = "Returns all agreements as a direct array if no params provided, or a paginated object if page/size are set."
+            summary     = "List agreements (Paginated)",
+            description = "Returns a paginated object containing agreements. Metadata includes totalElements and totalPages."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Agreements returned successfully"),
             @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<?> getAllAgreements(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) {
+    public ResponseEntity<Page<AgreementDTO>> getAllAgreements(
+            @ParameterObject @PageableDefault(size = 10, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        log.debug("[API] GET /api/v1/agreements — Requested Page: {}, Size: {}", page, size);
-
-        // Case 1: No pagination -> Return flat JSON Array
-        if (page == null || size == null) {
-            java.util.List<AgreementDTO> list = agreementService.findAllList()
-                    .stream()
-                    .map(agreementMapper::toDto)
-                    .toList();
-            return ResponseEntity.ok(list);
-        }
-
-        // Case 2: Pagination requested -> Return Spring Page Object
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
-                page, size, Sort.by("registrationDate").descending());
+        log.debug("[API] GET /api/v1/agreements — Pageable: {}", pageable);
 
         Page<AgreementDTO> resultPage = agreementService
                 .getAllPaginated(pageable)

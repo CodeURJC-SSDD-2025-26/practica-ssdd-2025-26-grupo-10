@@ -60,52 +60,29 @@ public class CompanyRestController {
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Returns a list of companies with dynamic response format.
+     * Returns a paginated list of companies.
      *
-     * <p>If 'page' and 'size' are omitted, it returns a direct JSON array (List).
-     * If they are provided, it returns a paginated JSON object (Page).</p>
+     * <p>Always returns a paginated JSON object (Page) to ensure consistency
+     * with the web application requirements.</p>
      *
-     * @param page Optional page index.
-     * @param size Optional page size.
-     * @return a {@link java.util.List} or {@link org.springframework.data.domain.Page} of {@link CompanyDTO}.
+     * @param search   Optional search filter.
+     * @param pageable Pagination and sorting metadata.
+     * @return a {@link org.springframework.data.domain.Page} of {@link CompanyDTO}.
      */
     @Operation(
-            summary     = "List companies (Dynamic format)",
-            description = "Returns all companies as a direct array if no params provided, or a paginated object if page/size are set."
+            summary     = "List companies (Paginated)",
+            description = "Returns a paginated object containing companies. Metadata includes totalElements and totalPages."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Companies returned successfully"),
             @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<?> getAllCompanies(
+    public ResponseEntity<Page<CompanyDTO>> getAllCompanies(
             @RequestParam(required = false) String search,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) {
+            @ParameterObject @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        log.debug("[API] GET /api/v1/companies — Search: {}, Requested Page: {}, Size: {}", search, page, size);
-
-        // Case 1: No pagination parameters -> Return flat JSON Array
-        if (page == null || size == null) {
-            java.util.List<CompanyDTO> list;
-            if (search != null && !search.isBlank()) {
-                list = companyService.searchClientsPaginated(search, org.springframework.data.domain.Pageable.unpaged())
-                        .getContent()
-                        .stream()
-                        .map(companyMapper::toDto)
-                        .toList();
-            } else {
-                list = companyService.findAllList()
-                        .stream()
-                        .map(companyMapper::toDto)
-                        .toList();
-            }
-            return ResponseEntity.ok(list);
-        }
-
-        // Case 2: Pagination requested -> Return Spring Page Object
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
-                page, size, Sort.by("id").ascending());
+        log.debug("[API] GET /api/v1/companies — Search: {}, Pageable: {}", search, pageable);
 
         Page<CompanyDTO> resultPage;
         if (search != null && !search.isBlank()) {

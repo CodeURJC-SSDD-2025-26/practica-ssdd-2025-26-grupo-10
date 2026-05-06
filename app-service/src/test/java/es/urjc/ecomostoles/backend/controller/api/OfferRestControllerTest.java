@@ -83,7 +83,7 @@ class OfferRestControllerTest {
         OfferDTO request = new OfferDTO(
                 null, "Lote de Palets", "Palets de madera en buen estado",
                 "WOOD_WASTE", 50.0, "uds", 100.0, "Inmediata",
-                OfferStatus.ACTIVE, null, 0, null
+                OfferStatus.ACTIVE, null, 0, null, false
         );
 
         mockMvc.perform(post("/api/v1/offers")
@@ -107,7 +107,7 @@ class OfferRestControllerTest {
         OfferDTO invalidRequest = new OfferDTO(
                 null, "", "Palets",
                 "WOOD_WASTE", 10.0, "kg", 5.0, "Hoy",
-                OfferStatus.ACTIVE, null, 0, null
+                OfferStatus.ACTIVE, null, 0, null, false
         );
 
         mockMvc.perform(post("/api/v1/offers")
@@ -123,7 +123,7 @@ class OfferRestControllerTest {
         OfferDTO invalidRequest = new OfferDTO(
                 null, "Oferta", "Desc",
                 "METAL_WASTE", 10.0, "kg", -1.0, "Mañana",
-                OfferStatus.ACTIVE, null, 0, null
+                OfferStatus.ACTIVE, null, 0, null, false
         );
 
         mockMvc.perform(post("/api/v1/offers")

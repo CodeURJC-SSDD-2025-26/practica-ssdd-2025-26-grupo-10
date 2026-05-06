@@ -54,4 +54,11 @@ public class AuthRestController {
     ) {
         return ResponseEntity.ok(authService.authenticate(request));
     }
+
+    @Operation(summary = "Delete an access token", description = "Invalidates the current session/token (stateless logout).")
+    @org.springframework.web.bind.annotation.DeleteMapping("/tokens")
+    public ResponseEntity<Void> logout() {
+        authService.logout();
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -30,6 +30,12 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query("SELECT m FROM Message m WHERE m.recipient = :company OR m.sender = :company ORDER BY m.sendDate DESC")
     Page<Message> findByCompanyPaginated(@Param("company") Company company, Pageable pageable);
 
+    @Query("SELECT m FROM Message m WHERE m.recipient = :company ORDER BY m.sendDate DESC")
+    Page<Message> findByRecipientPaginated(@Param("company") Company company, Pageable pageable);
+
+    @Query("SELECT m FROM Message m WHERE m.sender = :company ORDER BY m.sendDate DESC")
+    Page<Message> findBySenderPaginated(@Param("company") Company company, Pageable pageable);
+
     @Query("SELECT m FROM Message m ORDER BY m.sendDate DESC")
     Page<Message> findAllPaginated(Pageable pageable);
 }

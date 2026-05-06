@@ -56,55 +56,31 @@ public class DemandRestController {
     // -------------------------------------------------------------------------
 
     /**
-     * Returns a list of demands with dynamic response format.
+     * Returns a paginated list of demands.
      *
-     * <p>If 'page' and 'size' are omitted, it returns a direct JSON array (List).
-     * If they are provided, it returns a paginated JSON object (Page).</p>
+     * <p>Always returns a paginated JSON object (Page) to ensure consistency
+     * with the web application requirements.</p>
      *
-     * @param keyword Optional keyword filter.
-     * @param page Optional page index.
-     * @param size Optional page size.
-     * @return a {@link java.util.List} or {@link org.springframework.data.domain.Page} of {@link DemandDTO}.
+     * @param pageable Pagination and sorting metadata.
+     * @return a {@link org.springframework.data.domain.Page} of {@link DemandDTO}.
      */
     @Operation(
-            summary     = "List demands (Dynamic format)",
-            description = "Returns all demands as a direct array if no params provided, or a paginated object if page/size are set."
+            summary     = "List demands (Paginated)",
+            description = "Returns a paginated object containing active demands. Metadata includes totalElements and totalPages."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Demands returned successfully"),
             @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<?> getAllDemands(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) {
+    public ResponseEntity<Page<DemandDTO>> getAllDemands(
+            @ParameterObject @PageableDefault(size = 9, sort = "publicationDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        log.debug("[API] GET /api/v1/demands — Keyword: {}, Page: {}, Size: {}", keyword, page, size);
+        log.debug("[API] GET /api/v1/demands — Pageable: {}", pageable);
 
-        // Case 1: No pagination -> Return flat JSON Array
-        if (page == null || size == null) {
-            java.util.List<DemandDTO> list;
-            if (keyword != null && !keyword.isBlank()) {
-                list = demandService.searchFilteredDemands(keyword, es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE, org.springframework.data.domain.Pageable.unpaged())
-                        .getContent()
-                        .stream().map(demandMapper::toDto).toList();
-            } else {
-                list = demandService.findAllList().stream().map(demandMapper::toDto).toList();
-            }
-            return ResponseEntity.ok(list);
-        }
-
-        // Case 2: Pagination requested -> Return Spring Page Object
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
-                page, size, Sort.by("publicationDate").descending());
-
-        Page<DemandDTO> resultPage;
-        if (keyword != null && !keyword.isBlank()) {
-            resultPage = demandService.searchFilteredDemands(keyword, es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE, pageable).map(demandMapper::toDto);
-        } else {
-            resultPage = demandService.getAllPaginated(pageable).map(demandMapper::toDto);
-        }
+        Page<DemandDTO> resultPage = demandService
+                .getByStatusPaginated(es.urjc.ecomostoles.backend.model.DemandStatus.ACTIVE, pageable)
+                .map(demandMapper::toDto);
 
         return ResponseEntity.ok(resultPage);
     }
@@ -127,14 +103,15 @@ public class DemandRestController {
     @GetMapping("/{id}")
     public ResponseEntity<DemandDTO> getDemandById(
             @Parameter(description = "Database primary key of the demand", example = "1")
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            Principal principal) {
 
-        log.debug("[API] GET /api/v1/demands/{}", id);
+        log.debug("[API] GET /api/v1/demands/{} — User: {}", id, principal != null ? principal.getName() : "Anonymous");
 
         Demand demand = demandService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Demand not found with id: " + id));
 
-        return ResponseEntity.ok(demandMapper.toDto(demand));
+        return ResponseEntity.ok(new DemandDTO(demand, principal != null ? principal.getName() : null));
     }
 
     // -------------------------------------------------------------------------
@@ -192,7 +169,7 @@ public class DemandRestController {
 
         return ResponseEntity
                 .created(location)              // HTTP 201 + Location header set
-                .body(demandMapper.toDto(saved));
+                .body(new DemandDTO(saved, userEmail));
     }
 
     // -------------------------------------------------------------------------
@@ -258,7 +235,7 @@ public class DemandRestController {
         Demand updated = demandService.save(existing);
         log.info("[API] PUT /api/v1/demands/{} -- update committed", id);
 
-        return ResponseEntity.ok(demandMapper.toDto(updated));
+        return ResponseEntity.ok(new DemandDTO(updated, principal.getName()));
     }
 
     // -------------------------------------------------------------------------

@@ -38,7 +38,8 @@ public record DemandDTO(
         LocalDateTime publicationDate,
         LocalDateTime expiryDate,
         int visits,
-        CompanyDTO company
+        CompanyDTO company,
+        boolean owned
 ) {
     public String getFormattedWasteType() {
         if (this.wasteCategory == null) return "";
@@ -88,7 +89,7 @@ public record DemandDTO(
         long days = java.time.Duration.between(LocalDateTime.now(), this.expiryDate).toDays();
         return days < 0 ? 0 : days;
     }
-    public DemandDTO(Demand demand) {
+    public DemandDTO(es.urjc.ecomostoles.backend.model.Demand demand, String currentUserEmail) {
         this(
                 demand.getId(),
                 demand.getTitle(),
@@ -105,7 +106,12 @@ public record DemandDTO(
                 demand.getPublicationDate(),
                 demand.getExpiryDate(),
                 demand.getVisits(),
-                demand.getCompany() != null ? new CompanyDTO(demand.getCompany()) : null
+                demand.getCompany() != null ? new CompanyDTO(demand.getCompany()) : null,
+                demand.getCompany() != null && currentUserEmail != null && demand.getCompany().getContactEmail().equals(currentUserEmail)
         );
+    }
+
+    public DemandDTO(es.urjc.ecomostoles.backend.model.Demand demand) {
+        this(demand, null);
     }
 }

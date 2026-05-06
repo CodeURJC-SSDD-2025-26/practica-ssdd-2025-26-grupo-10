@@ -40,6 +40,16 @@ public class MessageService {
     }
 
     @Transactional(readOnly = true)
+    public Page<Message> getByRecipientPaginated(Company company, Pageable pageable) {
+        return messageRepository.findByRecipientPaginated(company, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Message> getBySenderPaginated(Company company, Pageable pageable) {
+        return messageRepository.findBySenderPaginated(company, pageable);
+    }
+
+    @Transactional(readOnly = true)
     public Page<Message> getAllPaginated(Pageable pageable) {
         return messageRepository.findAllPaginated(pageable);
     }

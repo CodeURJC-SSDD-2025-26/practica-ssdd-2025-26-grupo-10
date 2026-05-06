@@ -99,4 +99,11 @@ public class AuthService {
         String jwtToken = jwtService.generateToken(userDetails);
         return new AuthResponse(jwtToken, company.getId());
     }
+
+    /**
+     * Invalidates the current authentication state.
+     */
+    public void logout() {
+        org.springframework.security.core.context.SecurityContextHolder.clearContext();
+    }
 }

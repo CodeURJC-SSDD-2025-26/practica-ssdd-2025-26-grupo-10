@@ -82,7 +82,7 @@ class DemandRestControllerTest {
         DemandDTO request = new DemandDTO(
                 null, "Busco Chatarra", "METAL_WASTE", "Chatarra",
                 200.0, "kg", "Alta", 500.0, "Móstoles", "30",
-                DemandStatus.ACTIVE, null, null, null, 0, null
+                DemandStatus.ACTIVE, null, null, null, 0, null, false
         );
 
         mockMvc.perform(post("/api/v1/demands")
@@ -106,7 +106,7 @@ class DemandRestControllerTest {
         DemandDTO invalidRequest = new DemandDTO(
                 null, "Error Budget", "PLASTIC_WASTE", "Error",
                 1.0, "kg", "Baja", -10.0, "Madrid", "15",
-                DemandStatus.ACTIVE, null, null, null, 0, null
+                DemandStatus.ACTIVE, null, null, null, 0, null, false
         );
 
         mockMvc.perform(post("/api/v1/demands")

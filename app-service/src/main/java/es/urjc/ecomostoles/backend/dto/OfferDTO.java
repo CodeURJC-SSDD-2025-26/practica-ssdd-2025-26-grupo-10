@@ -33,7 +33,8 @@ public record OfferDTO(
         es.urjc.ecomostoles.backend.model.OfferStatus status,
         LocalDateTime publicationDate,
         int visits,
-        CompanyDTO company
+        CompanyDTO company,
+        boolean owned
 ) {
     public String getFormattedPrice() {
         return es.urjc.ecomostoles.backend.utils.NumberFormatter.formatCurrency(this.price);
@@ -65,7 +66,7 @@ public record OfferDTO(
     public boolean isClosed() {
         return es.urjc.ecomostoles.backend.model.OfferStatus.FINISHED.equals(this.status);
     }
-    public OfferDTO(Offer offer) {
+    public OfferDTO(Offer offer, String currentUserEmail) {
         this(
                 offer.getId(),
                 offer.getTitle(),
@@ -78,7 +79,16 @@ public record OfferDTO(
                 offer.getStatus(),
                 offer.getPublicationDate(),
                 offer.getVisits(),
-                offer.getCompany() != null ? new CompanyDTO(offer.getCompany()) : null
+                offer.getCompany() != null ? new CompanyDTO(offer.getCompany()) : null,
+                offer.getCompany() != null && currentUserEmail != null && offer.getCompany().getContactEmail().equals(currentUserEmail)
         );
+    }
+
+    /**
+     * Legacy constructor for internal mapping where ownership context is unknown.
+     * Defaults 'owned' to false.
+     */
+    public OfferDTO(Offer offer) {
+        this(offer, null);
     }
 }

@@ -71,53 +71,29 @@ public class OfferRestController {
     // -------------------------------------------------------------------------
 
     /**
-     * Returns a list of offers with dynamic response format.
+     * Returns a paginated list of offers.
      *
-     * <p>If 'page' and 'size' are omitted, it returns a direct JSON array (List).
-     * If they are provided, it returns a paginated JSON object (Page).</p>
+     * <p>Always returns a paginated JSON object (Page) to ensure consistency
+     * with the web application requirements.</p>
      *
-     * @param keyword Optional keyword filter.
-     * @param page Optional page index.
-     * @param size Optional page size.
-     * @return a {@link java.util.List} or {@link org.springframework.data.domain.Page} of {@link OfferSummary}.
+     * @param pageable Pagination and sorting metadata.
+     * @return a {@link org.springframework.data.domain.Page} of {@link OfferSummary}.
      */
     @Operation(
-            summary     = "List offers (Dynamic format)",
-            description = "Returns all offers as a direct array if no params provided, or a paginated object if page/size are set."
+            summary     = "List offers (Paginated)",
+            description = "Returns a paginated object containing active offers. Metadata includes totalElements and totalPages."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Offers returned successfully"),
             @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<?> getAllOffers(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) {
+    public ResponseEntity<Page<OfferSummary>> getAllOffers(
+            @ParameterObject @PageableDefault(size = 9, sort = "publicationDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        log.debug("[API] GET /api/v1/offers — Keyword: {}, Page: {}, Size: {}", keyword, page, size);
+        log.debug("[API] GET /api/v1/offers — Pageable: {}", pageable);
 
-        // Case 1: No pagination -> Return flat JSON Array
-        if (page == null || size == null) {
-            java.util.List<OfferSummary> list;
-            if (keyword != null && !keyword.isBlank()) {
-                list = offerService.searchFilteredOffers(keyword, null, null, org.springframework.data.domain.Pageable.unpaged()).getContent();
-            } else {
-                list = offerService.findAllList();
-            }
-            return ResponseEntity.ok(list);
-        }
-
-        // Case 2: Pagination requested -> Return Spring Page Object
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
-                page, size, Sort.by("publicationDate").descending());
-
-        Page<OfferSummary> resultPage;
-        if (keyword != null && !keyword.isBlank()) {
-            resultPage = offerService.searchFilteredOffers(keyword, null, null, pageable);
-        } else {
-            resultPage = offerService.getAllPaginated(pageable);
-        }
+        Page<OfferSummary> resultPage = offerService.getAllPaginated(pageable);
 
         return ResponseEntity.ok(resultPage);
     }
@@ -140,14 +116,16 @@ public class OfferRestController {
     @GetMapping("/{id}")
     public ResponseEntity<OfferDTO> getOfferById(
             @Parameter(description = "Database primary key of the offer", example = "1")
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            Principal principal) {
 
-        log.debug("[API] GET /api/v1/offers/{}", id);
+        log.debug("[API] GET /api/v1/offers/{} — User: {}", id, principal != null ? principal.getName() : "Anonymous");
 
         Offer offer = offerService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Offer not found with id: " + id));
 
-        return ResponseEntity.ok(offerMapper.toDto(offer));
+        // Use the ownership-aware constructor
+        return ResponseEntity.ok(new OfferDTO(offer, principal != null ? principal.getName() : null));
     }
 
     // -------------------------------------------------------------------------
@@ -213,7 +191,7 @@ public class OfferRestController {
 
         return ResponseEntity
                 .created(location)              // HTTP 201 + Location header set
-                .body(offerMapper.toDto(saved));
+                .body(new OfferDTO(saved, userEmail));
     }
 
     // -------------------------------------------------------------------------
@@ -280,7 +258,7 @@ public class OfferRestController {
         Offer updated = offerService.save(existing);
         log.info("[API] PUT /api/v1/offers/{} -- update committed", id);
 
-        return ResponseEntity.ok(offerMapper.toDto(updated));
+        return ResponseEntity.ok(new OfferDTO(updated, principal.getName()));
     }
 
     // -------------------------------------------------------------------------

@@ -1,6 +1,8 @@
 package es.urjc.ecomostoles.backend.controller.api;
 
 import es.urjc.ecomostoles.backend.dto.CompanyDTO;
+import es.urjc.ecomostoles.backend.dto.CompanyImpactDTO;
+import es.urjc.ecomostoles.backend.model.Company;
 import es.urjc.ecomostoles.backend.service.AgreementService;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.service.OfferService;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,7 +30,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/reports")
 @Tag(name = "Reports", description = "Endpoints for platform auditing and data exports")
-@PreAuthorize("hasRole('ADMIN')")
 public class ReportRestController {
 
     private final ReportService reportService;
@@ -43,8 +45,22 @@ public class ReportRestController {
         this.agreementService = agreementService;
     }
 
+    @Operation(summary = "Get my personal sustainability impact", description = "Returns the cumulative CO2 savings and managed materials for the authenticated company.")
+    @GetMapping("/company/me")
+    @PreAuthorize("hasRole('COMPANY')")
+    public ResponseEntity<CompanyImpactDTO> getMyImpact(Principal principal) {
+        Company company = companyService.findByEmail(principal.getName())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Company not found"));
+        
+        double co2Saved = agreementService.calculateCO2SavedByCompany(company.getId());
+        double materialsManaged = agreementService.sumReintroducedMaterial(company);
+        
+        return ResponseEntity.ok(new CompanyImpactDTO(co2Saved, materialsManaged, "kg"));
+    }
+
     @Operation(summary = "Export companies as CSV", description = "Generates a CSV file containing all registered companies. Admin only.")
     @GetMapping("/companies")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<byte[]> exportCompanies() {
         byte[] csv = reportService.generateUsersCsv(companyService.getAll());
         return ResponseEntity.ok()
@@ -55,6 +71,7 @@ public class ReportRestController {
 
     @Operation(summary = "Export offers as CSV", description = "Generates a CSV file containing all platform offers. Admin only.")
     @GetMapping("/offers")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<byte[]> exportOffers() {
         byte[] csv = reportService.generateOffersCsv(offerService.getAll());
         return ResponseEntity.ok()
@@ -68,6 +85,7 @@ public class ReportRestController {
             @ApiResponse(responseCode = "200", description = "Ranking returned successfully")
     })
     @GetMapping("/ranking")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COMPANY')")
     public ResponseEntity<List<CompanyDTO>> getCo2Ranking() {
         Map<Long, Double> co2Map = agreementService.getCO2Ranking();
         

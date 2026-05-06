@@ -51,55 +51,57 @@ public class MessageRestController {
         this.companyService = companyService;
     }
 
-    @Operation(summary = "List all messages", description = "Returns a list of all messages in the system (ordered by send date desc).")
+    /**
+     * Returns a paginated list of messages for the authenticated company.
+     *
+     * <p>Supports filtering by type:</p>
+     * <ul>
+     *   <li>{@code received}: Messages received by the company (Inbox).</li>
+     *   <li>{@code sent}: Messages sent by the company (Outbox).</li>
+     *   <li>{@code null} (default): All messages where the company is sender or recipient.</li>
+     * </ul>
+     *
+     * @param type     Optional filter: 'received' or 'sent'.
+     * @param pageable Pagination and sorting metadata.
+     * @param principal Authenticated user.
+     * @return a {@link org.springframework.data.domain.Page} of {@link MessageDTO}.
+     */
+    @Operation(
+            summary     = "List messages (Paginated)",
+            description = "Returns a paginated list of messages for the authenticated company. Supports 'type' filter (sent/received)."
+    )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "List of messages returned successfully",
-                    content = @Content(schema = @Schema(implementation = MessageDTO.class))),
+            @ApiResponse(responseCode = "200", description = "Messages returned successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT required", content = @Content),
             @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<?> getAllMessages(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
+    public ResponseEntity<Page<MessageDTO>> getAllMessages(
+            @RequestParam(required = false) String type,
+            @org.springdoc.core.annotations.ParameterObject 
+            @org.springframework.data.web.PageableDefault(size = 10, sort = "sendDate", direction = org.springframework.data.domain.Sort.Direction.DESC) 
+            org.springframework.data.domain.Pageable pageable,
             Principal principal) {
-        log.debug("[API] GET /api/v1/messages");
 
-        // Plain list logic (no parameters)
-        if (page == null || size == null) {
-            List<Message> allMessages;
-            if (principal == null) {
-                allMessages = List.of();
-            } else {
-                Company userCompany = companyService.findByEmail(principal.getName())
-                        .orElseThrow(() -> new NoSuchElementException("Authenticated user company not found"));
+        log.debug("[API] GET /api/v1/messages — Type: {}, Pageable: {}", type, pageable);
 
-                // Only return messages where the user is sender OR recipient
-                allMessages = messageService.getAll().stream()
-                        .filter(m -> (m.getSender() != null && m.getSender().getId().equals(userCompany.getId())) ||
-                                     (m.getRecipient() != null && m.getRecipient().getId().equals(userCompany.getId())))
-                        .toList();
-            }
-
-            List<MessageDTO> messages = allMessages.stream()
-                    .map(messageMapper::toDto)
-                    .toList();
-            return ResponseEntity.ok(messages);
-        }
-
-        // Pagination logic
-        org.springframework.data.domain.Pageable pageable = 
-            org.springframework.data.domain.PageRequest.of(page, size);
-
-        Page<MessageDTO> resultPage;
         if (principal == null) {
-            resultPage = messageService.getAllPaginated(pageable).map(messageMapper::toDto);
-        } else {
-            Company userCompany = companyService.findByEmail(principal.getName())
-                    .orElseThrow(() -> new NoSuchElementException("Authenticated user company not found"));
-            resultPage = messageService.getByCompanyPaginated(userCompany, pageable).map(messageMapper::toDto);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
 
-        return ResponseEntity.ok(resultPage);
+        Company userCompany = companyService.findByEmail(principal.getName())
+                .orElseThrow(() -> new NoSuchElementException("Authenticated company not found: " + principal.getName()));
+
+        Page<Message> resultPage;
+        if ("received".equalsIgnoreCase(type)) {
+            resultPage = messageService.getByRecipientPaginated(userCompany, pageable);
+        } else if ("sent".equalsIgnoreCase(type)) {
+            resultPage = messageService.getBySenderPaginated(userCompany, pageable);
+        } else {
+            resultPage = messageService.getByCompanyPaginated(userCompany, pageable);
+        }
+
+        return ResponseEntity.ok(resultPage.map(messageMapper::toDto));
     }
 
     @Operation(summary = "Get message by ID", description = "Retrieves the detail of a single message.")
@@ -112,6 +114,7 @@ public class MessageRestController {
     @GetMapping("/{id}")
     public ResponseEntity<MessageDTO> getMessageById(@PathVariable Long id, Principal principal) {
         log.debug("[API] GET /api/v1/messages/{}", id);
+        
         Message message = messageService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Message not found with id: " + id));
 
@@ -122,6 +125,13 @@ public class MessageRestController {
         if (principal == null || (!isSender && !isRecipient)) {
             log.warn("[SECURITY] Unauthorized attempt to read message ID: {} by user: {}", id, principal != null ? principal.getName() : "anonymous");
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to view this message");
+        }
+
+        // Automatic Mark as Read if recipient is reading it
+        if (isRecipient && !message.isRead()) {
+            message.setRead(true);
+            messageService.save(message);
+            log.debug("[API] Message {} marked as read by recipient {}", id, principal.getName());
         }
 
         return ResponseEntity.ok(messageMapper.toDto(message));
