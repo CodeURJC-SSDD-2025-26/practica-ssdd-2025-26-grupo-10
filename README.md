@@ -757,15 +757,15 @@ Asimismo, gestioné la optimización del frontend y la administración del siste
 
 ### **Documentación de la API REST**
 
-#### **Especificación OpenAPI**
+La documentación completa de nuestra API REST se ha generado utilizando SpringDoc (OpenAPI 3) y se encuentra alojada en las carpetas `/api-docs` de cada microservicio.
 
-📄 **[Especificación OpenAPI (YAML)](/api-docs/api-docs.yaml)**
+#### **App Service (Servicio Principal)**
+* 📄 **[Especificación OpenAPI (YAML)](/app-service/api-docs/api-docs.yaml)**
+* 🌐 **[Documentación Interactiva (HTML)](https://raw.githack.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/main/app-service/api-docs/api-docs.html)**
 
-#### **Documentación HTML**
-
-📖 **[Documentación API REST (HTML)](https://raw.githack.com/[usuario]/[repositorio]/main/api-docs/api-docs.html)**
-
-> La documentación de la API REST se encuentra en la carpeta `/api-docs` del repositorio. Se ha generado automáticamente con SpringDoc a partir de las anotaciones en el código Java.
+#### **Utility Service (Servicio de Utilidades / PDF)**
+* 📄 **[Especificación OpenAPI (YAML)](/utility-service/api-docs/api-docs.yaml)**
+* 🌐 **[Documentación Interactiva (HTML)](https://raw.githack.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/main/utility-service/api-docs/api-docs.html)**
 
 ### **Diagrama de Clases y Templates Actualizado**
 

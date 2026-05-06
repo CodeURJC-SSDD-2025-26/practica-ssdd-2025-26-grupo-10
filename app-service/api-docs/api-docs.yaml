@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+    <meta name="description" content="EcoMóstoles - Plataforma B2B de Simbiosis Industrial y Economía Circular. Conecta ofertas de residuos y demandas de maquinaria en el ámbito local.">
+    <title>EcoMóstoles</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+
+<body class="bg-theme-dark d-flex flex-column min-vh-100">
+<div id="particles-body"></div>
+
+<nav class="navbar navbar-expand-lg fixed-top navbar-custom">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/home">
+            <i class="fas fa-recycle me-2 text-success" style="font-size: 1.5rem;"></i>
+            <span class="fw-bold">EcoMóstoles</span>
+            
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+
+
+                <!-- VISITOR NAV -->
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" 
+                        href="/">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" 
+                        href="/mercado">Ofertas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" style="color: #198754 !important;" 
+                        href="/login">Login</a>
+                </li>
+                <li class="nav-item ms-lg-2">
+                    <a class="btn btn-eco btn-sm" href="/registro">Registro Empresa</a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- 
+    AUTHENTICATION GATEWAY
+    Uses a centered layout (d-flex align-items-center) to focus the user's attention
+    on the primary conversion point. The container leverages flex-grow-1 to 
+    push the footer to the bottom of the viewport.
+-->
+<main class="container flex-grow-1 d-flex align-items-center justify-content-center py-5">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-5 col-lg-4">
+            <!-- 
+                LOGIN CARD 
+                Implements a high-contrast top-border to distinguish the 'Success' identity.
+                Rounded-4 and shadow-sm follow the Vercel-style aesthetic.
+            -->
+            <div class="card p-4 border-top-success shadow-sm rounded-4">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <a href="/" class="text-decoration-none">
+                            <h1 class="h2 fw-bold text-dark"><i class="fas fa-recycle text-success me-2"></i>EcoMóstoles</h1>
+                        </a>
+                        <p class="text-muted small fw-bold text-uppercase ls-wide">Acceso para Empresas</p>
+                    </div>
+                    
+                    <!-- 
+                        FEEDBACK LOOP: Authentication States
+                        Handles error, registration success, and partial updates (email).
+                        Uses rounded-pill alerts for a premium, less aggressive feel.
+                    -->
+
+
+                    
+                    <!-- 
+                        LOGIN FORM 
+                        Integrates Spring Security default endpoint (/login) with 
+                        standard CSRF token injection for session integrity.
+                    -->
+                    <form action="/login" method="POST" class="needs-validation" novalidate="">
+                        <input type="hidden" name="_csrf" value="-uc5EbbZVdWgBBg9Wq8rAA4cDU9hb1TxperTfbKD0JZK2aGQmNIOJ9PgNOyNZy1bb4IfOD4tIC1TX2zcwYm1TIK14aF74cKk">
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bold small text-uppercase text-secondary">Email Corporativo</label>
+                            <input type="email" name="username" class="form-control" id="email" placeholder="nombre@empresa.com" required="">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-bold small text-uppercase text-secondary">Contraseña</label>
+                            <input type="password" name="password" class="form-control" id="password" placeholder="••••••••" required="">
+                        </div>
+                        
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary py-2 fw-bold rounded-pill">Entrar al Panel</button>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <p class="small text-muted mb-0">¿Aún no tienes cuenta? <a href="/registro" class="text-success fw-bold text-decoration-none">Regístrate aquí</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4 mb-5">
+                <a href="/" class="btn btn-outline-secondary btn-sm rounded-pill"><i class="fas fa-arrow-left me-1"></i> Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="bg-white border-top pt-5 pb-4 mt-auto">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                <h5 class="fw-bold text-dark mb-3"><i class="fas fa-recycle text-success me-2"></i>EcoMóstoles</h5>
+                <p class="text-muted small pe-4">Plataforma B2B de Simbiosis Industrial y Economía Circular. Transformando los residuos de hoy en los recursos del mañana para el tejido empresarial local.</p>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                <h6 class="fw-bold text-dark mb-3">Plataforma</h6>
+                <ul class="list-unstyled text-muted small">
+                </ul>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <h6 class="fw-bold text-dark mb-3">Legal y Soporte</h6>
+                <ul class="list-unstyled text-muted small">
+                    <li class="mb-2"><a href="/privacidad" class="text-muted text-decoration-none text-hover-success">Aviso Legal y Privacidad</a></li>
+                    <li class="mb-2"><a href="/terminos" class="text-muted text-decoration-none text-hover-success">Términos y Condiciones</a></li>
+                    <li class="mb-2"><a href="mailto:soporte@ecomostoles.com" class="text-muted text-decoration-none text-hover-success"><i class="fas fa-envelope me-2"></i>soporte@ecomostoles.com</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row align-items-center border-top pt-4">
+            <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                <span class="text-muted small">© 2026 EcoMóstoles. Todos los derechos reservados.</span>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <a href="https://linkedin.com/company/ecomostoles" class="text-secondary me-3 text-decoration-none" target="_blank"><i class="fab fa-linkedin fs-5"></i></a>
+                <a href="https://x.com/ecomostoles" class="text-secondary me-3 text-decoration-none" target="_blank">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-twitter-x mb-1" viewBox="0 0 16 16"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/></svg>
+                </a>
+                <a href="https://facebook.com/ecomostoles" class="text-secondary text-decoration-none" target="_blank"><i class="fab fa-facebook fs-5"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts: Base & Charts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script src="/js/particles-init.js"></script>
+<script src="/js/card-spotlight.js"></script>
+</body>
+</html>
+
