@@ -1,5 +1,6 @@
 package es.urjc.ecomostoles.backend.controller.api;
 
+import org.springframework.test.context.ActiveProfiles;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.urjc.ecomostoles.backend.dto.OfferDTO;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional

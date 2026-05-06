@@ -23,6 +23,7 @@ public class GlobalConfiguration {
     @Column(name = "config_key", unique = true, nullable = false)
     private String key;
 
+    @Column(name = "config_value")
     private String value;
 
     public GlobalConfiguration() {
