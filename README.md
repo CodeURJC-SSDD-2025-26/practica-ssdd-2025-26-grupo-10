@@ -865,17 +865,19 @@ Además, me he apoyado en la automatización para generar la documentación téc
 
 ---
 
-#### **Alumno 2 - [Nombre Completo]**
+#### **Alumno 2 - Alberto Sastre Zorrilla**
 
-[Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
+Durante el desarrollo de esta tercera práctica, mi responsabilidad principal ha abarcado la implementación integral de la API REST y la adaptación de su capa de seguridad. Me he encargado de diseñar los controladores REST en el servicio principal (app-service) con operaciones CRUD completas, implementando el uso de DTOs, una gestión centralizada de excepciones para unificar los errores de la API y la documentación interactiva mediante OpenAPI y SpringDoc. Para garantizar la protección de los endpoints manteniendo la misma jerarquía de roles que la web, he desarrollado desde cero el sistema de autenticación sin estado basado en tokens JWT.
+
+Por otro lado, he liderado la refactorización hacia una arquitectura de microservicios y su correspondiente despliegue. He extraído la funcionalidad de generación de documentos en un proyecto Spring Boot totalmente independiente (utility-service), estableciendo la comunicación entre servicios mediante peticiones HTTP. Finalmente, me he hecho cargo de la infraestructura del proyecto, empaquetando los servicios en imágenes Docker independientes, orquestando el entorno completo con docker-compose y asegurando la estabilidad del código mediante el desarrollo de pruebas de integración exhaustivas con MockMvc y flujos automáticos en GitHub Actions.
 
 | Nº  |               Commits                |           Files           |
 | :-: | :----------------------------------: | :-----------------------: |
-|  1  | [Descripción commit 1](URL_commit_1) | [Archivo1](URL_archivo_1) |
-|  2  | [Descripción commit 2](URL_commit_2) | [Archivo2](URL_archivo_2) |
-|  3  | [Descripción commit 3](URL_commit_3) | [Archivo3](URL_archivo_3) |
-|  4  | [Descripción commit 4](URL_commit_4) | [Archivo4](URL_archivo_4) |
-|  5  | [Descripción commit 5](URL_commit_5) | [Archivo5](URL_archivo_5) |
+|  1  | [Add utility-service with Spring Boot setup, including PDF generation and REST endpoints.](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/0bd5fd50205c9bd287b5d8d8f4b685c470e1cbe1) | [Archivo1](URL_archivo_1) |
+|  2  | [Implement REST controllers, security services, and Docker infrastructure with comprehensive unit testing](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/079a7a4fd40c45b0800bcfa9935dde1e836ecfd0) | [Archivo2](URL_archivo_2) |
+|  3  | [Implement DemandRestController with full CRUD operations for demands](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/dfb58991be3614ce83f09ecab1ac840f28370e4f) | [Archivo3](URL_archivo_3) |
+|  4  | [Implement authentication endpoints and JWT generation logic](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/cce3dc5509e85c15bea12857d4cf0757cb6c59ce) | [Archivo4](URL_archivo_4) |
+|  5  | [Configure global OpenAPI security scheme for JWT Bearer authentication](https://github.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/commit/49592be2a5bf1c62c6a8a9a0592c8793d1450451) | [Archivo5](URL_archivo_5) |
 
 ---
 
