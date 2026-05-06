@@ -1,0 +1,92 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8081
+  description: Generated server url
+tags:
+- name: PDF Generation API
+  description: Endpoints for generating premium PDF reports
+paths:
+  /api/v1/pdfs/certificate:
+    post:
+      tags:
+      - PDF Generation API
+      summary: Generate Agreement PDF
+      description: Generates a premium PDF certificate for an industrial agreement.
+      operationId: generateCertificate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AgreementReportRequest"
+        required: true
+      responses:
+        "200":
+          description: PDF generated successfully
+          content:
+            application/pdf: {}
+        "400":
+          description: Invalid request payload
+        "500":
+          description: Internal server error during PDF generation
+components:
+  schemas:
+    AgreementReportRequest:
+      type: object
+      properties:
+        agreementId:
+          type: integer
+          format: int64
+        status:
+          type: string
+        originCompanyName:
+          type: string
+        originCompanyTaxId:
+          type: string
+        originCompanyAddress:
+          type: string
+        originCompanyPhone:
+          type: string
+        originCompanySector:
+          type: string
+        originCompanyLogo:
+          type: string
+          format: byte
+        destinationCompanyName:
+          type: string
+        destinationCompanyTaxId:
+          type: string
+        destinationCompanyAddress:
+          type: string
+        destinationCompanyPhone:
+          type: string
+        destinationCompanySector:
+          type: string
+        exchangedMaterial:
+          type: string
+        quantity:
+          type: number
+          format: double
+        unit:
+          type: string
+        agreedPrice:
+          type: number
+          format: double
+        platformCommission:
+          type: number
+          format: double
+        co2Impact:
+          type: number
+          format: double
+        pickupDate:
+          type: string
+          format: date
+        registrationDate:
+          type: string
+        notes:
+          type: string
+        platformSeal:
+          type: string
+          format: byte
