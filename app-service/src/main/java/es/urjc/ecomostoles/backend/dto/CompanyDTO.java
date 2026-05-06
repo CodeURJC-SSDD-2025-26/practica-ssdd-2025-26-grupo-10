@@ -11,9 +11,12 @@ import es.urjc.ecomostoles.backend.utils.NumberFormatter;
 /**
  * Secure marshaling profile for Company entities.
  * 
- * Implements the DTO pattern ensuring strict isolation of the underlying DB schema 
- * from the presentation layer. Actively redacts sensitive payload nodes (e.g., password hashes, 
- * internal identity sequences) preventing over-posting vulnerabilities (Mass Assignment).
+ * Implements the DTO pattern ensuring strict isolation of the underlying DB
+ * schema
+ * from the presentation layer. Actively redacts sensitive payload nodes (e.g.,
+ * password hashes,
+ * internal identity sequences) preventing over-posting vulnerabilities (Mass
+ * Assignment).
  */
 public class CompanyDTO {
 

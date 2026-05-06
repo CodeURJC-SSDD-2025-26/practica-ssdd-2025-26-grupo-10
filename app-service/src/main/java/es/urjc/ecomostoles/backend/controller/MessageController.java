@@ -8,7 +8,6 @@ import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.service.DemandService;
 import es.urjc.ecomostoles.backend.service.MessageService;
 import es.urjc.ecomostoles.backend.mapper.MessageMapper;
-import java.util.stream.Collectors;
 import es.urjc.ecomostoles.backend.service.OfferService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,8 +27,10 @@ import java.util.Optional;
  * B2B communication synchronization controller.
  * 
  * Orchestrates internal mailboxes allowing cross-tenant discussions regarding
- * materials and logistic operations. Implements assertive permission sweeps guaranteeing 
- * that companies strictly process mail chains explicitly bounding them (as sender or recipient).
+ * materials and logistic operations. Implements assertive permission sweeps
+ * guaranteeing
+ * that companies strictly process mail chains explicitly bounding them (as
+ * sender or recipient).
  */
 @Controller
 public class MessageController {
@@ -38,7 +39,7 @@ public class MessageController {
 
         private final CompanyService companyService;
         private final MessageService messageService;
-    private final MessageMapper messageMapper;
+        private final MessageMapper messageMapper;
         private final OfferService offerService;
         private final DemandService demandService;
 
@@ -46,7 +47,7 @@ public class MessageController {
                         MessageService messageService,
                         OfferService offerService,
                         DemandService demandService, MessageMapper messageMapper) {
-        this.messageMapper = messageMapper;
+                this.messageMapper = messageMapper;
                 this.companyService = companyService;
                 this.messageService = messageService;
                 this.offerService = offerService;
@@ -54,10 +55,12 @@ public class MessageController {
         }
 
         /**
-         * Resolves and maps the dual-inbox architecture (Sent/Received) for the active tenant.
+         * Resolves and maps the dual-inbox architecture (Sent/Received) for the active
+         * tenant.
          * 
-         * @param model layout dictionary payload.
-         * @param principal strictly validated authentication token mapping to a Company.
+         * @param model     layout dictionary payload.
+         * @param principal strictly validated authentication token mapping to a
+         *                  Company.
          * @return DOM sequence executing the mailbox UI tree.
          */
         @GetMapping("/mensajes")
@@ -80,7 +83,7 @@ public class MessageController {
 
                 model.addAttribute("receivedMessages", received);
                 model.addAttribute("sentMessages", sent);
-                model.addAttribute("messages", received); 
+                model.addAttribute("messages", received);
 
                 return "mensajes";
         }
@@ -88,10 +91,11 @@ public class MessageController {
         /**
          * Fetches message body contents, enforcing IDOR protection boundaries.
          * 
-         * @param id primary unique reference of the target message.
-         * @param model presentation logic mapping object.
+         * @param id        primary unique reference of the target message.
+         * @param model     presentation logic mapping object.
          * @param principal authenticated connection executing the read.
-         * @return detailed message template, or redirects natively if bounds are breached.
+         * @return detailed message template, or redirects natively if bounds are
+         *         breached.
          */
         @GetMapping("/mensajes/{id}")
         public String showMessageDetail(@PathVariable Long id, Model model, Principal principal) {
@@ -103,7 +107,8 @@ public class MessageController {
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                                 "Company not found"));
 
-                // Security: Enforce Strict IDOR isolation. Read sweeps are blocked if the user isn't in the thread.
+                // Security: Enforce Strict IDOR isolation. Read sweeps are blocked if the user
+                // isn't in the thread.
                 boolean isRecipient = message.getRecipient().getId().equals(company.getId());
                 boolean isSender = message.getSender().getId().equals(company.getId());
 
@@ -125,17 +130,22 @@ public class MessageController {
         }
 
         /**
-         * Triggers a contact action initializing a thread derived directly from an active Offer.
+         * Triggers a contact action initializing a thread derived directly from an
+         * active Offer.
          * 
-         * @param offerId external relational constraint ID anchoring the discussion topic.
-         * @param content raw UTF-8 string block containing the user dispatch payload.
-         * @param principal originator security context.
-         * @param redirectAttributes attribute dispatcher to render UI feedback to the client.
+         * @param offerId            external relational constraint ID anchoring the
+         *                           discussion topic.
+         * @param content            raw UTF-8 string block containing the user dispatch
+         *                           payload.
+         * @param principal          originator security context.
+         * @param redirectAttributes attribute dispatcher to render UI feedback to the
+         *                           client.
          * @return backwards redirect resuming the previous view layout seamlessly.
          */
         @PostMapping("/mensajes/enviar/{offerId}")
         public String sendOfferMessage(@PathVariable Long offerId, @RequestParam String content,
-                Principal principal, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+                        Principal principal,
+                        org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
                 Offer offer = offerService.findById(offerId)
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                                 "Offer not found"));
@@ -147,9 +157,11 @@ public class MessageController {
                 String subject = "Re: " + offer.getTitle();
 
                 messageService.sendMessage(subject, content, sender, recipient);
-                log.info("[Mailbox] Success -> Message sent from '{}' to '{}' regarding offer ID: {}", sender.getContactEmail(), recipient.getContactEmail(), offerId);
- 
-                redirectAttributes.addFlashAttribute("successMessage", "Mensaje enviado correctamente a " + recipient.getCommercialName());
+                log.info("[Mailbox] Success -> Message sent from '{}' to '{}' regarding offer ID: {}",
+                                sender.getContactEmail(), recipient.getContactEmail(), offerId);
+
+                redirectAttributes.addFlashAttribute("successMessage",
+                                "Mensaje enviado correctamente a " + recipient.getCommercialName());
 
                 return "redirect:/oferta/" + offerId;
         }
@@ -161,17 +173,21 @@ public class MessageController {
         public String sendDemandMessage(@PathVariable Long demandId, @RequestParam String content,
                         Principal principal, RedirectAttributes redirectAttributes) {
                 Demand demand = demandService.findById(demandId)
-                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Demand not found"));
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Demand not found"));
                 Company sender = companyService.findByEmail(principal.getName())
-                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender not found"));
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Sender not found"));
 
                 Company recipient = demand.getCompany();
                 String subject = "Interés en la demanda: " + demand.getTitle();
 
                 messageService.sendMessage(subject, content, sender, recipient);
-                log.info("[Mailbox] Success -> Message sent from '{}' to '{}' regarding demand ID: {}", sender.getContactEmail(), recipient.getContactEmail(), demandId);
- 
-                redirectAttributes.addFlashAttribute("successMessage", "Mensaje enviado correctamente a la empresa solicitante.");
+                log.info("[Mailbox] Success -> Message sent from '{}' to '{}' regarding demand ID: {}",
+                                sender.getContactEmail(), recipient.getContactEmail(), demandId);
+
+                redirectAttributes.addFlashAttribute("successMessage",
+                                "Mensaje enviado correctamente a la empresa solicitante.");
 
                 return "redirect:/solicitudes";
         }
@@ -217,7 +233,7 @@ public class MessageController {
         /**
          * Destroys an existing communication link safely.
          * 
-         * @param id message entity key targeted for cleanup.
+         * @param id        message entity key targeted for cleanup.
          * @param principal interacting user validated securely via RBAC/Email match.
          * @return route directive looping back into the mailbox pane.
          */
@@ -233,8 +249,9 @@ public class MessageController {
                 boolean isSender = message.getSender().getContactEmail().equals(principal.getName());
 
                 if (!isRecipient && !isSender) {
-                    log.warn("[Mailbox] Security -> Forbidden deletion attempt for message ID: {} by user: {}", id, principal.getName());
-                    return "redirect:/mensajes?error=forbidden";
+                        log.warn("[Mailbox] Security -> Forbidden deletion attempt for message ID: {} by user: {}", id,
+                                        principal.getName());
+                        return "redirect:/mensajes?error=forbidden";
                 }
 
                 messageService.delete(id);

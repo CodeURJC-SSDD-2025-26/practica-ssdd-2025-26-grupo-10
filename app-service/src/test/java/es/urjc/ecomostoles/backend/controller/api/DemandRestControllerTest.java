@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Random;
 
-import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -76,18 +75,17 @@ class DemandRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
+    @WithMockUser(username = TEST_EMAIL, roles = { "COMPANY" })
     @DisplayName("Phase 2: Demand CRUD - Create valid demand (201)")
     void shouldCreateDemandSuccessfully() throws Exception {
         DemandDTO request = new DemandDTO(
                 null, "Busco Chatarra", "METAL_WASTE", "Chatarra",
                 200.0, "kg", "Alta", 500.0, "Móstoles", "30",
-                DemandStatus.ACTIVE, null, null, null, 0, null, false
-        );
+                DemandStatus.ACTIVE, null, null, null, 0, null, false);
 
         mockMvc.perform(post("/api/v1/demands")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
     }
 
@@ -100,18 +98,17 @@ class DemandRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
+    @WithMockUser(username = TEST_EMAIL, roles = { "COMPANY" })
     @DisplayName("Phase 2: Demand Validation - Negative budget (400)")
     void shouldReturn400WhenBudgetIsNegative() throws Exception {
         DemandDTO invalidRequest = new DemandDTO(
                 null, "Error Budget", "PLASTIC_WASTE", "Error",
                 1.0, "kg", "Baja", -10.0, "Madrid", "15",
-                DemandStatus.ACTIVE, null, null, null, 0, null, false
-        );
+                DemandStatus.ACTIVE, null, null, null, 0, null, false);
 
         mockMvc.perform(post("/api/v1/demands")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
     }
 }

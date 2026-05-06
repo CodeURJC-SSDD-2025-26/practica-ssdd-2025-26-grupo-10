@@ -181,8 +181,8 @@ public class AdminController {
         model.addAttribute("totalPages", companiesPage.getTotalPages() == 0 ? 1 : companiesPage.getTotalPages());
         model.addAttribute("hasPrevious", companiesPage.hasPrevious());
         model.addAttribute("hasNext", companiesPage.hasNext());
-        model.addAttribute("prevPage", companiesPage.getNumber() - 1);
-        model.addAttribute("nextPage", companiesPage.getNumber() + 1);
+        model.addAttribute("prevPage", companiesPage.getNumber());
+        model.addAttribute("nextPage", companiesPage.getNumber() + 2);
         model.addAttribute("totalItems", companiesPage.getTotalElements());
 
         // Base URL and query string for pagination
@@ -275,8 +275,8 @@ public class AdminController {
         model.addAttribute("totalPages", offersPage.getTotalPages() == 0 ? 1 : offersPage.getTotalPages());
         model.addAttribute("hasPrevious", offersPage.hasPrevious());
         model.addAttribute("hasNext", offersPage.hasNext());
-        model.addAttribute("prevPage", offersPage.getNumber() - 1);
-        model.addAttribute("nextPage", offersPage.getNumber() + 1);
+        model.addAttribute("prevPage", offersPage.getNumber());
+        model.addAttribute("nextPage", offersPage.getNumber() + 2);
         model.addAttribute("totalItems", offersPage.getTotalElements());
 
         // Fix: Persist state filter in pagination
@@ -362,8 +362,8 @@ public class AdminController {
         model.addAttribute("totalPages", demandsPage.getTotalPages() == 0 ? 1 : demandsPage.getTotalPages());
         model.addAttribute("hasPrevious", demandsPage.hasPrevious());
         model.addAttribute("hasNext", demandsPage.hasNext());
-        model.addAttribute("prevPage", demandsPage.getNumber() - 1);
-        model.addAttribute("nextPage", demandsPage.getNumber() + 1);
+        model.addAttribute("prevPage", demandsPage.getNumber());
+        model.addAttribute("nextPage", demandsPage.getNumber() + 2);
         model.addAttribute("totalItems", demandsPage.getTotalElements());
 
         // Dynamic stats for admin_demandas cards
@@ -397,8 +397,8 @@ public class AdminController {
         model.addAttribute("totalPages", agreementsPage.getTotalPages() == 0 ? 1 : agreementsPage.getTotalPages());
         model.addAttribute("hasPrevious", agreementsPage.hasPrevious());
         model.addAttribute("hasNext", agreementsPage.hasNext());
-        model.addAttribute("prevPage", agreementsPage.getNumber() - 1);
-        model.addAttribute("nextPage", agreementsPage.getNumber() + 1);
+        model.addAttribute("prevPage", agreementsPage.getNumber());
+        model.addAttribute("nextPage", agreementsPage.getNumber() + 2);
         model.addAttribute("totalItems", agreementsPage.getTotalElements());
 
         // Dynamic stats for admin_acuerdos cards

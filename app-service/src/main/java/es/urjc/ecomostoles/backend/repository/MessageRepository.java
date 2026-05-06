@@ -28,6 +28,9 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findTop100ByOrderBySendDateDesc();
 
     @Query("SELECT m FROM Message m WHERE m.recipient = :company OR m.sender = :company ORDER BY m.sendDate DESC")
+    List<Message> findByCompany(@Param("company") Company company);
+
+    @Query("SELECT m FROM Message m WHERE m.recipient = :company OR m.sender = :company ORDER BY m.sendDate DESC")
     Page<Message> findByCompanyPaginated(@Param("company") Company company, Pageable pageable);
 
     @Query("SELECT m FROM Message m WHERE m.recipient = :company ORDER BY m.sendDate DESC")

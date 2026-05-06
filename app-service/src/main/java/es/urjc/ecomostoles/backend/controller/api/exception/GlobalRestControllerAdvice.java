@@ -77,14 +77,28 @@ public class GlobalRestControllerAdvice {
     public ResponseEntity<ApiErrorDTO> handleDataIntegrity(org.springframework.dao.DataIntegrityViolationException ex, HttpServletRequest request) {
         log.warn("[REST API] 400 BAD REQUEST (Integrity) — path: '{}', reason: '{}'", request.getRequestURI(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiErrorDTO.of(request.getRequestURI(), "El email o CIF ya están registrados en el sistema", HttpStatus.BAD_REQUEST.value()));
+                .body(ApiErrorDTO.of(request.getRequestURI(), "The email or CIF is already registered in the system", HttpStatus.BAD_REQUEST.value()));
     }
 
     @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
     public ResponseEntity<ApiErrorDTO> handleAuthentication(org.springframework.security.core.AuthenticationException ex, HttpServletRequest request) {
         log.warn("[REST API] 401 UNAUTHORIZED — path: '{}', reason: '{}'", request.getRequestURI(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiErrorDTO.of(request.getRequestURI(), "Credenciales incorrectas", HttpStatus.UNAUTHORIZED.value()));
+                .body(ApiErrorDTO.of(request.getRequestURI(), "Invalid credentials", HttpStatus.UNAUTHORIZED.value()));
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiErrorDTO> handleAccessDenied(org.springframework.security.access.AccessDeniedException ex, HttpServletRequest request) {
+        log.warn("[REST API] 403 FORBIDDEN — path: '{}', reason: '{}'", request.getRequestURI(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiErrorDTO.of(request.getRequestURI(), "Access denied: You do not have the required permissions for this operation.", HttpStatus.FORBIDDEN.value()));
+    }
+
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ResponseEntity<ApiErrorDTO> handleResponseStatus(org.springframework.web.server.ResponseStatusException ex, HttpServletRequest request) {
+        log.warn("[REST API] {} — path: '{}', reason: '{}'", ex.getStatusCode(), request.getRequestURI(), ex.getReason());
+        return ResponseEntity.status(ex.getStatusCode())
+                .body(ApiErrorDTO.of(request.getRequestURI(), ex.getReason(), ex.getStatusCode().value()));
     }
 
     @ExceptionHandler(Exception.class)

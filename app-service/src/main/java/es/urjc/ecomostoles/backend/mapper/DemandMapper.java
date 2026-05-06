@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {CompanyMapper.class})
 public interface DemandMapper {
+    @org.mapstruct.Mapping(target = "owned", ignore = true)
     DemandDTO toDto(Demand entity);
     Demand toEntity(DemandDTO dto);
 }

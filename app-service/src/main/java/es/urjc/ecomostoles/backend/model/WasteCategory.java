@@ -16,7 +16,8 @@ public enum WasteCategory {
     TEXTILE_WASTE("Residuo Textil"),
     CONSTRUCTION_WASTE("Excedentes de Obra"),
     PAPER_WASTE("Papel y Cartón"),
-    GLASS_WASTE("Residuo de Vidrio");
+    GLASS_WASTE("Residuo de Vidrio"),
+    OTHER("Otros Residuos");
 
     private final String displayName;
 

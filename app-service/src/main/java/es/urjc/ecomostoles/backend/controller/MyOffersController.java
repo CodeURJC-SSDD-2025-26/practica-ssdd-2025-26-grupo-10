@@ -8,8 +8,6 @@ import es.urjc.ecomostoles.backend.dto.OfferSummary;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.service.OfferService;
 import es.urjc.ecomostoles.backend.mapper.OfferMapper;
-import java.util.stream.Collectors;
-import es.urjc.ecomostoles.backend.dto.OfferDTO;
 import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -39,10 +37,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 
 /**
- * Operational controller provisioning CRUD interfaces for Offer assets strictly tracked under the logged tenant.
+ * Operational controller provisioning CRUD interfaces for Offer assets strictly
+ * tracked under the logged tenant.
  * 
- * Embeds zero-trust evaluation models explicitly blocking external data mutations by utilizing 
- * ownership checks prior to all state-changing endpoints. Abstracts file processing complexity 
+ * Embeds zero-trust evaluation models explicitly blocking external data
+ * mutations by utilizing
+ * ownership checks prior to all state-changing endpoints. Abstracts file
+ * processing complexity
  * safely away from the underlying persistence layers.
  */
 @Controller
@@ -64,12 +65,14 @@ public class MyOffersController {
     }
 
     /**
-     * Defensive authorization gate. Resolves and validates asset alignment against the active security principle.
+     * Defensive authorization gate. Resolves and validates asset alignment against
+     * the active security principle.
      * 
-     * @param offerId unique constraint ID mapping the material asset.
+     * @param offerId   unique constraint ID mapping the material asset.
      * @param principal current authorized connection object.
      * @return fully materialized Offer verified for logical accessibility.
-     * @throws ResponseStatusException if bounded context assertions fail (HTTP 403/404).
+     * @throws ResponseStatusException if bounded context assertions fail (HTTP
+     *                                 403/404).
      */
     private Offer verifyOwnership(Long offerId, Principal principal) {
         Offer offer = offerService.findById(offerId)
@@ -86,7 +89,8 @@ public class MyOffersController {
                 && offer.getCompany().getId().equals(loggedCompany.getId());
 
         if (!isAdmin && !isOwner) {
-            log.warn("[Marketplace] Security -> Unauthorized access attempt to offer ID: {} by user: {}", offerId, principal.getName());
+            log.warn("[Marketplace] Security -> Unauthorized access attempt to offer ID: {} by user: {}", offerId,
+                    principal.getName());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "You do not have permission to modify this offer.");
         }
@@ -115,8 +119,8 @@ public class MyOffersController {
             model.addAttribute("totalPages", offerPage.getTotalPages() == 0 ? 1 : offerPage.getTotalPages());
             model.addAttribute("hasNext", offerPage.hasNext());
             model.addAttribute("hasPrevious", offerPage.hasPrevious());
-            model.addAttribute("prevPage", offerPage.getNumber() - 1);
-            model.addAttribute("nextPage", offerPage.getNumber() + 1);
+            model.addAttribute("prevPage", offerPage.getNumber());
+            model.addAttribute("nextPage", offerPage.getNumber() + 2);
             model.addAttribute("totalItems", offerPage.getTotalElements());
 
             // Dynamic base URL for pagination partial
@@ -164,14 +168,18 @@ public class MyOffersController {
     }
 
     /**
-     * Marshals complex multipart form payloads handling both textual metadata and BLOB image buffers.
+     * Marshals complex multipart form payloads handling both textual metadata and
+     * BLOB image buffers.
      * 
-     * @param offer DTO automatically hydrated via Spring's internal binder.
-     * @param result JSR 380 constraint validation state holder.
-     * @param imageFile buffered input stream intercepting multipart network boundaries.
-     * @param model MVC rendering dictionary.
-     * @param principal authentication wrapping context.
-     * @param redirectAttributes flash storage container ensuring ephemeral messages persist over redirect jumps.
+     * @param offer              DTO automatically hydrated via Spring's internal
+     *                           binder.
+     * @param result             JSR 380 constraint validation state holder.
+     * @param imageFile          buffered input stream intercepting multipart
+     *                           network boundaries.
+     * @param model              MVC rendering dictionary.
+     * @param principal          authentication wrapping context.
+     * @param redirectAttributes flash storage container ensuring ephemeral messages
+     *                           persist over redirect jumps.
      * @return logical redirect URI enforcing PRG interaction loops.
      */
     @PostMapping("/oferta/nueva")
@@ -203,13 +211,13 @@ public class MyOffersController {
             model.addAttribute("errors", result.getAllErrors());
             model.addAttribute("offer", offerMapper.toDto(offer)); // Ensure attribute name matches template
             loadSelectOptions(model, offer); // Fix: use loadSelectOptions instead of injectDynamicOptions
-            
+
             // SECURITY: Ensure sidebar knows user role on validation fail
             Company loggedUser = companyService.findByEmail(principal.getName()).orElse(null);
             if (loggedUser != null && loggedUser.getRoles().contains("ADMIN")) {
                 model.addAttribute("isAdmin", true);
             }
-            
+
             return "crear_activo";
         }
 
@@ -228,7 +236,8 @@ public class MyOffersController {
             }
 
             offerService.save(offer);
-            log.info("[Marketplace] Success -> New offer published by '{}': '{}'", principal.getName(), offer.getTitle());
+            log.info("[Marketplace] Success -> New offer published by '{}': '{}'", principal.getName(),
+                    offer.getTitle());
             redirectAttributes.addFlashAttribute("successMessage", "¡Oferta publicada con éxito!");
             return "redirect:/dashboard/mis-ofertas";
         }
@@ -267,7 +276,8 @@ public class MyOffersController {
         // Status with selection logic
         List<SelectOption> statusOptions = new ArrayList<>();
         for (OfferStatus status : OfferStatus.values()) {
-            statusOptions.add(new SelectOption(status.name(), status.getDisplayName(), status.equals(offer.getStatus())));
+            statusOptions
+                    .add(new SelectOption(status.name(), status.getDisplayName(), status.equals(offer.getStatus())));
         }
         model.addAttribute("statusOptions", statusOptions);
 
@@ -341,12 +351,12 @@ public class MyOffersController {
             model.addAttribute("errors", result.getAllErrors());
             model.addAttribute("offer", offerMapper.toDto(offerForm)); // Ensure attribute name matches template 'offer'
             offerForm.setId(id);
-            
+
             // SECURITY: Ensure sidebar knows user role on validation fail
             if (loggedUser.getRoles().contains("ADMIN")) {
                 model.addAttribute("isAdmin", true);
             }
-            
+
             return "editar_activo";
         }
 

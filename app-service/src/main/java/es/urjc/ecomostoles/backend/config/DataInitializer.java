@@ -141,6 +141,7 @@ public class DataInitializer implements CommandLineRunner {
             impactFactorRepository.save(new ImpactFactor("CONSTRUCTION_WASTE", 0.7));
             impactFactorRepository.save(new ImpactFactor("PAPER_WASTE", 1.1));
             impactFactorRepository.save(new ImpactFactor("GLASS_WASTE", 1.2));
+            impactFactorRepository.save(new ImpactFactor("OTHER", 1.0));
             log.info("[Sustainability] Success -> {} impact factors registered.", impactFactorRepository.count());
         }
 
@@ -272,7 +273,7 @@ public class DataInitializer implements CommandLineRunner {
             demand2.setUrgency("Consultar");
             demand2.setStatus(DemandStatus.ACTIVE);
             demand2.setPublicationDate(LocalDateTime.now());
-            demand2.setValidity("0");
+            demand2.setValidity("30");
             demand2.setPickupZone("Móstoles Central");
             demand2.setCompany(company2);
             demandRepository.save(demand2);
@@ -351,6 +352,24 @@ public class DataInitializer implements CommandLineRunner {
                             WasteCategory.METAL_WASTE.name()));
 
             agreementRepository.save(agreement1);
+
+            // New Agreement: EcoSur (company2) -> Paco (company3) [Metales del Sur NOT involved]
+            Agreement agreement2 = new Agreement();
+            agreement2.setExchangedMaterial("Retales de PVC Industrial");
+            agreement2.setQuantity(80.0);
+            agreement2.setUnit("kg");
+            agreement2.setAgreedPrice(16.0);
+            agreement2.setStatus(AgreementStatus.ACCEPTED);
+            agreement2.setRegistrationDate(LocalDateTime.now().minusHours(12));
+            agreement2.setPickupDate(java.time.LocalDate.now().plusDays(2));
+            agreement2.setOriginCompany(company2);
+            agreement2.setDestinationCompany(company3);
+            agreement2.setPlatformCommission(0.40);
+            agreement2.setCo2Impact(
+                    sustainabilityEngine.calculateCo2Impact(agreement2.getQuantity(),
+                            WasteCategory.PLASTIC_WASTE.name()));
+            agreementRepository.save(agreement2);
+            log.info("[Marketplace] Success -> Sample agreement (EcoSur <-> Paco) created.");
         }
 
         // ══════════════════════════════════════════

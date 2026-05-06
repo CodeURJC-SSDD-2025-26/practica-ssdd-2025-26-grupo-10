@@ -58,6 +58,12 @@ public class AgreementService {
     }
 
     @Transactional(readOnly = true)
+    public Company findCompanyByEmail(String email) {
+        return companyService.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found for email: " + email));
+    }
+
+    @Transactional(readOnly = true)
     public List<Agreement> getAll() {
         return agreementRepository.findTop50ByOrderByRegistrationDateDesc();
     }
@@ -228,8 +234,13 @@ public class AgreementService {
 
     @Transactional(readOnly = true)
     public double sumReintroducedMaterial(Company company) {
-        Double total = agreementRepository.sumQuantityByCompanyAndStatus(company, AgreementStatus.COMPLETED);
-        return total != null ? total : 0.0;
+        log.debug("[AgreementService] Summing material for company: {}", company.getContactEmail());
+        List<Agreement> all = agreementRepository.findByCompany(company);
+        
+        return all.stream()
+                .filter(a -> AgreementStatus.COMPLETED.equals(a.getStatus()))
+                .mapToDouble(a -> a.getQuantity() != null ? a.getQuantity() : 0.0)
+                .sum();
     }
 
     @Transactional(readOnly = true)
@@ -240,12 +251,16 @@ public class AgreementService {
 
     @Transactional(readOnly = true)
     public double calculateCO2SavedByCompany(Long companyId) {
-        Optional<Company> company = companyService.findById(companyId);
-        if (company.isEmpty())
-            return 0.0;
+        Company company = companyService.findById(companyId).orElse(null);
+        if (company == null) return 0.0;
 
-        Double total = agreementRepository.sumCO2ImpactByCompanyCompleted(company.get());
-        return total != null ? total : 0.0;
+        log.debug("[AgreementService] Calculating CO2 for company: {}", company.getContactEmail());
+        List<Agreement> all = agreementRepository.findByCompany(company);
+
+        return all.stream()
+                .filter(a -> AgreementStatus.COMPLETED.equals(a.getStatus()))
+                .mapToDouble(a -> a.getCo2Impact() != null ? a.getCo2Impact() : 0.0)
+                .sum();
     }
 
     @Transactional(readOnly = true)
@@ -275,19 +290,19 @@ public class AgreementService {
 
     @Transactional(readOnly = true)
     public Double getRawCO2Impact() {
-        Double total = agreementRepository.sumTotalCO2ImpactCompleted();
+        Double total = agreementRepository.sumTotalCO2ImpactCompleted(AgreementStatus.COMPLETED);
         return total != null ? total : 0.0;
     }
 
     @Transactional(readOnly = true)
     public Double calculateCO2Saved() {
-        Double total = agreementRepository.sumTotalCO2ImpactCompleted();
+        Double total = agreementRepository.sumTotalCO2ImpactCompleted(AgreementStatus.COMPLETED);
         return total != null ? total : 0.0;
     }
 
     @Transactional(readOnly = true)
     public Double getTotalCommission() {
-        Double total = agreementRepository.sumTotalCommissionCompleted();
+        Double total = agreementRepository.sumTotalCommissionCompleted(AgreementStatus.COMPLETED);
         return total != null ? total : 0.0;
     }
 
@@ -331,17 +346,25 @@ public class AgreementService {
             existingAgreement.setCo2Impact(co2);
         }
 
-        // Update allowed fields
-        existingAgreement.setExchangedMaterial(updatedData.getExchangedMaterial());
-        existingAgreement.setQuantity(updatedData.getQuantity());
-        existingAgreement.setUnit(updatedData.getUnit());
-        existingAgreement.setPickupDate(updatedData.getPickupDate());
-        existingAgreement.setStatus(updatedData.getStatus());
+        // Update allowed fields (Only if they are provided in updatedData to avoid nulling out mandatory fields)
+        if (updatedData.getExchangedMaterial() != null) {
+            existingAgreement.setExchangedMaterial(updatedData.getExchangedMaterial());
+        }
+        if (updatedData.getQuantity() != null) {
+            existingAgreement.setQuantity(updatedData.getQuantity());
+        }
+        if (updatedData.getUnit() != null) {
+            existingAgreement.setUnit(updatedData.getUnit());
+        }
+        if (updatedData.getPickupDate() != null) {
+            existingAgreement.setPickupDate(updatedData.getPickupDate());
+        }
+        if (updatedData.getStatus() != null) {
+            existingAgreement.setStatus(updatedData.getStatus());
+        }
 
         // Recalculate profit if price changed
-        if (updatedData.getAgreedPrice() != null &&
-                !updatedData.getAgreedPrice().equals(existingAgreement.getAgreedPrice())) {
-
+        if (updatedData.getAgreedPrice() != null) {
             existingAgreement.setAgreedPrice(updatedData.getAgreedPrice());
 
             String platformCommission = configurationService.getAutoValue("platformCommission");
@@ -355,8 +378,6 @@ public class AgreementService {
             double commission = existingAgreement.getAgreedPrice() * (percentage / 100.0);
             commission = Math.round(commission * 100.0) / 100.0;
             existingAgreement.setPlatformCommission(commission);
-        } else {
-            existingAgreement.setAgreedPrice(updatedData.getAgreedPrice());
         }
 
         Agreement saved = agreementRepository.save(existingAgreement);

@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,7 +50,7 @@ class MessageRestControllerTest {
     private static final String TEST_EMAIL = "test@company.com";
 
     @Test
-    @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
+    @WithMockUser(username = TEST_EMAIL, roles = { "COMPANY" })
     @DisplayName("Phase 3: Messaging - Send a message (201 Created)")
     void shouldSendMessage() throws Exception {
         // Mock companies
@@ -62,12 +61,13 @@ class MessageRestControllerTest {
 
         when(companyService.findById(1L)).thenReturn(Optional.of(sender));
         when(companyService.findById(2L)).thenReturn(Optional.of(recipient));
-        when(companyService.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(sender)); // Added for IDOR/Impersonation check
+        when(companyService.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(sender)); // Added for IDOR/Impersonation
+                                                                                      // check
 
         // Mock message mapping and saving
         Message mockMessage = new Message();
         mockMessage.setId(10L);
-        
+
         when(messageMapper.toEntity(any(MessageDTO.class))).thenReturn(mockMessage);
         when(messageService.save(any(Message.class))).thenReturn(mockMessage);
         when(messageMapper.toDto(any(Message.class))).thenReturn(null);
@@ -79,18 +79,17 @@ class MessageRestControllerTest {
         recipientDTO.setId(2L);
 
         MessageDTO messageDTO = new MessageDTO(
-                null, 
-                "Asunto de prueba", 
-                "Cuerpo del mensaje", 
-                null, 
-                false, 
-                senderDTO, 
-                recipientDTO
-        );
+                null,
+                "Asunto de prueba",
+                "Cuerpo del mensaje",
+                null,
+                false,
+                senderDTO,
+                recipientDTO);
 
         mockMvc.perform(post("/api/v1/messages")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(messageDTO)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(messageDTO)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isCreated());
     }

@@ -65,8 +65,8 @@ public class DemandController {
         model.addAttribute("totalPages", demandPage.getTotalPages() == 0 ? 1 : demandPage.getTotalPages());
         model.addAttribute("hasNext", demandPage.hasNext());
         model.addAttribute("hasPrevious", demandPage.hasPrevious());
-        model.addAttribute("prevPage", demandPage.getNumber() - 1);
-        model.addAttribute("nextPage", demandPage.getNumber() + 1);
+        model.addAttribute("prevPage", demandPage.getNumber());
+        model.addAttribute("nextPage", demandPage.getNumber() + 2);
         model.addAttribute("totalItems", demandPage.getTotalElements());
 
         // Dynamic base URL for pagination partial

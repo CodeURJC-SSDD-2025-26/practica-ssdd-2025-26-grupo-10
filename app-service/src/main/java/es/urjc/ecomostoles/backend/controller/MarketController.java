@@ -4,7 +4,6 @@ import es.urjc.ecomostoles.backend.model.Offer;
 import es.urjc.ecomostoles.backend.dto.OfferSummary;
 import es.urjc.ecomostoles.backend.service.OfferService;
 import es.urjc.ecomostoles.backend.mapper.OfferMapper;
-import es.urjc.ecomostoles.backend.dto.OfferDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +17,12 @@ import java.util.Optional;
 /**
  * Commercial hub presentation controller for Offer entities.
  * 
- * Brokers interactions across the public/authenticated marketplace viewing pane. Reconciles complex
- * multifaceted HTTP query profiles (keywords, topological constraints, taxonomy) bridging them natively 
- * into the service-layer specification schemas to guarantee seamless offset pagination behavior.
+ * Brokers interactions across the public/authenticated marketplace viewing
+ * pane. Reconciles complex
+ * multifaceted HTTP query profiles (keywords, topological constraints,
+ * taxonomy) bridging them natively
+ * into the service-layer specification schemas to guarantee seamless offset
+ * pagination behavior.
  */
 @Controller
 public class MarketController {
@@ -36,15 +38,19 @@ public class MarketController {
     }
 
     /**
-     * Compiles the dynamic, paginated matrix of active environmental trading offers.
+     * Compiles the dynamic, paginated matrix of active environmental trading
+     * offers.
      * 
-     * @param model template layout schema block.
-     * @param principal active session identifier indicating context scoping.
-     * @param keyword regex/contains subset query modifier matching titles/descriptions.
-     * @param wasteCategory vertical taxonomy constraint.
+     * @param model          template layout schema block.
+     * @param principal      active session identifier indicating context scoping.
+     * @param keyword        regex/contains subset query modifier matching
+     *                       titles/descriptions.
+     * @param wasteCategory  vertical taxonomy constraint.
      * @param industrialPark geographical scoping boundary.
-     * @param error state flag catching business-logic faults (ex: self-contracting).
-     * @param pageable resolved offset/limit bindings injected safely via the HandlerInterceptor.
+     * @param error          state flag catching business-logic faults (ex:
+     *                       self-contracting).
+     * @param pageable       resolved offset/limit bindings injected safely via the
+     *                       HandlerInterceptor.
      * @return string directive targeting the marketplace DOM tree.
      */
     @GetMapping("/mercado")
@@ -57,11 +63,11 @@ public class MarketController {
 
         Page<OfferSummary> offerPage = offerService.searchFilteredOffers(keyword, wasteCategory, industrialPark,
                 pageable);
- 
-        log.info("[Market] Discovery -> Executing multifaceted search. Keyword: '{}', Category: '{}', Region: '{}'", 
-                 keyword != null ? keyword : "ALL", 
-                 wasteCategory != null ? wasteCategory : "ALL", 
-                 industrialPark != null ? industrialPark : "ALL");
+
+        log.info("[Market] Discovery -> Executing multifaceted search. Keyword: '{}', Category: '{}', Region: '{}'",
+                keyword != null ? keyword : "ALL",
+                wasteCategory != null ? wasteCategory : "ALL",
+                industrialPark != null ? industrialPark : "ALL");
 
         model.addAttribute("offers", offerPage.getContent());
         model.addAttribute("hasOffers", !offerPage.isEmpty());
@@ -71,8 +77,8 @@ public class MarketController {
         model.addAttribute("totalPages", offerPage.getTotalPages() == 0 ? 1 : offerPage.getTotalPages());
         model.addAttribute("hasNext", offerPage.hasNext());
         model.addAttribute("hasPrevious", offerPage.hasPrevious());
-        model.addAttribute("prevPage", offerPage.getNumber() - 1);
-        model.addAttribute("nextPage", offerPage.getNumber() + 1);
+        model.addAttribute("prevPage", offerPage.getNumber());
+        model.addAttribute("nextPage", offerPage.getNumber() + 2);
         model.addAttribute("totalItems", offerPage.getTotalElements());
 
         // Dynamic base URL and query string for pagination partial
@@ -103,12 +109,15 @@ public class MarketController {
     /**
      * Displays exhaustive granular specifics regarding an isolated supply unit.
      * 
-     * Conditionally evaluates the identity of the invoker to halt analytical contamination 
-     * (e.g., locking out interaction metrics when the owner views their own listing).
+     * Conditionally evaluates the identity of the invoker to halt analytical
+     * contamination
+     * (e.g., locking out interaction metrics when the owner views their own
+     * listing).
      * 
-     * @param id remote unique sequence corresponding to the offer.
-     * @param model MVC data dictionary.
-     * @param principal authenticated user envelope (used for ownership detection).
+     * @param id                 remote unique sequence corresponding to the offer.
+     * @param model              MVC data dictionary.
+     * @param principal          authenticated user envelope (used for ownership
+     *                           detection).
      * @param redirectAttributes decoupled carrier for post-redirect flash alerts.
      * @return logical view path exposing granular offer variables.
      */

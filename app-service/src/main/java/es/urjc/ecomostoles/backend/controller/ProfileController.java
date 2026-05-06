@@ -14,7 +14,6 @@ import es.urjc.ecomostoles.backend.model.Company;
 import es.urjc.ecomostoles.backend.dto.CompanyDTO;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.mapper.CompanyMapper;
-import es.urjc.ecomostoles.backend.dto.CompanyDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.validation.Valid;
@@ -27,8 +26,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 /**
  * Controller orchestrating dynamic profile manipulation.
  * 
- * Supports both self-service tenant administration and global administrative overrides 
- * via role-based access constraints. Enforces payload mapping and security auditing across updates 
+ * Supports both self-service tenant administration and global administrative
+ * overrides
+ * via role-based access constraints. Enforces payload mapping and security
+ * auditing across updates
  * safely isolating entity mutations from unauthorized lateral edits.
  */
 @Controller
@@ -46,7 +47,8 @@ public class ProfileController {
 
     @GetMapping("/perfil")
     public String showProfile(Model model, @RequestParam(required = false) boolean success, Principal principal) {
-        // Integrity check: Ensure the authenticated principal still exists in the database
+        // Integrity check: Ensure the authenticated principal still exists in the
+        // database
         companyService.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
 
@@ -72,14 +74,17 @@ public class ProfileController {
     }
 
     /**
-     * Executes entity modifications bridging incoming generic forms to persistent models.
+     * Executes entity modifications bridging incoming generic forms to persistent
+     * models.
      * 
-     * @param companyDTO marshaled domain transfer object containing unsanitized modifications.
-     * @param bindingResult constraints violation tracker.
-     * @param logoFile raw BLOB multipart buffer.
-     * @param request base HTTP servlet extracting administrative contexts securely.
-     * @param model MVC rendering frame.
-     * @param principal authenticated command issuer.
+     * @param companyDTO         marshaled domain transfer object containing
+     *                           unsanitized modifications.
+     * @param bindingResult      constraints violation tracker.
+     * @param logoFile           raw BLOB multipart buffer.
+     * @param request            base HTTP servlet extracting administrative
+     *                           contexts securely.
+     * @param model              MVC rendering frame.
+     * @param principal          authenticated command issuer.
      * @param redirectAttributes decoupled PRG carrier parameters.
      * @return logical redirect router dependent on the active role structure.
      */
@@ -93,7 +98,8 @@ public class ProfileController {
             RedirectAttributes redirectAttributes) {
 
         if (logoFile != null && !logoFile.isEmpty()) {
-            log.info("[Profile] Success -> Multipart logo received: '{}' ({} bytes)", logoFile.getOriginalFilename(), logoFile.getSize());
+            log.info("[Profile] Success -> Multipart logo received: '{}' ({} bytes)", logoFile.getOriginalFilename(),
+                    logoFile.getSize());
         } else {
             log.info("[Profile] INFO -> Profile update request without logo modification.");
         }
@@ -102,11 +108,12 @@ public class ProfileController {
         boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
 
         if (bindingResult.hasErrors()) {
-            log.warn("[Profile] Failed -> Validation constraints violated during profile update for ID: {}. Errors: {}", targetId, bindingResult.getFieldErrors().size());
-            
+            log.warn("[Profile] Failed -> Validation constraints violated during profile update for ID: {}. Errors: {}",
+                    targetId, bindingResult.getFieldErrors().size());
+
             // Map errors as boolean flags for Mustache UI
             bindingResult.getFieldErrors().forEach(err -> model.addAttribute("error_" + err.getField(), true));
-            
+
             // Re-populate required model attributes to keep context
             model.addAttribute("isDashboard", true);
             if (isAdmin && targetId != null) {
@@ -115,11 +122,12 @@ public class ProfileController {
             } else {
                 model.addAttribute("company", companyDTO);
             }
-            
+
             return "perfil_empresa";
         }
 
-        // Logic: Evaluate authorization clearance dynamically. Admin roles break isolation barriers to assist users.
+        // Logic: Evaluate authorization clearance dynamically. Admin roles break
+        // isolation barriers to assist users.
         Company company;
 
         if (isAdmin && targetId != null) {
@@ -138,10 +146,12 @@ public class ProfileController {
 
         if (logoFile != null && !logoFile.isEmpty()) {
             try {
-                log.info("[Storage] Persistence -> Synchronizing new binary logo for company ID: {} ({} bytes)", company.getId(), logoFile.getSize());
+                log.info("[Storage] Persistence -> Synchronizing new binary logo for company ID: {} ({} bytes)",
+                        company.getId(), logoFile.getSize());
                 company.setLogo(logoFile.getBytes());
             } catch (Exception e) {
-                log.error("[Storage] ERROR -> IO exception during logo binary synchronization for company ID: {}", company.getId(), e);
+                log.error("[Storage] ERROR -> IO exception during logo binary synchronization for company ID: {}",
+                        company.getId(), e);
             }
         }
 

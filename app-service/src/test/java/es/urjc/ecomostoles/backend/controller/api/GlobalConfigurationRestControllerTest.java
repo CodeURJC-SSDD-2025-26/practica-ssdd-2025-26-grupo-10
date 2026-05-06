@@ -30,8 +30,8 @@ class GlobalConfigurationRestControllerTest {
     private ConfigurationService configurationService;
 
     @Test
-    @WithMockUser(username = "test@company.com", roles = {"COMPANY"})
-    @DisplayName("Phase 4: Global Config - Get system configuration (200 OK)")
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("GET /api/v1/configurations - Success (ADMIN)")
     void shouldGetGlobalConfiguration() throws Exception {
         // Wildcard stub as fallback: prevents NPE in Map.of() if any key returns null
         when(configurationService.getAutoValue(anyString())).thenReturn("default-value");

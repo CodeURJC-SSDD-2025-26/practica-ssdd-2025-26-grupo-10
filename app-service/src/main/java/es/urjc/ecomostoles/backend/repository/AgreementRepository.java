@@ -83,15 +83,16 @@ public interface AgreementRepository extends JpaRepository<Agreement, Long> {
         Double sumTotalQuantityByStatus(
                         @org.springframework.data.repository.query.Param("status") AgreementStatus status);
 
-        @org.springframework.data.jpa.repository.Query("SELECT SUM(a.co2Impact) FROM Agreement a WHERE a.status = 'COMPLETED'")
-        Double sumTotalCO2ImpactCompleted();
+        @org.springframework.data.jpa.repository.Query("SELECT SUM(a.co2Impact) FROM Agreement a WHERE a.status = :status")
+        Double sumTotalCO2ImpactCompleted(@org.springframework.data.repository.query.Param("status") AgreementStatus status);
 
-        @org.springframework.data.jpa.repository.Query("SELECT SUM(a.co2Impact) FROM Agreement a WHERE (a.originCompany = :company OR a.destinationCompany = :company) AND a.status = 'COMPLETED'")
+        @org.springframework.data.jpa.repository.Query("SELECT SUM(a.co2Impact) FROM Agreement a WHERE (a.originCompany = :company OR a.destinationCompany = :company) AND a.status = :status")
         Double sumCO2ImpactByCompanyCompleted(
-                        @org.springframework.data.repository.query.Param("company") Company company);
+                        @org.springframework.data.repository.query.Param("company") Company company,
+                        @org.springframework.data.repository.query.Param("status") AgreementStatus status);
 
-        @org.springframework.data.jpa.repository.Query("SELECT SUM(a.platformCommission) FROM Agreement a WHERE a.status = 'COMPLETED'")
-        Double sumTotalCommissionCompleted();
+        @org.springframework.data.jpa.repository.Query("SELECT SUM(a.platformCommission) FROM Agreement a WHERE a.status = :status")
+        Double sumTotalCommissionCompleted(@org.springframework.data.repository.query.Param("status") AgreementStatus status);
 
         long countByRegistrationDateAfter(java.time.LocalDateTime date);
 

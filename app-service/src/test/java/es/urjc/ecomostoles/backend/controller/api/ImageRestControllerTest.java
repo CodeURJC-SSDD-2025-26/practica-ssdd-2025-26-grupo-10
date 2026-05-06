@@ -2,6 +2,7 @@ package es.urjc.ecomostoles.backend.controller.api;
 
 import es.urjc.ecomostoles.backend.model.Company;
 import es.urjc.ecomostoles.backend.model.Offer;
+import es.urjc.ecomostoles.backend.model.OfferStatus;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.service.OfferService;
 import org.junit.jupiter.api.DisplayName;
@@ -42,7 +43,7 @@ class ImageRestControllerTest {
     private static final String TEST_EMAIL = "image_owner@test.com";
 
     @Test
-    @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
+    @WithMockUser(username = TEST_EMAIL, roles = { "COMPANY" })
     @DisplayName("Phase 2: Image - Upload company logo (Mocked Service 204)")
     void shouldUploadCompanyLogo() throws Exception {
         // Mock the company retrieval and save to avoid any DB/Disk 500 errors
@@ -54,20 +55,19 @@ class ImageRestControllerTest {
         when(companyService.save(any(Company.class))).thenReturn(mockCompany);
 
         MockMultipartFile file = new MockMultipartFile(
-                "imageFile", 
-                "logo.png", 
-                "image/png", 
-                "mock-binary-data".getBytes()
-        );
+                "imageFile",
+                "logo.png",
+                "image/png",
+                "mock-binary-data".getBytes());
 
         mockMvc.perform(multipart("/api/v1/images/companies/1")
-                        .file(file))
+                .file(file))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
+    @WithMockUser(username = TEST_EMAIL, roles = { "COMPANY" })
     @DisplayName("Phase 2: Image - Download non-existent logo (404)")
     void shouldReturn404WhenLogoNotFound() throws Exception {
         Company mockCompany = new Company();
@@ -79,5 +79,55 @@ class ImageRestControllerTest {
         mockMvc.perform(get("/api/v1/images/companies/1"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "any_user@test.com", roles = { "COMPANY" })
+    @DisplayName("Phase 3: Image - Get offer image (Active - OK)")
+    void shouldReturnOkWhenOfferActive() throws Exception {
+        Offer mockOffer = new Offer();
+        mockOffer.setStatus(OfferStatus.ACTIVE);
+        mockOffer.setImage("fake-image".getBytes());
+
+        when(offerService.findById(anyLong())).thenReturn(Optional.of(mockOffer));
+
+        mockMvc.perform(get("/api/v1/images/offers/1"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "not_the_owner@test.com", roles = { "COMPANY" })
+    @DisplayName("Phase 3: Image - Get offer image (Inactive & Not Owner - 403)")
+    void shouldReturnForbiddenWhenOfferNotActiveAndNotOwner() throws Exception {
+        Company owner = new Company();
+        owner.setContactEmail(TEST_EMAIL);
+
+        Offer mockOffer = new Offer();
+        mockOffer.setStatus(OfferStatus.FINISHED);
+        mockOffer.setCompany(owner);
+        mockOffer.setImage("fake-image".getBytes());
+
+        when(offerService.findById(anyLong())).thenReturn(Optional.of(mockOffer));
+
+        mockMvc.perform(get("/api/v1/images/offers/1"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = TEST_EMAIL, roles = { "COMPANY" })
+    @DisplayName("Phase 3: Image - Get offer image (Inactive but Owner - OK)")
+    void shouldReturnOkWhenOfferNotActiveButIsOwner() throws Exception {
+        Company owner = new Company();
+        owner.setContactEmail(TEST_EMAIL);
+
+        Offer mockOffer = new Offer();
+        mockOffer.setStatus(OfferStatus.FINISHED);
+        mockOffer.setCompany(owner);
+        mockOffer.setImage("fake-image".getBytes());
+
+        when(offerService.findById(anyLong())).thenReturn(Optional.of(mockOffer));
+
+        mockMvc.perform(get("/api/v1/images/offers/1"))
+                .andExpect(status().isOk());
     }
 }

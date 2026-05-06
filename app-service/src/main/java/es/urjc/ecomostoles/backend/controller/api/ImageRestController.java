@@ -20,8 +20,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
+
+import es.urjc.ecomostoles.backend.model.OfferStatus;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * REST API controller for managing binary image data (BLOBs) for Offers and Companies.
@@ -47,19 +54,38 @@ public class ImageRestController {
     // GET /api/v1/images/offers/{id}
     // -------------------------------------------------------------------------
 
-    @Operation(summary = "Get offer image", description = "Retrieves the image binary data for a specific offer.")
+    @Operation(summary = "Get offer image", description = "Retrieves the image binary data for a specific offer. " +
+            "Only active offers are visible to everyone; non-active offers require ownership or ADMIN role.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Image returned successfully", content = @Content(mediaType = "image/jpeg")),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Offer is not active", content = @Content),
             @ApiResponse(responseCode = "404", description = "Offer or image not found", content = @Content)
     })
     @GetMapping("/offers/{id}")
     public ResponseEntity<byte[]> getOfferImage(
             @Parameter(description = "ID of the offer", example = "1")
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            Principal principal) {
         log.debug("[API] GET /api/v1/images/offers/{}", id);
 
         Offer offer = offerService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Offer not found with id: " + id));
+
+        // Security check: Only ACTIVE offers are public. Non-active require ownership or ADMIN.
+        boolean isActive = offer.getStatus() == OfferStatus.ACTIVE;
+        boolean isOwner = principal != null && offer.getCompany() != null &&
+                offer.getCompany().getContactEmail().equals(principal.getName());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth != null && auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isActive && !isOwner && !isAdmin) {
+            log.warn("[SECURITY] Privacy breach attempt: User {} tried to view image of non-active offer {}",
+                    principal != null ? principal.getName() : "anonymous", id);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Access denied: This offer is no longer active and you are not the owner.");
+        }
 
         if (offer.getImage() == null || offer.getImage().length == 0) {
             throw new NoSuchElementException("No image found for offer id: " + id);
@@ -115,8 +141,8 @@ public class ImageRestController {
             @PathVariable Long id,
             @Parameter(description = "Image file to upload")
             @RequestParam("imageFile") MultipartFile imageFile,
-            java.security.Principal principal) throws IOException {
-        
+            Principal principal) throws IOException {
+
         log.info("[API] POST /api/v1/images/offers/{}", id);
 
         if (imageFile.isEmpty()) {
@@ -127,16 +153,21 @@ public class ImageRestController {
                 .orElseThrow(() -> new NoSuchElementException("Offer not found with id: " + id));
 
         // IDOR Protection: Verify ownership or ADMIN role
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        }
+
         boolean isOwner = offer.getCompany() != null && offer.getCompany().getContactEmail().equals(principal.getName());
-        boolean isAdmin = org.springframework.security.core.context.SecurityContextHolder.getContext()
-                .getAuthentication().getAuthorities().stream()
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth != null && auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
         if (!isOwner && !isAdmin) {
-            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to upload image for offer {} owned by {}", 
+            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to upload image for offer {} owned by {}",
                     principal.getName(), id, offer.getCompany() != null ? offer.getCompany().getContactEmail() : "N/A");
-            throw new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.FORBIDDEN, "You do not have permission to upload images for this offer");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "You do not have permission to upload images to this offer");
         }
 
         offer.setImage(imageFile.getBytes());
@@ -162,8 +193,8 @@ public class ImageRestController {
             @PathVariable Long id,
             @Parameter(description = "Logo file to upload")
             @RequestParam("imageFile") MultipartFile imageFile,
-            java.security.Principal principal) throws IOException {
-        
+            Principal principal) throws IOException {
+
         log.info("[API] POST /api/v1/images/companies/{}", id);
 
         if (imageFile.isEmpty()) {
@@ -174,16 +205,21 @@ public class ImageRestController {
                 .orElseThrow(() -> new NoSuchElementException("Company not found with id: " + id));
 
         // IDOR Protection: Verify ownership or ADMIN role
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        }
+
         boolean isOwner = company.getContactEmail().equals(principal.getName());
-        boolean isAdmin = org.springframework.security.core.context.SecurityContextHolder.getContext()
-                .getAuthentication().getAuthorities().stream()
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth != null && auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
         if (!isOwner && !isAdmin) {
-            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to upload logo for company {}", 
+            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to upload logo for company {}",
                     principal.getName(), id);
-            throw new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.FORBIDDEN, "You do not have permission to update this company logo");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "You do not have permission to update this company's logo");
         }
 
         company.setLogo(imageFile.getBytes());

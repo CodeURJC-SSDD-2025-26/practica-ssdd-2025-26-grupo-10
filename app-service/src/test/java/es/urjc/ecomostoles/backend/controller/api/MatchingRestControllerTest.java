@@ -13,8 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import java.util.Collections;
-
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,7 +36,7 @@ class MatchingRestControllerTest {
     private static final String TEST_EMAIL = "test@company.com";
 
     @Test
-    @WithMockUser(username = TEST_EMAIL, roles = {"COMPANY"})
+    @WithMockUser(username = TEST_EMAIL, roles = { "COMPANY" })
     @DisplayName("Phase 3: Smart Matching - Get suggestions for a demand (200 OK)")
     void shouldGetBestMatchesForDemand() throws Exception {
         // Create a demand with owner to pass IDOR checks
@@ -51,7 +49,8 @@ class MatchingRestControllerTest {
 
         // Mock a simple result list
         MatchResultDTO mockResult = new MatchResultDTO(null, 95.0, "Alta compatibilidad");
-        when(matchingService.findBestMatchesForDemand(anyLong())).thenReturn(java.util.Collections.singletonList(mockResult));
+        when(matchingService.findBestMatchesForDemand(anyLong()))
+                .thenReturn(java.util.Collections.singletonList(mockResult));
 
         mockMvc.perform(get("/api/v1/matches/demands/1"))
                 .andDo(MockMvcResultHandlers.print())

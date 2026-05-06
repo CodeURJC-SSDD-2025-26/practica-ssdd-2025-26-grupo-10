@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -29,283 +28,378 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.server.ResponseStatusException;
+import es.urjc.ecomostoles.backend.model.OfferStatus;
+import es.urjc.ecomostoles.backend.model.Company;
+import es.urjc.ecomostoles.backend.dto.CompanyDTO;
+import es.urjc.ecomostoles.backend.service.CompanyService;
 
 /**
  * REST API controller for the Offer resource — full CRUD.
  *
  * <h3>Pagination strategy</h3>
  * <ul>
- *   <li><b>List endpoint</b> (GET /) uses {@link OfferSummary} Spring Data projections,
- *       excluding BLOB image bytes at SQL level for high-throughput paginations.</li>
- *   <li><b>Detail endpoint</b> (GET /{id}) fetches the full {@link Offer} entity and maps
- *       it to {@link OfferDTO} via {@link OfferMapper}.</li>
+ * <li><b>List endpoint</b> (GET /) uses {@link OfferSummary} Spring Data
+ * projections,
+ * excluding BLOB image bytes at SQL level for high-throughput paginations.</li>
+ * <li><b>Detail endpoint</b> (GET /{id}) fetches the full {@link Offer} entity
+ * and maps
+ * it to {@link OfferDTO} via {@link OfferMapper}.</li>
  * </ul>
  *
  * <h3>Keyword filtering</h3>
  * The optional {@code keyword} parameter routes through
- * {@code OfferService#searchFilteredOffers} (DB-level LIKE, ACTIVE offers only).
+ * {@code OfferService#searchFilteredOffers} (DB-level LIKE, ACTIVE offers
+ * only).
  * Omitting it returns all paginated offers regardless of status.
  *
- * <p>Base path: {@code /api/v1/offers}</p>
+ * <p>
+ * Base path: {@code /api/v1/offers}
+ * </p>
  */
 @RestController
 @RequestMapping("/api/v1/offers")
 @Tag(name = "Offers", description = "Full CRUD for material exchange offers")
 public class OfferRestController {
 
-    private static final Logger log = LoggerFactory.getLogger(OfferRestController.class);
+        private static final Logger log = LoggerFactory.getLogger(OfferRestController.class);
 
-    private final OfferService offerService;
-    private final OfferMapper  offerMapper;
-    private final es.urjc.ecomostoles.backend.service.CompanyService companyService;
+        private final OfferService offerService;
+        private final OfferMapper offerMapper;
+        private final CompanyService companyService;
 
-    public OfferRestController(OfferService offerService, OfferMapper offerMapper, es.urjc.ecomostoles.backend.service.CompanyService companyService) {
-        this.offerService = offerService;
-        this.offerMapper  = offerMapper;
-        this.companyService = companyService;
-    }
+        private static final String ROLE_ADMIN = "ROLE_ADMIN";
+        private static final String NOT_FOUND_PREFIX = "Offer not found with id: ";
+        private static final String ANONYMOUS = "Anonymous";
 
-    // -------------------------------------------------------------------------
-    // GET /api/v1/offers
-    // -------------------------------------------------------------------------
-
-    /**
-     * Returns a paginated list of offers.
-     *
-     * <p>Always returns a paginated JSON object (Page) to ensure consistency
-     * with the web application requirements.</p>
-     *
-     * @param pageable Pagination and sorting metadata.
-     * @return a {@link org.springframework.data.domain.Page} of {@link OfferSummary}.
-     */
-    @Operation(
-            summary     = "List offers (Paginated)",
-            description = "Returns a paginated object containing active offers. Metadata includes totalElements and totalPages."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Offers returned successfully"),
-            @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
-    })
-    @GetMapping
-    public ResponseEntity<Page<OfferSummary>> getAllOffers(
-            @ParameterObject @PageableDefault(size = 9, sort = "publicationDate", direction = Sort.Direction.DESC) Pageable pageable) {
-
-        log.debug("[API] GET /api/v1/offers — Pageable: {}", pageable);
-
-        Page<OfferSummary> resultPage = offerService.getAllPaginated(pageable);
-
-        return ResponseEntity.ok(resultPage);
-    }
-
-    // -------------------------------------------------------------------------
-    // GET /api/v1/offers/{id}
-    // -------------------------------------------------------------------------
-
-    @Operation(
-            summary     = "Get offer by ID",
-            description = "Retrieves the complete detail of a single material exchange offer. " +
-                          "Returns 404 if the offer does not exist."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Offer found",
-                    content = @Content(schema = @Schema(implementation = OfferDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Offer not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
-    })
-    @GetMapping("/{id}")
-    public ResponseEntity<OfferDTO> getOfferById(
-            @Parameter(description = "Database primary key of the offer", example = "1")
-            @PathVariable Long id,
-            Principal principal) {
-
-        log.debug("[API] GET /api/v1/offers/{} — User: {}", id, principal != null ? principal.getName() : "Anonymous");
-
-        Offer offer = offerService.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Offer not found with id: " + id));
-
-        // Use the ownership-aware constructor
-        return ResponseEntity.ok(new OfferDTO(offer, principal != null ? principal.getName() : null));
-    }
-
-    // -------------------------------------------------------------------------
-    // POST /api/v1/offers
-    // -------------------------------------------------------------------------
-
-    /**
-     * Creates a new material exchange offer.
-     *
-     * Returns 201 CREATED with:
-     *  - Location header: /api/v1/offers/{newId}  built via ServletUriComponentsBuilder
-     *  - Body: the persisted OfferDTO
-     *
-     * Server-side fields (id, publicationDate, visits) are always overwritten
-     * and must not be relied upon in the request body.
-     */
-    @Operation(
-            summary     = "Create a new offer",
-            description = "Publishes a new material exchange offer. " +
-                          "Returns 201 CREATED with a Location header pointing to the new resource. " +
-                          "Fields 'id', 'publicationDate' and 'visits' are set server-side."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Offer created successfully -- see Location header",
-                    content = @Content(schema = @Schema(implementation = OfferDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Validation failed -- check request body", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
-    })
-    @PostMapping
-    public ResponseEntity<OfferDTO> createOffer(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Offer data to publish (id, publicationDate and visits are ignored)",
-                    required    = true)
-            @Valid @RequestBody OfferDTO offerDTO) {
-
-        log.info("[API] POST /api/v1/offers -- creating offer: '{}'", offerDTO.title());
-
-        // Map inbound DTO to entity, then set server-controlled fields
-        Offer newOffer = offerMapper.toEntity(offerDTO);
-        newOffer.setPublicationDate(LocalDateTime.now());
-        newOffer.setVisits(0);
-        newOffer.setStatus(
-                offerDTO.status() != null
-                        ? offerDTO.status()
-                        : es.urjc.ecomostoles.backend.model.OfferStatus.ACTIVE);
-
-        // Assign company from the authenticated user (JWT)
-        String userEmail = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
-        es.urjc.ecomostoles.backend.model.Company company = companyService.findByEmail(userEmail)
-                .orElseThrow(() -> new java.util.NoSuchElementException("Authenticated company not found: " + userEmail));
-        
-        newOffer.setCompany(company);
-
-        Offer saved = offerService.save(newOffer);
-        log.info("[API] POST /api/v1/offers -- saved with ID: {}", saved.getId());
-
-        // Build Location header: /api/v1/offers/{id}  -- CRITICAL for HTTP 201 compliance
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()           // base = current POST URL
-                .path("/{id}")                  // append /{id} path segment
-                .buildAndExpand(saved.getId())  // substitute {id} with the new PK
-                .toUri();
-
-        return ResponseEntity
-                .created(location)              // HTTP 201 + Location header set
-                .body(new OfferDTO(saved, userEmail));
-    }
-
-    // -------------------------------------------------------------------------
-    // PUT /api/v1/offers/{id}
-    // -------------------------------------------------------------------------
-
-    /**
-     * Updates the editable fields of an existing offer.
-     * Company ownership, publicationDate and visits counter are preserved from the DB record.
-     */
-    @Operation(
-            summary     = "Update an existing offer",
-            description = "Replaces the editable fields of an offer. " +
-                          "Company ownership, visit count and publication date are preserved. " +
-                          "Returns 404 if the offer does not exist."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Offer updated successfully",
-                    content = @Content(schema = @Schema(implementation = OfferDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Validation failed -- check request body", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Offer not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
-    })
-    @PutMapping("/{id}")
-    public ResponseEntity<OfferDTO> updateOffer(
-            @Parameter(description = "Database primary key of the offer to update", example = "1")
-            @PathVariable Long id,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "New offer values (company, visits and publicationDate are ignored)",
-                    required    = true)
-            @Valid @RequestBody OfferDTO offerDTO,
-            Principal principal) {
-
-        log.info("[API] PUT /api/v1/offers/{} -- updating fields", id);
-
-        Offer existing = offerService.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Offer not found with id: " + id));
-
-        // Ownership check (IDOR protection) OR ADMIN override
-        boolean isAdmin = principal != null && org.springframework.security.core.context.SecurityContextHolder.getContext()
-                .getAuthentication().getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-
-        if (!existing.getCompany().getContactEmail().equals(principal.getName()) && !isAdmin) {
-            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to update offer {} owned by {}", 
-                    principal.getName(), id, existing.getCompany().getContactEmail());
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to modify this offer");
+        public OfferRestController(OfferService offerService, OfferMapper offerMapper,
+                        CompanyService companyService) {
+                this.offerService = offerService;
+                this.offerMapper = offerMapper;
+                this.companyService = companyService;
         }
 
-        // Apply only editable fields; preserve audit/ownership data
-        existing.setTitle(offerDTO.title());
-        existing.setDescription(offerDTO.description());
-        if (offerDTO.wasteCategory() != null) {
-            existing.setWasteCategory(offerDTO.wasteCategory());
+        // -------------------------------------------------------------------------
+        // GET /api/v1/offers
+        // -------------------------------------------------------------------------
+
+        /**
+         * Returns a paginated list of offers.
+         *
+         * <p>
+         * Always returns a paginated JSON object (Page) to ensure consistency
+         * with the web application requirements.
+         * </p>
+         *
+         * @param pageable Pagination and sorting metadata.
+         * @return a {@link org.springframework.data.domain.Page} of
+         *         {@link OfferSummary}.
+         */
+        @Operation(summary = "List offers (Paginated)", description = "Returns a paginated object containing active offers. Metadata includes totalElements and totalPages.")
+        @ApiResponse(responseCode = "200", description = "Offers returned successfully")
+        @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
+        @GetMapping
+        public ResponseEntity<Page<OfferDTO>> getAllOffers(
+                        @ParameterObject @PageableDefault(size = 9, sort = "publicationDate", direction = Sort.Direction.DESC) Pageable pageable,
+                        @RequestParam(required = false) String status,
+                        java.security.Principal principal) {
+
+                log.debug("[API] GET /api/v1/offers — status: {}, pageable: {}", status, pageable);
+
+                boolean isAdmin = principal != null && SecurityContextHolder.getContext()
+                                .getAuthentication().getAuthorities().stream()
+                                .anyMatch(a -> a.getAuthority().equals(ROLE_ADMIN));
+
+                Page<OfferSummary> resultPage;
+
+                // 1. Resolve target status if provided
+                OfferStatus targetStatus = null;
+                if (status != null && !status.isBlank()) {
+                        try {
+                                targetStatus = OfferStatus.valueOf(status.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                                throw new ResponseStatusException(
+                                                HttpStatus.BAD_REQUEST, "Invalid status: " + status);
+                        }
+                }
+
+                // 2. RBAC Enforcement
+                if (isAdmin) {
+                        // Admins can see anything
+                        if (targetStatus != null) {
+                                resultPage = offerService.getByStatusPaginated(targetStatus, pageable);
+                        } else {
+                                resultPage = offerService.getAllPaginated(pageable);
+                        }
+                } else {
+                        // Regular companies/anonymous can ONLY see ACTIVE offers
+                        if (targetStatus != null && targetStatus != OfferStatus.ACTIVE) {
+                                log.warn("[SECURITY] Unauthorized status filter attempt: {}", targetStatus);
+                                throw new ResponseStatusException(
+                                                HttpStatus.FORBIDDEN,
+                                                "Access denied: You can only filter for ACTIVE offers.");
+                        }
+                        resultPage = offerService.getByStatusPaginated(OfferStatus.ACTIVE, pageable);
+                }
+
+                // Map to OfferDTO to ensure company object is consistent (uses CompanyDTO)
+                Page<OfferDTO> dtoPage = resultPage.map(s -> new OfferDTO(
+                                s.getId(),
+                                s.getTitle(),
+                                s.getDescription(),
+                                s.getWasteCategory(),
+                                s.getQuantity(),
+                                s.getUnit(),
+                                s.getPrice(),
+                                s.getAvailability(),
+                                s.getStatus(),
+                                s.getPublicationDate(),
+                                s.getVisits(),
+                                s.getCompany() != null ? new CompanyDTO(s.getCompany())
+                                                : null,
+                                false));
+
+                return ResponseEntity.ok(dtoPage);
         }
-        existing.setQuantity(offerDTO.quantity());
-        existing.setUnit(offerDTO.unit());
-        existing.setPrice(offerDTO.price());
-        existing.setAvailability(offerDTO.availability());
-        if (offerDTO.status() != null) {
-            existing.setStatus(offerDTO.status());
+
+        /**
+         * Returns a paginated list of offers belonging strictly to the authenticated
+         * tenant.
+         *
+         * @param pageable  pagination metadata.
+         * @param principal active session identifier.
+         * @return a page of OfferDTOs owned by the user.
+         */
+        @Operation(summary = "List MY offers (Paginated)", description = "Returns only the offers created by the authenticated company.")
+        @GetMapping("/me")
+        public ResponseEntity<Page<OfferDTO>> getMyOffers(
+                        @ParameterObject @PageableDefault(size = 10, sort = "publicationDate", direction = Sort.Direction.DESC) Pageable pageable,
+                        Principal principal) {
+
+                if (principal == null)
+                        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+                log.debug("[API] GET /api/v1/offers/me — User: {}", principal.getName());
+
+                Company company = companyService.findByEmail(principal.getName())
+                                .orElseThrow(() -> new NoSuchElementException("Company not found"));
+
+                Page<OfferSummary> resultPage = offerService.getByCompanyPaginated(company, pageable);
+
+                return ResponseEntity.ok(
+                                resultPage.map(s -> new OfferDTO(s, principal.getName())));
         }
 
-        Offer updated = offerService.save(existing);
-        log.info("[API] PUT /api/v1/offers/{} -- update committed", id);
+        // -------------------------------------------------------------------------
+        // GET /api/v1/offers/{id}
+        // -------------------------------------------------------------------------
 
-        return ResponseEntity.ok(new OfferDTO(updated, principal.getName()));
-    }
+        @Operation(summary = "Get offer by ID", description = "Retrieves the complete detail of a single material exchange offer. "
+                        +
+                        "Returns 404 if the offer does not exist.")
+        @ApiResponse(responseCode = "200", description = "Offer found", content = @Content(schema = @Schema(implementation = OfferDTO.class)))
+        @ApiResponse(responseCode = "404", description = "Offer not found", content = @Content)
+        @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
+        @GetMapping("/{id}")
+        public ResponseEntity<OfferDTO> getOfferById(
+                        @Parameter(description = "Database primary key of the offer", example = "1") @PathVariable Long id,
+                        Principal principal) {
 
-    // -------------------------------------------------------------------------
-    // DELETE /api/v1/offers/{id}
-    // -------------------------------------------------------------------------
+                log.debug("[API] GET /api/v1/offers/{} — User: {}", id,
+                                principal != null ? principal.getName() : ANONYMOUS);
 
-    /**
-     * Permanently deletes an offer.
-     * Returns 204 NO CONTENT on success; 404 if the offer does not exist (prevents ghost-delete).
-     */
-    @Operation(
-            summary     = "Delete an offer",
-            description = "Permanently removes an offer from the platform. " +
-                          "Returns 204 NO CONTENT on success. " +
-                          "Returns 404 if the offer does not exist."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Offer deleted successfully", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Offer not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
-    })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOffer(
-            @Parameter(description = "Database primary key of the offer to delete", example = "1")
-            @PathVariable Long id,
-            Principal principal) {
+                Offer offer = offerService.findById(id)
+                                .orElseThrow(() -> new NoSuchElementException(NOT_FOUND_PREFIX + id));
 
-        log.info("[API] DELETE /api/v1/offers/{}", id);
+                // Privacy/RBAC: If not active, only owner or ADMIN can view it
+                boolean isOwner = principal != null && offer.getCompany().getContactEmail().equals(principal.getName());
+                boolean isAdmin = principal != null
+                                && SecurityContextHolder.getContext()
+                                                .getAuthentication().getAuthorities().stream()
+                                                .anyMatch(a -> a.getAuthority().equals(ROLE_ADMIN));
+                boolean isActive = offer.getStatus() == OfferStatus.ACTIVE;
 
-        // Existence and ownership check -- prevents unauthorized deletion or misleading 204
-        Offer offer = offerService.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Offer not found with id: " + id));
+                if (!isActive && !isOwner && !isAdmin) {
+                        log.warn("[SECURITY] Privacy breach attempt: User {} tried to view non-active offer {}",
+                                        principal != null ? principal.getName() : "anonymous", id);
+                        throw new ResponseStatusException(
+                                        HttpStatus.FORBIDDEN,
+                                        "Access denied: This offer is no longer active and you are not the owner.");
+                }
 
-        // Ownership check (IDOR protection) OR ADMIN override
-        boolean isAdmin = principal != null && org.springframework.security.core.context.SecurityContextHolder.getContext()
-                .getAuthentication().getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-
-        if (!offer.getCompany().getContactEmail().equals(principal.getName()) && !isAdmin) {
-            log.warn("[SECURITY] IDOR attempt blocked: User {} tried to delete offer {} owned by {}", 
-                    principal.getName(), id, offer.getCompany().getContactEmail());
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete this offer");
+                // Use the ownership-aware constructor
+                return ResponseEntity.ok(new OfferDTO(offer, principal.getName()));
         }
 
-        offerService.delete(id);
-        log.info("[API] DELETE /api/v1/offers/{} -- offer removed", id);
+        // -------------------------------------------------------------------------
+        // POST /api/v1/offers
+        // -------------------------------------------------------------------------
 
-        return ResponseEntity.noContent().build();   // HTTP 204 -- no body
-    }
+        /**
+         * Creates a new material exchange offer.
+         *
+         * Returns 201 CREATED with:
+         * - Location header: /api/v1/offers/{newId} built via
+         * ServletUriComponentsBuilder
+         * - Body: the persisted OfferDTO
+         *
+         * Server-side fields (id, publicationDate, visits) are always overwritten
+         * and must not be relied upon in the request body.
+         */
+        @Operation(summary = "Create a new offer", description = "Publishes a new material exchange offer. " +
+                        "Returns 201 CREATED with a Location header pointing to the new resource. " +
+                        "Fields 'id', 'publicationDate' and 'visits' are set server-side.")
+        @ApiResponse(responseCode = "201", description = "Offer created successfully -- see Location header", content = @Content(schema = @Schema(implementation = OfferDTO.class)))
+        @ApiResponse(responseCode = "400", description = "Validation failed -- check request body", content = @Content)
+        @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
+        @PostMapping
+        public ResponseEntity<OfferDTO> createOffer(
+                        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Offer data to publish (id, publicationDate and visits are ignored)", required = true) @Valid @RequestBody OfferDTO offerDTO) {
+
+                log.info("[API] POST /api/v1/offers -- creating offer: '{}'", offerDTO.title());
+
+                // Map inbound DTO to entity, then set server-controlled fields
+                Offer newOffer = offerMapper.toEntity(offerDTO);
+                newOffer.setPublicationDate(LocalDateTime.now());
+                newOffer.setVisits(0);
+                newOffer.setStatus(
+                                offerDTO.status() != null
+                                                ? offerDTO.status()
+                                                : OfferStatus.ACTIVE);
+
+                // Assign company from the authenticated user (JWT)
+                String userEmail = SecurityContextHolder.getContext()
+                                .getAuthentication().getName();
+                Company company = companyService.findByEmail(userEmail)
+                                .orElseThrow(() -> new NoSuchElementException(
+                                                "Authenticated company not found: " + userEmail));
+
+                newOffer.setCompany(company);
+
+                Offer saved = offerService.save(newOffer);
+                log.info("[API] POST /api/v1/offers -- saved with ID: {}", saved.getId());
+
+                // Build Location header: /api/v1/offers/{id} -- CRITICAL for HTTP 201
+                // compliance
+                URI location = ServletUriComponentsBuilder
+                                .fromCurrentRequest() // base = current POST URL
+                                .path("/{id}") // append /{id} path segment
+                                .buildAndExpand(saved.getId()) // substitute {id} with the new PK
+                                .toUri();
+
+                return ResponseEntity
+                                .created(location) // HTTP 201 + Location header set
+                                .body(new OfferDTO(saved, userEmail));
+        }
+
+        // -------------------------------------------------------------------------
+        // PUT /api/v1/offers/{id}
+        // -------------------------------------------------------------------------
+
+        /**
+         * Updates the editable fields of an existing offer.
+         * Company ownership, publicationDate and visits counter are preserved from the
+         * DB record.
+         */
+        @Operation(summary = "Update an existing offer", description = "Replaces the editable fields of an offer. " +
+                        "Company ownership, visit count and publication date are preserved. " +
+                        "Returns 404 if the offer does not exist.")
+        @ApiResponse(responseCode = "200", description = "Offer updated successfully", content = @Content(schema = @Schema(implementation = OfferDTO.class)))
+        @ApiResponse(responseCode = "400", description = "Validation failed -- check request body", content = @Content)
+        @ApiResponse(responseCode = "404", description = "Offer not found", content = @Content)
+        @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
+        @PutMapping("/{id}")
+        public ResponseEntity<OfferDTO> updateOffer(
+                        @Parameter(description = "Database primary key of the offer to update", example = "1") @PathVariable Long id,
+                        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "New offer values (company, visits and publicationDate are ignored)", required = true) @Valid @RequestBody OfferDTO offerDTO,
+                        Principal principal) {
+
+                log.info("[API] PUT /api/v1/offers/{} -- updating fields", id);
+
+                Offer existing = offerService.findById(id)
+                                .orElseThrow(() -> new NoSuchElementException(NOT_FOUND_PREFIX + id));
+
+                // Ownership check (IDOR protection) OR ADMIN override
+                boolean isAdmin = principal != null
+                                && SecurityContextHolder.getContext()
+                                                .getAuthentication().getAuthorities().stream()
+                                                .anyMatch(a -> a.getAuthority().equals(ROLE_ADMIN));
+
+                if (principal == null
+                                || (!existing.getCompany().getContactEmail().equals(principal.getName()) && !isAdmin)) {
+                        log.warn("[SECURITY] IDOR attempt blocked: User {} tried to update offer {} owned by {}",
+                                        principal != null ? principal.getName() : "Anonymous", id,
+                                        existing.getCompany().getContactEmail());
+                        throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                                        "You do not have permission to modify this offer");
+                }
+
+                // Apply only editable fields; preserve audit/ownership data
+                existing.setTitle(offerDTO.title());
+                existing.setDescription(offerDTO.description());
+                if (offerDTO.wasteCategory() != null) {
+                        existing.setWasteCategory(offerDTO.wasteCategory());
+                }
+                existing.setQuantity(offerDTO.quantity());
+                existing.setUnit(offerDTO.unit());
+                existing.setPrice(offerDTO.price());
+                existing.setAvailability(offerDTO.availability());
+                if (offerDTO.status() != null) {
+                        existing.setStatus(offerDTO.status());
+                }
+
+                Offer updated = offerService.save(existing);
+                log.info("[API] PUT /api/v1/offers/{} -- update committed", id);
+
+                return ResponseEntity.ok(new OfferDTO(updated, principal != null ? principal.getName() : null));
+        }
+
+        // -------------------------------------------------------------------------
+        // DELETE /api/v1/offers/{id}
+        // -------------------------------------------------------------------------
+
+        /**
+         * Permanently deletes an offer.
+         * Returns 204 NO CONTENT on success; 404 if the offer does not exist (prevents
+         * ghost-delete).
+         */
+        @Operation(summary = "Delete an offer", description = "Permanently removes an offer from the platform. " +
+                        "Returns 204 NO CONTENT on success. " +
+                        "Returns 404 if the offer does not exist.")
+        @ApiResponse(responseCode = "204", description = "Offer deleted successfully", content = @Content)
+        @ApiResponse(responseCode = "404", description = "Offer not found", content = @Content)
+        @ApiResponse(responseCode = "500", description = "Unexpected server error", content = @Content)
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> deleteOffer(
+                        @Parameter(description = "Database primary key of the offer to delete", example = "1") @PathVariable Long id,
+                        Principal principal) {
+
+                log.info("[API] DELETE /api/v1/offers/{}", id);
+
+                // Existence and ownership check -- prevents unauthorized deletion or misleading
+                // 204
+                Offer offer = offerService.findById(id)
+                                .orElseThrow(() -> new NoSuchElementException(NOT_FOUND_PREFIX + id));
+
+                // Ownership check (IDOR protection) OR ADMIN override
+                boolean isAdmin = principal != null
+                                && SecurityContextHolder.getContext()
+                                                .getAuthentication().getAuthorities().stream()
+                                                .anyMatch(a -> a.getAuthority().equals(ROLE_ADMIN));
+
+                if (principal == null
+                                || (!offer.getCompany().getContactEmail().equals(principal.getName()) && !isAdmin)) {
+                        log.warn("[SECURITY] IDOR attempt blocked: User {} tried to delete offer {} owned by {}",
+                                        principal != null ? principal.getName() : "Anonymous", id,
+                                        offer.getCompany().getContactEmail());
+                        throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                                        "You do not have permission to delete this offer");
+                }
+
+                offerService.delete(id);
+                log.info("[API] DELETE /api/v1/offers/{} -- offer removed", id);
+
+                return ResponseEntity.noContent().build(); // HTTP 204 -- no body
+        }
 }

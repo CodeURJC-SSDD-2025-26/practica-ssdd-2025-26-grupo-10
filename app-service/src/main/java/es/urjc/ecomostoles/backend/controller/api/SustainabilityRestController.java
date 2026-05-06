@@ -2,7 +2,6 @@ package es.urjc.ecomostoles.backend.controller.api;
 
 import es.urjc.ecomostoles.backend.component.SustainabilityEngine;
 import es.urjc.ecomostoles.backend.dto.SustainabilityImpactDTO;
-import es.urjc.ecomostoles.backend.model.WasteCategory;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,22 +26,18 @@ public class SustainabilityRestController {
     }
 
     @Operation(summary = "Calculate estimated CO2 impact", description = "Calculates the CO2 reduction in Kg based on material quantity and category.")
-    @ApiResponse(responseCode = "200", description = "Calculation successful", 
-            content = @Content(schema = @Schema(implementation = SustainabilityImpactDTO.class)))
+    @ApiResponse(responseCode = "200", description = "Calculation successful", content = @Content(schema = @Schema(implementation = SustainabilityImpactDTO.class)))
     @GetMapping("/impacts")
     public ResponseEntity<SustainabilityImpactDTO> calculateImpact(
-            @Parameter(description = "Quantity of material", example = "500")
-            @RequestParam Double quantity,
-            @Parameter(description = "Waste category", example = "METAL_WASTE")
-            @RequestParam String category) {
+            @Parameter(description = "Quantity of material", example = "500") @RequestParam Double quantity,
+            @Parameter(description = "Waste category", example = "METAL_WASTE") @RequestParam String category) {
 
         double co2 = sustainabilityEngine.calculateCo2Impact(quantity, category);
-        
+
         return ResponseEntity.ok(new SustainabilityImpactDTO(
-            quantity,
-            category,
-            co2,
-            "Kg"
-        ));
+                quantity,
+                category,
+                co2,
+                "Kg"));
     }
 }

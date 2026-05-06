@@ -35,6 +35,11 @@ public class MessageService {
     }
 
     @Transactional(readOnly = true)
+    public List<Message> getByCompany(Company company) {
+        return messageRepository.findByCompany(company);
+    }
+
+    @Transactional(readOnly = true)
     public Page<Message> getByCompanyPaginated(Company company, Pageable pageable) {
         return messageRepository.findByCompanyPaginated(company, pageable);
     }

@@ -29,6 +29,11 @@ services:
     container_name: utility-service
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
     restart: unless-stopped
 
   app-service:
@@ -46,8 +51,15 @@ services:
       SPRING_DATASOURCE_PASSWORD: securepass
       UTILITY_SERVICE_URL: http://utility-service:8080
       KEYSTORE_PASSWORD: "ecomostolespass"
+    healthcheck:
+      test: ["CMD", "curl", "-k", "-f", "https://localhost:8443/actuator/health"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
     depends_on:
       db:
+        condition: service_healthy
+      utility-service:
         condition: service_healthy
     restart: unless-stopped
 

@@ -27,15 +27,21 @@ public class GlobalConfigurationRestController {
         this.configurationService = configurationService;
     }
 
-    @Operation(summary = "Get platform configuration", description = "Returns active platform parameters like contact email, city, and name.")
+    @Operation(summary = "Get platform configuration", description = "Returns active platform parameters including business rules and taxonomies.")
     @ApiResponse(responseCode = "200", description = "Configuration returned successfully",
             content = @Content(schema = @Schema(implementation = GlobalConfigDTO.class)))
     @GetMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<GlobalConfigDTO> getGlobalConfig() {
         return ResponseEntity.ok(new GlobalConfigDTO(
             configurationService.getAutoValue("platformName"),
             configurationService.getAutoValue("contactEmail"),
-            configurationService.getAutoValue("platformCity")
+            configurationService.getAutoValue("platformCity"),
+            configurationService.getAutoValue("platformCommission"),
+            configurationService.getAutoValue("categoryList"),
+            configurationService.getAutoValue("unitList"),
+            configurationService.getAutoValue("availabilityList"),
+            configurationService.getAutoValue("sectorList")
         ));
     }
 
@@ -45,8 +51,16 @@ public class GlobalConfigurationRestController {
     @ApiResponse(responseCode = "500", description = "Error saving configuration")
     @PutMapping
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> updateGlobalConfig(@org.springframework.web.bind.annotation.RequestBody java.util.Map<String, String> config) {
-        config.forEach(configurationService::saveOrUpdateConfiguration);
+    public ResponseEntity<Void> updateGlobalConfig(@org.springframework.web.bind.annotation.RequestBody GlobalConfigDTO config) {
+        if (config.platformName() != null) configurationService.saveOrUpdateConfiguration("platformName", config.platformName());
+        if (config.contactEmail() != null) configurationService.saveOrUpdateConfiguration("contactEmail", config.contactEmail());
+        if (config.platformCity() != null) configurationService.saveOrUpdateConfiguration("platformCity", config.platformCity());
+        if (config.platformCommission() != null) configurationService.saveOrUpdateConfiguration("platformCommission", config.platformCommission());
+        if (config.categoryList() != null) configurationService.saveOrUpdateConfiguration("categoryList", config.categoryList());
+        if (config.unitList() != null) configurationService.saveOrUpdateConfiguration("unitList", config.unitList());
+        if (config.availabilityList() != null) configurationService.saveOrUpdateConfiguration("availabilityList", config.availabilityList());
+        if (config.sectorList() != null) configurationService.saveOrUpdateConfiguration("sectorList", config.sectorList());
+        
         return ResponseEntity.ok().build();
     }
 }

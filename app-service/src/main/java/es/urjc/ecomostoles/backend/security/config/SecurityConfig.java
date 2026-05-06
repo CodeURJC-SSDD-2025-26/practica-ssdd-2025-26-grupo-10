@@ -18,84 +18,115 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
-    private final es.urjc.ecomostoles.backend.security.handler.CustomAuthenticationSuccessHandler successHandler;
+        private final JwtAuthenticationFilter jwtAuthFilter;
+        private final AuthenticationProvider authenticationProvider;
+        private final es.urjc.ecomostoles.backend.security.handler.CustomAuthenticationSuccessHandler successHandler;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter,
-            AuthenticationProvider authenticationProvider,
-            es.urjc.ecomostoles.backend.security.handler.CustomAuthenticationSuccessHandler successHandler) {
-        this.jwtAuthFilter = jwtAuthFilter;
-        this.authenticationProvider = authenticationProvider;
-        this.successHandler = successHandler;
-    }
+        public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter,
+                        AuthenticationProvider authenticationProvider,
+                        es.urjc.ecomostoles.backend.security.handler.CustomAuthenticationSuccessHandler successHandler) {
+                this.jwtAuthFilter = jwtAuthFilter;
+                this.authenticationProvider = authenticationProvider;
+                this.successHandler = successHandler;
+        }
 
-    // --- 1. REST API CONFIGURATION (STATELESS + JWT) ---
-    @Bean
-    @Order(1) // Highest priority: Catches REST requests first
-    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/api/**") // This chain ONLY affects the API
-                .cors(org.springframework.security.config.Customizer.withDefaults())
-                // CRITICAL: CSRF is disabled EXCLUSIVELY for the REST API (Stateless)
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/tokens", "/api/v1/registrations").permitAll() // Actual auth endpoints
-                        .requestMatchers("/api/v1/auth/**").permitAll() // Legacy auth path support
-                        .requestMatchers("/api/v1/public/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/configurations/**", "/api/v1/config/**").permitAll() // Public system info (GET only)
-                        // RBAC: Explicitly protect admin-only management operations in the API
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/companies").hasRole("ADMIN")
-                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/companies/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/reports/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated())
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        // --- 1. REST API CONFIGURATION (STATELESS + JWT) ---
+        @Bean
+        @Order(1) // Highest priority: Catches REST requests first
+        public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .securityMatcher("/api/**") // This chain ONLY affects the API
+                                .cors(org.springframework.security.config.Customizer.withDefaults())
+                                // CRITICAL: CSRF is disabled EXCLUSIVELY for the REST API (Stateless)
+                                .csrf(AbstractHttpConfigurer::disable)
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/api/v1/tokens", "/api/v1/registrations").permitAll() // Actual
+                                                                                                                        // auth
+                                                                                                                        // endpoints
+                                                .requestMatchers("/api/v1/auth/**").permitAll() // Legacy auth path
+                                                                                                // support
+                                                .requestMatchers("/api/v1/public/**").permitAll()
+                                                .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                                                "/api/v1/configurations/**", "/api/v1/config/**")
+                                                .permitAll() // Public system info (GET only)
+                                                // RBAC: Explicitly protect admin-only management operations in the API
+                                                .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                                                "/api/v1/companies")
+                                                .hasRole("ADMIN")
+                                                .requestMatchers("/api/v1/charts/**").hasRole("ADMIN")
+                                                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                                                .requestMatchers("/api/v1/configurations/**").hasRole("ADMIN")
+                                                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/agreements").hasRole("ADMIN")
+                                                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/agreements/").hasRole("ADMIN")
+                                                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/companies").hasRole("ADMIN")
+                                                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/companies/").hasRole("ADMIN")
+                                                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/companies/**").hasRole("ADMIN")
+                                                .requestMatchers("/api/v1/ranking/**").hasRole("ADMIN")
+                                                .requestMatchers("/api/v1/reports/company/me").hasAnyRole("ADMIN", "COMPANY")
+                                                .requestMatchers("/api/v1/reports/**").hasRole("ADMIN")
+                                                .anyRequest().authenticated())
+                                .exceptionHandling(exception -> exception
+                                        .authenticationEntryPoint((request, response, authException) -> {
+                                            response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED);
+                                            response.setContentType("application/json");
+                                            response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"Authentication required: Please provide a valid JWT token.\"}");
+                                        })
+                                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                            response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN);
+                                            response.setContentType("application/json");
+                                            response.getWriter().write("{\"error\": \"Forbidden\", \"message\": \"Access denied: You do not have the required ADMIN role for this administrative operation.\"}");
+                                        }))
+                                .authenticationProvider(authenticationProvider)
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    // --- 2. TRADITIONAL WEB CONFIGURATION (STATEFUL + FORM LOGIN) ---
-    @Bean
-    @Order(2) // Secondary priority: Catches normal web traffic
-    public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                // CRITICAL: CSRF protection remains ENABLED (default) for all web traffic
-                .authorizeHttpRequests(auth -> auth
-                        // Allow public access to static resources, login, registration, and Swagger
-                        .requestMatchers("/", "/login", "/registro", "/css/**", "/js/**", "/img/**", "/images/**",
-                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
-                        .permitAll()
-                        // RBAC: Explicitly protect the entire /admin path
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        // All other web pages require being logged in
-                        .anyRequest().authenticated())
-                .formLogin(form -> form
-                        .loginPage("/login") // Our custom HTML template
-                        .loginProcessingUrl("/login") // The URL where the HTML performs the POST
-                        .successHandler(successHandler) // Dynamic redirection based on role
-                        .failureUrl("/login?error=true") // Where to go on failure
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
-                        .permitAll());
+        // --- 2. TRADITIONAL WEB CONFIGURATION (STATEFUL + FORM LOGIN) ---
+        @Bean
+        @Order(2) // Secondary priority: Catches normal web traffic
+        public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                // CRITICAL: CSRF protection remains ENABLED (default) for all web traffic
+                                .authorizeHttpRequests(auth -> auth
+                                                // Allow public access to static resources, login, registration, and
+                                                // Swagger
+                                                .requestMatchers("/", "/login", "/registro", "/css/**", "/js/**",
+                                                                "/img/**", "/images/**",
+                                                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
+                                                                "/actuator/**")
+                                                .permitAll()
+                                                // RBAC: Explicitly protect the entire /admin path
+                                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                                // All other web pages require being logged in
+                                                .anyRequest().authenticated())
+                                .formLogin(form -> form
+                                                .loginPage("/login") // Our custom HTML template
+                                                .loginProcessingUrl("/login") // The URL where the HTML performs the
+                                                                              // POST
+                                                .successHandler(successHandler) // Dynamic redirection based on role
+                                                .failureUrl("/login?error=true") // Where to go on failure
+                                                .permitAll())
+                                .logout(logout -> logout
+                                                .logoutUrl("/logout")
+                                                .logoutSuccessUrl("/")
+                                                .permitAll());
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    // --- CORS CONFIGURATION FOR THE API FRONTEND ---
-    @Bean
-    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
-        org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-        configuration.setAllowedOrigins(java.util.List.of("http://localhost:4200", "http://localhost:5173",
-                "http://localhost:3000", "http://127.0.0.1:5500"));
-        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type"));
-        org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+        // --- CORS CONFIGURATION FOR THE API FRONTEND ---
+        @Bean
+        public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+                org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
+                configuration.setAllowedOrigins(java.util.List.of("http://localhost:4200", "http://localhost:5173",
+                                "http://localhost:3000", "http://127.0.0.1:5500"));
+                configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type"));
+                org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                return source;
+        }
 }

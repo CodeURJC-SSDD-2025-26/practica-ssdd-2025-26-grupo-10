@@ -6,7 +6,6 @@ import es.urjc.ecomostoles.backend.model.Company;
 import es.urjc.ecomostoles.backend.service.DemandService;
 import es.urjc.ecomostoles.backend.mapper.DemandMapper;
 import java.util.stream.Collectors;
-import es.urjc.ecomostoles.backend.dto.DemandDTO;
 import es.urjc.ecomostoles.backend.service.CompanyService;
 import es.urjc.ecomostoles.backend.utils.FormOptionsHelper;
 import jakarta.validation.Valid;
@@ -31,10 +30,13 @@ import java.util.ArrayList;
 import es.urjc.ecomostoles.backend.dto.SelectOption;
 
 /**
- * Controller managing the lifecycle of Demand entities spawned by the authenticated tenant.
+ * Controller managing the lifecycle of Demand entities spawned by the
+ * authenticated tenant.
  * 
- * Enforces strict multi-tenant boundary checks. All destructive actions (Edit/Delete) explicitly
- * verify that the requesting principal legally owns the database record or harbors overriding 
+ * Enforces strict multi-tenant boundary checks. All destructive actions
+ * (Edit/Delete) explicitly
+ * verify that the requesting principal legally owns the database record or
+ * harbors overriding
  * ADMIN privileges before executing modifications via the DemandService.
  */
 @Controller
@@ -56,12 +58,14 @@ public class MyDemandsController {
     }
 
     /**
-     * Secures object-level authorization by validating identity claims against entity schemas.
+     * Secures object-level authorization by validating identity claims against
+     * entity schemas.
      * 
-     * @param demandId target asset identifier sequence.
+     * @param demandId  target asset identifier sequence.
      * @param principal authenticated executor containing the role context map.
      * @return securely fetched demand entity safe for subsequent alterations.
-     * @throws ResponseStatusException HTTP 403 if ownership chains do not match or user lacks ADMIN role.
+     * @throws ResponseStatusException HTTP 403 if ownership chains do not match or
+     *                                 user lacks ADMIN role.
      */
     private Demand verifyDemandOwnership(Long demandId, Principal principal) {
         Demand demand = demandService.findById(demandId)
@@ -78,7 +82,8 @@ public class MyDemandsController {
                 && demand.getCompany().getId().equals(loggedCompany.getId());
 
         if (!isAdmin && !isOwner) {
-            log.warn("[Marketplace] Security -> Unauthorized access attempt to demand ID: {} by user: {}", demandId, principal.getName());
+            log.warn("[Marketplace] Security -> Unauthorized access attempt to demand ID: {} by user: {}", demandId,
+                    principal.getName());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "You do not have permission to modify this demand.");
         }
@@ -86,11 +91,13 @@ public class MyDemandsController {
     }
 
     /**
-     * Binds the private demand registry matrix, constrained strictly to the active user's DB projection.
+     * Binds the private demand registry matrix, constrained strictly to the active
+     * user's DB projection.
      * 
-     * @param model UI payload mapping dictionary.
+     * @param model     UI payload mapping dictionary.
      * @param principal proxy wrapping the current auth session identifier.
-     * @param pageable resolved spring-data offset instructions mitigating heavy loads.
+     * @param pageable  resolved spring-data offset instructions mitigating heavy
+     *                  loads.
      * @return logical routing mapping rendering the private asset grid.
      */
     @GetMapping("/dashboard/mis-demandas")
@@ -103,7 +110,8 @@ public class MyDemandsController {
             model.addAttribute("isDashboard", true);
 
             Page<Demand> demandsPage = demandService.getByCompanyPaginated(company, pageable);
-            model.addAttribute("demands", demandsPage.getContent().stream().map(demandMapper::toDto).collect(Collectors.toList()));
+            model.addAttribute("demands",
+                    demandsPage.getContent().stream().map(demandMapper::toDto).collect(Collectors.toList()));
             model.addAttribute("hasDemands", !demandsPage.isEmpty());
 
             // Pagination metadata
@@ -111,8 +119,8 @@ public class MyDemandsController {
             model.addAttribute("totalPages", demandsPage.getTotalPages() == 0 ? 1 : demandsPage.getTotalPages());
             model.addAttribute("hasNext", demandsPage.hasNext());
             model.addAttribute("hasPrevious", demandsPage.hasPrevious());
-            model.addAttribute("prevPage", demandsPage.getNumber() - 1);
-            model.addAttribute("nextPage", demandsPage.getNumber() + 1);
+            model.addAttribute("prevPage", demandsPage.getNumber());
+            model.addAttribute("nextPage", demandsPage.getNumber() + 2);
             model.addAttribute("totalItems", demandsPage.getTotalElements());
 
             // Pagination metadata
@@ -156,14 +164,19 @@ public class MyDemandsController {
     }
 
     /**
-     * Orchestrates the persistence workflow mapping HTTP inputs into secure domain models.
+     * Orchestrates the persistence workflow mapping HTTP inputs into secure domain
+     * models.
      * Relies on JSR 380 standards triggering automatic pre-flight data inspections.
      * 
-     * @param demand marshaled transient DTO holding unverified form inputs.
-     * @param result interceptor carrying field constraint violations for iterative UI feedback.
-     * @param model layout binder context.
-     * @param principal authoritative session triggering the creation logic.
-     * @param redirectAttributes parameter carrier resolving post-redirect loops gracefully.
+     * @param demand             marshaled transient DTO holding unverified form
+     *                           inputs.
+     * @param result             interceptor carrying field constraint violations
+     *                           for iterative UI feedback.
+     * @param model              layout binder context.
+     * @param principal          authoritative session triggering the creation
+     *                           logic.
+     * @param redirectAttributes parameter carrier resolving post-redirect loops
+     *                           gracefully.
      * @return conditional redirection routing context.
      */
     @PostMapping("/demanda/nueva")
@@ -187,9 +200,10 @@ public class MyDemandsController {
             demand.setPublicationDate(LocalDateTime.now());
             demand.setStatus(DemandStatus.ACTIVE);
             demandService.save(demand);
-            log.info("[Marketplace] Success -> New demand published by '{}': '{}'", principal.getName(), demand.getTitle());
+            log.info("[Marketplace] Success -> New demand published by '{}': '{}'", principal.getName(),
+                    demand.getTitle());
             redirectAttributes.addFlashAttribute("successMessage", "¡Demanda publicada con éxito!");
-            
+
             // FIX: Redirect based on role to avoid 403
             if (companyOpt.get().getRoles().contains("ADMIN")) {
                 return "redirect:/admin/demandas";
@@ -208,7 +222,7 @@ public class MyDemandsController {
         verifyDemandOwnership(id, principal);
         demandService.delete(id);
         log.info("[Marketplace] Success -> Demand ID: {} deleted by owner/admin: {}", id, principal.getName());
-        
+
         redirectAttributes.addFlashAttribute("successMessage", "Demanda eliminada con éxito.");
 
         // FIX: Redirect based on role to avoid 403
@@ -233,7 +247,8 @@ public class MyDemandsController {
         // Dynamic Select Options for status (Spanish labels from Enum)
         List<SelectOption> statusOptions = new ArrayList<>();
         for (DemandStatus status : DemandStatus.values()) {
-            statusOptions.add(new SelectOption(status.name(), status.getDisplayName(), status.equals(demand.getStatus())));
+            statusOptions
+                    .add(new SelectOption(status.name(), status.getDisplayName(), status.equals(demand.getStatus())));
         }
         model.addAttribute("statusOptions", statusOptions);
     }
@@ -255,12 +270,16 @@ public class MyDemandsController {
     /**
      * Modifies existing demand properties through tightly controlled data-binding.
      * 
-     * @param id verified target identifier belonging to the requester.
-     * @param demandForm transient detached object encapsulating state changes.
-     * @param result internal error flag collector avoiding SQL-level constraint blasts.
-     * @param model HTTP response properties payload.
-     * @param principal active actor executing the update command.
-     * @param redirectAttributes proxy facilitating UX transitions safely via the PRG pattern.
+     * @param id                 verified target identifier belonging to the
+     *                           requester.
+     * @param demandForm         transient detached object encapsulating state
+     *                           changes.
+     * @param result             internal error flag collector avoiding SQL-level
+     *                           constraint blasts.
+     * @param model              HTTP response properties payload.
+     * @param principal          active actor executing the update command.
+     * @param redirectAttributes proxy facilitating UX transitions safely via the
+     *                           PRG pattern.
      * @return path command to revert back into the administrative table view.
      */
     @PostMapping("/demandas/{id}/editar")
@@ -282,12 +301,12 @@ public class MyDemandsController {
             model.addAttribute("errors", result.getAllErrors());
             model.addAttribute("demand", demandMapper.toDto(demandForm)); // FIX: Add missing model attribute
             demandForm.setId(id);
-            
+
             // SECURITY: Ensure sidebar knows user role on validation fail
             if (loggedUser.getRoles().contains("ADMIN")) {
                 model.addAttribute("isAdmin", true);
             }
-            
+
             return "editar_solicitud";
         }
 

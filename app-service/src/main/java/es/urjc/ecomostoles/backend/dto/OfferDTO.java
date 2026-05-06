@@ -29,6 +29,7 @@ public record OfferDTO(
         @PositiveOrZero(message = "El precio no puede ser negativo")
         Double price,
         
+        @NotBlank(message = "La disponibilidad es obligatoria")
         String availability,
         es.urjc.ecomostoles.backend.model.OfferStatus status,
         LocalDateTime publicationDate,
@@ -66,6 +67,27 @@ public record OfferDTO(
     public boolean isClosed() {
         return es.urjc.ecomostoles.backend.model.OfferStatus.FINISHED.equals(this.status);
     }
+    /**
+     * Constructor mapping from OfferSummary projection.
+     */
+    public OfferDTO(OfferSummary summary, String currentUserEmail) {
+        this(
+                summary.getId(),
+                summary.getTitle(),
+                summary.getDescription(),
+                summary.getWasteCategory(),
+                summary.getQuantity(),
+                summary.getUnit(),
+                summary.getPrice(),
+                summary.getAvailability(),
+                summary.getStatus(),
+                summary.getPublicationDate(),
+                summary.getVisits(),
+                summary.getCompany() != null ? new CompanyDTO(summary.getCompany()) : null,
+                summary.getCompany() != null && currentUserEmail != null && summary.getCompany().getContactEmail().equals(currentUserEmail)
+        );
+    }
+
     public OfferDTO(Offer offer, String currentUserEmail) {
         this(
                 offer.getId(),
