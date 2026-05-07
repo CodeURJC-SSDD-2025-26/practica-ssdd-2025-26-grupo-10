@@ -11,6 +11,7 @@
 
 ---
 
+
 ## 🎭 **Preparación: Definición del Proyecto**
 
 ### **Descripción del Tema**
@@ -767,6 +768,10 @@ La documentación completa de nuestra API REST se ha generado utilizando SpringD
 * 📄 **[Especificación OpenAPI (YAML)](/utility-service/api-docs/api-docs.yaml)**
 * 🌐 **[Documentación Interactiva (HTML)](https://raw.githack.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/main/utility-service/api-docs/api-docs.html)**
 
+#### **Postman Collection**
+* 🚀 **[Colección de Postman (JSON)](https://raw.githubusercontent.com/CodeURJC-SSDD-2025-26/practica-ssdd-2025-26-grupo-10/main/docs/ECOMOSTOLES-B2B-API.postman_collection.json)**
+
+
 ### **Diagrama de Clases y Templates Actualizado**
 
 Diagrama actualizado incluyendo los @RestController y su relación con los @Service compartidos:
@@ -828,7 +833,8 @@ El archivo `docker-compose.yml` orquesta tres contenedores coordinados:
 Todos los scripts de automatización se encuentran en la carpeta `docker/`. Es necesario ejecutarlos desde dicho directorio.
 
 #### **Requisitos de Desarrollo**
-- Docker Desktop en ejecución.
+- **Docker Desktop** en ejecución.
+- **ORAS CLI** instalado (`winget install ORASProject.ORAS` en Windows).
 - Sesión iniciada en DockerHub (`docker login`).
 - (En Windows) Política de ejecución: `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`.
 
@@ -851,7 +857,7 @@ Para subir las versiones recién construidas al registro público:
 ```
 
 #### **3. Publicación del OCI Artifact (Docker Compose)**
-Siguiendo los requisitos avanzados de la práctica, el archivo de orquestación se publica como un artefacto OCI:
+Siguiendo los requisitos avanzados de la práctica, el archivo de orquestación se publica como un artefacto OCI (requiere haber instalado **ORAS**):
 
 ```powershell
 .\publish_docker-compose.ps1
